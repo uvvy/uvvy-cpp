@@ -81,7 +81,7 @@ test: Makefile libmk4$(LIBEXT) regress
 	-test -d ../tests/ok/CVS && (test -d tests/CVS || mkdir tests/CVS)
 	test -f reversed || cp $(srcdir)/reversed .
 	./regress
-	diff --exclude=CVS $(srcdir)/../tests/ok tests
+	diff --exclude=.svn $(srcdir)/../tests/ok tests
 
 test-tcl: tcl
 	cd $(srcdir)/../tcl/test && $(tclsh) all.tcl
