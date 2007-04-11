@@ -43,7 +43,7 @@ CXX_FLAGS = @CPPFLAGS@ @CXXFLAGS@ @MK_THREADS@ @SHLIB_CFLAGS@ \
 # (e.g. in Mk4py).  This does not affect standard operation, *only* errors.
 # Happens in gcc 2.95.3, it has been disabled for now (even though slower).
 #CXXFLAGS = -fomit-frame-pointer $(CXX_FLAGS)
-CXXFLAGS = $(CXX_FLAGS)
+CXXFLAGS = $(CXX_FLAGS) $(CFLAGS)
 #CXXFLAGS = -Dq4_CHECK $(CXX_FLAGS)
 #CXXFLAGS = -Wall -pedantic -Wno-unused $(CXX_FLAGS)
 
@@ -53,7 +53,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 LIB_SUFFIX = @LIB_SUFFIX@
 SHLIB_SUFFIX = @SHLIB_SUFFIX@
-SHLIB_LD = @SHLIB_LD@
+SHLIB_LD = @SHLIB_LD@ $(CFLAGS)
 SHLIB_FLAGS = @SHLIB_FLAGS@
 STRIP_FLAGS = @STRIP_FLAGS@
 LIBEXT = @LIBEXT@
