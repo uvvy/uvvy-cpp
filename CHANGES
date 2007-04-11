@@ -1,8 +1,3 @@
-2007-04-11    Add suport for universal builds on Mac OS X
-
-    Well, indirectly anyway.  Add CFLAGS to the compile and link steps,
-    so that it can be set to "-arch ppc -arch i386 <etc>".
-
 2007-02-12    Continue unmapped, also in debug mode
 
     In the WIN32 version of ResetFileMapping, there were two assertions
