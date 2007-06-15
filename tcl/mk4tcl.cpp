@@ -44,13 +44,62 @@ class MkTcl;
 // inc'ed whenever a datafile is closed, forces relookup of all paths
 static int generation;
 
-TCL_DECLARE_MUTEX(mkMutex) // use a single monolithic mutex for now
+#ifdef TCL_THREADS
 
+// There is a single monolithic mutex for protecting all of Mk4tcl, but it has
+// to be a bit more advanced than Tcl's one since it has to support recursion,
+// i.e. re-entering this code from the *same* thread needs to be allowed.  The
+// recursion can happen in Tcl's type callbacks, see "Tcl_ObjType mkCursorType".
+//
+// We know the current interpreter in all cases, it can be used as mutex owner.
+// So we can be multiple times inside the mutex, but ONLY from a simgle interp.
+// No deadlock is possible, locking is always in the order mkMutex -> infoMutex.
+
+TCL_DECLARE_MUTEX(mkMutex)    // use a single monolithic mutex for now
+TCL_DECLARE_MUTEX(infoMutex)  // use a second mutex to manage the info below
+
+// set to the interp holding the mutex, or to zero when not locked
+static Tcl_Interp *mutex_owner;
+
+// set to the reursion level, > 1 means we've re-entered from same interp
+static int mutex_level;
+  
+static void EnterMutex(Tcl_Interp *ip_) {
+    d4_assert(ip_ != 0);
+    Tcl_MutexLock(&infoMutex);
+    if (ip_ != mutex_owner) {
+        Tcl_MutexUnlock(&infoMutex);
+        Tcl_MutexLock(&mkMutex);
+        Tcl_MutexLock(&infoMutex);
+        d4_assert(mutex_owner == 0);
+        mutex_owner = ip_;
+    }
+    ++mutex_level;
+    Tcl_MutexUnlock(&infoMutex);
+}
+
+static void LeaveMutex() {
+    Tcl_MutexLock(&infoMutex);
+    d4_assert(mutex_owner != 0 && mutex_level > 0);
+    if (--mutex_level == 0) {
+      mutex_owner = 0;
+      Tcl_MutexUnlock(&mkMutex);
+    }
+    Tcl_MutexUnlock(&infoMutex);
+}
+
+#else
+
+#define EnterMutex(x)
+#define LeaveMutex()
+
+#endif
+ 
 // put code in this file as a mutex is static in Windows
 int Mk_EvalObj(Tcl_Interp *ip_, Tcl_Obj *cmd_) {
-    Tcl_MutexUnlock(&mkMutex);
+    LeaveMutex();
     int e = Tcl_EvalObj(ip_, cmd_);
-    Tcl_MutexLock(&mkMutex);
+    EnterMutex(ip_);
     return e;
 }
 
@@ -963,6 +1012,7 @@ const c4_Property &AsProperty(Tcl_Obj *objPtr, const c4_View &view_) {
 }
 
 static void FreePropertyInternalRep(Tcl_Obj *propPtr) {
+  // no mutex protection needed here, MK's own C++ locking is sufficient
   delete (c4_Property*)propPtr->internalRep.twoPtrValue.ptr2;
 }
 
@@ -1002,19 +1052,27 @@ int &AsIndex(Tcl_Obj *obj_) {
 }
 
 static void FreeCursorInternalRep(Tcl_Obj *cursorPtr) {
-  AsPath(cursorPtr).Refs( - 1);
+  MkPath &path = AsPath(cursorPtr);
+  EnterMutex(path._ws->_interp);
+  path.Refs( - 1);
+  LeaveMutex();
 }
 
 static void DupCursorInternalRep(Tcl_Obj *srcPtr, Tcl_Obj *copyPtr) {
-  AsPath(srcPtr).Refs( + 1);
-
+  MkPath &path = AsPath(srcPtr);
+  EnterMutex(path._ws->_interp);
+  path.Refs( + 1);
   copyPtr->internalRep = srcPtr->internalRep;
   copyPtr->typePtr = &mkCursorType;
+  LeaveMutex();
 }
 
 int SetCursorFromAny(Tcl_Interp *interp, Tcl_Obj *objPtr) {
+  d4_assert(interp != 0);
+  EnterMutex(interp);
+
   // force a relookup if the this object is of the wrong generation
-  if (objPtr->typePtr ==  &mkCursorType && AsPath(objPtr)._currGen !=
+  if (objPtr->typePtr == &mkCursorType && AsPath(objPtr)._currGen !=
     generation) {
     // make sure we have a string representation around
     if (objPtr->bytes == 0)
@@ -1044,11 +1102,14 @@ int SetCursorFromAny(Tcl_Interp *interp, Tcl_Obj *objPtr) {
     objPtr->internalRep.twoPtrValue.ptr2 = s;
   }
 
+  LeaveMutex();
   return TCL_OK;
 }
 
 static void UpdateStringOfCursor(Tcl_Obj *cursorPtr) {
-  c4_String s = AsPath(cursorPtr)._path;
+  MkPath &path = AsPath(cursorPtr);
+  EnterMutex(path._ws->_interp);
+  c4_String s = path._path;
 
   int index = AsIndex(cursorPtr);
   if (index >= 0) {
@@ -1059,6 +1120,7 @@ static void UpdateStringOfCursor(Tcl_Obj *cursorPtr) {
 
   cursorPtr->length = s.GetLength();
   cursorPtr->bytes = strcpy(Tcl_Alloc(cursorPtr->length + 1), s);
+  LeaveMutex();
 }
 
 static Tcl_Obj *AllocateNewTempRow(MkWorkspace &work_) {
@@ -2083,9 +2145,9 @@ int MkTcl::LoopCmd() {
     if (!(i < limit && incr > 0 || i > limit && incr < 0))
       break;
 
-    Tcl_MutexUnlock(&mkMutex);
+    LeaveMutex();
     _error = Tcl_EvalObj(interp, cmd);
-    Tcl_MutexLock(&mkMutex);
+    EnterMutex(interp);
 
     if (_error == TCL_CONTINUE)
       _error = TCL_OK;
@@ -2469,7 +2531,7 @@ int MkTcl::Execute(int oc, Tcl_Obj *const * ov) {
     return Fail(msg);
   }
 
-  Tcl_MutexLock(&mkMutex);
+  EnterMutex(interp);
   int result;
   switch (id) {
     case 0:
@@ -2505,7 +2567,7 @@ int MkTcl::Execute(int oc, Tcl_Obj *const * ov) {
       break;
 #endif 
   }
-  Tcl_MutexUnlock(&mkMutex);
+  LeaveMutex();
   return result;
 }
 

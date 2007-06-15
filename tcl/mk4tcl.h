@@ -209,10 +209,11 @@ class MkWorkspace {
     c4_PtrArray _items; // items, or null if released
     c4_Bytes _usedBuffer; // buffer, using 1 byte per entry
     t4_byte *_usedRows; // 1 if that row in item 0 is currently in use
-    Tcl_Interp *_interp;
     c4_PtrArray _commands;
 
   public:
+    Tcl_Interp *_interp;
+
     struct Item {
         const c4_String _name; // the alias for this storage
         const c4_String _fileName;

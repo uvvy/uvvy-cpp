@@ -1451,7 +1451,7 @@ else
   ok=no
 fi;
 if test "$ok" = yes; then
-  MK_THREADS="-Dq4_MULTI"
+  MK_THREADS="-Dq4_MULTI -DTCL_THREADS"
   echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6
 else

@@ -1,3 +1,24 @@
+2007-06-16    Fix threading problems in Mk4tcl
+
+    The Mk4tcl binding had two serious bugs, causing potential crashes
+    and database corruption when used in multi-threaded mode:
+    
+    1) The Makefile did not set -DTCL_THREADS when configured with
+       the "--enable-threads" flag, only -Dq4_MULTI, which is the C++
+       level threading support of Metakit.  So all builds were still
+       running the Mk4tcl wrapper in unprotected mode (!).
+       
+    2) Tcl's type conversion callbacks did not contain mutex calls to
+       prevent calls from Tcl into Mk4tcl other than mk::* commands.
+       This happens during "Tcl_ObjType mkCursorType" type conversions.
+       
+    Added the proper -DTCL_THREADS flag to Makefile.in, and extra code
+    to implement recursive mutex protection on top of Tcl's primitives.
+    
+    This problem does not affect the C++ core (which has been in use in
+    threaded mode for some time, on many platforms including Windows),
+    nor the Mk4py binding for Python which uses a global interp lock.
+
 2007-02-12    Continue unmapped, also in debug mode
 
     In the WIN32 version of ResetFileMapping, there were two assertions
