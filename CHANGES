@@ -1,3 +1,7 @@
+2006-11-15    ############################################    MK 2.4.9.7
+
+    If you're using Tcl in threaded mode, please upgrade - see below.
+
 2007-06-16    Fix threading problems in Mk4tcl
 
     The Mk4tcl binding had two serious bugs, causing potential crashes

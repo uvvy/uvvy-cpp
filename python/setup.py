@@ -166,7 +166,7 @@ class test_regrtest(Command):
 #    metakit = sys.modules['metakit']
 
 setup(name             = "metakit",
-      version          = "2.4.9.6",
+      version          = "2.4.9.7",
       description      = "Python bindings to the Metakit database library",
       #long_description = metakit.__doc__,
       author           = "Gordon McMillan / Jean-Claude Wippler",

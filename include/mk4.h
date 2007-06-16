@@ -43,7 +43,7 @@
 //---------------------------------------------------------------------------
 
 /// Current release = 100 * major + 10 * minor + maintenance
-#define d4_MetakitLibraryVersion 249    // 2.4.9.6 release, Nov 15, 2006
+#define d4_MetakitLibraryVersion 249    // 2.4.9.7 release, Jun 16, 2007
 #define d4_MetaKitLibraryVersion d4_MetakitLibraryVersion // compat, yuck
 
 //---------------------------------------------------------------------------
