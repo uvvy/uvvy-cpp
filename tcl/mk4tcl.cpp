@@ -543,7 +543,8 @@ MkPath::MkPath(MkWorkspace &ws_, const char * &path_, Tcl_Interp *interp):
 }
 
 MkPath::~MkPath() {
-  if (_ws != 0)
+  // 24-01-2003: paths should not clean up workspaces once exiting
+  if (_currGen != -1)
     _ws->ForgetPath(this);
 }
 
@@ -691,9 +692,7 @@ MkWorkspace::Item::~Item() {
     if (_index > 0)
       path->_view = c4_View();
     path->_path = "?"; // make sure it never matches
-    path->_currGen =  - 1; // make sure lookup is retried on next use
-    // 24-01-2003: paths should not clean up workspaces once exiting
-    path->_ws = 0;
+    path->_currGen = -1; // make sure lookup is retried on next use
     // TODO: get rid of generations, use a "_valid" flag instead
   }
   ++generation; // make sure all cached paths refresh on next access

@@ -1,3 +1,9 @@
+2007-06-18    Fix threading problems in Mk4tcl
+
+    A change is needed to make the thread fix work with mk::loop,
+    because the _ws pointer could be null in FreeCursorInternalRep.
+    Fixed by no longer clearing _ws and changing a test for that case.
+
 2007-06-16    ############################################    MK 2.4.9.7
 
     If you're using Tcl in threaded mode, please upgrade - see below.
