@@ -1,3 +1,11 @@
+2007-06-24    Patch for cygwin
+
+    There's a submitted patch (F152) which tries to fix a problem
+    when compilng MK on cygwin with CXXFLAGS=-mno-cygwin, but it may
+    not be the best way to fix things.  Instead, this change adds the
+    $(LDFLAGS) parameter in a few places in the Makefile.  It was not
+    used before, and $(SHLIB_FLAGS) still isn't being used - weird.
+
 2007-06-18    Fix threading problems in Mk4tcl
 
     A change is needed to make the thread fix work with mk::loop,

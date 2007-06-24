@@ -134,24 +134,25 @@ libmk4$(LIB_SUFFIX): $(LOBJS)
 	ranlib $@
 
 libmk4$(SHLIB_SUFFIX): $(LOBJS) $(LINK_SPECIAL_FILES)
-	$(SHLIB_LD) -o $@ $(LOBJS) $(LINK_SPECIAL_FLAGS)
+	$(SHLIB_LD) -o $@ $(LOBJS) $(LINK_SPECIAL_FLAGS) $(LDFLAGS)
 
 Mk4tcl$(LIB_SUFFIX): mk4tcl.o mk4too.o $(LOBJS)
 	ar rcu $@ mk4tcl.o mk4too.o $(LOBJS)
 	ranlib $@
 
 Mk4tcl$(SHLIB_SUFFIX): mk4tcl.o mk4too.o $(LOBJS) $(LINK_SPECIAL_FILES)
-	$(SHLIB_LD) -o $@ mk4tcl.o mk4too.o $(LOBJS) $(LINK_SPECIAL_FLAGS)
+	$(SHLIB_LD) -o $@ mk4tcl.o mk4too.o \
+			$(LOBJS) $(LINK_SPECIAL_FLAGS) $(LDFLAGS)
 
 Mk4py$(LIB_SUFFIX): $(PYOBJS) $(LOBJS)
 	ar cru $@ $(PYOBJS) $(LOBJS)
 	ranlib $@
 
 Mk4py$(SHLIB_SUFFIX): $(PYOBJS) $(LOBJS) $(LINK_SPECIAL_FILES)
-	$(SHLIB_LD) -o $@ $(PYOBJS) $(LOBJS) $(LINK_SPECIAL_FLAGS)
+	$(SHLIB_LD) -o $@ $(PYOBJS) $(LOBJS) $(LINK_SPECIAL_FLAGS) $(LDFLAGS)
 
 Mk4lua$(SHLIB_SUFFIX): mk4lua.o $(LOBJS) $(LINK_SPECIAL_FILES)
-	$(SHLIB_LD) -o $@ mk4lua.o $(LOBJS) $(LINK_SPECIAL_FLAGS)
+	$(SHLIB_LD) -o $@ mk4lua.o $(LOBJS) $(LINK_SPECIAL_FLAGS) $(LDFLAGS)
 
 demo: $(srcdir)/../demos/demo.cpp libmk4$(LIBEXT)
 	$(CXX) $(CXX_SWITCHES) -o $@$(EXEEXT) \
