@@ -1,3 +1,10 @@
+2007-06-24    Cleanup obsolete code
+
+    Remove Lua binding in lua/, it was never completed.
+    Remove win/{catfish,kitviewer,msevc3,msvc152} - now unsupported.
+    Remove mac/, pre-macosx builds are no longer supported.
+    Removed the MKSQL logic and tcl/mksql.tcl, since it is not used.
+
 2007-06-24    Patch for cygwin
 
     There's a submitted patch (F152) which tries to fix a problem

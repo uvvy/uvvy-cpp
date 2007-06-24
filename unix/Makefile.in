@@ -151,9 +151,6 @@ Mk4py$(LIB_SUFFIX): $(PYOBJS) $(LOBJS)
 Mk4py$(SHLIB_SUFFIX): $(PYOBJS) $(LOBJS) $(LINK_SPECIAL_FILES)
 	$(SHLIB_LD) -o $@ $(PYOBJS) $(LOBJS) $(LINK_SPECIAL_FLAGS) $(LDFLAGS)
 
-Mk4lua$(SHLIB_SUFFIX): mk4lua.o $(LOBJS) $(LINK_SPECIAL_FILES)
-	$(SHLIB_LD) -o $@ mk4lua.o $(LOBJS) $(LINK_SPECIAL_FLAGS) $(LDFLAGS)
-
 demo: $(srcdir)/../demos/demo.cpp libmk4$(LIBEXT)
 	$(CXX) $(CXX_SWITCHES) -o $@$(EXEEXT) \
 		$(srcdir)/../demos/demo.cpp libmk4$(LIBEXT) @LIBS@
@@ -236,9 +233,6 @@ univ.o:    $(srcdir)/../src/univ.cpp
 view.o:    $(srcdir)/../src/view.cpp
 	$(CXX) -c $(CXX_SWITCHES) $?
 viewx.o:   $(srcdir)/../src/viewx.cpp
-	$(CXX) -c $(CXX_SWITCHES) $?
-
-mk4lua.o:  $(srcdir)/../lua/mk4lua.cpp
 	$(CXX) -c $(CXX_SWITCHES) $?
 
 regress.o: $(srcdir)/../tests/regress.cpp

@@ -5,10 +5,6 @@
 #include "mk4tcl.h"
 #include "mk4io.h"
 
-#if MKSQL
-#include "mksql.h"
-#endif 
-
 #ifndef _WIN32_WCE
 #include <errno.h>
 #endif 
@@ -2387,86 +2383,6 @@ int MkTcl::ChannelCmd() {
   return tcl_SetObjResult(o);
 }
 
-#if MKSQL
-
-class TclSQL: public MkSQL {
-  public:
-
-    TclSQL(Tcl_Interp *ip_, const c4_Storage &sp_): _interp(ip_) {
-        Connect(sp_);
-    }
-
-    int ExecCmd(int objc_, Tcl_Obj *const * objv_) {
-        if (objc_ != 2)
-          return TCL_ERROR;
-
-        const char *statement = Tcl_GetStringFromObj(objv_[1], 0);
-        c4_View v = Execute(statement);
-        if (_error) {
-            Tcl_SetResult(_interp, (char*)"execute failed", TCL_STATIC);
-            return TCL_ERROR;
-        }
-
-        Tcl_Obj *list = Tcl_GetObjResult(_interp);
-
-        for (int n = 0; n < v.GetSize(); ++n) {
-            c4_RowRef row = v[n];
-
-            Tcl_Obj *result = Tcl_NewObj();
-
-            for (int i = 0; i < v.NumProperties(); ++i) {
-                const c4_Property &prop = v.NthProperty(i);
-                if (prop.Type() == 'V')
-                  continue;
-                // omit subviews
-
-                Tcl_ListObjAppendElement(_interp, result, GetAsObj(row, prop));
-            }
-
-            Tcl_ListObjAppendElement(_interp, list, result);
-        }
-
-        return TCL_OK;
-    }
-
-    static int DoCmd(ClientData cd_, Tcl_Interp *ip_, int oc_, Tcl_Obj *const *
-      ov_) {
-        TclSQL *sql = (TclSQL*)cd_;
-
-        return sql->ExecCmd(oc_, ov_);
-    }
-
-    static void DelCmd(ClientData cd_) {
-        delete (TclSQL*)cd_;
-    }
-
-    Tcl_Interp *_interp;
-};
-
-int MkTcl::SqlAuxCmd() {
-  const char *dbName = Tcl_GetStringFromObj(objv[1], 0);
-  const char *cmdName = Tcl_GetStringFromObj(objv[2], 0);
-
-  MkWorkspace::Item *np = work.Find(dbName);
-  if (np == 0)
-    return Fail("no storage with this name");
-
-  TclSQL *sql = new TclSQL(interp, np->_storage);
-  if (sql == 0 || sql->_error)
-    return Fail("connect failed");
-
-  Tcl_CreateObjCommand(interp, (char*)cmdName, TclSQL::DoCmd, sql, TclSQL
-    ::DelCmd);
-
-  if (_error)
-    return _error;
-
-  KeepRef o = tcl_NewStringObj("abc");
-  return tcl_SetObjResult(o);
-}
-
-#endif 
-
 int MkTcl::Execute(int oc, Tcl_Obj *const * ov) {
   struct CmdDef {
     int min;
@@ -2503,13 +2419,7 @@ int MkTcl::Execute(int oc, Tcl_Obj *const * ov) {
       3, 4, "channel path prop ?mode?"
     }
     , 
-#if MKSQL
-     {
-      3, 3, "cmd db"
-    }
-    , 
-#endif 
-     {
+    {
       0, 0, 0
     }
     , 
@@ -2560,11 +2470,6 @@ int MkTcl::Execute(int oc, Tcl_Obj *const * ov) {
     case 8:
       result = ChannelCmd();
       break;
-#if MKSQL
-    case 9:
-      result = SqlAuxCmd();
-      break;
-#endif 
   }
   LeaveMutex();
   return result;
@@ -2608,9 +2513,6 @@ static int Mktcl_Cmds(Tcl_Interp *interp, bool /*safe*/) {
   // this list must match the "CmdDef defTab []" above.
   static const char *cmds[] =  {
     "get", "set", "cursor", "row", "view", "file", "loop", "select", "channel", 
-#if MKSQL
-    "Q", 
-#endif 
     0
   };
 
