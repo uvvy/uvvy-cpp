@@ -1316,16 +1316,9 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
-#--------------------------------------------------------------------
-# Call TEA_INIT as the first TEA_ macro to set up initial vars.
-# This will define a ${TEA_PLATFORM} variable == "unix" or "windows"
-# as well as PKG_LIB_FILE and PKG_STUB_LIB_FILE.
-#--------------------------------------------------------------------
-
-
     # TEA extensions pass this us the version of TEA they think they
     # are compatible with.
-    TEA_VERSION="3.5"
+    TEA_VERSION="3.6"
 
     echo "$as_me:$LINENO: checking for correct TEA configuration" >&5
 echo $ECHO_N "checking for correct TEA configuration... $ECHO_C" >&6
@@ -1336,15 +1329,15 @@ echo "$as_me: error:
 The PACKAGE_NAME variable must be defined by your TEA configure.in" >&2;}
    { (exit 1); exit 1; }; }
     fi
-    if test x"3.5" = x ; then
+    if test x"3.6" = x ; then
 	{ { echo "$as_me:$LINENO: error:
 TEA version not specified." >&5
 echo "$as_me: error:
 TEA version not specified." >&2;}
    { (exit 1); exit 1; }; }
-    elif test "3.5" != "${TEA_VERSION}" ; then
-	echo "$as_me:$LINENO: result: warning: requested TEA version \"3.5\", have \"${TEA_VERSION}\"" >&5
-echo "${ECHO_T}warning: requested TEA version \"3.5\", have \"${TEA_VERSION}\"" >&6
+    elif test "3.6" != "${TEA_VERSION}" ; then
+	echo "$as_me:$LINENO: result: warning: requested TEA version \"3.6\", have \"${TEA_VERSION}\"" >&5
+echo "${ECHO_T}warning: requested TEA version \"3.6\", have \"${TEA_VERSION}\"" >&6
     else
 	echo "$as_me:$LINENO: result: ok (TEA ${TEA_VERSION})" >&5
 echo "${ECHO_T}ok (TEA ${TEA_VERSION})" >&6
@@ -1450,10 +1443,6 @@ ac_config_guess="$SHELL $ac_aux_dir/config.guess"
 ac_config_sub="$SHELL $ac_aux_dir/config.sub"
 ac_configure="$SHELL $ac_aux_dir/configure" # This should be Cygnus configure.
 
-
-#--------------------------------------------------------------------
-# Load the tclConfig.sh file
-#--------------------------------------------------------------------
 
 
 
@@ -1600,7 +1589,7 @@ echo $ECHO_N "checking for existence of ${TCL_BIN_DIR}/tclConfig.sh... $ECHO_C" 
     if test -f "${TCL_BIN_DIR}/tclConfig.sh" ; then
         echo "$as_me:$LINENO: result: loading" >&5
 echo "${ECHO_T}loading" >&6
-	. ${TCL_BIN_DIR}/tclConfig.sh
+	. "${TCL_BIN_DIR}/tclConfig.sh"
     else
         echo "$as_me:$LINENO: result: could not find ${TCL_BIN_DIR}/tclConfig.sh" >&5
 echo "${ECHO_T}could not find ${TCL_BIN_DIR}/tclConfig.sh" >&6
@@ -1616,7 +1605,7 @@ echo "${ECHO_T}could not find ${TCL_BIN_DIR}/tclConfig.sh" >&6
     # of TCL_BUILD_LIB_SPEC. An extension should make use of TCL_LIB_SPEC
     # instead of TCL_BUILD_LIB_SPEC since it will work with both an
     # installed and uninstalled version of Tcl.
-    if test -f ${TCL_BIN_DIR}/Makefile ; then
+    if test -f "${TCL_BIN_DIR}/Makefile" ; then
         TCL_LIB_SPEC=${TCL_BUILD_LIB_SPEC}
         TCL_STUB_LIB_SPEC=${TCL_BUILD_STUB_LIB_SPEC}
         TCL_STUB_LIB_PATH=${TCL_BUILD_STUB_LIB_PATH}
@@ -1626,7 +1615,7 @@ echo "${ECHO_T}could not find ${TCL_BIN_DIR}/tclConfig.sh" >&6
 	# against Tcl.framework installed in an arbitary location.
 	case ${TCL_DEFS} in
 	    *TCL_FRAMEWORK*)
-		if test -f ${TCL_BIN_DIR}/${TCL_LIB_FILE}; then
+		if test -f "${TCL_BIN_DIR}/${TCL_LIB_FILE}"; then
 		    for i in "`cd ${TCL_BIN_DIR}; pwd`" \
 			     "`cd ${TCL_BIN_DIR}/../..; pwd`"; do
 			if test "`basename "$i"`" = "${TCL_LIB_FILE}.framework"; then
@@ -1635,7 +1624,7 @@ echo "${ECHO_T}could not find ${TCL_BIN_DIR}/tclConfig.sh" >&6
 			fi
 		    done
 		fi
-		if test -f ${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}; then
+		if test -f "${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}"; then
 		    TCL_STUB_LIB_SPEC="-L${TCL_BIN_DIR} ${TCL_STUB_LIB_FLAG}"
 		    TCL_STUB_LIB_PATH="${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}"
 		fi
@@ -1668,19 +1657,6 @@ echo "${ECHO_T}could not find ${TCL_BIN_DIR}/tclConfig.sh" >&6
 
 
 
-#--------------------------------------------------------------------
-# Load the tkConfig.sh file if necessary (Tk extension)
-#--------------------------------------------------------------------
-
-#TEA_PATH_TKCONFIG
-#TEA_LOAD_TKCONFIG
-
-#-----------------------------------------------------------------------
-# Handle the --prefix=... option by defaulting to what Tcl gave.
-# Must be called after TEA_LOAD_TCLCONFIG and before TEA_SETUP_COMPILER.
-#-----------------------------------------------------------------------
-
-
     if test "${prefix}" = "NONE"; then
 	prefix_default=yes
 	if test x"${TCL_PREFIX}" != x; then
@@ -1705,14 +1681,6 @@ echo "$as_me: --exec-prefix defaulting to ${prefix}" >&6;}
 	    exec_prefix=$prefix
 	fi
     fi
-
-
-#-----------------------------------------------------------------------
-# Standard compiler checks.
-# This sets up CC by using the CC env var, or looks for gcc otherwise.
-# This also calls AC_PROG_CC, AC_PROG_INSTALL and a few others to create
-# the basic setup necessary to compile executables.
-#-----------------------------------------------------------------------
 
 
     # Don't put any macros that use the compiler (e.g. AC_TRY_COMPILE)
@@ -3362,9 +3330,12 @@ done
     if test -z "$no_pipe" -a -n "$GCC"; then
 	echo "$as_me:$LINENO: checking if the compiler understands -pipe" >&5
 echo $ECHO_N "checking if the compiler understands -pipe... $ECHO_C" >&6
-	OLDCC="$CC"
-	CC="$CC -pipe"
-	cat >conftest.$ac_ext <<_ACEOF
+if test "${tcl_cv_cc_pipe+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+	    hold_cflags=$CFLAGS; CFLAGS="$CFLAGS -pipe"
+	    cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
 _ACEOF
 cat confdefs.h >>conftest.$ac_ext
@@ -3401,17 +3372,21 @@ if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
   ac_status=$?
   echo "$as_me:$LINENO: \$? = $ac_status" >&5
   (exit $ac_status); }; }; then
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
+  tcl_cv_cc_pipe=yes
 else
   echo "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-CC="$OLDCC"
-	    echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
+tcl_cv_cc_pipe=no
 fi
 rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+	    CFLAGS=$hold_cflags
+fi
+echo "$as_me:$LINENO: result: $tcl_cv_cc_pipe" >&5
+echo "${ECHO_T}$tcl_cv_cc_pipe" >&6
+	if test $tcl_cv_cc_pipe = yes; then
+	    CFLAGS="$CFLAGS -pipe"
+	fi
     fi
 
     #--------------------------------------------------------------------
@@ -6112,15 +6087,6 @@ done
     fi
 
 
-#-----------------------------------------------------------------------
-# Specify the C source files to compile in TEA_ADD_SOURCES,
-# public headers that need to be installed in TEA_ADD_HEADERS,
-# stub library C source files to compile in TEA_ADD_STUB_SOURCES,
-# and runtime Tcl library files in TEA_ADD_TCL_SOURCES.
-# This defines PKG(_STUB)_SOURCES, PKG(_STUB)_OBJECTS, PKG_HEADERS
-# and PKG_TCL_SOURCES.
-#-----------------------------------------------------------------------
-
 
     vars="../src/column.cpp
 		 ../src/custom.cpp
@@ -6187,7 +6153,7 @@ echo "$as_me: error: could not find header file '${srcdir}/$i'" >&2;}
 
 
 
-    vars="-I\"\${srcdir}/../include\" -I\"\${srcdir}\""
+    vars="-I\"${srcdir}/../include\" -I\"${srcdir}\" -I."
     for i in $vars; do
 	PKG_INCLUDES="$PKG_INCLUDES $i"
     done
@@ -6247,39 +6213,20 @@ echo "$as_me: error: could not find tcl source file '${srcdir}/$i'" >&2;}
 
 
 
-#--------------------------------------------------------------------
-# Define a special symbol for Windows (BUILD_Mk4tcl in this case) so
-# that we create the export library with the dll.
-#
-# Windows creates a few extra files that need to be cleaned up.
-# You can add more files to clean if your extension creates any extra
-# files.
-#
-# TEA_ADD_* any platform specific compiler/build info here.
-#--------------------------------------------------------------------
-
 if test "${TEA_PLATFORM}" = "windows" ; then
     cat >>confdefs.h <<\_ACEOF
 #define BUILD_Mk4tcl 1
 _ACEOF
 
-    CLEANFILES="pkgIndex.tcl *.lib *.dll *.exp *.ilk *.pdb vc*.pch"
+    CLEANFILES="*.lib *.dll *.exp *.ilk *.pdb vc*.pch"
     #TEA_ADD_SOURCES([win/winFile.c])
     #TEA_ADD_INCLUDES([-I\"$(${CYGPATH} ${srcdir}/win)\"])
 else
-    CLEANFILES="pkgIndex.tcl"
+    CLEANFILES=""
     #TEA_ADD_SOURCES([unix/unixFile.c])
     #TEA_ADD_LIBS([-lsuperfly])
 fi
 
-
-#--------------------------------------------------------------------
-# Choose which headers you need.  Extension authors should try very
-# hard to only rely on the Tcl public header files.  Internal headers
-# contain private data structures and are subject to change without
-# notice.
-# This MUST be called after TEA_LOAD_TCLCONFIG / TEA_LOAD_TKCONFIG
-#--------------------------------------------------------------------
 
 
     echo "$as_me:$LINENO: checking for Tcl public headers" >&5
@@ -6367,16 +6314,6 @@ echo "${ECHO_T}${ac_cv_c_tclh}" >&6
     TCL_INCLUDES=-I\"${INCLUDE_DIR_NATIVE}\"
 
 
-
-#TEA_PRIVATE_TCL_HEADERS
-
-#TEA_PUBLIC_TK_HEADERS
-#TEA_PRIVATE_TK_HEADERS
-#TEA_PATH_X
-
-#--------------------------------------------------------------------
-# Check whether --enable-threads or --disable-threads was given.
-#--------------------------------------------------------------------
 
 
     # Check whether --enable-threads or --disable-threads was given.
@@ -6850,12 +6787,6 @@ echo "$as_me: WARNING:
 
 
 
-#--------------------------------------------------------------------
-# The statement below defines a collection of symbols related to
-# building as a shared library instead of a static library.
-#--------------------------------------------------------------------
-
-
     echo "$as_me:$LINENO: checking how to build libraries" >&5
 echo $ECHO_N "checking how to build libraries... $ECHO_C" >&6
     # Check whether --enable-shared or --disable-shared was given.
@@ -6888,13 +6819,6 @@ _ACEOF
 
     fi
 
-
-
-#--------------------------------------------------------------------
-# This macro figures out what flags to use with the compiler/linker
-# when building shared/static debug/optimized objects.  This information
-# can be taken from the tclConfig.sh file, but this figures it all out.
-#--------------------------------------------------------------------
 
 
 
@@ -7696,7 +7620,11 @@ _ACEOF
 	    #AC_DEFINE(_XOPEN_SOURCE, 1, [Do we want to use the XOPEN network library?])
 	    #LIBS="$LIBS -lxnet"               # Use the XOPEN network library
 
-	    SHLIB_SUFFIX=".sl"
+	    if test "`uname -m`" = "ia64" ; then
+		SHLIB_SUFFIX=".so"
+	    else
+		SHLIB_SUFFIX=".sl"
+	    fi
 	    echo "$as_me:$LINENO: checking for shl_load in -ldld" >&5
 echo $ECHO_N "checking for shl_load in -ldld... $ECHO_C" >&6
 if test "${ac_cv_lib_dld_shl_load+set}" = set; then
@@ -7966,7 +7894,8 @@ echo "$as_me: WARNING: 64bit mode not supported by gcc" >&2;}
 	    # get rid of the warnings.
 	    #CFLAGS_OPTIMIZE="${CFLAGS_OPTIMIZE} -D__NO_STRING_INLINES -D__NO_MATH_INLINES"
 
-	    SHLIB_LD="${CC} -shared"
+	    # TEA specific: use LDFLAGS_DEFAULT instead of LDFLAGS here:
+	    SHLIB_LD='${CC} -shared ${CFLAGS} ${LDFLAGS_DEFAULT}'
 	    DL_OBJS="tclLoadDl.o"
 	    DL_LIBS="-ldl"
 	    LDFLAGS="$LDFLAGS -Wl,--export-dynamic"
@@ -7974,6 +7903,70 @@ echo "$as_me: WARNING: 64bit mode not supported by gcc" >&2;}
 	    LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 	    if test "`uname -m`" = "alpha" ; then
 		CFLAGS="$CFLAGS -mieee"
+	    fi
+	    if test $do64bit = yes; then
+		echo "$as_me:$LINENO: checking if compiler accepts -m64 flag" >&5
+echo $ECHO_N "checking if compiler accepts -m64 flag... $ECHO_C" >&6
+if test "${tcl_cv_cc_m64+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+		    hold_cflags=$CFLAGS
+		    CFLAGS="$CFLAGS -m64"
+		    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  tcl_cv_cc_m64=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+tcl_cv_cc_m64=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+		    CFLAGS=$hold_cflags
+fi
+echo "$as_me:$LINENO: result: $tcl_cv_cc_m64" >&5
+echo "${ECHO_T}$tcl_cv_cc_m64" >&6
+		if test $tcl_cv_cc_m64 = yes; then
+		    CFLAGS="$CFLAGS -m64"
+		    do64bit_ok=yes
+		fi
 	    fi
 
 	    # The combo of gcc + glibc has a bug related
@@ -8170,17 +8163,146 @@ echo "${ECHO_T}$tcl_cv_ld_elf" >&6
 	Darwin-*)
 	    CFLAGS_OPTIMIZE="-Os"
 	    SHLIB_CFLAGS="-fno-common"
+	    # To avoid discrepancies between what headers configure sees during
+	    # preprocessing tests and compiling tests, move any -isysroot and
+	    # -mmacosx-version-min flags from CFLAGS to CPPFLAGS:
+	    CPPFLAGS="${CPPFLAGS} `echo " ${CFLAGS}" | \
+		awk 'BEGIN {FS=" +-";ORS=" "}; {for (i=2;i<=NF;i++) \
+		if ($i~/^(isysroot|mmacosx-version-min)/) print "-"$i}'`"
+	    CFLAGS="`echo " ${CFLAGS}" | \
+		awk 'BEGIN {FS=" +-";ORS=" "}; {for (i=2;i<=NF;i++) \
+		if (!($i~/^(isysroot|mmacosx-version-min)/)) print "-"$i}'`"
 	    if test $do64bit = yes; then
-		do64bit_ok=yes
 		case `arch` in
 		    ppc)
-			CFLAGS="$CFLAGS -arch ppc64 -mpowerpc64 -mcpu=G5";;
+			echo "$as_me:$LINENO: checking if compiler accepts -arch ppc64 flag" >&5
+echo $ECHO_N "checking if compiler accepts -arch ppc64 flag... $ECHO_C" >&6
+if test "${tcl_cv_cc_arch_ppc64+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+			    hold_cflags=$CFLAGS
+			    CFLAGS="$CFLAGS -arch ppc64 -mpowerpc64 -mcpu=G5"
+			    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  tcl_cv_cc_arch_ppc64=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+tcl_cv_cc_arch_ppc64=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+			    CFLAGS=$hold_cflags
+fi
+echo "$as_me:$LINENO: result: $tcl_cv_cc_arch_ppc64" >&5
+echo "${ECHO_T}$tcl_cv_cc_arch_ppc64" >&6
+			if test $tcl_cv_cc_arch_ppc64 = yes; then
+			    CFLAGS="$CFLAGS -arch ppc64 -mpowerpc64 -mcpu=G5"
+			    do64bit_ok=yes
+			fi;;
 		    i386)
-			CFLAGS="$CFLAGS -arch x86_64";;
+			echo "$as_me:$LINENO: checking if compiler accepts -arch x86_64 flag" >&5
+echo $ECHO_N "checking if compiler accepts -arch x86_64 flag... $ECHO_C" >&6
+if test "${tcl_cv_cc_arch_x86_64+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+
+			    hold_cflags=$CFLAGS
+			    CFLAGS="$CFLAGS -arch x86_64"
+			    cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  tcl_cv_cc_arch_x86_64=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+tcl_cv_cc_arch_x86_64=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+			    CFLAGS=$hold_cflags
+fi
+echo "$as_me:$LINENO: result: $tcl_cv_cc_arch_x86_64" >&5
+echo "${ECHO_T}$tcl_cv_cc_arch_x86_64" >&6
+			if test $tcl_cv_cc_arch_x86_64 = yes; then
+			    CFLAGS="$CFLAGS -arch x86_64"
+			    do64bit_ok=yes
+			fi;;
 		    *)
 			{ echo "$as_me:$LINENO: WARNING: Don't know how enable 64-bit on architecture \`arch\`" >&5
-echo "$as_me: WARNING: Don't know how enable 64-bit on architecture \`arch\`" >&2;}
-			do64bit_ok=no;;
+echo "$as_me: WARNING: Don't know how enable 64-bit on architecture \`arch\`" >&2;};;
 		esac
 	    else
 		# Check for combined 32-bit and 64-bit fat build
@@ -8257,7 +8379,7 @@ echo "${ECHO_T}$tcl_cv_ld_single_module" >&6
 	    DL_LIBS=""
 	    # Don't use -prebind when building for Mac OS X 10.4 or later only:
 	    test "`echo "${MACOSX_DEPLOYMENT_TARGET}" | awk -F '10\\.' '{print int($2)}'`" -lt 4 -a \
-		"`echo "${CFLAGS}" | awk -F '-mmacosx-version-min=10\\.' '{print int($2)}'`" -lt 4 && \
+		"`echo "${CPPFLAGS}" | awk -F '-mmacosx-version-min=10\\.' '{print int($2)}'`" -lt 4 && \
 		LDFLAGS="$LDFLAGS -prebind"
 	    LDFLAGS="$LDFLAGS -headerpad_max_install_names"
 	    echo "$as_me:$LINENO: checking if ld accepts -search_paths_first flag" >&5
@@ -8326,10 +8448,10 @@ echo "${ECHO_T}$tcl_cv_ld_search_paths_first" >&6
 	    LD_LIBRARY_PATH_VAR="DYLD_LIBRARY_PATH"
 
 	    # TEA specific: for Tk extensions, remove 64-bit arch flags from
-	    # CFLAGS for combined 32-bit and 64-bit fat builds as neither TkAqua
-	    # nor TkX11 can be built for 64-bit at present.
-	    test "$fat_32_64" = yes && test -n "${TK_BIN_DIR}" && \
-		CFLAGS="`echo "$CFLAGS " | sed -e 's/-arch ppc64 / /g' -e 's/-arch x86_64 / /g'`"
+	    # CFLAGS et al. for combined 32 & 64 bit fat builds as neither
+	    # TkAqua nor TkX11 can be built for 64-bit at present.
+	    test "$fat_32_64" = yes && test -n "${TK_BIN_DIR}" && for v in CFLAGS CPPFLAGS LDFLAGS; do
+		eval $v'="`echo "$'$v' "|sed -e "s/-arch ppc64 / /g" -e "s/-arch x86_64 / /g"`"'; done
 	    ;;
 	NEXTSTEP-*)
 	    SHLIB_CFLAGS=""
@@ -8671,6 +8793,8 @@ echo "${ECHO_T}$tcl_cv_ld_Bexport" >&6
 	{ echo "$as_me:$LINENO: WARNING: 64bit support being disabled -- don't know magic for this platform" >&5
 echo "$as_me: WARNING: 64bit support being disabled -- don't know magic for this platform" >&2;}
     fi
+
+
 
     # Step 4: disable dynamic loading if requested via a command-line switch.
 
@@ -9510,11 +9634,6 @@ echo "${ECHO_T}no" >&6
 
 
 
-#--------------------------------------------------------------------
-# Set the default compiler switches based on the --enable-symbols option.
-#--------------------------------------------------------------------
-
-
 
     echo "$as_me:$LINENO: checking for build with symbols" >&5
 echo $ECHO_N "checking for build with symbols... $ECHO_C" >&6
@@ -9566,22 +9685,10 @@ echo "${ECHO_T}enabled $tcl_ok debugging" >&6
     fi
 
 
-#--------------------------------------------------------------------
-# Everyone should be linking against the Tcl stub library.  If you
-# can't for some reason, remove this definition.  If you aren't using
-# stubs, you also need to modify the SHLIB_LD_LIBS setting below to
-# link against the non-stubbed Tcl library.  Add Tk too if necessary.
-#--------------------------------------------------------------------
+cat >>confdefs.h <<\_ACEOF
+#define USE_TCL_STUBS 1
+_ACEOF
 
-#2005 ouch, this is needed in dynamic libs, but *not* in static libs!
-#AC_DEFINE(USE_TCL_STUBS)
-#AC_DEFINE(USE_TK_STUBS)
-
-#--------------------------------------------------------------------
-# This macro generates a line to use when building a library.  It
-# depends on values set by the TEA_ENABLE_SHARED, TEA_ENABLE_SYMBOLS,
-# and TEA_LOAD_TCLCONFIG macros above.
-#--------------------------------------------------------------------
 
 
     if test "${TEA_PLATFORM}" = "windows" -a "$GCC" != "yes"; then
@@ -9656,16 +9763,6 @@ echo "${ECHO_T}enabled $tcl_ok debugging" >&6
 
 
 
-#--------------------------------------------------------------------
-# Find tclsh so that we can run pkg_mkIndex to generate the pkgIndex.tcl
-# file during the install process.  Don't run the TCLSH_PROG through
-# ${CYGPATH} because it's being used directly by make.
-# Require that we use a tclsh shell version 8.2 or later since earlier
-# versions have bugs in the pkg_mkIndex routine.
-# Add WISH as well if this is a Tk extension.
-#--------------------------------------------------------------------
-
-
     echo "$as_me:$LINENO: checking for tclsh" >&5
 echo $ECHO_N "checking for tclsh... $ECHO_C" >&6
     if test -f "${TCL_BIN_DIR}/Makefile" ; then
@@ -9687,25 +9784,18 @@ echo $ECHO_N "checking for tclsh... $ECHO_C" >&6
               `ls -d ${TCL_PREFIX}/bin     2>/dev/null`"
         for i in $list ; do
             if test -f "$i/${TCLSH_PROG}" ; then
-                REAL_TCL_BIN_DIR="`cd "$i"; pwd`"
+                REAL_TCL_BIN_DIR="`cd "$i"; pwd`/"
                 break
             fi
         done
-        TCLSH_PROG="${REAL_TCL_BIN_DIR}/${TCLSH_PROG}"
+        TCLSH_PROG="${REAL_TCL_BIN_DIR}${TCLSH_PROG}"
     fi
     echo "$as_me:$LINENO: result: ${TCLSH_PROG}" >&5
 echo "${ECHO_T}${TCLSH_PROG}" >&6
 
 
-#TEA_PROG_WISH
 
-#--------------------------------------------------------------------
-# Finally, substitute all of the various values into the Makefile.
-# You may alternatively have a special pkgIndex.tcl.in or other files
-# which require substituting th AC variables in.  Include these here.
-#--------------------------------------------------------------------
-
-          ac_config_files="$ac_config_files Makefile"
+                              ac_config_files="$ac_config_files Makefile pkgIndex.tcl config.h"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -9828,6 +9918,7 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
+CFLAGS="${CFLAGS} ${CPPFLAGS}"; CPPFLAGS=""
 
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
@@ -10258,6 +10349,8 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+  "pkgIndex.tcl" ) CONFIG_FILES="$CONFIG_FILES pkgIndex.tcl" ;;
+  "config.h" ) CONFIG_FILES="$CONFIG_FILES config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;

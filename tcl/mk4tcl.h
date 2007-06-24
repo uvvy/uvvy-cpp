@@ -4,12 +4,14 @@
 
 #include "mk4.h"
 #include "mk4str.h"
-
-#ifdef PIC
-#define USE_TCL_STUBS 1
-#endif 
+#include "../src/univ.h"
 
 #include <tcl.h>
+
+#ifdef BUILD_Mk4tcl
+#undef TCL_STORAGE_CLASS
+#define TCL_STORAGE_CLASS DLLEXPORT
+#endif
 
 #ifndef d4_assert
 #if q4_INLINE && !q4_CHECK
@@ -40,106 +42,6 @@ class MkPath;
 class MkWorkspace;
 class Tcl;
 class MkTcl;
-
-/////////////////////////////////////////////////////////////////////////////
-// This code is part of the private classes of Metakit, unfortunately. 
-// It is not needed on Windows since we can use the MFC classes directly.
-// The proper solution would be to use either public MK stuff or rewrite it.
-
-#if q4_MFC            // Microsoft Foundation Classes
-typedef class CPtrArray c4_PtrArray;
-
-#elif 1 // 2002-04-03: just use the original, don't introduce a copy here
-#include "../src/univ.h"
-#else 
-
-class c4_BaseArray {
-  public:
-    c4_BaseArray();
-    ~c4_BaseArray();
-
-    int GetLength()const;
-    void SetLength(int nNewSize);
-
-    const void *GetData(int nIndex)const;
-    void *GetData(int nIndex);
-
-    void Grow(int nIndex);
-
-    void InsertAt(int nIndex, int nCount);
-    void RemoveAt(int nIndex, int nCount);
-
-  private:
-    char *_data;
-    int _size;
-};
-
-class c4_PtrArray {
-  public:
-    c4_PtrArray();
-    ~c4_PtrArray();
-
-    int GetSize()const;
-    void SetSize(int nNewSize, int nGrowBy =  - 1);
-
-    void *GetAt(int nIndex)const;
-    void SetAt(int nIndex, const void *newElement);
-    void * &ElementAt(int nIndex);
-
-    int Add(void *newElement);
-
-    void InsertAt(int nIndex, void *newElement, int nCount = 1);
-    void RemoveAt(int nIndex, int nCount = 1);
-
-  private:
-    static int Off(int n_);
-
-    c4_BaseArray _vector;
-};
-
-#if q4_INLINE
-d4_inline int c4_BaseArray::GetLength()const {
-  return _size;
-}
-
-d4_inline const void *c4_BaseArray::GetData(int nIndex)const {
-  return _data + nIndex;
-}
-
-d4_inline void *c4_BaseArray::GetData(int nIndex) {
-  return _data + nIndex;
-}
-
-d4_inline c4_PtrArray::c4_PtrArray(){}
-
-d4_inline c4_PtrArray::~c4_PtrArray(){}
-
-d4_inline int c4_PtrArray::Off(int n_) {
-  return n_ *sizeof(void*);
-}
-
-d4_inline int c4_PtrArray::GetSize()const {
-  return _vector.GetLength() / sizeof(void*);
-}
-
-d4_inline void c4_PtrArray::SetSize(int nNewSize, int) {
-  _vector.SetLength(Off(nNewSize));
-}
-
-d4_inline void *c4_PtrArray::GetAt(int nIndex)const {
-  return *(void *const*)_vector.GetData(Off(nIndex));
-}
-
-d4_inline void c4_PtrArray::SetAt(int nIndex, const void *newElement) {
-  *(const void **)_vector.GetData(Off(nIndex)) = newElement;
-}
-
-d4_inline void * &c4_PtrArray::ElementAt(int nIndex) {
-  return *(void **)_vector.GetData(Off(nIndex));
-}
-
-#endif 
-#endif 
 
 ///////////////////////////////////////////////////////////////////////////////
 // Utility code: return next token up to char < '0', and

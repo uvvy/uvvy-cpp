@@ -25,9 +25,9 @@ PYTHON - The binding for Python is called "Mk4py".  It uses SCXX by Gordon
 TCL/TK - The MK extension for Tcl is called "Mk4tcl".  It is being used in a
     number of commercial projects.  The source is in directory "tcl/".
 
-LICENSE AND SUPPORT - Metakit is now distributed as open source software (the
-    X/MIT-style license is at the end of this document).  Commercial support
-    is available through an Enterprise License, see the URL mentioned below.
+LICENSE AND SUPPORT - Metakit is distributed as open source software (see the
+    X/MIT-style license at the end of this document).  Commercial support is
+    available through an Enterprise License, see the URL mentioned below.
 
 DOCUMENTATION - All documentation uses HTML.  The main page is "Metakit.html",
     which leads to the rest of the documentation in the "doc/" directory.
@@ -37,8 +37,8 @@ WEBSITE URLS - The main pages on the world wide web, for news and downloads:
     Homepage:       http://www.equi4.com/metakit.html
     Python news:    http://www.equi4.com/metakit/python.html
     Tcl/Tk news:    http://www.equi4.com/metakit/tcl.html
-    License info:   http://www.equi4.com/mklicense.html
-    Contact info:   http://www.equi4.com/contact.html
+    License info:   http://www.equi4.com/metakit/license.html
+    Contact info:   http://www.equi4.com/about/contact.html
 
 ACKNOWLEDGEMENTS - Thanks to everyone who has helped shape and extend Metakit,
     including Kyrill Denisenko, Mark Roseman, Gordon McMillan, Matt Newman,
@@ -91,26 +91,24 @@ PYTHON - Nov 2006
     the flags don't seem to create proper executables.  That's ok though, the
     .o files are fat, which is all setup.py needs.
 
-TCL - Nov 2006
+TCL - Jun 2007
 
-    The unix/configure works better for Tcl than for Python, due to the stubs
-    interface.  In many cases, adding --with-tcl or --with-tcl=<dir-of-tcl.h>
-    will produce a Mk4tcl.so (or a Mk4tcl.dylib on Mac OS X).
+	  The Tcl build has been converted to use the TEA3-based configure script
+		in the tcl/ directory.  The way to build Mk4tcl is now as follows:
+
+				mkdir tbuild			# can be anywhere, really...
+				cd tbuild
+				CC=g++ sh ../tcl/configure
+				make
+				make test
+				make install
+
+		This build configuration has not yet been tested with non-gcc compilers.
+		There are no dependencies on the C++ build process, nor the builds/ dir.
     
-    Alternately, you could use the TEA3-based tcl/configure script.  It needs
-    a few preliminary steps to get a proper config.h file in the right spot:
-        cd builds
-        sh ../unix/configure
-        cd ../tcl
-        ln -s ../builds/config.h
-        sh configure
-        make
-    There are still some issues, the above generates a lot of warning errors.    
-    Note that this does not depend on .o files in ../builds, just config.h
-    
-    Note: for Windows CE, the tcl.configure script has been successfully used
-    using EVC3.  One trick is that in tcl/configure.in, "TEA_ADD_CFLAGS([])"
-    has to be changed to "TEA_ADD_CFLAGS([-Dq4_WINCE])".
+    Note: for Windows CE, an older version of the tcl.configure script was
+ 		successfully used with MS EVC3.  One trick is that in tcl/configure.in,
+ 		"TEA_ADD_CFLAGS([])" has to be changed to "TEA_ADD_CFLAGS([-Dq4_WINCE])".
     
 UNIX (ALSO MAC OS X)
 
@@ -175,14 +173,6 @@ WINDOWS
     Rob Bloodgood adds that the following GCC options are for maximum code
     efficiency on x86 hardware: "-O2 -m486 -malign-loops=2 -malign-jumps=2".
     I have not yet tried this myself, but am passing on the tip.
-
-MACINTOSH CLASSIC
-
-    The Mac version requires Metrowerks CodeWarrior 6.  See the info above
-    in the Windows section (MWCW is multi-platform).  The projects are all
-    located in the "mac/" folder, which is also where MWCW will place its own
-    "... Data" folders with intermediate results.  As with all other setups,
-    final results are made to end up in the "builds/" directory.
 
 
 LICENSE AND COPYRIGHT STATEMENT

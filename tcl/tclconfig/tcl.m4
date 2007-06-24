@@ -11,11 +11,11 @@
 #
 # RCS: @(#) $Id$
 
-AC_PREREQ(2.50)
+AC_PREREQ(2.57)
 
 dnl TEA extensions pass us the version of TEA they think they
 dnl are compatible with (must be set in TEA_INIT below)
-dnl TEA_VERSION="3.5"
+dnl TEA_VERSION="3.6"
 
 # Possible values for key variables defined:
 #
@@ -336,7 +336,7 @@ AC_DEFUN([TEA_LOAD_TCLCONFIG], [
 
     if test -f "${TCL_BIN_DIR}/tclConfig.sh" ; then
         AC_MSG_RESULT([loading])
-	. ${TCL_BIN_DIR}/tclConfig.sh
+	. "${TCL_BIN_DIR}/tclConfig.sh"
     else
         AC_MSG_RESULT([could not find ${TCL_BIN_DIR}/tclConfig.sh])
     fi
@@ -351,7 +351,7 @@ AC_DEFUN([TEA_LOAD_TCLCONFIG], [
     # of TCL_BUILD_LIB_SPEC. An extension should make use of TCL_LIB_SPEC
     # instead of TCL_BUILD_LIB_SPEC since it will work with both an
     # installed and uninstalled version of Tcl.
-    if test -f ${TCL_BIN_DIR}/Makefile ; then
+    if test -f "${TCL_BIN_DIR}/Makefile" ; then
         TCL_LIB_SPEC=${TCL_BUILD_LIB_SPEC}
         TCL_STUB_LIB_SPEC=${TCL_BUILD_STUB_LIB_SPEC}
         TCL_STUB_LIB_PATH=${TCL_BUILD_STUB_LIB_PATH}
@@ -361,7 +361,7 @@ AC_DEFUN([TEA_LOAD_TCLCONFIG], [
 	# against Tcl.framework installed in an arbitary location.
 	case ${TCL_DEFS} in
 	    *TCL_FRAMEWORK*)
-		if test -f ${TCL_BIN_DIR}/${TCL_LIB_FILE}; then
+		if test -f "${TCL_BIN_DIR}/${TCL_LIB_FILE}"; then
 		    for i in "`cd ${TCL_BIN_DIR}; pwd`" \
 			     "`cd ${TCL_BIN_DIR}/../..; pwd`"; do
 			if test "`basename "$i"`" = "${TCL_LIB_FILE}.framework"; then
@@ -370,7 +370,7 @@ AC_DEFUN([TEA_LOAD_TCLCONFIG], [
 			fi
 		    done
 		fi
-		if test -f ${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}; then
+		if test -f "${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}"; then
 		    TCL_STUB_LIB_SPEC="-L${TCL_BIN_DIR} ${TCL_STUB_LIB_FLAG}"
 		    TCL_STUB_LIB_PATH="${TCL_BIN_DIR}/${TCL_STUB_LIB_FILE}"
 		fi
@@ -424,7 +424,7 @@ AC_DEFUN([TEA_LOAD_TKCONFIG], [
 
     if test -f "${TK_BIN_DIR}/tkConfig.sh" ; then
         AC_MSG_RESULT([loading])
-	. ${TK_BIN_DIR}/tkConfig.sh
+	. "${TK_BIN_DIR}/tkConfig.sh"
     else
         AC_MSG_RESULT([could not find ${TK_BIN_DIR}/tkConfig.sh])
     fi
@@ -439,7 +439,7 @@ AC_DEFUN([TEA_LOAD_TKCONFIG], [
     # of TK_BUILD_LIB_SPEC. An extension should make use of TK_LIB_SPEC
     # instead of TK_BUILD_LIB_SPEC since it will work with both an
     # installed and uninstalled version of Tcl.
-    if test -f ${TK_BIN_DIR}/Makefile ; then
+    if test -f "${TK_BIN_DIR}/Makefile" ; then
         TK_LIB_SPEC=${TK_BUILD_LIB_SPEC}
         TK_STUB_LIB_SPEC=${TK_BUILD_STUB_LIB_SPEC}
         TK_STUB_LIB_PATH=${TK_BUILD_STUB_LIB_PATH}
@@ -449,7 +449,7 @@ AC_DEFUN([TEA_LOAD_TKCONFIG], [
 	# against Tk.framework installed in an arbitary location.
 	case ${TK_DEFS} in
 	    *TK_FRAMEWORK*)
-		if test -f ${TK_BIN_DIR}/${TK_LIB_FILE}; then
+		if test -f "${TK_BIN_DIR}/${TK_LIB_FILE}"; then
 		    for i in "`cd ${TK_BIN_DIR}; pwd`" \
 			     "`cd ${TK_BIN_DIR}/../..; pwd`"; do
 			if test "`basename "$i"`" = "${TK_LIB_FILE}.framework"; then
@@ -458,7 +458,7 @@ AC_DEFUN([TEA_LOAD_TKCONFIG], [
 			fi
 		    done
 		fi
-		if test -f ${TK_BIN_DIR}/${TK_STUB_LIB_FILE}; then
+		if test -f "${TK_BIN_DIR}/${TK_STUB_LIB_FILE}"; then
 		    TK_STUB_LIB_SPEC="-L${TK_BIN_DIR} ${TK_STUB_LIB_FLAG}"
 		    TK_STUB_LIB_PATH="${TK_BIN_DIR}/${TK_STUB_LIB_FILE}"
 		fi
@@ -1317,7 +1317,11 @@ dnl AC_CHECK_TOOL(AR, ar)
 	    #AC_DEFINE(_XOPEN_SOURCE, 1, [Do we want to use the XOPEN network library?])
 	    #LIBS="$LIBS -lxnet"               # Use the XOPEN network library
 
-	    SHLIB_SUFFIX=".sl"
+	    if test "`uname -m`" = "ia64" ; then
+		SHLIB_SUFFIX=".so"
+	    else
+		SHLIB_SUFFIX=".sl"
+	    fi
 	    AC_CHECK_LIB(dld, shl_load, tcl_ok=yes, tcl_ok=no)
 	    if test "$tcl_ok" = yes; then
 		SHLIB_CFLAGS="+z"
@@ -1447,7 +1451,8 @@ dnl AC_CHECK_TOOL(AR, ar)
 	    # get rid of the warnings.
 	    #CFLAGS_OPTIMIZE="${CFLAGS_OPTIMIZE} -D__NO_STRING_INLINES -D__NO_MATH_INLINES"
 
-	    SHLIB_LD="${CC} -shared"
+	    # TEA specific: use LDFLAGS_DEFAULT instead of LDFLAGS here:
+	    SHLIB_LD='${CC} -shared ${CFLAGS} ${LDFLAGS_DEFAULT}'
 	    DL_OBJS="tclLoadDl.o"
 	    DL_LIBS="-ldl"
 	    LDFLAGS="$LDFLAGS -Wl,--export-dynamic"
@@ -1455,6 +1460,17 @@ dnl AC_CHECK_TOOL(AR, ar)
 	    LD_SEARCH_FLAGS=${CC_SEARCH_FLAGS}
 	    if test "`uname -m`" = "alpha" ; then
 		CFLAGS="$CFLAGS -mieee"
+	    fi
+	    if test $do64bit = yes; then
+		AC_CACHE_CHECK([if compiler accepts -m64 flag], tcl_cv_cc_m64, [
+		    hold_cflags=$CFLAGS
+		    CFLAGS="$CFLAGS -m64"
+		    AC_TRY_LINK(,, tcl_cv_cc_m64=yes, tcl_cv_cc_m64=no)
+		    CFLAGS=$hold_cflags])
+		if test $tcl_cv_cc_m64 = yes; then
+		    CFLAGS="$CFLAGS -m64"
+		    do64bit_ok=yes
+		fi
 	    fi
 
 	    # The combo of gcc + glibc has a bug related
@@ -1605,16 +1621,43 @@ dnl AC_CHECK_TOOL(AR, ar)
 	Darwin-*)
 	    CFLAGS_OPTIMIZE="-Os"
 	    SHLIB_CFLAGS="-fno-common"
+	    # To avoid discrepancies between what headers configure sees during
+	    # preprocessing tests and compiling tests, move any -isysroot and
+	    # -mmacosx-version-min flags from CFLAGS to CPPFLAGS:
+	    CPPFLAGS="${CPPFLAGS} `echo " ${CFLAGS}" | \
+		awk 'BEGIN {FS=" +-";ORS=" "}; {for (i=2;i<=NF;i++) \
+		if ([$]i~/^(isysroot|mmacosx-version-min)/) print "-"[$]i}'`"
+	    CFLAGS="`echo " ${CFLAGS}" | \
+		awk 'BEGIN {FS=" +-";ORS=" "}; {for (i=2;i<=NF;i++) \
+		if (!([$]i~/^(isysroot|mmacosx-version-min)/)) print "-"[$]i}'`"
 	    if test $do64bit = yes; then
-		do64bit_ok=yes
 		case `arch` in
 		    ppc)
-			CFLAGS="$CFLAGS -arch ppc64 -mpowerpc64 -mcpu=G5";;
+			AC_CACHE_CHECK([if compiler accepts -arch ppc64 flag],
+				tcl_cv_cc_arch_ppc64, [
+			    hold_cflags=$CFLAGS
+			    CFLAGS="$CFLAGS -arch ppc64 -mpowerpc64 -mcpu=G5"
+			    AC_TRY_LINK(,, tcl_cv_cc_arch_ppc64=yes,
+				    tcl_cv_cc_arch_ppc64=no)
+			    CFLAGS=$hold_cflags])
+			if test $tcl_cv_cc_arch_ppc64 = yes; then
+			    CFLAGS="$CFLAGS -arch ppc64 -mpowerpc64 -mcpu=G5"
+			    do64bit_ok=yes
+			fi;;
 		    i386)
-			CFLAGS="$CFLAGS -arch x86_64";;
+			AC_CACHE_CHECK([if compiler accepts -arch x86_64 flag],
+				tcl_cv_cc_arch_x86_64, [
+			    hold_cflags=$CFLAGS
+			    CFLAGS="$CFLAGS -arch x86_64"
+			    AC_TRY_LINK(,, tcl_cv_cc_arch_x86_64=yes,
+				    tcl_cv_cc_arch_x86_64=no)
+			    CFLAGS=$hold_cflags])
+			if test $tcl_cv_cc_arch_x86_64 = yes; then
+			    CFLAGS="$CFLAGS -arch x86_64"
+			    do64bit_ok=yes
+			fi;;
 		    *)
-			AC_MSG_WARN([Don't know how enable 64-bit on architecture `arch`])
-			do64bit_ok=no;;
+			AC_MSG_WARN([Don't know how enable 64-bit on architecture `arch`]);;
 		esac
 	    else
 		# Check for combined 32-bit and 64-bit fat build
@@ -1638,7 +1681,7 @@ dnl AC_CHECK_TOOL(AR, ar)
 	    DL_LIBS=""
 	    # Don't use -prebind when building for Mac OS X 10.4 or later only:
 	    test "`echo "${MACOSX_DEPLOYMENT_TARGET}" | awk -F '10\\.' '{print int([$]2)}'`" -lt 4 -a \
-		"`echo "${CFLAGS}" | awk -F '-mmacosx-version-min=10\\.' '{print int([$]2)}'`" -lt 4 && \
+		"`echo "${CPPFLAGS}" | awk -F '-mmacosx-version-min=10\\.' '{print int([$]2)}'`" -lt 4 && \
 		LDFLAGS="$LDFLAGS -prebind"
 	    LDFLAGS="$LDFLAGS -headerpad_max_install_names"
 	    AC_CACHE_CHECK([if ld accepts -search_paths_first flag], tcl_cv_ld_search_paths_first, [
@@ -1654,10 +1697,10 @@ dnl AC_CHECK_TOOL(AR, ar)
 	    LD_LIBRARY_PATH_VAR="DYLD_LIBRARY_PATH"
 
 	    # TEA specific: for Tk extensions, remove 64-bit arch flags from
-	    # CFLAGS for combined 32-bit and 64-bit fat builds as neither TkAqua
-	    # nor TkX11 can be built for 64-bit at present.
-	    test "$fat_32_64" = yes && test -n "${TK_BIN_DIR}" && \
-		CFLAGS="`echo "$CFLAGS " | sed -e 's/-arch ppc64 / /g' -e 's/-arch x86_64 / /g'`"
+	    # CFLAGS et al. for combined 32 & 64 bit fat builds as neither
+	    # TkAqua nor TkX11 can be built for 64-bit at present.
+	    test "$fat_32_64" = yes && test -n "${TK_BIN_DIR}" && for v in CFLAGS CPPFLAGS LDFLAGS; do
+		eval $v'="`echo "$'$v' "|sed -e "s/-arch ppc64 / /g" -e "s/-arch x86_64 / /g"`"'; done
 	    ;;
 	NEXTSTEP-*)
 	    SHLIB_CFLAGS=""
@@ -1925,6 +1968,12 @@ dnl AC_CHECK_TOOL(AR, ar)
     if test "$do64bit" = "yes" -a "$do64bit_ok" = "no" ; then
 	AC_MSG_WARN([64bit support being disabled -- don't know magic for this platform])
     fi
+
+dnl # Add any CPPFLAGS set in the environment to our CFLAGS, but delay doing so
+dnl # until the end of configure, as configure's compile and link tests use
+dnl # both CPPFLAGS and CFLAGS (unlike our compile and link) but configure's
+dnl # preprocessing tests use only CPPFLAGS.
+    AC_CONFIG_COMMANDS_PRE([CFLAGS="${CFLAGS} ${CPPFLAGS}"; CPPFLAGS=""])
 
     # Step 4: disable dynamic loading if requested via a command-line switch.
 
@@ -2734,7 +2783,7 @@ AC_DEFUN([TEA_TCL_64BIT_FLAGS], [
 AC_DEFUN([TEA_INIT], [
     # TEA extensions pass this us the version of TEA they think they
     # are compatible with.
-    TEA_VERSION="3.5"
+    TEA_VERSION="3.6"
 
     AC_MSG_CHECKING([for correct TEA configuration])
     if test x"${PACKAGE_NAME}" = x ; then
@@ -3110,11 +3159,14 @@ AC_DEFUN([TEA_SETUP_COMPILER], [
     #------------------------------------------------------------------------
 
     if test -z "$no_pipe" -a -n "$GCC"; then
-	AC_MSG_CHECKING([if the compiler understands -pipe])
-	OLDCC="$CC"
-	CC="$CC -pipe"
-	AC_TRY_COMPILE(,, AC_MSG_RESULT([yes]), CC="$OLDCC"
-	    AC_MSG_RESULT([no]))
+	AC_CACHE_CHECK([if the compiler understands -pipe],
+	    tcl_cv_cc_pipe, [
+	    hold_cflags=$CFLAGS; CFLAGS="$CFLAGS -pipe"
+	    AC_TRY_COMPILE(,, tcl_cv_cc_pipe=yes, tcl_cv_cc_pipe=no)
+	    CFLAGS=$hold_cflags])
+	if test $tcl_cv_cc_pipe = yes; then
+	    CFLAGS="$CFLAGS -pipe"
+	fi
     fi
 
     #--------------------------------------------------------------------
@@ -3354,7 +3406,12 @@ AC_DEFUN([TEA_PRIVATE_TCL_HEADERS], [
 	        TCL_INCLUDES="${TCL_INCLUDES} ${TCL_INCLUDE_SPEC} `echo "${TCL_INCLUDE_SPEC}" | sed -e 's/Headers/PrivateHeaders/'`"; fi
 	        ;;
 	esac
+    else
+	if test ! -f "${TCL_SRC_DIR}/generic/tclInt.h" ; then
+	    AC_MSG_ERROR([Cannot find private header tclInt.h in ${TCL_SRC_DIR}])
+	fi
     fi
+
 
     AC_SUBST(TCL_TOP_DIR_NATIVE)
     AC_SUBST(TCL_GENERIC_DIR_NATIVE)
@@ -3510,6 +3567,10 @@ AC_DEFUN([TEA_PRIVATE_TK_HEADERS], [
 	        TK_INCLUDES="-I\"${TK_BIN_DIR}/Headers\" -I\"${TK_BIN_DIR}/PrivateHeaders\" ${TK_INCLUDES}"; fi
 	        ;;
 	esac
+    else
+	if test ! -f "${TK_SRC_DIR}/generic/tkInt.h" ; then
+	    AC_MSG_ERROR([Cannot find private header tkInt.h in ${TK_SRC_DIR}])
+	fi
     fi
 
     AC_SUBST(TK_TOP_DIR_NATIVE)
@@ -3546,7 +3607,7 @@ AC_DEFUN([TEA_PRIVATE_TK_HEADERS], [
 AC_DEFUN([TEA_PUBLIC_TK_HEADERS], [
     AC_MSG_CHECKING([for Tk public headers])
 
-    AC_ARG_WITH(tkinclude, [  --with-tkinclude      directory containing the public Tk header files.], with_tkinclude=${withval})
+    AC_ARG_WITH(tkinclude, [  --with-tkinclude        directory containing the public Tk header files], with_tkinclude=${withval})
 
     AC_CACHE_VAL(ac_cv_c_tkh, [
 	# Use the value from --with-tkinclude, if it was given
@@ -3666,11 +3727,11 @@ AC_DEFUN([TEA_PROG_TCLSH], [
               `ls -d ${TCL_PREFIX}/bin     2>/dev/null`"
         for i in $list ; do
             if test -f "$i/${TCLSH_PROG}" ; then
-                REAL_TCL_BIN_DIR="`cd "$i"; pwd`"
+                REAL_TCL_BIN_DIR="`cd "$i"; pwd`/"
                 break
             fi
         done
-        TCLSH_PROG="${REAL_TCL_BIN_DIR}/${TCLSH_PROG}"
+        TCLSH_PROG="${REAL_TCL_BIN_DIR}${TCLSH_PROG}"
     fi
     AC_MSG_RESULT([${TCLSH_PROG}])
     AC_SUBST(TCLSH_PROG)
@@ -3864,7 +3925,7 @@ AC_DEFUN([TEA_LOAD_CONFIG], [
 
     if test -f "${$1_BIN_DIR}/$1Config.sh" ; then
         AC_MSG_RESULT([loading])
-	. ${$1_BIN_DIR}/$1Config.sh
+	. "${$1_BIN_DIR}/$1Config.sh"
     else
         AC_MSG_RESULT([file not found])
     fi
@@ -3878,7 +3939,7 @@ AC_DEFUN([TEA_LOAD_CONFIG], [
     # installed and uninstalled version of Tcl.
     #
 
-    if test -f ${$1_BIN_DIR}/Makefile ; then
+    if test -f "${$1_BIN_DIR}/Makefile" ; then
 	AC_MSG_WARN([Found Makefile - using build library specs for $1])
         $1_LIB_SPEC=${$1_BUILD_LIB_SPEC}
         $1_STUB_LIB_SPEC=${$1_BUILD_STUB_LIB_SPEC}

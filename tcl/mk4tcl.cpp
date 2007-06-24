@@ -18,11 +18,11 @@
 #endif 
 
 // stub interface code, removes the need to link with libtclstub*.a
-#ifdef USE_TCL_STUBS
-#include "stubtcl.h"
-#else 
-#define MyInitStubs(x) 1
-#endif 
+//#ifdef USE_TCL_STUBS
+//#include "stubtcl.h"
+//#else 
+//#define MyInitStubs(x) 1
+//#endif 
 
 // definition of valid property name - alpha numerics, underscore, percent,
 // or any extended utf-8 character
@@ -2441,7 +2441,7 @@ int MkTcl::Execute(int oc, Tcl_Obj *const * ov) {
   }
 
   EnterMutex(interp);
-  int result;
+  int result = 0;
   switch (id) {
     case 0:
       result = GetCmd();
@@ -2494,7 +2494,7 @@ static void DelProc(ClientData cd_, Tcl_Interp *ip_) {
 }
 
 static int Mktcl_Cmds(Tcl_Interp *interp, bool /*safe*/) {
-  if (!MyInitStubs(interp))
+  if (Tcl_InitStubs(interp, "8.1", 0) == 0)
     return TCL_ERROR;
 
   // Create workspace if not present.
@@ -2529,23 +2529,19 @@ static int Mktcl_Cmds(Tcl_Interp *interp, bool /*safe*/) {
 // but 8.0.2 load guesses module "mk" instead of "mk4tcl" (it stops at digits)
 // when the third argument is omitted, allow that too: "load mk4tcl.{so,dll}".
 
-#if defined (__MWERKS__)
-#pragma export on
-#endif 
-
-extern "C" DLLEXPORT int Mk4tcl_Init(Tcl_Interp *interp) {
+EXTERN int Mk4tcl_Init(Tcl_Interp *interp) {
   return Mktcl_Cmds(interp, false);
 }
 
-extern "C" DLLEXPORT int Mk_Init(Tcl_Interp *interp) {
+EXTERN int Mk_Init(Tcl_Interp *interp) {
   return Mktcl_Cmds(interp, false);
 }
 
-extern "C" DLLEXPORT int Mk4tcl_SafeInit(Tcl_Interp *interp) {
+EXTERN int Mk4tcl_SafeInit(Tcl_Interp *interp) {
   return Mktcl_Cmds(interp, true);
 }
 
-extern "C" DLLEXPORT int Mk_SafeInit(Tcl_Interp *interp) {
+EXTERN int Mk_SafeInit(Tcl_Interp *interp) {
   return Mktcl_Cmds(interp, true);
 }
 

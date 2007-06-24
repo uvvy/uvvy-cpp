@@ -1,6 +1,17 @@
+2007-06-24    Tcl TEA3 overhaul
+
+    Replace configure.in/Makefile.in with new versions, adapted from
+    Tcl's sampleextension.  Now generates config.h and pkgIndex.tcl
+    from corresponding *.in files.
+    
+    Comnvert all tcl/test/ entries to new ones in tcl/tests/ to use
+    the standard tcltest framework.  Just 40 tests in all so far.
+    
+    Update to tcl.m4 3.6, with a patch to fix "make test" on macosx.
+
 2007-06-24    Cleanup obsolete code
 
-    Remove Lua binding in lua/, it was never completed.
+    Remove Lua binding in lua/ - it was never actually completed.
     Remove win/{catfish,kitviewer,msevc3,msvc152} - now unsupported.
     Remove mac/, pre-macosx builds are no longer supported.
     Removed the MKSQL logic and tcl/mksql.tcl, since it is not used.
