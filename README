@@ -93,22 +93,22 @@ PYTHON - Nov 2006
 
 TCL - Jun 2007
 
-	  The Tcl build has been converted to use the TEA3-based configure script
-		in the tcl/ directory.  The way to build Mk4tcl is now as follows:
+    The Tcl build has been converted to use the TEA3-based configure script
+    in the tcl/ directory.  The way to build Mk4tcl is now as follows:
 
-				mkdir tbuild			# can be anywhere, really...
-				cd tbuild
-				CC=g++ sh ../tcl/configure
-				make
-				make test
-				make install
+        mkdir tbuild      # can be anywhere, really...
+        cd tbuild
+        CC=g++ sh ../tcl/configure
+        make
+        make test
+        make install
 
-		This build configuration has not yet been tested with non-gcc compilers.
-		There are no dependencies on the C++ build process, nor the builds/ dir.
+    This build configuration has not yet been tested with non-gcc compilers.
+    There are no dependencies on the C++ build process, nor the builds/ dir.
     
     Note: for Windows CE, an older version of the tcl.configure script was
- 		successfully used with MS EVC3.  One trick is that in tcl/configure.in,
- 		"TEA_ADD_CFLAGS([])" has to be changed to "TEA_ADD_CFLAGS([-Dq4_WINCE])".
+    successfully used with MS EVC3.  One trick is that in tcl/configure.in,
+    "TEA_ADD_CFLAGS([])" has to be changed to "TEA_ADD_CFLAGS([-Dq4_WINCE])".
     
 UNIX (ALSO MAC OS X)
 
