@@ -29,6 +29,10 @@
 #define CONST84
 #endif 
 
+#ifndef CONST86
+#define CONST86
+#endif
+
 #ifndef TCL_DECLARE_MUTEX
 #define TCL_DECLARE_MUTEX(v)
 #define Tcl_MutexLock(v)

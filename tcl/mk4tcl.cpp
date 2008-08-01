@@ -975,7 +975,7 @@ const c4_Property &AsProperty(Tcl_Obj *objPtr, const c4_View &view_) {
   void *tag = (&view_[0])._seq; // horrific hack to get at c4_Sequence pointer
   if (objPtr->typePtr !=  &mkPropertyType || objPtr
     ->internalRep.twoPtrValue.ptr1 != tag) {
-    Tcl_ObjType *oldTypePtr = objPtr->typePtr;
+    CONST86 Tcl_ObjType *oldTypePtr = objPtr->typePtr;
 
     char type = 'S';
 
@@ -1079,7 +1079,7 @@ int SetCursorFromAny(Tcl_Interp *interp, Tcl_Obj *objPtr) {
   }
 
   if (objPtr->typePtr !=  &mkCursorType) {
-    Tcl_ObjType *oldTypePtr = objPtr->typePtr;
+    CONST86 Tcl_ObjType *oldTypePtr = objPtr->typePtr;
 
     const char *string = Tcl_GetStringFromObj(objPtr, 0);
 
