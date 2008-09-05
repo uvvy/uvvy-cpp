@@ -9685,10 +9685,11 @@ echo "${ECHO_T}enabled $tcl_ok debugging" >&6
     fi
 
 
+if test "${SHARED_BUILD}" = "1"; then
 cat >>confdefs.h <<\_ACEOF
 #define USE_TCL_STUBS 1
 _ACEOF
-
+fi
 
 
     if test "${TEA_PLATFORM}" = "windows" -a "$GCC" != "yes"; then
