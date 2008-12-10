@@ -24,6 +24,10 @@
 //#define MyInitStubs(x) 1
 //#endif 
 
+#if 10 * TCL_MAJOR_VERSION + TCL_MINOR_VERSION < 86
+#define Tcl_GetErrorLine(interp) (interp)->errorLine
+#endif
+
 // definition of valid property name - alpha numerics, underscore, percent,
 // or any extended utf-8 character
 #define ISNAME(c)       (isalnum((c)) || (c) == '_' || (c) == '%' || (c) & 0x80)
@@ -2152,7 +2156,7 @@ int MkTcl::LoopCmd() {
         _error = TCL_OK;
       else if (_error == TCL_ERROR) {
         char msg[100];
-        sprintf(msg, "\n  (\"mk::loop\" body line %d)", interp->errorLine);
+        sprintf(msg, "\n  (\"mk::loop\" body line %d)", Tcl_GetErrorLine(interp));
         Tcl_AddObjErrorInfo(interp, msg,  - 1);
       }
       break;

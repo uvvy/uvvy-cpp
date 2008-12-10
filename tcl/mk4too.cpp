@@ -7,6 +7,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#if 10 * TCL_MAJOR_VERSION + TCL_MINOR_VERSION < 86
+#define Tcl_GetErrorLine(interp) (interp)->errorLine
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 // Defined in this file:
 
@@ -612,7 +616,7 @@ int MkView::LoopCmd() {
           _error = TCL_OK;
         else if (_error == TCL_ERROR) {
           char msg[100];
-          sprintf(msg, "\n  (\"mk::loop\" body line %d)", interp->errorLine);
+          sprintf(msg, "\n  (\"mk::loop\" body line %d)", Tcl_GetErrorLine(interp));
           Tcl_AddObjErrorInfo(interp, msg,  - 1);
         }
         break;
