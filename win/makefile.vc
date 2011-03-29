@@ -122,7 +122,7 @@ cdebug	= -DNDEBUG
 !endif
 !else if "$(MACHINE)" == "IA64" || "$(MACHINE)" == "AMD64"
 ### Warnings are too many, can't support warnings into errors.
-cdebug	= -D_DEBUG -Zi -WX $(DEBUGFLAGS)
+cdebug	= -D_DEBUG -Zi -W3 $(DEBUGFLAGS)
 !else
 cdebug	= -D_DEBUG -Zi -WX $(DEBUGFLAGS)
 !endif
@@ -168,7 +168,7 @@ CFLAGS   = $(cflags) $(cdebug) $(crt) $(INCLUDES)
 #---------------------------------------------------------------------
 
 !if $(DEBUG)
-ldebug	= -debug:full -debugtype:cv
+ldebug	= -debug
 !if $(MSVCRT)
 ldebug = $(ldebug) -nodefaultlib:msvcrt
 !endif
@@ -253,6 +253,7 @@ $**
 	-@del $*.exp
 !endif
 	$(CPY) $@ $(BUILDS)
+	$(CPY) $(@:.dll=.lib) $(BUILDS)
 
 $(MKTEST): $(TESTOBJS)
 	$(link32) $(conlflags) -out:$@ $(MKIMPLIB) @<<
