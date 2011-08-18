@@ -1,6 +1,6 @@
 2011-08-18    Move code to public repository on GitHub
 
-    The Subversion repository at svn://www.equi4.com/metakit is now
+    The Subversion repository at svn://svn.equi4.com/metakit is now
     obsolete. GitHub has the new official repository for Metakit.
 
 2009-02-10    Create Python install dir if not yet present
