@@ -1,0 +1,41 @@
+This directory contains a simple visual demo of SST's stream prioritization
+capabilities as they might be used in a web browser and web server.  The
+demo is not a "real" web browser: it uses Qt's rich text formatting system,
+which supports a limited subset of HTML.  It also does not use "real" HTTP
+for content loading, but a trivial request/response protocol that behaves
+like HTTP in the ways relevant to the demo.
+
+To run the demo, first create in this directory a subdirectory or symbolic
+link called 'page' containing a web page called 'index.html'.  The web page
+should have many images; photo album pages tend to work well.  Then, to run
+the demo on a simulated network with adjustable bandwidth, type:
+
+	./webtest sim
+
+The checkbox at the top flips between "legacy" HTTP/1.1-like loading
+behavior and prioritized SST behavior, the slider adjusts the network
+bandwidth (page load rate), and the reload icon reloads all the images on
+the page.  The forward and back buttons are just decorative.
+
+The demo can also be run over a real network.  To do this, first make sure
+you have a 'page' subdirectory or symlink on each machine containing
+exactly the same web page.  This is necessary because the demo client
+currently cheats a bit by downloading only the images and not the main
+index.html from the server (it's the image loading behavior we're
+interested in anyway), and by peeking at the images locally to pre-set the
+image sizes so that it works well even on web pages without "width=" and
+"height=" attributes in the image markups.  On the server machine, type:
+
+	./webtest sim [<port>]
+
+The port number is optional.  Then, on the client machine, type:
+
+	./webtest <hostname> [<port>]
+
+The downside of running the demo over a real network, however, is that
+download performance is determined by the performance of the real network
+and not under explicit control: the network bandwidth slider no longer
+appears at the top of the demo window.  If the connection between the
+client and server is fast, then it may be difficult to notice the
+difference betweent the two behaviors before the page loads completely.
+

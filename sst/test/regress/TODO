@@ -1,0 +1,17 @@
+Regression tests needed:
+
+substreams:
+- create a lot of substreams rapidly, hold onto them, use them once in a while
+- create and destroy a lot of substreams in rapid succession
+- rapidly create a deep hierarchy of nested substreams
+
+datagrams:
+- send a stream of datagrams of widely varying size
+- send a mix of datagram substreams and real two-way substreams
+
+flow control:
+- flow control for byte streams
+- receive window borrowing
+- receive window borrowing for datagram substreams
+- inherited versus independent receive windows
+

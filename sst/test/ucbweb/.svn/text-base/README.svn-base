@@ -1,0 +1,9 @@
+This directory contains a test client/server
+that simulates web-like communication patterns over SST or TCP,
+driven by the UC Berkeley Home IP Web Traces
+available from the Internet Traffic archive at:
+
+	http://ita.ee.lbl.gov/
+
+To run the client, place the appropriate (un-gzipped) trace
+into the current directory in a file called 'trace'.

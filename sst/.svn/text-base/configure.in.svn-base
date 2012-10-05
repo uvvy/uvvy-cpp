@@ -1,0 +1,107 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+AC_INIT(SST, 0.01)
+AC_PREREQ(2.59)
+AC_CONFIG_SRCDIR([lib/regcli.cc])
+
+AC_LANG([C++])
+
+# Plain list of include directories without -I's, for qmake
+INCS=""
+AC_SUBST(INCS)
+
+# Similarly, build an absolute install pathname for Qt to use,
+# because qmake uses different variable substitution operators...  (grrr)
+PREFIX=$prefix
+test "x$PREFIX" = xNONE && PREFIX=$ac_default_prefix
+EXEC_PREFIX=$exec_prefix
+test "x$EXEC_PREFIX" = xNONE && EXEC_PREFIX=$PREFIX
+BINDIR=$bindir
+test "x$BINDIR" = 'x${exec_prefix}/bin' && BINDIR=$EXEC_PREFIX/bin
+AC_SUBST(BINDIR)
+LIBDIR=$libdir
+test "x$LIBDIR" = 'x${exec_prefix}/lib' && LIBDIR=$EXEC_PREFIX/lib
+AC_SUBST(LIBDIR)
+INCDIR=$includedir
+test "x$INCDIR" = 'x${prefix}/include' && INCDIR=$PREFIX/include
+AC_SUBST(INCDIR)
+ETCDIR=$sysconfdir
+test "x$ETCDIR" = 'x${prefix}/etc' && ETCDIR=$PREFIX/etc
+AC_SUBST(ETCDIR)
+
+# Compile in debug mode if appropriate
+QCONFIG=debug
+AC_ARG_ENABLE(release,
+		AC_HELP_STRING([--enable-release],
+				[Build in release mode (non-debugging).]),
+		QCONFIG=release)
+AC_SUBST(QCONFIG)
+
+# Add to see which type of library is desired.  Currently static is default.
+LIBTYPE=staticlib
+AC_ARG_ENABLE(shared, 
+              AC_HELP_STRING([--enable-shared], 
+                             [Generate a shared library.]),
+              LIBTYPE=dll)
+AC_ARG_ENABLE(static,
+              AC_HELP_STRING([--enable-static], 
+                             [Generate a shared library (default).]),
+              LIBTYPE=staticlib)
+AC_SUBST(LIBTYPE)
+
+# Check for required Qt 4 framework
+AC_ARG_WITH(qt, AC_HELP_STRING([--with-qt=DIR],
+		[Qt 4 toolkit location]))
+if test -n "$with_qt"; then
+	QMAKE="$with_qt/bin/qmake"
+	if ! test -x $QMAKE; then
+		AC_MSG_WARN([$QMAKE not found.])
+		QMAKE=""
+	fi
+else
+	AC_CHECK_PROGS(QMAKE,[qmake-qt4 qmake4 qmake])
+fi
+if test -n "$QMAKE"; then
+	AC_MSG_CHECKING([Qt toolkit version])
+	if test -n "$QMAKE" && ! ($QMAKE -v | grep -q "[Qt version 4[.][123456789]]"); then
+		AC_MSG_RESULT([wrong version.])
+		QMAKE=""
+	else
+		AC_MSG_RESULT([correct (version 4.1 or later).])
+	fi
+fi
+if test -z "$QMAKE"; then
+	AC_MSG_ERROR([SST requires Qt toolkit version 4.1 or later.
+		Please specify its location via '--with-qt=DIR',
+		or see http://www.trolltech.com/ to obtain it.])
+fi
+if test `uname` = "Darwin"; then
+	# Arrgh, qmake on mac now defaults to assuming an xcode build...
+	QMAKE="$QMAKE -spec macx-g++"
+fi
+$QMAKE || exit 1
+
+# Check for OpenSSL crypto library
+AC_ARG_WITH(qt, AC_HELP_STRING([--with-openssl=DIR],
+		[OpenSSL install location]))
+if test -n "$with_openssl"; then
+	if test ! -f "$with_openssl/include/openssl/sha.h"; then
+		AC_MSG_ERROR([Cannot find OpenSSL headers in '$with_openssl/include/openssl'])
+	fi
+	CXXFLAGS="$CXXFLAGS -I$with_openssl/include"
+	INCS="$INCS $with_openssl/include"
+	LIBS="$LIBS -L$with_openssl/lib"
+fi
+AC_CHECK_LIB(crypto,RAND_bytes,,
+	[AC_MSG_ERROR([SST requires OpenSSL version 0.9.8 or later.
+		Please specify its location via '--with-openssl=DIR',
+		or see http://www.openssl.org/ to obtain it.])])
+AC_CHECK_LIB(crypto,SHA256_Init,,
+	[AC_MSG_ERROR([The installed version of OpenSSL appears to be too old;
+		SST requires OpenSSL version 0.9.8 or later.
+		Please specify another location via '--with-openssl=DIR',
+		or see http://www.openssl.org/ to obtain it.])])
+
+AC_MSG_NOTICE([Configuration successful.])
+
+AC_OUTPUT([top.pri])

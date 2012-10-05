@@ -1,0 +1,30 @@
+
+Most immediate usability necessities:
+- finish implementing wire protocol to specs.  Specifically:
+	- receiver-directed flow control
+	- datagram reassembly
+	- stream attachment and detachment
+	- proper stream ID allocation & assignment
+	- implement and use sequencing barriers properly
+- specify and fix negotiation protocol format
+- registration protocol: specify, add explicit deregistration on shutdown
+
+Renaming and restructuring to do at some point (tentative list):
+- Socket -> Network (or -> Adapter?); Channel -> ChannelID (or -> FlowID?)
+- SocketReceiver -> ControlProtocol?
+- Flow -> Channel?
+- StreamTarget -> Target, separate into its own module
+- Message -> Record (e.g., readMesage() -> readRecord)?
+  Might help avoid confusion between "Message" and "Datagram".
+
+---
+Qt wishlist for SST:
+- Base64 conversion flags for URL-safe and/or '='-padding free variants.
+- QTimer hooks allowing time virtualization for simulation purposes.
+- Make *Datagram calls in QUdpSocket virtual, or else
+  support custom NetworkProxy extensions for vitualizing the network.
+- Make QAbstractSocket a "real" abstract base class that can be subclassed
+  for reasons other than to wrap a different kind of native socket.
+- Make Qt's signal/slot mechanism handle namespaces in type names properly.
+- Access to OS's path MTU detection facilities under UDP
+

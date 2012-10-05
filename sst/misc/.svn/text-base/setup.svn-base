@@ -1,0 +1,4 @@
+#!/bin/sh
+# Run this to build the top-level configure script.
+
+autoconf || exit 1

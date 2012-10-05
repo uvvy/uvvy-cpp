@@ -1,0 +1,9 @@
+This directory contains some test and demo programs associated with SST:
+
+lib		Library of supplemental code for use by the other programs,
+		including an adjustable network simulation framework.
+regress		Automated regression test suite for SST.
+web		Interactive "web browser" demo with prioritized image loading.
+ucbweb		Test program used to generate the experimental
+		performance results for the SIGCOMM paper on SST.
+

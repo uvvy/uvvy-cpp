@@ -1,0 +1,9 @@
+K 10
+svn:ignore
+V 37
+moc_*.cpp
+sstregress
+Makefile
+.gdb_*
+
+END
