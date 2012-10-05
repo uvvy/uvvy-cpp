@@ -1,2 +1,9 @@
-add_executable(sstregress main.h srv.h cli.h dgram.h migrate.h seg.h main.cc srv.cc cli.cc dgram.cc migrate.cc seg.cc)
-target_link_libraries(sstregress sst sst_test)
+set(QT_USE_QTNETWORK TRUE)
+include(${QT_USE_FILE})
+include_directories(../../lib ../lib)
+
+set(sstregress_HEADERS srv.h cli.h dgram.h migrate.h seg.h)
+qt4_wrap_cpp(sstregress_HEADERS_MOC ${sstregress_HEADERS})
+
+add_executable(sstregress  main.cc srv.cc cli.cc dgram.cc migrate.cc seg.cc ${sstregress_HEADERS_MOC})
+target_link_libraries(sstregress sst sst_test ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
