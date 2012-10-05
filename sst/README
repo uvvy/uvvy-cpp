@@ -15,16 +15,9 @@ Software package dependencies:		Can be obtained from:
 Building and Installing
 -----------------------
 
-To check out from Subversion and set up the configure scripts:
-  svn co svn://svn.pdos.csail.mit.edu/uia/trunk/uia/sst
-  cd sst
-  ./misc/setup
+The procedures to build have changed since original SST!
 
-To build and install:
-  ./configure [--prefix=<install-location>]
-  make
-  make install
-
+   Run cmake in build directory, followed by make.
 
 Using SST
 ---------
