@@ -65,7 +65,7 @@ static inline Node *randomNode()
 ////////// Node //////////
 
 Node::Node(Simulator *sim, const QByteArray &id, const QHostAddress &addr)
-:	host(sim, addr),
+:	host(sim/*, addr*/),
 	rtr(&host, id)
 {
 	x = drand48() * worldWidth;
