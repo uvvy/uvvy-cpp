@@ -1,3 +1,7 @@
+set(QT_USE_QTNETWORK TRUE)
+include(${QT_USE_FILE})
+add_definitions(${QT_DEFINITIONS})
+
 set(SST_SOURCES strm/abs.h strm/base.h strm/dgram.h strm/peer.h strm/sflow.h strm/proto.h
               sock.h key.h dh.h ident.h flow.h seg.h stream.h reg.h regcli.h
 			  sign.h dsa.h rsa.h aes.h sha2.h hmac.h chk32.h xdr.h util.h
