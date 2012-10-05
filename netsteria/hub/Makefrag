@@ -1,0 +1,23 @@
+
+HUB_OBJS =	$(addprefix hub/,	\
+			main.o		\
+			archive.o	\
+			locom.o		\
+			peer.o		\
+			flow.o		\
+			gossip.o	\
+			hash.o		\
+		) \
+		lib/sha2.o \
+		lib/base32.o \
+		lib/chunk.o \
+# XXX just link with library?
+
+uiphub: $(HUB_OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(HUB_OBJS) -lssl
+
+
+hub/%.o: hub/%.cc
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+
