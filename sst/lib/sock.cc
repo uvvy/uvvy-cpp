@@ -230,7 +230,7 @@ QList<Endpoint> UdpSocket::localEndpoints()
 SocketFlow::SocketFlow(QObject *parent)
 :	QObject(parent),
 	sock(NULL),
-	localchan(localchan),
+	localchan(0),
 	remotechan(0),
 	active(false)
 {
