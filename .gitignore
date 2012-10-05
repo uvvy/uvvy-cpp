@@ -10,3 +10,7 @@
 *.lai
 *.la
 *.a
+
+# Build directory
+_build_
+
