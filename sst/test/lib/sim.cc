@@ -253,14 +253,20 @@ SimPacket::SimPacket(SimHost *srch, const Endpoint &src,
 	quint32 seqno = ntohl(*(quint32*)buf.data()) & 0xffffff;
 	isclient = !w;	// XXX hacke
 	if (tracepkts)
-	if (isclient)
-		qDebug("%12lld:\t\t     --> %6d %4d --> %4s  @%lld",
-			curusecs, seqno, buf.size(), drop ? "DROP" : "",
-			drop ? 0 : actarr + ptime);
-	else
-		qDebug("%12lld:\t\t\t\t%4s <-- %6d %4d <--  @%lld",
-			curusecs, drop ? "DROP" : "", seqno, buf.size(),
-			drop ? 0 : actarr + ptime);
+	{
+		if (isclient)
+		{
+			qDebug("%12lld:\t\t     --> %6d %4d --> %4s  @%lld",
+				curusecs, seqno, buf.size(), drop ? "DROP" : "",
+				drop ? 0 : actarr + ptime);
+		}
+		else
+		{
+			qDebug("%12lld:\t\t\t\t%4s <-- %6d %4d <--  @%lld",
+				curusecs, drop ? "DROP" : "", seqno, buf.size(),
+				drop ? 0 : actarr + ptime);
+		}
+	}
 
 	if (drop) {
 		qDebug() << "SimPacket: DROP";
@@ -292,12 +298,18 @@ void SimPacket::arrive()
 
 	quint32 seqno = ntohl(*(quint32*)buf.data()) & 0xffffff;
 	if (tracepkts)
-	if (isclient)
-		qDebug("%12lld:\t\t\t\t\t\t        --> %6d %4d",
-			sim->currentTime().usecs, seqno, buf.size());
-	else
-		qDebug("%12lld: %6d %4d <--",
-			sim->currentTime().usecs, seqno, buf.size());
+	{
+		if (isclient)
+		{
+			qDebug("%12lld:\t\t\t\t\t\t        --> %6d %4d",
+				sim->currentTime().usecs, seqno, buf.size());
+		}
+		else
+		{
+			qDebug("%12lld: %6d %4d <--",
+				sim->currentTime().usecs, seqno, buf.size());
+		}
+	}
 
 	SimSocket *dsts = dsth->socks.value(dst.port);
 	if (!dsts) {
