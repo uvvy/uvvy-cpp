@@ -6,7 +6,6 @@
 #include <QtDebug>
 
 #include "audio.h"
-#include "portaudio.h"
 
 
 ////////// Audio //////////
@@ -25,7 +24,7 @@ QList<AbstractAudioOutput*> Audio::outstreams;	// Enabled output streams
 // Last error string returned
 QString Audio::errmsg;
 
-static PortAudioStream *pas;
+static RtAudio *audio_inst;
 static double parate;
 static int paframesize;
 
@@ -58,15 +57,15 @@ int Audio::scan()
 	if (ndevs >= 0)
 		return ndevs;
 
-	int rc = Pa_Initialize();
-	if (rc) {
-		errmsg = Pa_GetErrorText(rc);
-		qWarning("Can't initialize PortAudio library: %s",
-			Pa_GetErrorText(rc));
+	try {
+		audio_inst  = new RtAudio();
+  	}
+  	catch (RtError &error) {
+		qWarning("Can't initialize RtAudio library, %s", error.what());
 		return -1;
 	}
 
-	ndevs = Pa_CountDevices();
+	ndevs = audio_inst->getDeviceCount();
 	if (ndevs == 0)
 		errmsg = tr("No audio devices available");
 
@@ -94,7 +93,15 @@ int Audio::scan()
 
 QString Audio::deviceName(int dev)
 {
-	return QString::fromLocal8Bit(Pa_GetDeviceInfo(dev)->name);
+	RtAudio::DeviceInfo info;
+    try {
+      info = audio_inst->getDeviceInfo(dev);
+    }
+    catch (RtError &error) {
+      qWarning("Error getting device %d name: %s", dev, error.what());
+      return QString();
+    }
+	return QString::fromLocal8Bit(info.name.c_str());
 }
 
 QStringList Audio::deviceNames()
@@ -125,12 +132,12 @@ int Audio::findDevice(const QString &name)
 
 int Audio::defaultInputDevice()
 {
-	return Pa_GetDefaultInputDeviceID();
+	return 0;
 }
 
 int Audio::defaultOutputDevice()
 {
-	return Pa_GetDefaultOutputDeviceID();
+	return 0;
 }
 
 void Audio::setInputDevice(int dev)
@@ -173,47 +180,67 @@ void Audio::setOutputDevice(const QString &name)
 
 int Audio::inChannels(int dev)
 {
-	return Pa_GetDeviceInfo(dev)->maxInputChannels;
+	RtAudio::DeviceInfo info;
+    try {
+      info = audio_inst->getDeviceInfo(dev);
+    }
+    catch (RtError &error) {
+      qWarning("Error getting device %d in channels: %s", dev, error.what());
+      return 0;
+    }
+	return info.inputChannels;
 }
 
 int Audio::outChannels(int dev)
 {
-	return Pa_GetDeviceInfo(dev)->maxOutputChannels;
+	RtAudio::DeviceInfo info;
+    try {
+      info = audio_inst->getDeviceInfo(dev);
+    }
+    catch (RtError &error) {
+      qWarning("Error getting device %d out channels: %s", dev, error.what());
+      return 0;
+    }
+	return info.outputChannels;
 }
 
 double Audio::minSampleRate(int dev)
 {
-	const PaDeviceInfo *info = Pa_GetDeviceInfo(dev);
-	Q_ASSERT(info->numSampleRates != 0);
-	if (info->numSampleRates > 0) {
-		double minrate = info->sampleRates[0];
-		for (int i = 1; i < info->numSampleRates; i++)
-			minrate = qMin(minrate, info->sampleRates[i]);
-		return minrate;
-	} else {
-		Q_ASSERT(info->sampleRates[0] < info->sampleRates[1]);
-		return info->sampleRates[0];
-	}
+	RtAudio::DeviceInfo info;
+    try {
+      info = audio_inst->getDeviceInfo(dev);
+    }
+    catch (RtError &error) {
+      qWarning("Error getting device %d sample rates: %s", dev, error.what());
+      return 0.0;
+    }
+	Q_ASSERT(info.sampleRates.size() != 0);
+	int minrate = INT_MAX;
+	for (int rate : info.sampleRates)
+		minrate = qMin(minrate, rate);
+	return minrate;
 }
 
 double Audio::maxSampleRate(int dev)
 {
-	const PaDeviceInfo *info = Pa_GetDeviceInfo(dev);
-	Q_ASSERT(info->numSampleRates != 0);
-	if (info->numSampleRates > 0) {
-		double maxrate = info->sampleRates[0];
-		for (int i = 1; i < info->numSampleRates; i++)
-			maxrate = qMax(maxrate, info->sampleRates[i]);
-		return maxrate;
-	} else {
-		Q_ASSERT(info->sampleRates[0] < info->sampleRates[1]);
-		return info->sampleRates[1];
-	}
+	RtAudio::DeviceInfo info;
+    try {
+      info = audio_inst->getDeviceInfo(dev);
+    }
+    catch (RtError &error) {
+      qWarning("Error getting device %d sample rates: %s", dev, error.what());
+      return 0.0;
+    }
+	Q_ASSERT(info.sampleRates.size() != 0);
+	int maxrate = 0;
+	for (int rate : info.sampleRates)
+		maxrate = qMax(maxrate, rate);
+	return maxrate;
 }
 
 void Audio::open()
 {
-	if (pas)
+	if (audio_inst->isStreamOpen())
 		return;	// Already open
 
 	// Make sure we're initialized
@@ -248,31 +275,19 @@ void Audio::open()
 		<< "output:" << outdev << (outena ? "enable" : "disable");
 
 	// Open the audio device
-	int rc = Pa_OpenStream(&pas,
-			inena ? indev : paNoDevice, inena ? 1 : 0,
-			paFloat32, NULL,
-			outena ? outdev : paNoDevice, outena ? 1 : 0,
-			paFloat32, NULL,
-			maxrate, minframesize,
-			Pa_GetMinNumBuffers(minframesize, maxrate)+10,
-			paNoFlag, pacallback, NULL);
-	if (rc) {
-		qDebug() << "error" << rc;
-		errmsg = Pa_GetErrorText(rc);
-		qWarning("Error opening audio device: %s",
-			Pa_GetErrorText(rc));
-		return;
-	}
-	parate = maxrate;
-	paframesize = minframesize;
+	RtAudio::StreamParameters inparam, outparam;
+	inparam.deviceId = indev;
+	inparam.nChannels = 1;
+	outparam.deviceId = outdev;
+	outparam.nChannels = 2;
+	unsigned int bufferFrames = minframesize;
 
-	rc = Pa_StartStream(pas);
-	if (rc) {
-		errmsg = Pa_GetErrorText(rc);
-		qWarning("Error starting audio stream: %s",
-			Pa_GetErrorText(rc));
-		return close();
-	}
+	audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, maxrate, &bufferFrames, rtcallback);
+
+	parate = maxrate;
+	paframesize = bufferFrames;
+
+	audio_inst->startStream();
 }
 
 void Audio::reopen()
@@ -285,15 +300,11 @@ void Audio::reopen()
 
 void Audio::close()
 {
-	if (!pas)
+	if (!audio_inst->isStreamOpen())
 		return;
 
 	qDebug() << "Close audio stream";
-	int rc = Pa_CloseStream(pas);
-	if (rc)
-		qWarning("Error closing audio stream: %s",
-			Pa_GetErrorText(rc));
-	pas = NULL;
+	audio_inst->closeStream();
 
 	setInputLevel(0);
 	setOutputLevel(0);
@@ -303,7 +314,7 @@ int Audio::rescan()
 {
 	close();
 	if (ndevs >= 0) {
-		Pa_Terminate();
+		delete audio_inst; audio_inst = 0;
 		ndevs = -1;
 	}
 
@@ -313,17 +324,16 @@ int Audio::rescan()
 	return rc;
 }
 
-int Audio::pacallback(void *inbuf, void *outbuf,
-			unsigned long framesPerBuffer, PaTimestamp, void *)
+int Audio::rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double, RtAudioStreamStatus, void *)
 {
 	// A PortAudio "frame" is one sample per channel,
 	// whereas our "frame" is one buffer worth of data (as in Speex).
-	Q_ASSERT((int)framesPerBuffer == paframesize);
+	Q_ASSERT(nFrames == paframesize);
 
-	if (inbuf != NULL)
-		sendin((float*)inbuf);
-	if (outbuf != NULL)
-		mixout((float*)outbuf);
+	if (inputBuffer != NULL)
+		sendin((float*)inputBuffer);
+	if (outputBuffer != NULL)
+		mixout((float*)outputBuffer);
 
 	return 0;
 }
@@ -424,7 +434,9 @@ Audio::~Audio()
 {
 	close();
 	if (ndevs >= 0)
-		Pa_Terminate();
+	{
+		delete audio_inst; audio_inst = 0;
+	}
 }
 
 

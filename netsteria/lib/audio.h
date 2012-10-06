@@ -7,7 +7,7 @@
 #include <QQueue>
 #include <QMutex>
 
-#include "portaudio.h"
+#include "RtAudio.h"
 
 class QAbstractItemModel;
 class AbstractAudioInput;
@@ -101,9 +101,7 @@ private:
 	static void reopen();
 	static void close();
 
-	static int pacallback(void *inputBuffer, void *outputBuffer,
-				unsigned long framesPerBuffer,
-				PaTimestamp outTime, void *userData);
+	static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double streamTime, RtAudioStreamStatus status, void *userData );
 	static void sendin(const float *inbuf);
 	static void mixout(float *outbuf);
 
