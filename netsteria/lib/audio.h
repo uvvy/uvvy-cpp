@@ -156,6 +156,7 @@ public:
 			QObject *parent = NULL);
 
 	void setEnabled(bool enabled);
+	static const int nChannels = 2;
 
 protected:
 	// Accept audio input data received from the sound hardware.
@@ -178,6 +179,7 @@ public:
 			QObject *parent = NULL);
 
 	void setEnabled(bool enabled);
+	static const int nChannels = 2;
 
 protected:
 	// Produce a frame of audio data to be sent to the sound hardware.
@@ -248,7 +250,7 @@ public:
 	AudioOutput(int framesize, double samplerate, QObject *parent = NULL);
 	~AudioOutput();
 
-	void setFrameSize(int framesize); 
+	void setFrameSize(int framesize);
 
 	int numFramesQueued();
 	int writeFrames(const float *buf, int nframes);

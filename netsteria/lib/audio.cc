@@ -10,6 +10,9 @@
 
 ////////// Audio //////////
 
+const int AbstractAudioInput::nChannels;
+const int AbstractAudioOutput::nChannels;
+
 // -1 indicates we haven't called Pa_Initialize()
 int Audio::ndevs = -1;
 
@@ -76,6 +79,13 @@ int Audio::scan()
 			|| outChannels(outdev) <= 0)
 		outdev = defaultOutputDevice();
 
+	qDebug() << "Audio::scan:" << ndevs << "devices found.";
+
+	for(auto s : deviceNames())
+	{
+		qDebug() << "Device:" << s;
+	}
+
 #if 0
 	QStringList inlist, outlist;
 	for (int i = 0; i < ndevs; i++) {
@@ -132,12 +142,12 @@ int Audio::findDevice(const QString &name)
 
 int Audio::defaultInputDevice()
 {
-	return 0;
+	return 1;
 }
 
 int Audio::defaultOutputDevice()
 {
-	return 0;
+	return 2;
 }
 
 void Audio::setInputDevice(int dev)
@@ -277,12 +287,18 @@ void Audio::open()
 	// Open the audio device
 	RtAudio::StreamParameters inparam, outparam;
 	inparam.deviceId = indev;
-	inparam.nChannels = 1;
+	inparam.nChannels = AudioInput::nChannels;
 	outparam.deviceId = outdev;
-	outparam.nChannels = 2;
+	outparam.nChannels = AudioOutput::nChannels;
 	unsigned int bufferFrames = minframesize;
 
-	audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, maxrate, &bufferFrames, rtcallback);
+	try {
+		audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, maxrate, &bufferFrames, rtcallback);
+	}
+    catch (RtError &error) {
+    	qWarning() << "Couldn't open stream" << error.what();
+    	return;
+    }
 
 	parate = maxrate;
 	paframesize = bufferFrames;
@@ -304,7 +320,12 @@ void Audio::close()
 		return;
 
 	qDebug() << "Close audio stream";
-	audio_inst->closeStream();
+	try {
+		audio_inst->closeStream();
+	}
+    catch (RtError &error) {
+    	qWarning() << "Couldn't close stream" << error.what();
+    }
 
 	setInputLevel(0);
 	setOutputLevel(0);
@@ -489,7 +510,7 @@ void AbstractAudioInput::setEnabled(bool enable)
 {
 	if (enable && !enabled()) {
 		if (frameSize() <= 0 || sampleRate() <= 0) {
-			qWarning("AudioInput: bad frame size or sample rate");
+			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
 			return;
 		}
 
@@ -529,7 +550,7 @@ void AbstractAudioOutput::setEnabled(bool enable)
 {
 	if (enable && !enabled()) {
 		if (frameSize() <= 0 || sampleRate() <= 0) {
-			qWarning("AudioOutput: bad frame size or sample rate");
+			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
 			return;
 		}
 
