@@ -51,12 +51,12 @@ void OpusInput::acceptInput(const float *samplebuf)
 #if 1
 	// Encode the frame and write it into a QByteArray buffer
 	QByteArray bytebuf;
-	int maxbytes = 65536;//meh, any opus option to get this?
+	int maxbytes = 1024;//meh, any opus option to get this?
 	bytebuf.resize(maxbytes);
 	int nbytes = opus_encode_float(encstate, samplebuf, frameSize(), (unsigned char*)bytebuf.data(), bytebuf.size());
 	Q_ASSERT(nbytes <= maxbytes);
 	bytebuf.resize(nbytes);
-	qDebug() << "Encoded frame:" << nbytes;
+	qWarning() << "Encoded frame size:" << nbytes;
 #else
 	// Trivial XDR-based encoding, for debugging
 	QByteArray bytebuf;
@@ -139,9 +139,10 @@ void OpusOutput::produceOutput(float *samplebuf)
 #if 1
 	// Decode the frame
 	if (!bytebuf.isEmpty()) {
-		qDebug() << "Decode frame:" << bytebuf.size();
+		qWarning() << "Decode frame size:" << bytebuf.size();
 		int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(), bytebuf.size(), samplebuf, frameSize(), /*decodeFEC:*/1);
 		Q_ASSERT(len > 0);
+		Q_ASSERT(len == frameSize());
 
 		// Signal the main thread if the queue empties
 		if (nowempty)

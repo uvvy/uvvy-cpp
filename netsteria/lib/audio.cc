@@ -81,9 +81,11 @@ int Audio::scan()
 
 	qDebug() << "Audio::scan:" << ndevs << "devices found.";
 
+	int n = 0;
 	for(auto s : deviceNames())
 	{
-		qDebug() << "Device:" << s;
+		qWarning() << "Device" << n << ":" << s;
+		++n;
 	}
 
 #if 0
@@ -142,12 +144,12 @@ int Audio::findDevice(const QString &name)
 
 int Audio::defaultInputDevice()
 {
-	return 1;
+	return 0;
 }
 
 int Audio::defaultOutputDevice()
 {
-	return 3;
+	return 2;
 }
 
 void Audio::setInputDevice(int dev)
@@ -280,9 +282,9 @@ void Audio::open()
 	// XXX check against rates supported by devices,
 	// resample if necessary...
 
-	qDebug() << "Open audio:"
-		<< "input:" << indev << (inena ? "enable" : "disable")
-		<< "output:" << outdev << (outena ? "enable" : "disable");
+	qWarning() << "Open audio:"
+		<< "input:" << indev << deviceName(indev) << (inena ? "enable" : "disable")
+		<< "*;* output:" << outdev << deviceName(outdev) << (outena ? "enable" : "disable");
 
 	// Open the audio device
 	RtAudio::StreamParameters inparam, outparam;
@@ -293,6 +295,7 @@ void Audio::open()
 	unsigned int bufferFrames = minframesize;
 
 	try {
+		/*outena ? &outparam : NULL, inena ? &inparam : NULL*/
 		audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, maxrate, &bufferFrames, rtcallback);
 	}
     catch (RtError &error) {
@@ -351,11 +354,21 @@ int Audio::rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
 	// whereas our "frame" is one buffer worth of data (as in Speex).
 	Q_ASSERT(nFrames == paframesize);
 
+	qWarning() << "rtcallback, inputBuffer" << inputBuffer << ", outputBuffer" << outputBuffer << ", nframes" << nFrames;
+
+#if 0
+	// Loopback test...
+	if (inputBuffer and outputBuffer)
+	{
+		memcpy(outputBuffer, inputBuffer, nFrames*sizeof(float));
+	}
+#else
 	if (inputBuffer != NULL)
 		sendin((float*)inputBuffer);
 	if (outputBuffer != NULL)
 		mixout((float*)outputBuffer);
-
+#endif
+	
 	return 0;
 }
 
@@ -422,6 +435,7 @@ void Audio::setInputLevel(int lev)
 	if (inlev == lev)
 		return;
 
+	qWarning() << "setInputLevel" << lev;
 	inlev = lev;
 	instance()->inputLevelChanged(lev);
 }
@@ -431,6 +445,7 @@ void Audio::setOutputLevel(int lev)
 	if (outlev == lev)
 		return;
 
+	qWarning() << "setOutputLevel" << lev;
 	outlev = lev;
 	instance()->outputLevelChanged(lev);
 }
