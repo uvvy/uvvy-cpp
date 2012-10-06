@@ -44,16 +44,19 @@ QByteArray convEncrypt(const void *in, void *out, int size)
 QByteArray passEncrypt(const QByteArray &data, const QByteArray &key)
 {
 	Q_ASSERT(false);
+	return QByteArray();
 }
 
 QByteArray passDecrypt(const QByteArray &data, const QByteArray &key)
 {
 	Q_ASSERT(false);
+	return QByteArray();
 }
 
 QByteArray passCheck(const QByteArray &data, const QByteArray &key)
 {
 	Q_ASSERT(false);
+	return QByteArray();
 }
 
 
