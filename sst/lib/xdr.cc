@@ -54,7 +54,7 @@ XdrStream::XdrStream(const QByteArray &a)
 
 void XdrStream::setDevice(QIODevice *d)
 {
-	if (dev != NULL & dev->parent() == this)
+	if (dev != NULL and dev->parent() == this)
 		delete dev;
 	dev = d;
 }
