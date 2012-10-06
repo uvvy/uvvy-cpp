@@ -156,6 +156,7 @@ Ident Ident::generate(Scheme sch, int bits)
 		break;
 	default:
 		Q_ASSERT(0);
+		return Ident();
 	}
 
 	// Find the corresponding ID
