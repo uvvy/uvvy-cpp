@@ -13,5 +13,3 @@ if (UNIX)
     add_subdirectory(shell)
 endif (UNIX)
 
-#add_library(sst ${SST_SOURCES})
-
