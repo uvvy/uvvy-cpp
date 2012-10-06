@@ -52,9 +52,8 @@ lib		Netsteria library implementing all core functionality
 gui		GUI-based Netsteria client ('netsteria')
 reg		Console-based dedicated Netsteria registration server.
 cons		Console-based Netsteria client ('nst') - not yet very functional
-speex		Speex codec for Voice-over-IP support (http://www.speex.org/)
-portaudio	Portable audio toolkit (http://www.portaudio.com/)
-
+opus
+rtaudio
 
 License
 ~~~~~~~

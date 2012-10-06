@@ -1,6 +1,6 @@
 set(QT_USE_QTNETWORK TRUE)
 include(${QT_USE_FILE})
-include_directories(../lib ../../sst/lib ../3rdparty/speex/include ../3rdparty/rtaudio-4.0.11)
+include_directories(../lib ../../sst/lib ../3rdparty/opus-1.0.1/include ../3rdparty/rtaudio-4.0.11)
 
 set(netsteria_SOURCES main.cc search.cc chat.cc view.cc save.cc settings.cc logarea.cc meter.cc)
 
@@ -11,7 +11,7 @@ set(netsteria_RESOURCES gui.qrc)
 qt4_add_resources(netsteria_RESOURCES_RCC ${netsteria_RESOURCES})
 
 add_executable(Netsteria ${GUI_TYPE} ${netsteria_SOURCES} ${netsteria_HEADERS_MOC} ${netsteria_RESOURCES_RCC})
-target_link_libraries(Netsteria sst netsteria speex rtaudio ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(Netsteria sst netsteria opus rtaudio ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 if (WIN32)
 	target_link_libraries(Netsteria ws2_32 gdi32 winmm)
