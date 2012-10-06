@@ -19,23 +19,20 @@ void OpusInput::setEnabled(bool enable)
 	if (enable && !enabled()) {
 		Q_ASSERT(!encstate);
 		int error = 0;
-		encstate = opus_encoder_create(sampleRate(), Audio::inChannels(Audio::defaultInputDevice()), OPUS_APPLICATION_VOIP, &error);
+		encstate = opus_encoder_create(48000, nChannels, OPUS_APPLICATION_VOIP, &error);
 		Q_ASSERT(encstate);
 		Q_ASSERT(!error);
 
-		// int framesize, rate;
-		// speex_encoder_ctl(encstate, SPEEX_GET_FRAME_SIZE, &framesize);
-		// speex_encoder_ctl(encstate, SPEEX_GET_SAMPLING_RATE, &rate);
-		// setFrameSize(framesize);
-		// setSampleRate(rate);
-		// qDebug() << "OpusInput: frame size" << framesize << "sample rate" << rate;
+		int framesize, rate;
+		opus_encoder_ctl(encstate, OPUS_GET_SAMPLE_RATE(&rate));
+		framesize = rate / 50; // 20ms
+		setFrameSize(framesize);
+		setSampleRate(rate);
+		qDebug() << "OpusInput: frame size" << framesize << "sample rate" << rate;
 
-		// int vbr = 1;
-		// speex_encoder_ctl(encstate, SPEEX_SET_VBR, &vbr);
-		//int bitrate = 10000;
-		//speex_encoder_ctl(encstate, SPEEX_SET_BITRATE, &bitrate);
-		//int vad = 1;
-		//speex_encoder_ctl(encstate, SPEEX_SET_VAD, &vad);
+		opus_encoder_ctl(encstate, OPUS_SET_VBR(1));
+		opus_encoder_ctl(encstate, OPUS_SET_BITRATE(OPUS_AUTO));
+		opus_encoder_ctl(encstate, OPUS_SET_DTX(1));
 
 		AbstractAudioInput::setEnabled(true);
 
@@ -59,7 +56,7 @@ void OpusInput::acceptInput(const float *samplebuf)
 	int nbytes = opus_encode_float(encstate, samplebuf, frameSize(), (unsigned char*)bytebuf.data(), bytebuf.size());
 	Q_ASSERT(nbytes <= maxbytes);
 	bytebuf.resize(nbytes);
-	//qDebug() << "Encoded frame:" << nbytes;
+	qDebug() << "Encoded frame:" << nbytes;
 #else
 	// Trivial XDR-based encoding, for debugging
 	QByteArray bytebuf;
@@ -106,16 +103,16 @@ void OpusOutput::setEnabled(bool enable)
 	if (enable && !enabled()) {
 		Q_ASSERT(!decstate);
 		int error = 0;
-		decstate = opus_decoder_create(sampleRate(), Audio::outChannels(Audio::defaultOutputDevice()), &error);
+		decstate = opus_decoder_create(48000, nChannels, &error);
 		Q_ASSERT(decstate);
 		Q_ASSERT(!error);
 
-		// int framesize, rate;
-		// speex_decoder_ctl(decstate, SPEEX_GET_FRAME_SIZE, &framesize);
-		// speex_decoder_ctl(decstate, SPEEX_GET_SAMPLING_RATE, &rate);
-		// setFrameSize(framesize);
-		// setSampleRate(rate);
-		// qDebug() << "OpusOutput: frame size" << framesize << "sample rate" << rate;
+		int framesize, rate;
+		opus_decoder_ctl(decstate, OPUS_GET_SAMPLE_RATE(&rate));
+		framesize = rate / 50; // 20ms
+		setFrameSize(framesize);
+		setSampleRate(rate);
+		qDebug() << "OpusOutput: frame size" << framesize << "sample rate" << rate;
 
 		AbstractAudioOutput::setEnabled(true);
 
@@ -142,7 +139,7 @@ void OpusOutput::produceOutput(float *samplebuf)
 #if 1
 	// Decode the frame
 	if (!bytebuf.isEmpty()) {
-		//qDebug() << "Decode frame:" << bytebuf.size();
+		qDebug() << "Decode frame:" << bytebuf.size();
 		int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(), bytebuf.size(), samplebuf, frameSize(), /*decodeFEC:*/1);
 		Q_ASSERT(len > 0);
 
@@ -187,12 +184,12 @@ void OpusOutput::writeFrame(const QByteArray &buf, qint32 seqno, int queuemax)
 	// Queue up the missed frames, if any.
 	for (int i = 0; i < seqdiff; i++) {
 		outqueue.enqueue(QByteArray());
-		//qDebug() << "  MISSED audio frame" << outseq + i;
+		qDebug() << "  MISSED audio frame" << outseq + i;
 	}
 
 	// Queue up the frame we actually got.
 	outqueue.enqueue(buf);
-	//qDebug() << "Received audio frame" << seqno;
+	qDebug() << "Received audio frame" << seqno;
 
 	// Discard frames from the head if we exceed queueMax
 	while (outqueue.size() > queuemax)
@@ -319,10 +316,13 @@ void VoiceService::gotInStreamConnected(Stream *strm)
 		this, SLOT(readyReadDatagram()));
 	connect(rs.vout, SIGNAL(queueEmpty()),
 		this, SLOT(voutQueueEmpty()));
+
+	qDebug() << "VoiceService: established incoming connection from" << peerName(strm->remoteHostId());
 }
 
 void VoiceService::gotInStreamDisconnected(Stream *strm)
 {
+	qDebug() << "VoiceService: disconnection notification from" << peerName(strm->remoteHostId());
 	ReceiveStream rs = recv.take(strm);
 	if (rs.vout)
 		delete rs.vout;
@@ -344,9 +344,9 @@ void VoiceService::vinReadyRead()
 		// Broadcast it to everyone we're talking to
 		foreach (Stream *strm, sending) {
 			SendStream &ss = send[strm];
-			Q_ASSERT(strm && ss.stream == strm);
+			Q_ASSERT(strm and ss.stream == strm);
 
-			//qDebug() << "Sending audio frame" << ss.seqno;
+			qDebug() << "Sending audio frame" << ss.seqno;
 
 			// Set the message sequence number
 			*(qint32*)msg.data() = htonl(ss.seqno++);
@@ -377,7 +377,7 @@ void VoiceService::readyReadDatagram()
 		if (msg.size() < 4)
 			continue;
 		qint32 seqno = ntohl(*(qint32*)msg.data());
-		//qDebug() << "Received audio frame" << seqno;
+		qDebug() << "Received audio frame" << seqno;
 
 		// Queue it to the audio system
 		int nqueued = rs.vout->numFramesQueued();
@@ -386,7 +386,7 @@ void VoiceService::readyReadDatagram()
 		// If the stream isn't enabled yet,
 		// enable it once we get a threshold of frames queued
 		if (nqueued >= queueMin) {
-			//qDebug() << "Enabling audio output";
+			qDebug() << "Enabling audio output";
 			rs.vout->enable();
 		}
 	}
