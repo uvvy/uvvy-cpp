@@ -64,13 +64,16 @@ void myMsgHandler(QtMsgType type, const char *msg)
 	switch (type) {
 	case QtDebugMsg:
 		strm << "Debug: " << msg << '\n';
+		std::cout << "Debug: " << msg << '\n';
 		break;
 	case QtWarningMsg:
 		strm << "Warning: " << msg << '\n';
+		std::cout << "Warning: " << msg << '\n';
 		break;
 	case QtCriticalMsg:
 		strm << "Critical: " << msg << '\n';
 		strm.flush();
+		std::cout << "Critical: " << msg << '\n';
 		QMessageBox::critical(NULL,
 			QObject::tr("Netsteria: Critical Error"), msg,
 			QMessageBox::Ok, QMessageBox::NoButton);
@@ -78,6 +81,7 @@ void myMsgHandler(QtMsgType type, const char *msg)
 	case QtFatalMsg:
 		strm << "Fatal: " << msg << '\n';
 		strm.flush();
+		std::cout << "Fatal: " << msg << '\n';
 		QMessageBox::critical(NULL,
 			QObject::tr("Netsteria: Critical Error"), msg,
 			QMessageBox::Ok, QMessageBox::NoButton);
@@ -354,7 +358,7 @@ void MainWindow::addPeer(const QByteArray &id, QString name, bool edit)
 	int row = friends->insert(id, name);
 
 	if (edit) {
-		//qDebug() << "Edit friend" << row;
+		qDebug() << "Edit friend" << row;
 		//friendslist->setCurrentIndex(peersmodel->index(row, 0));
 		friendslist->edit(friends->index(row, 0));
 	}
