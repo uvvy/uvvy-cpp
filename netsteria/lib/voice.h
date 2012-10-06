@@ -4,42 +4,19 @@
 #include <QMutex>
 #include <QQueue>
 
-#include <speex.h>
+#include <opus.h>
 
 #include "audio.h"
 #include "peer.h"
 
-
-class Speex
-{
-	friend class SpeexInput;
-	friend class SpeexOutput;
-
-public:
-	enum Mode {
-		InvalidMode = 0,
-		NarrowBand,
-		WideBand,
-	};
-
-private:
-	inline SpeexMode *modeptr(Mode m)
-		{ Q_ASSERT(m == NarrowBand || m == WideBand);
-		  return (m == NarrowBand) ? &speex_nb_mode : &speex_wb_mode; }
-};
-
-class SpeexInput : public AbstractAudioInput, public Speex
+class OpusInput : public AbstractAudioInput
 {
 	Q_OBJECT
 
 private:
-	// Configuration state.
-	Mode mod;
-
 	// Speex encoder state.
 	// Owned exclusively by the audio thread while enabled.
-	SpeexBits bits;
-	void *encstate;
+	OpusEncoder *encstate;
 
 	// Inter-thread synchronization and queueing state
 	QMutex mutex;
@@ -49,10 +26,7 @@ signals:
 	void readyRead();
 
 public:
-	SpeexInput(QObject *parent = NULL);
-
-	inline Mode mode() { return mod; }
-	inline void setMode(Mode mode) { Q_ASSERT(!enabled()); mod = mode; }
+	OpusInput(QObject *parent = NULL);
 
 	void setEnabled(bool enabled);
 
@@ -63,7 +37,7 @@ private:
 	virtual void acceptInput(const float *buf);
 };
 
-class SpeexOutput : public AbstractAudioOutput, public Speex
+class OpusOutput : public AbstractAudioOutput
 {
 	Q_OBJECT
 
@@ -71,13 +45,9 @@ private:
 	// Maximum number of consecutive frames to skip
 	static const int maxSkip = 3;
 
-	// Configuration state.
-	Mode mod;
-
 	// Speex decoder state.
 	// Owned exclusively by the audio thread while enabled.
-	SpeexBits bits;
-	void *decstate;
+	OpusDecoder *decstate;
 
 	// Inter-thread synchronization and queueing state
 	QMutex mutex;
@@ -85,10 +55,7 @@ private:
 	qint32 outseq;
 
 public:
-	SpeexOutput(QObject *parent = NULL);
-
-	inline Mode mode() { return mod; }
-	inline void setMode(Mode mode) { Q_ASSERT(!enabled()); mod = mode; }
+	OpusOutput(QObject *parent = NULL);
 
 	void setEnabled(bool enabled);
 
@@ -138,19 +105,19 @@ private:
 
 	struct ReceiveStream {
 		Stream *stream;
-		SpeexOutput *vout;
+		OpusOutput *vout;
 		qint32 seqno;
 
 		inline ReceiveStream()
 			: stream(NULL), vout(NULL), seqno(0) { }
 		inline ReceiveStream(const ReceiveStream &o)
 			: stream(o.stream), vout(o.vout), seqno(o.seqno) { }
-		inline ReceiveStream(Stream *stream, SpeexOutput *vout)
+		inline ReceiveStream(Stream *stream, OpusOutput *vout)
 			: stream(stream), vout(vout), seqno(0) { }
 	};
 
 	// Voice communication state
-	SpeexInput vin;
+	OpusInput vin;
 	QSet<Stream*> sending;
 	QHash<Stream*, SendStream> send;
 	QHash<Stream*, ReceiveStream> recv;

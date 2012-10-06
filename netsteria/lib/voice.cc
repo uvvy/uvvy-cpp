@@ -6,33 +6,32 @@
 #include "xdr.h"
 
 
-////////// SpeexInput //////////
+////////// OpusInput //////////
 
-SpeexInput::SpeexInput(QObject *parent)
+OpusInput::OpusInput(QObject *parent)
 :	AbstractAudioInput(parent),
-	mod(NarrowBand),
 	encstate(NULL)
 {
 }
 
-void SpeexInput::setEnabled(bool enable)
+void OpusInput::setEnabled(bool enable)
 {
 	if (enable && !enabled()) {
 		Q_ASSERT(!encstate);
-		speex_bits_init(&bits);
-		encstate = speex_encoder_init(modeptr(mod));
+		int error = 0;
+		encstate = opus_encoder_create(sampleRate(), Audio::inChannels(Audio::defaultInputDevice()), OPUS_APPLICATION_VOIP, &error);
 		Q_ASSERT(encstate);
+		Q_ASSERT(!error);
 
-		int framesize, rate;
-		speex_encoder_ctl(encstate, SPEEX_GET_FRAME_SIZE, &framesize);
-		speex_encoder_ctl(encstate, SPEEX_GET_SAMPLING_RATE, &rate);
-		setFrameSize(framesize);
-		setSampleRate(rate);
-		qDebug() << "SpeexInput: frame size" << framesize
-			<< "sample rate" << rate;
+		// int framesize, rate;
+		// speex_encoder_ctl(encstate, SPEEX_GET_FRAME_SIZE, &framesize);
+		// speex_encoder_ctl(encstate, SPEEX_GET_SAMPLING_RATE, &rate);
+		// setFrameSize(framesize);
+		// setSampleRate(rate);
+		// qDebug() << "OpusInput: frame size" << framesize << "sample rate" << rate;
 
-		int vbr = 1;
-		speex_encoder_ctl(encstate, SPEEX_SET_VBR, &vbr);
+		// int vbr = 1;
+		// speex_encoder_ctl(encstate, SPEEX_SET_VBR, &vbr);
 		//int bitrate = 10000;
 		//speex_encoder_ctl(encstate, SPEEX_SET_BITRATE, &bitrate);
 		//int vad = 1;
@@ -45,30 +44,19 @@ void SpeexInput::setEnabled(bool enable)
 		AbstractAudioInput::setEnabled(false);
 
 		Q_ASSERT(encstate);
-		speex_bits_destroy(&bits);
-		speex_encoder_destroy(encstate);
+		opus_encoder_destroy(encstate);
 		encstate = NULL;
 	}
 }
 
-void SpeexInput::acceptInput(const float *samplebuf)
+void OpusInput::acceptInput(const float *samplebuf)
 {
 #if 1
-	// Speex uses a range of +/- 32767.0; PortAudio uses +/- 1.0.
-	int nsamp = frameSize();
-	float newbuf[nsamp];
-	for (int i = 0; i < nsamp; i++)
-		newbuf[i]  = samplebuf[i] * 32767.0;
-
-	// Encode the frame
-	speex_bits_reset(&bits);
-	speex_encode(encstate, (float*)newbuf, &bits);
-
-	// Write it into a QByteArray buffer
+	// Encode the frame and write it into a QByteArray buffer
 	QByteArray bytebuf;
-	int maxbytes = speex_bits_nbytes(&bits);
+	int maxbytes = 65536;//meh, any opus option to get this?
 	bytebuf.resize(maxbytes);
-	int nbytes = speex_bits_write(&bits, bytebuf.data(), maxbytes);
+	int nbytes = opus_encode_float(encstate, samplebuf, frameSize(), (unsigned char*)bytebuf.data(), bytebuf.size());
 	Q_ASSERT(nbytes <= maxbytes);
 	bytebuf.resize(nbytes);
 	//qDebug() << "Encoded frame:" << nbytes;
@@ -91,7 +79,7 @@ void SpeexInput::acceptInput(const float *samplebuf)
 		readyRead();
 }
 
-QByteArray SpeexInput::readFrame()
+QByteArray OpusInput::readFrame()
 {
 	QMutexLocker lock(&mutex);
 
@@ -102,33 +90,32 @@ QByteArray SpeexInput::readFrame()
 }
 
 
-////////// SpeexOutput //////////
+////////// OpusOutput //////////
 
-const int SpeexOutput::maxSkip;
+const int OpusOutput::maxSkip;
 
-SpeexOutput::SpeexOutput(QObject *parent)
+OpusOutput::OpusOutput(QObject *parent)
 :	AbstractAudioOutput(parent),
-	mod(NarrowBand),
 	decstate(NULL),
 	outseq(0)
 {
 }
 
-void SpeexOutput::setEnabled(bool enable)
+void OpusOutput::setEnabled(bool enable)
 {
 	if (enable && !enabled()) {
 		Q_ASSERT(!decstate);
-		speex_bits_init(&bits);
-		decstate = speex_decoder_init(modeptr(mod));
+		int error = 0;
+		decstate = opus_decoder_create(sampleRate(), Audio::outChannels(Audio::defaultOutputDevice()), &error);
 		Q_ASSERT(decstate);
+		Q_ASSERT(!error);
 
-		int framesize, rate;
-		speex_decoder_ctl(decstate, SPEEX_GET_FRAME_SIZE, &framesize);
-		speex_decoder_ctl(decstate, SPEEX_GET_SAMPLING_RATE, &rate);
-		setFrameSize(framesize);
-		setSampleRate(rate);
-		qDebug() << "SpeexOutput: frame size" << framesize
-			<< "sample rate" << rate;
+		// int framesize, rate;
+		// speex_decoder_ctl(decstate, SPEEX_GET_FRAME_SIZE, &framesize);
+		// speex_decoder_ctl(decstate, SPEEX_GET_SAMPLING_RATE, &rate);
+		// setFrameSize(framesize);
+		// setSampleRate(rate);
+		// qDebug() << "OpusOutput: frame size" << framesize << "sample rate" << rate;
 
 		AbstractAudioOutput::setEnabled(true);
 
@@ -137,13 +124,12 @@ void SpeexOutput::setEnabled(bool enable)
 		AbstractAudioOutput::setEnabled(false);
 
 		Q_ASSERT(decstate);
-		speex_bits_destroy(&bits);
-		speex_decoder_destroy(decstate);
+		opus_decoder_destroy(decstate);
 		decstate = NULL;
 	}
 }
 
-void SpeexOutput::produceOutput(float *samplebuf)
+void OpusOutput::produceOutput(float *samplebuf)
 {
 	// Grab the next buffer from the queue
 	QByteArray bytebuf;
@@ -157,21 +143,17 @@ void SpeexOutput::produceOutput(float *samplebuf)
 	// Decode the frame
 	if (!bytebuf.isEmpty()) {
 		//qDebug() << "Decode frame:" << bytebuf.size();
-		speex_bits_reset(&bits);
-		speex_bits_read_from(&bits, bytebuf.data(), bytebuf.size());
-		speex_decode(decstate, &bits, samplebuf);
+		int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(), bytebuf.size(), samplebuf, frameSize(), /*decodeFEC:*/1);
+		Q_ASSERT(len > 0);
 
 		// Signal the main thread if the queue empties
 		if (nowempty)
 			queueEmpty();
 	} else {
 		// "decode" a missing frame
-		speex_decode(decstate, NULL, samplebuf);
+		int len = opus_decode_float(decstate, NULL, 0, samplebuf, frameSize(), /*decodeFEC:*/1);
+		Q_ASSERT(len > 0);
 	}
-
-	// Speex uses a range of +/- 32767.0; PortAudio uses +/- 1.0.
-	for (int i = 0; i < frameSize(); i++)
-		samplebuf[i] /= 32767.0;
 #else
 	// Trivial XDR-based encoding, for debugging
 	if (!bytebuf.isEmpty()) {
@@ -188,14 +170,14 @@ void SpeexOutput::produceOutput(float *samplebuf)
 #endif
 }
 
-void SpeexOutput::writeFrame(const QByteArray &buf, qint32 seqno, int queuemax)
+void OpusOutput::writeFrame(const QByteArray &buf, qint32 seqno, int queuemax)
 {
 	// Determine how many frames we missed.
 	qint32 seqdiff = seqno - outseq;
 	if (seqdiff < 0) {
 		// Out-of-order frame - just drop it for now.
 		// XXX insert into queue out-of-order if it's still useful
-		qDebug() << "SpeexOutput: frame received out of order";
+		qDebug() << "OpusOutput: frame received out of order";
 		return;
 	}
 	seqdiff = qMin(seqdiff, maxSkip);
@@ -220,13 +202,13 @@ void SpeexOutput::writeFrame(const QByteArray &buf, qint32 seqno, int queuemax)
 	outseq = seqno+1;
 }
 
-int SpeexOutput::numFramesQueued()
+int OpusOutput::numFramesQueued()
 {
 	QMutexLocker lock(&mutex);
 	return outqueue.size();
 }
 
-void SpeexOutput::reset()
+void OpusOutput::reset()
 {
 	disable();
 
@@ -325,15 +307,14 @@ void VoiceService::gotInStreamConnected(Stream *strm)
 	if (!strm->isConnected())
 		return;
 
-	qDebug() << "VoiceService: incoming connection from"
-		<< peerName(strm->remoteHostId());
+	qDebug() << "VoiceService: incoming connection from" << peerName(strm->remoteHostId());
 
 	ReceiveStream &rs = recv[strm];
 	if (rs.stream != NULL)
 		return;
 
 	rs.stream = strm;
-	rs.vout = new SpeexOutput(this);
+	rs.vout = new OpusOutput(this);
 	connect(strm, SIGNAL(readyReadDatagram()),
 		this, SLOT(readyReadDatagram()));
 	connect(rs.vout, SIGNAL(queueEmpty()),
@@ -413,7 +394,7 @@ void VoiceService::readyReadDatagram()
 
 void VoiceService::voutQueueEmpty()
 {
-	SpeexOutput *vout = (SpeexOutput*)sender();
+	OpusOutput *vout = (OpusOutput*)sender();
 
 	foreach (Stream *strm, recv.keys()) {
 		ReceiveStream &rs = recv[strm];
