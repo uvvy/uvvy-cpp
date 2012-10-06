@@ -27,6 +27,12 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 endmacro(WRAP_RPC_SOURCES)
 
 
+if (APPLE)
+	set(GUI_TYPE MACOSX_BUNDLE)
+endif (APPLE)
+
 
 add_subdirectory(sst)
+add_subdirectory(netsteria)
+
 #add_subdirectory(ui)
