@@ -3,3 +3,5 @@ This is NOT a complete Speex source tree; for the full distribution, see:
 	http://www.speex.org/
 
 See the file COPYING in this directory for Speex codec license information.
+
+@todo: Port speex to 1.2rc1 or even better replace with OPUS.
