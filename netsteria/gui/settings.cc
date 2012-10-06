@@ -103,7 +103,7 @@ AudioControl::AudioControl(QWidget *parent)
 
 	// XX lib/audio.cc should provide dynamic models...
 	QStringList inlist, outlist;
-	int indfl, outdfl;
+	int indfl = 0, outdfl = 0;
 	for (int i = 0; i < Audio::scan(); i++) {
 		if (Audio::inChannels(i) > 0) {
 			if (i == Audio::defaultInputDevice())
