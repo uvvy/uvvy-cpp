@@ -13,4 +13,5 @@
 
 # Build directory
 _build_
+.DS_Store
 
