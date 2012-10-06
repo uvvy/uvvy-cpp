@@ -202,8 +202,8 @@ bool PeerTable::setData(const QModelIndex &index, const QVariant &value, int rol
 	}
 
 	// Changing some dynamic table content.
-	//qDebug() << "PeerTable::setData col" << col << "role" << role
-	//	<< "value" << value.toString();
+	qDebug() << "PeerTable::setData col" << col << "role" << role
+		<< "value" << value.toString();
 	peers[row].dyndata.insert(QPair<int,int>(col,role), value);
 	dataChanged(index, index);
 	return true;

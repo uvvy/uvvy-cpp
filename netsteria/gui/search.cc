@@ -143,7 +143,7 @@ void SearchDialog::searchDone(const QString &text, const QList<QByteArray> ids,
 			continue;
 
 		// Found a new result ID - request info about it.
-		//qDebug() << "Looking up ID" << id.toBase64();
+		qDebug() << "Looking up ID" << id.toBase64();
 		reqids.insert(id, -1);
 		foreach (RegClient *cli, regclients) {
 			if (!cli->registered())
@@ -160,7 +160,7 @@ void SearchDialog::lookupDone(const QByteArray &id, const Endpoint &loc,
 		qDebug("Got lookup info for wrong ID (from old search?)");
 		return;
 	}
-	//qDebug() << "Got RegInfo for ID" << id.toBase64();
+	qDebug() << "Got RegInfo for ID" << id.toBase64();
 
 	// Find or create the table row for this ID.
 	int &idrow = reqids[id];

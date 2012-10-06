@@ -58,7 +58,7 @@ Stream::Stream(AbstractStream *as, QObject *parent)
 
 Stream::~Stream()
 {
-	//qDebug() << "~" << this;
+	qDebug() << "~" << this;
 
 	disconnect();
 	Q_ASSERT(as == NULL);
@@ -376,7 +376,7 @@ StreamResponder::StreamResponder(Host *h)
 
 void StreamResponder::conncli(RegClient *rc)
 {
-	//qDebug() << "StreamResponder: RegClient" << rc->serverName();
+	qDebug() << "StreamResponder: RegClient" << rc->serverName();
 	if (connrcs.contains(rc))
 		return;
 
@@ -412,7 +412,7 @@ Flow *StreamResponder::newFlow(const SocketEndpoint &epi, const QByteArray &idi,
 
 void StreamResponder::clientStateChanged()
 {
-	//qDebug() << "StreamResponder::clientStateChanged";
+	qDebug() << "StreamResponder::clientStateChanged";
 
 	// A RegClient changed state, potentially connected.
 	// (XX make the signal more specific.)

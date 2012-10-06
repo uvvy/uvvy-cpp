@@ -53,7 +53,7 @@ void StreamPeer::connectFlow()
 	//if (receivers(SIGNAL(flowConnected())) == 0)
 	//	return;	// No one is actually waiting for a flow.
 
-	//qDebug() << "Lookup target" << id.toBase64();
+	qDebug() << this << "Lookup target" << id.toBase64();
 
 	// Send a lookup request to each known registration server.
 	foreach (RegClient *rc, h->regClients()) {
@@ -103,16 +103,16 @@ void StreamPeer::lookupDone(const QByteArray &id, const Endpoint &loc,
 				const RegInfo &info)
 {
 	if (id != this->id) {
-		//qDebug() << this << "got lookupDone for wrong id"
-		//	<< id.toBase64()
-		//	<< "expecting" << this->id.toBase64();
+		qDebug() << this << "got lookupDone for wrong id"
+			<< id.toBase64()
+			<< "expecting" << this->id.toBase64();
 		return;	// ignore responses for other lookup requests
 	}
 
 	// Mark this outstanding lookup as completed.
 	RegClient *rc = (RegClient*)sender();
 	if (!lookups.contains(rc)) {
-		//qDebug() << "StreamPeer: unexpected lookupDone signal";
+		qDebug() << "StreamPeer: unexpected lookupDone signal";
 		return;	// ignore duplicates caused by concurrent requests
 	}
 	lookups.remove(rc);
@@ -180,8 +180,8 @@ void StreamPeer::initiate(Socket *sock, const Endpoint &ep)
 	// Don't simultaneously initiate multiple flows to the same endpoint.
 	SocketEndpoint sep(ep, sock);
 	if (initors.contains(sep)) {
-		//qDebug() << this << "already attmpting connection to"
-		//	<< ep.toString();
+		qDebug() << this << "already attmpting connection to"
+			<< ep.toString();
 		return;
 	}
 

@@ -777,8 +777,8 @@ void AbstractOpaqueReader::addKeys(const Region &r,
 		if (r.byrec ? (recofs + k.irecs > r.start)
 			    : (byteofs + k.isize > r.start)) {
 
-			//qDebug() << "Add level" << k.level << "region"
-			//	<< byteofs << "to" << (byteofs + k.isize);
+			qDebug() << "Add level" << k.level << "region"
+				<< byteofs << "to" << (byteofs + k.isize);
 
 			// We need this subregion.
 			Region subr;

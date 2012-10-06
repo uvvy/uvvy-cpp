@@ -45,7 +45,7 @@ IdentData::IdentData(const IdentData &other)
 	k(NULL)
 {
 	if (other.k) {
-		//qDebug("IdentData: copying key");
+		qDebug("IdentData: copying key");
 
 		// Copy the key by serializing and deserializing it.
 		bool isPrivate = other.k->type() == SignKey::Private;

@@ -393,7 +393,7 @@ AbstractStream *BaseStream::openSubstream()
 
 void BaseStream::setPriority(int newpri)
 {
-	//qDebug() << this << "set priority" << newpri;
+	qDebug() << this << "set priority" << newpri;
 	AbstractStream::setPriority(newpri);
 
 	if (tqflow) {
@@ -503,8 +503,8 @@ void BaseStream::transmit(StreamFlow *flow)
 
 		// Register the segment as being in-flight.
 		tflt += hp->payloadSize();
-		//qDebug() << this << "inflight Data" << hp->tsn
-		//	<< "bytes in flight" << tflt;
+		qDebug() << this << "inflight Data" << hp->tsn
+			<< "bytes in flight" << tflt;
 
 		// Transmit the next segment in a regular Data packet.
 		Packet p = tqueue.dequeue();
@@ -540,7 +540,7 @@ void BaseStream::transmit(StreamFlow *flow)
 				&& usid.chanId == flow->txChannelId()
 				&& (quint16)usid.streamCtr == tcuratt->sid
 			/* XXX	&& parent->tflt + segsize <= parent->twin*/) {
-			//qDebug() << "sending Init packet";
+			qDebug() << "sending Init packet";
 
 			// Adjust the in-flight byte count for flow control.
 			// Init packets get "charged" to the parent stream.
@@ -557,7 +557,7 @@ void BaseStream::transmit(StreamFlow *flow)
 			goto noReply;	// no room for data: just Attach
 		for (int i = 0; i < maxAttach; i++) {
 			if (ratt[i].flow == flow && ratt[i].isActive()) {
-				//qDebug() << "sending Reply packet";
+				qDebug() << "sending Reply packet";
 
 				// Adjust the in-flight byte count.
 				tflt += hp->payloadSize();
@@ -606,8 +606,8 @@ void BaseStream::txData(Packet &p)
 	quint64 pktseq;
 	flow->flowTransmit(p.buf, pktseq);
 	Q_ASSERT(pktseq);	// XXX
-	//qDebug() << strm << "tx " << pktseq
-	//	<< "posn" << p.tsn << "size" << p.buf.size();
+	qDebug() << strm << "tx " << pktseq
+		<< "posn" << p.tsn << "size" << p.buf.size();
 
 	// Save the data packet in the flow's ackwait hash.
 	p.late = false;
@@ -624,7 +624,7 @@ void BaseStream::txData(Packet &p)
 
 void BaseStream::txDatagram()
 {
-	//qDebug() << this << "txDatagram";
+	qDebug() << this << "txDatagram";
 
 	// Transmit the whole the datagram immediately,
 	// so that all fragments get consecutive packet sequence numbers.
@@ -706,7 +706,7 @@ void BaseStream::txReset(StreamFlow */*flow*/, quint16 /*sid*/,
 
 void BaseStream::acked(StreamFlow *flow, const Packet &pkt, quint64 rxseq)
 {
-	//qDebug() << "BaseStream::acked packet of size" << pkt.buf.size();
+	qDebug() << "BaseStream::acked packet of size" << pkt.buf.size();
 
 	switch (pkt.type) {
 	case DataPacket:
@@ -1199,8 +1199,8 @@ void BaseStream::rxData(QByteArray &pkt, quint32 byteseq)
 
 		// It's out of order beyond our current receive sequence -
 		// stash it in a re-order buffer, sorted by rsn.
-		//qDebug() << "Received out-of-order segment at" << rseg.rsn
-		//	<< "size" << segsize;
+		qDebug() << "Received out-of-order segment at" << rseg.rsn
+			<< "size" << segsize;
 		int lo = 0, hi = rahead.size();
 		if (hi > 0 && (rahead[hi-1].rsn - rsn) < rsndiff) {
 			// Common case: belongs at end of rahead list.
@@ -1786,7 +1786,7 @@ void BaseStream::fail(const QString &err)
 
 void BaseStream::disconnect()
 {
-	//qDebug() << "Stream" << this << "disconnected: state" << state;
+	qDebug() << "Stream" << this << "disconnected: state" << state;
 
 	// XXX disconnect from stream
 	//Q_ASSERT(0);

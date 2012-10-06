@@ -74,7 +74,7 @@ ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
 
 ChatDialog::~ChatDialog()
 {
-	//qDebug() << "~ChatDialog";
+	qDebug() << "~ChatDialog";
 }
 
 void ChatDialog::closeEvent(QCloseEvent *event)
@@ -204,7 +204,7 @@ static QStringList files(const QMimeData *data)
 		if (url.scheme().toLower() != "file")
 			continue;	// Not a local file
 
-		//qDebug() << "URL" << url.toString();
+		qDebug() << "URL" << url.toString();
 		QString path = url.path();
 #ifdef WIN32
 		// Get rid of the leading slash before the drive letter.
@@ -417,7 +417,7 @@ void ChatScanner::scanProgress()
 		if (!scan->isDone())
 			alldone = false;
 	}
-	//qDebug() << "ChatScanner:" << gotbytes << "of" << totbytes;
+	qDebug() << "ChatScanner:" << gotbytes << "of" << totbytes;
 
 	if (alldone) {
 		QList<FileInfo> fil;

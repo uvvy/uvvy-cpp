@@ -93,7 +93,7 @@ int SaveDialog::numActive()
 
 void SaveDialog::save(const FileInfo &info, const QString &localname)
 {
-	//qDebug() << "Save" << info.name() << "as" << localname;
+	qDebug() << "Save" << info.name() << "as" << localname;
 
 	init();
 
@@ -106,7 +106,7 @@ void SaveDialog::save(const FileInfo &info, const QString &localname)
 
 void SaveDialog::cleanup()
 {
-	//qDebug() << "SaveDialog::cleanup";
+	qDebug() << "SaveDialog::cleanup";
 
 	for (int row = items.size()-1; row >= 0; row--) {
 		SaveItem *item = items.at(row);
@@ -221,7 +221,7 @@ void SaveItem::pausePressed()
 
 void SaveItem::cancelPressed()
 {
-	//qDebug() << "SaveItem::cancelPressed";
+	qDebug() << "SaveItem::cancelPressed";
 
 	dlg->items.removeAll(this);
 	dlg->writestate();

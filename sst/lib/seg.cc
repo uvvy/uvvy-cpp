@@ -196,7 +196,7 @@ bool FlowSocket::bindFlow(const Endpoint &remoteep, Channel localchan,
 
 bool FlowSocket::send(const Endpoint &ep, const char *data, int size)
 {
-	//qDebug() << this << "send to" << ep << "size" << size;
+	qDebug() << this << "send to" << ep << "size" << size;
 
 	Q_ASSERT(ep == peer);
 	Q_ASSERT(fseg);

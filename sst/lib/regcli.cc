@@ -117,7 +117,7 @@ void RegClient::registerAt(const QString &srvname, quint16 srvport)
 
 void RegClient::reregister()
 {
-	//qDebug() << this << "reregister";
+	qDebug() << this << "reregister";
 
 	Q_ASSERT(!srvname.isEmpty());
 	Q_ASSERT(srvport != 0);
@@ -177,7 +177,7 @@ void RegClient::goInsert1()
 
 void RegClient::sendInsert1()
 {
-	//qDebug("Insert1");
+	qDebug("Insert1");
 
 	// Send our Insert1 message
 	QByteArray msg;
@@ -189,7 +189,7 @@ void RegClient::sendInsert1()
 
 void RegClient::gotInsert1Reply(XdrStream &rs)
 {
-	//qDebug("Insert1 reply");
+	qDebug("Insert1 reply");
 
 	// Decode the rest of the reply
 	rs >> chal;
@@ -204,7 +204,7 @@ void RegClient::gotInsert1Reply(XdrStream &rs)
 
 void RegClient::goInsert2()
 {
-	//qDebug("Insert2");
+	qDebug("Insert2");
 
 	// Find our serialized public key to send to the server.
 	Ident identi = h->hostIdent();
@@ -226,7 +226,7 @@ void RegClient::goInsert2()
 
 void RegClient::sendInsert2()
 {
-	//qDebug("Insert2 reply");
+	qDebug("Insert2 reply");
 
 	// Send our Insert2 message
 	QByteArray msg;
@@ -275,7 +275,7 @@ void RegClient::lookup(const QByteArray &idtarget, bool notify)
 
 void RegClient::sendLookup(const QByteArray &idtarget, bool notify)
 {
-	//qDebug() << "RegClient: send lookup for ID" << idtarget.toBase64();
+	qDebug() << "RegClient: send lookup for ID" << idtarget.toBase64();
 
 	// Prepare the Lookup message
 	QByteArray msg;
@@ -287,7 +287,7 @@ void RegClient::sendLookup(const QByteArray &idtarget, bool notify)
 
 void RegClient::gotLookupReply(XdrStream &rs, bool isnotify)
 {
-	//qDebug() << this << "gotLookupReply" << isnotify;
+	qDebug() << this << "gotLookupReply" << isnotify;
 
 	// Decode the rest of the reply
 	QByteArray targetid, targetinfo;
@@ -312,7 +312,7 @@ void RegClient::gotLookupReply(XdrStream &rs, bool isnotify)
 		//qDebug("RegClient: useless Lookup result");
 		return;
 	}
-	//qDebug() << this << "processed Lookup for" << targetid.toBase64();
+	qDebug() << this << "processed Lookup for" << targetid.toBase64();
 	lookups.remove(targetid);
 	punches.remove(targetid);
 	lookupDone(targetid, targetloc, reginfo);

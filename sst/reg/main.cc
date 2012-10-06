@@ -52,8 +52,8 @@ RegServer::udpReadyRead()
 void
 RegServer::udpDispatch(QByteArray &msg, const Endpoint &srcep)
 {
-	//qDebug("Received %d-byte message from %s:%d",
-	//	msg.size(), srcep.addr.toString().toAscii().data(), srcep.port);
+	qDebug("Received %d-byte message from %s:%d",
+		msg.size(), srcep.addr.toString().toAscii().data(), srcep.port);
 
 	XdrStream rxs(msg);
 	quint32 magic, code;
@@ -82,7 +82,7 @@ RegServer::udpDispatch(QByteArray &msg, const Endpoint &srcep)
 void
 RegServer::doInsert1(XdrStream &rxs, const Endpoint &srcep)
 {
-	//qDebug("Insert1");
+	qDebug() << this << "Insert1";
 
 	// Decode the rest of the request message (after the 32-bit code)
 	QByteArray idi, nhi;
@@ -134,7 +134,7 @@ QByteArray RegServer::calcCookie(const Endpoint &srcep, const QByteArray &idi,
 void
 RegServer::doInsert2(XdrStream &rxs, const Endpoint &srcep)
 {
-	//qDebug("Insert2");
+	qDebug() << this << "Insert2";
 
 	// Decode the rest of the request message (after the 32-bit code)
 	QByteArray idi, ni, chal, info, key, sig;
@@ -260,7 +260,7 @@ RegServer::doLookup(XdrStream &rxs, const Endpoint &srcep)
 void RegServer::replyLookup(RegRecord *reci, quint32 replycode,
 				const QByteArray &idr, RegRecord *recr)
 {
-	//qDebug() << "replyLookup" << replycode;
+	qDebug() << this << "replyLookup" << replycode;
 
 	QByteArray resp;
 	XdrStream wxs(&resp, QIODevice::WriteOnly);

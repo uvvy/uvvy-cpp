@@ -104,7 +104,7 @@ void DatagramStream::shutdown(Stream::ShutdownMode mode)
 		pos = size();
 
 	if (strm == NULL) {
-		//qDebug() << this << "self-destructing";
+		qDebug() << this << "self-destructing";
 		deleteLater();
 	}
 }

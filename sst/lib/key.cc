@@ -121,7 +121,7 @@ static QByteArray calcKey(const QByteArray &master,
 		const QByteArray &nhi, const QByteArray &nr,
 		char which, int keylen)
 {
-	//qDebug("calcKey: master size %d bytes", master.size());
+	qDebug("calcKey: master size %d bytes", master.size());
 
 	QByteArray masterHash = Sha256::hash(master);
 	Q_ASSERT(masterHash.size() == HMACKEYLEN);
@@ -470,9 +470,9 @@ void KeyResponder::gotDhI2(KeyChunkDhI2Data &i2, const SocketEndpoint &src)
 	}
 
 	// Verify the initiator's identity
-	//qDebug() << "eidi" << kii.eidi.toBase64()
-	//	<< "idpki" << kii.idpki.toBase64()
-	//	<< "sigi" << kii.sigi.toBase64();
+	qDebug() << "eidi" << kii.eidi.toBase64()
+		<< "idpki" << kii.idpki.toBase64()
+		<< "sigi" << kii.sigi.toBase64();
 	Ident identi(kii.eidi);
 	if (!identi.setKey(kii.idpki)) {
 		qDebug("Received I2 with bad initiator public key");
@@ -480,16 +480,16 @@ void KeyResponder::gotDhI2(KeyChunkDhI2Data &i2, const SocketEndpoint &src)
 	}
 	QByteArray sighash = calcSigHash(i2.group, i2.keylen, nhi, i2.nr,
 					i2.dhi, i2.dhr, kii.eidr);
-	//qDebug("idi %s\nidpki %s\nsighash %s\nsigi %s\n",
-	//	idi.toBase64().data(), idpki.toBase64().data(),
-	//	sighash.toBase64().data(), sigi.toBase64().data());
+	qDebug("idi %s\nidpki %s\nsighash %s\nsigi %s\n",
+		i2.idi.toBase64().data(), kii.idpki.toBase64().data(),
+		sighash.toBase64().data(), kii.sigi.toBase64().data());
 	if (!identi.verify(sighash, kii.sigi)) {
 		qDebug("Received I2 with bad initiator signature");
 		return;	// XXX generate cached error response instead
 	}
 
-	//qDebug() << "Authenticated initiator ID" << idi.toBase64()
-	//	<< "at" << src.toString();
+	qDebug() << "Authenticated initiator ID" << i2.idi.toBase64()
+		<< "at" << src.toString();
 
 	// Everything looks good - setup a flow and produce our R2 response.
 	QByteArray ulpr;
@@ -520,7 +520,7 @@ void KeyResponder::gotDhI2(KeyChunkDhI2Data &i2, const SocketEndpoint &src)
 	XdrStream wds(&encidr, QIODevice::WriteOnly);
 	wds << kir;
 	Q_ASSERT(wds.status() == wds.Ok);
-	//qDebug() << "encidr:" << encidr.toBase64() << "size" << encidr.size();
+	qDebug() << "encidr:" << encidr.toBase64() << "size" << encidr.size();
 
 	// XX There appears to be a bug in the "optimized" x86 version
 	// of AES-CBC at least in openssl-0.9.8b when given an input
@@ -649,7 +649,7 @@ KeyInitiator::~KeyInitiator()
 void
 KeyInitiator::cancel()
 {
-	//qDebug() << this << "done initiating to" << sepr;
+	qDebug() << this << "done initiating to" << sepr;
 
 	if ((methods & KEYMETH_CHK) &&
 			h->initchks.value(KeyEpChk(sepr, chkkey)) == this)
@@ -990,7 +990,7 @@ void
 KeyInitiator::retransmit(bool fail)
 {
 	if (fail) {
-		//qDebug("Key exchange failed");
+		qDebug("Key exchange failed");
 		state = Done;
 		txtimer.stop();
 		return completed(false);
