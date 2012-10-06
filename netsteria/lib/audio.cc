@@ -295,8 +295,7 @@ void Audio::open()
 	unsigned int bufferFrames = minframesize;
 
 	try {
-		/*outena ? &outparam : NULL, inena ? &inparam : NULL*/
-		audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, maxrate, &bufferFrames, rtcallback);
+		audio_inst->openStream(outena ? &outparam : NULL, inena ? &inparam : NULL, RTAUDIO_FLOAT32, maxrate, &bufferFrames, rtcallback);
 	}
     catch (RtError &error) {
     	qWarning() << "Couldn't open stream" << error.what();
@@ -368,7 +367,7 @@ int Audio::rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
 	if (outputBuffer != NULL)
 		mixout((float*)outputBuffer);
 #endif
-	
+
 	return 0;
 }
 
