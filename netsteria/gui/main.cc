@@ -64,7 +64,7 @@ void myMsgHandler(QtMsgType type, const char *msg)
 	switch (type) {
 	case QtDebugMsg:
 		strm << "Debug: " << msg << '\n';
-		std::cout << "Debug: " << msg << '\n';
+		// std::cout << "Debug: " << msg << '\n';
 		break;
 	case QtWarningMsg:
 		strm << "Warning: " << msg << '\n';
