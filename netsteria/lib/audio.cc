@@ -147,7 +147,7 @@ int Audio::defaultInputDevice()
 
 int Audio::defaultOutputDevice()
 {
-	return 2;
+	return 3;
 }
 
 void Audio::setInputDevice(int dev)
