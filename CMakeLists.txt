@@ -4,7 +4,7 @@ project(metta-grabber)
 
 find_package(Qt4 REQUIRED)
 #find_package(Boost REQUIRED)
-#find_package(OpenSSL REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 
 # How to run rpcgen to build XDR stubs
