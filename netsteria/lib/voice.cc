@@ -14,9 +14,9 @@ OpusInput::OpusInput(QObject *parent)
 {
 }
 
-void OpusInput::setEnabled(bool enable)
+void OpusInput::setEnabled(bool enabling)
 {
-	if (enable && !enabled()) {
+	if (enabling && !enabled()) {
 		Q_ASSERT(!encstate);
 		int error = 0;
 		encstate = opus_encoder_create(48000, nChannels, OPUS_APPLICATION_VOIP, &error);
@@ -36,7 +36,7 @@ void OpusInput::setEnabled(bool enable)
 
 		AbstractAudioInput::setEnabled(true);
 
-	} else if (!enable && enabled()) {
+	} else if (!enabling && enabled()) {
 
 		AbstractAudioInput::setEnabled(false);
 
@@ -98,9 +98,9 @@ OpusOutput::OpusOutput(QObject *parent)
 {
 }
 
-void OpusOutput::setEnabled(bool enable)
+void OpusOutput::setEnabled(bool enabling)
 {
-	if (enable && !enabled()) {
+	if (enabling && !enabled()) {
 		Q_ASSERT(!decstate);
 		int error = 0;
 		decstate = opus_decoder_create(48000, nChannels, &error);
@@ -116,7 +116,7 @@ void OpusOutput::setEnabled(bool enable)
 
 		AbstractAudioOutput::setEnabled(true);
 
-	} else if (!enable && enabled()) {
+	} else if (!enabling && enabled()) {
 
 		AbstractAudioOutput::setEnabled(false);
 

@@ -520,9 +520,9 @@ AbstractAudioInput::AbstractAudioInput(int framesize, double samplerate,
 	setSampleRate(samplerate);
 }
 
-void AbstractAudioInput::setEnabled(bool enable)
+void AbstractAudioInput::setEnabled(bool enabling)
 {
-	if (enable && !enabled()) {
+	if (enabling && !enabled()) {
 		if (frameSize() <= 0 || sampleRate() <= 0) {
 			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
 			return;
@@ -535,7 +535,7 @@ void AbstractAudioInput::setEnabled(bool enable)
 		if (wasempty || parate < sampleRate())
 			Audio::reopen(); // (re-)open at suitable rate
 
-	} else if (!enable && enabled()) {
+	} else if (!enabling && enabled()) {
 		Q_ASSERT(Audio::instreams.contains(this));
 		Audio::instreams.removeAll(this);
 		AudioStream::setEnabled(false);
@@ -560,9 +560,9 @@ AbstractAudioOutput::AbstractAudioOutput(int framesize, double samplerate,
 	setSampleRate(samplerate);
 }
 
-void AbstractAudioOutput::setEnabled(bool enable)
+void AbstractAudioOutput::setEnabled(bool enabling)
 {
-	if (enable && !enabled()) {
+	if (enabling && !enabled()) {
 		if (frameSize() <= 0 || sampleRate() <= 0) {
 			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
 			return;
@@ -575,7 +575,7 @@ void AbstractAudioOutput::setEnabled(bool enable)
 		if (wasempty || parate < sampleRate())
 			Audio::reopen(); // (re-)open at suitable rate
 
-	} else if (!enable && enabled()) {
+	} else if (!enabling && enabled()) {
 		Q_ASSERT(Audio::outstreams.contains(this));
 		Audio::outstreams.removeAll(this);
 		AudioStream::setEnabled(false);
@@ -776,9 +776,9 @@ void AudioLoop::setLoopDelay(float secs)
 	delay = secs;
 }
 
-void AudioLoop::setEnabled(bool enable)
+void AudioLoop::setEnabled(bool enabling)
 {
-	if (enable && !enabled()) {
+	if (enabling && !enabled()) {
 		int framesize = frameSize() ? frameSize() : monFrameSize;
 		in.setFrameSize(framesize);
 		out.setFrameSize(framesize);
@@ -792,11 +792,11 @@ void AudioLoop::setEnabled(bool enable)
 
 		in.enable();
 
-	} else if (!enable && enabled()) {
+	} else if (!enabling && enabled()) {
 		in.reset();
 		out.reset();
 	}
-	AudioStream::setEnabled(enable);
+	AudioStream::setEnabled(enabling);
 }
 
 void AudioLoop::inReadyRead()
