@@ -492,7 +492,7 @@ int main(int argc, char **argv)
 	qDebug() << "local endpoints" << myreginfo.endpoints().size();
 
 	// XXX allow user-modifiable set of regservers
-	regcli("xi.lcs.mit.edu");
+	// regcli("xi.lcs.mit.edu");
 	regcli("pdos.csail.mit.edu");
 
 	// Load and initialize our friends table
