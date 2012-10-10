@@ -6,4 +6,4 @@ set(web_HEADERS cli.h srv.h)
 qt4_wrap_cpp(web_HEADERS_MOC ${web_HEADERS})
 
 add_executable(webtest main.cc cli.cc srv.cc ${web_HEADERS_MOC})
-target_link_libraries(webtest sst sst_test ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(webtest sst routing sst_test ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})

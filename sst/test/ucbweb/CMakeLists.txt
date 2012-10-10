@@ -10,4 +10,4 @@ if (WIN32)
 endif (WIN32)
 
 add_executable(ucbwebtest main.cc cli.cc srv.cc ${ucbweb_HEADERS_MOC})
-target_link_libraries(ucbwebtest sst sst_test ${QT_LIBRARIES} ${OPENSSL_LIBRARIES} ${ucbweb_EXTRA_LIBS})
+target_link_libraries(ucbwebtest sst routing sst_test ${QT_LIBRARIES} ${OPENSSL_LIBRARIES} ${ucbweb_EXTRA_LIBS})

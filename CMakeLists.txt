@@ -33,6 +33,8 @@ endif (APPLE)
 
 
 add_subdirectory(sst)
+add_subdirectory(routing)
+#add_subdirectory(naming)
 add_subdirectory(netsteria)
 
 #add_subdirectory(ui)

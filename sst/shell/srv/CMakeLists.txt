@@ -7,4 +7,4 @@ set(nshd_HEADERS srv.h ../proto.h ../asyncfile.h)
 qt4_wrap_cpp(nshd_HEADERS_MOC ${nshd_HEADERS})
 
 add_executable(nshd main.cc srv.cc ../proto.cc ../asyncfile.cc ${nshd_HEADERS_MOC})
-target_link_libraries(nshd sst ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(nshd sst routing ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})

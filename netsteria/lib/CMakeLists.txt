@@ -1,6 +1,6 @@
 set(QT_USE_QTNETWORK TRUE)
 include(${QT_USE_FILE})
-include_directories(../3rdparty/opus-1.0.1/include ../3rdparty/rtaudio-4.0.11 ../../sst/lib)
+include_directories(../3rdparty/opus-1.0.1/include ../3rdparty/rtaudio-4.0.11 ../../sst/lib ../../routing/lib)
 
 set(netsteria_SOURCES store.cc share.cc index.cc arch.cc chunk.cc file.cc opaque.cc
 		              action.cc scan.cc update.cc crypt.cc adler32.cc rcsum.cc peer.cc audio.cc voice.cc)
