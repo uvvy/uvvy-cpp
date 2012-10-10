@@ -8,7 +8,7 @@
 #include <QUdpSocket>
 #include <QBasicTimer>
 
-#include "reg.h"
+#include "reginfo.h"
 #include "util.h"
 
 namespace SST {

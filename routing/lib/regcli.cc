@@ -22,7 +22,7 @@
 #include <QHostInfo>
 #include <QtDebug>
 
-#include "reg.h"
+#include "reginfo.h"
 #include "regcli.h"
 #include "ident.h"
 #include "sock.h"

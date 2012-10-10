@@ -8,7 +8,7 @@
 #include "main.h"
 #include "ident.h"
 #include "util.h"
-#include "reg.h"
+#include "reginfo.h"
 #include "xdr.h"
 #include "sha2.h"
 
@@ -318,7 +318,7 @@ RegServer::doSearch(XdrStream &rxs, const Endpoint &srcep)
 			continue; // It's the one we started with
 		minset.intersect(kwhash[kw]);
 	}
-	//qDebug() << "Minset size" << minset.size();
+	qDebug() << "Minset size" << minset.size();
 
 	// If client supplied no keywords, (try to) return all records.
 	const QSet<RegRecord*> &results

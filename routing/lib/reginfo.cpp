@@ -21,7 +21,7 @@
 
 #include <QtDebug>
 
-#include "reg.h"
+#include "reginfo.h"
 #include "xdr.h"
 #include "util.h"
 

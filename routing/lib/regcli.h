@@ -22,7 +22,7 @@
 
 #include <QSet>
 
-#include "reg.h"
+#include "reginfo.h"
 #include "sock.h"
 #include "timer.h"
 

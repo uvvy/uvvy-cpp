@@ -67,6 +67,7 @@ public:
         Endpoints   = 0x00000001,   // Private addrs for hole punch
 
         // UTF-8 string tags representing advertised information
+        // this is fairly preliminary at the moment.
         HostName    = 0x00010001,   // Name of host (machine)
         OwnerName   = 0x00010002,   // Name of owner (human)
         City        = 0x00010003,   // Metropolitan area
