@@ -2,4 +2,4 @@
 include_directories(../sst/lib lib)
 
 add_subdirectory(lib)
-add_subdirectory(reg)
+add_subdirectory(regserver)
