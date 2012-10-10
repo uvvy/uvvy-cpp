@@ -1,54 +1,42 @@
+Structured Streams Transport
+============================
 
-			Structured Stream Transport
-			~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SST is an experimental transport protocol designed to address the needs
+of modern applications that need to juggle many asynchronous communication
+activities in parallel, such as downloading different parts of a web page
+simultaneously and playing multiple audio and video streams at once.
 
 Project home page: http://pdos.csail.mit.edu/uia/sst/
 
-Requirements
-------------
-
-Software package dependencies:		Can be obtained from:
-	- OpenSSL libraries		openssl.org
-	- Qt 4 GUI toolkit		trolltech.com
-
-
-Building and Installing
------------------------
-
-The procedures to build have changed since original SST!
-
-   Run cmake in build directory, followed by make.
-
 Using SST
----------
+=========
 
 ...modes of use...
 
 ...event loop integration:
 (a) if your app uses Qt...
 (b) if your app uses glib...  Qt 4.2 contains built-in support
-	for integration with glib's event loop.
-	Make sure Qt was compiled and installed with
-	glib support (the -glib option on the configure line).
-	Qt will then by default use glib's main event loop instead of its own.
+    for integration with glib's event loop.
+    Make sure Qt was compiled and installed with
+    glib support (the -glib option on the configure line).
+    Qt will then by default use glib's main event loop instead of its own.
 (c) if neither of the above apply, implement a few callback functions...
 
 
 Directory Structure
-~~~~~~~~~~~~~~~~~~~
+===================
 
-inc		Public C/C++ header files for SST libraries
-lib		Core SST protocol stack implementation library (libsst)
-c		API wrapper/remote access library for C programs (libsst_c)
-reg		Lightweight standalone registration server for NAT traversal
-doc		Documentation for the SST protocol stack and API wrapper
-rpcgen		Version of Sun rpcgen modified to produce Qt-style XDR stubs
-shell		Simple SST-based remote shell application
-test		Various small test, analysis, and demo programs
+inc         Public C/C++ header files for SST libraries
+lib         Core SST protocol stack implementation library (libsst)
+c           API wrapper/remote access library for C programs (libsst_c)
+doc         Documentation for the SST protocol stack and API wrapper
+rpcgen      Version of Sun rpcgen modified to produce Qt-style XDR stubs
+shell       Simple SST-based remote shell application
+test        Various small test, analysis, and demo programs
 
 
 License
--------
+=======
 
 The SST prototype implemenation relies on the Qt 4 toolkit from Trolltech, now
 part of Nokia.  Qt versions 4.0 through 4.4 were released under the GNU General
