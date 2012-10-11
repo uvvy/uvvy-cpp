@@ -1,16 +1,6 @@
 Metta Grabber prototype
 =======================
 
-Dependencies
-* Qt4 at http://qt-project.org/
-* libqxt at http://libqxt.org/
-* boost at http://boost.org/
-* cmake at http://cmake.org/
-
-* sst from http://pdos.csail.mit.edu/uia/sst/           (included in this repository)
-* opus at http://opus-codec.org/                        (included in this repository)
-* rtaudio at http://www.music.mcgill.ca/~gary/rtaudio/  (included in this repository)
-
 First prototype requirements
 * должна быть возможность добавить устройство в "кластер" своих устройств, разрешая ему таким образом поиск по всему кластеру и возможность модифицировать данные в этом кластере.
 * должна быть возможность удалить устройство из кластера, при этом доступа к этому устройству может уже и не быть. Например, потерянный телефон.
@@ -26,3 +16,21 @@ GUI features
 * drag-n-drop data to basket
 * metadata assignments - how?
 * how to perform search? an ESC-interface sounds intriguing
+
+Dependencies
+============
+
+* Qt4 at http://qt-project.org/
+* cmake at http://cmake.org/
+
+Includede in this repository:
+* sst from http://pdos.csail.mit.edu/uia/sst/
+* opus at http://opus-codec.org/
+* rtaudio at http://www.music.mcgill.ca/~gary/rtaudio/
+* miniupnpc from https://github.com/miniupnp/miniupnp/tree/master/miniupnpc
+* libnatpmp from http://thebends.googlecode.com/svn/trunk/nat/pmp
+
+Not yet required
+* libqxt at http://libqxt.org/
+* boost at http://boost.org/
+
