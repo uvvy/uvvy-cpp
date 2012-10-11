@@ -23,7 +23,7 @@ Dependencies
 * Qt4 at http://qt-project.org/
 * cmake at http://cmake.org/
 
-Includede in this repository:
+Included in this repository:
 * sst from http://pdos.csail.mit.edu/uia/sst/
 * opus at http://opus-codec.org/
 * rtaudio at http://www.music.mcgill.ca/~gary/rtaudio/
