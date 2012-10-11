@@ -22,7 +22,7 @@ Qt wishlist for SST:
 - Base64 conversion flags for URL-safe and/or '='-padding free variants.
 - QTimer hooks allowing time virtualization for simulation purposes.
 - Make *Datagram calls in QUdpSocket virtual, or else
-  support custom NetworkProxy extensions for vitualizing the network.
+  support custom NetworkProxy extensions for virtualizing the network.
 - Make QAbstractSocket a "real" abstract base class that can be subclassed
   for reasons other than to wrap a different kind of native socket.
 - Make Qt's signal/slot mechanism handle namespaces in type names properly.
