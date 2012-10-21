@@ -92,7 +92,7 @@ void myMsgHandler(QtMsgType type, const char *msg)
 MainWindow::MainWindow()
 :	searcher(NULL)
 {
-	QIcon appicon(":/img/netsteria.png");
+	QIcon appicon(":/img/mettanode.png");
 
 	setWindowTitle(tr("Netsteria"));
 	setWindowIcon(appicon);
@@ -106,8 +106,8 @@ MainWindow::MainWindow()
 	friendslist->setColumnWidth(0, 150);
 	friendslist->setColumnWidth(1, 250);
 	friendslist->setColumnWidth(2, 75);
-	friendslist->setColumnHidden(1, true);
-	friendslist->setColumnHidden(COL_LISTEN, true);	// XXX
+	// friendslist->setColumnHidden(1, true);
+	// friendslist->setColumnHidden(COL_LISTEN, true);	// XXX
 	friendslist->verticalHeader()->hide();
 	connect(friendslist, SIGNAL(clicked(const QModelIndex&)),
 		this, SLOT(friendsClicked(const QModelIndex&)));
@@ -386,7 +386,7 @@ void MainWindow::exitApp()
 	QApplication::exit(0);
 }
 
-static void regcli(const QString &hostname)
+static void regclient(const QString &hostname)
 {
 	RegClient *regcli = new RegClient(ssthost);
 	regcli->setInfo(myreginfo);
@@ -492,8 +492,8 @@ int main(int argc, char **argv)
 	qDebug() << "local endpoints" << myreginfo.endpoints().size();
 
 	// XXX allow user-modifiable set of regservers
-	// regcli("xi.lcs.mit.edu");
-	regcli("pdos.csail.mit.edu");
+	regclient("pdos.csail.mit.edu");
+	regclient("motoko.madfire.net");
 
 	// Load and initialize our friends table
 	friends = new PeerTable(NCOLS);
