@@ -1,7 +1,7 @@
 //
 // File and directory metadata management
-#ifndef FILE_H
-#define FILE_H
+//
+#pragma once
 
 #include <QHash>
 #include <QAbstractItemModel>
@@ -36,8 +36,10 @@ struct FileTreeStats
 };
 
 
-// FileInfo represents a Netsteria file metadata record.
-// The contents of a directory is a sequence of encoded FileInfo records.
+/**
+ * FileInfo represents a Netsteria file metadata record.
+ * The contents of a directory is a sequence of encoded FileInfo records.
+ */
 class FileInfo
 {
 public:
@@ -174,14 +176,14 @@ inline SST::XdrStream &operator>>(SST::XdrStream &xs, FileInfo &fi)
 	{ fi.decode(xs); return xs; }
 
 
-// This class provides convenient asynchronous directory reading.
-// When it reads a directory chunk, it decodes the chunk into a FileInfo list,
-// and then supplies the list along with the position at which the new entries
-// should be inserted in a list the client is presumably building.
+/**
+ * This class provides convenient asynchronous directory reading.
+ * When it reads a directory chunk, it decodes the chunk into a FileInfo list,
+ * and then supplies the list along with the position at which the new entries
+ * should be inserted in a list the client is presumably building.
+ */
 class AbstractDirReader : public AbstractOpaqueReader
 {
-public:
-private:
 	QList<qint64> recs;
 
 public:
@@ -211,7 +213,9 @@ protected:
 				qint64 size, int nrecs);
 };
 
-// Concrete version of AbstractDirReader that sends signals.
+/**
+ * Concrete version of AbstractDirReader that sends signals.
+ */
 class DirReader : public AbstractDirReader
 {
 public:
@@ -225,8 +229,10 @@ signals:
 };
 
 
-// Netsteria File browser model that can handle multiple top-level files
-// and browsing into subdirectories.
+/**
+ * Netsteria File browser model that can handle multiple top-level files
+ * and browsing into subdirectories.
+ */
 class FileModel : public QAbstractItemModel
 {
 	static const int columns = 2;
@@ -288,5 +294,3 @@ public:
 		Qt::ItemFlags itemFlags = Qt::ItemIsEnabled
 					| Qt::ItemIsSelectable);
 };
-
-#endif	// FILE_H

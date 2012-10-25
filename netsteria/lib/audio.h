@@ -142,9 +142,11 @@ public:
 	void setSampleRate(double samplerate);
 };
 
-// This abstract base class represents a source of audio input
-// from the currently selected input device, at a controllable bitrate.
-// Currently provides one-channel (Mono) audio only (appropriate for VoIP).
+/**
+ * This abstract base class represents a source of audio input
+ * from the currently selected input device, at a controllable bitrate.
+ * Currently provides one-channel (Mono) audio only (appropriate for VoIP).
+ */
 class AbstractAudioInput : public AudioStream
 {
 	friend class Audio;
@@ -165,9 +167,11 @@ protected:
 	virtual void acceptInput(const float *buf) = 0;
 };
 
-// This abstract base class represents a sink for audio output
-// to the currently selected output device, at a controllable bitrate.
-// Currently provides one-channel (Mono) audio only (appropriate for VoIP).
+/**
+ * This abstract base class represents a sink for audio output
+ * to the currently selected output device, at a controllable bitrate.
+ * Currently provides one-channel (Mono) audio only (appropriate for VoIP).
+ */
 class AbstractAudioOutput : public AudioStream
 {
 	friend class Audio;
@@ -193,9 +197,11 @@ private:
 	void getOutput(float *buf);
 };
 
-// This class represents a high-level source of audio input
-// from the currently selected input device, at a controllable bitrate,
-// providing automatic queueing and interthread synchronization.
+/**
+ * This class represents a high-level source of audio input
+ * from the currently selected input device, at a controllable bitrate,
+ * providing automatic queueing and interthread synchronization.
+ */
 class AudioInput : public AbstractAudioInput
 {
 	Q_OBJECT
@@ -233,9 +239,11 @@ private:
 	void readInto(float *buf, int nframes);
 };
 
-// This class represents a high-level sink for audio output
-// to the currently selected output device, at a controllable bitrate,
-// providing automatic queueing and interthread synchronization.
+/**
+ * This class represents a high-level sink for audio output
+ * to the currently selected output device, at a controllable bitrate,
+ * providing automatic queueing and interthread synchronization.
+ */
 class AudioOutput : public AbstractAudioOutput
 {
 	friend class Audio;
@@ -271,7 +279,9 @@ protected:
 	virtual void produceOutput(float *buf);
 };
 
-// Audio loopback - copies input to output with variable delay
+/**
+ * Audio loopback - copies input to output with variable delay.
+ */
 class AudioLoop : public AudioStream
 {
 	Q_OBJECT
@@ -298,7 +308,9 @@ private slots:
 	void inReadyRead();
 };
 
-// Private helper class for input level monitoring
+/**
+ * Private helper class for input level monitoring.
+ */
 class AudioInputMonitor : public AudioInput
 {
 	friend class Audio;

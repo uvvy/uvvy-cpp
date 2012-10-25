@@ -1,7 +1,3 @@
-//
-// Sharing of files and directory trees on the local file system.
-// This is the basis for filesync/backup.
-//
 #pragma once
 
 #include <QSet>
@@ -16,7 +12,10 @@
 class Share;
 class ShareFile;
 
-
+/**
+Sharing of files and directory trees on the local file system.
+This is the basis for filesync/backup.
+*/
 class Share : public QObject
 {
 	friend class ShareFile;
@@ -39,7 +38,9 @@ private:
 };
 
 
-// The Share class represents a shareable object on a local file system.
+/**
+ * The Share class represents a shareable object on a local file system.
+ */
 class ShareFile : public QObject
 {
 	friend class Share;

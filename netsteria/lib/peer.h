@@ -15,12 +15,14 @@
 class QSettings;
 
 
-// Qt table model describing a list of peers.
-// The first column always lists the human-readable peer names,
-// and the second column always lists the base64 encodings of the host IDs.
-// (A UI would typically hide the second column except in "advanced" mode.)
-// An arbitrary number of additional columns can hold dynamic content:
-// e.g., online status information about each peer.
+/**
+ * Qt table model describing a list of peers.
+ * The first column always lists the human-readable peer names,
+ * and the second column always lists the base64 encodings of the host IDs.
+ * (A UI would typically hide the second column except in "advanced" mode.)
+ * An arbitrary number of additional columns can hold dynamic content:
+ * e.g., online status information about each peer.
+ */
 class PeerTable : public QAbstractTableModel
 {
 	Q_OBJECT

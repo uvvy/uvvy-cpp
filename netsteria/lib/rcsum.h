@@ -1,18 +1,17 @@
-//
-// RollingChecksum:
-// Simple 32-bite rolling checksum algorithm inspired by Adler-32,
-// which can be easily rolled through a buffer at byte granularity.
-// Not exactly Adler-32 because we use mod-65536 instead of mod-65521,
-// for simplicity and efficiency of the checksum calculations.
-// (The nice delayed modulo optimization in Adler-32 doesn't work
-// when it's used as a rolling checksum, unfortunately.)
-//
 #ifndef RCSUM_H
 #define RCSUM_H
 
 #include <stddef.h>
 #include <stdint.h>
 
+/**
+Simple 32-bite rolling checksum algorithm inspired by Adler-32,
+which can be easily rolled through a buffer at byte granularity.
+Not exactly Adler-32 because we use mod-65536 instead of mod-65521,
+for simplicity and efficiency of the checksum calculations.
+(The nice delayed modulo optimization in Adler-32 doesn't work
+when it's used as a rolling checksum, unfortunately.)
+*/
 class RollingChecksum
 {
 	const uint8_t *buf;
