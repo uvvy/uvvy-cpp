@@ -28,10 +28,10 @@ static void loadIcons()
 {
 	if (filePixmap)
 		return;
-	filePixmap = new QPixmap("img/file-16.png");
-	dirOpenPixmap = new QPixmap("img/diropen-16.png");
-	dirClosedPixmap = new QPixmap("img/dirclosed-16.png");
-	filelinkPixmap = new QPixmap("img/filelink-16.png");
+	filePixmap = new QPixmap(":/trolltech/styles/commonstyle/images/file-16.png");
+	dirOpenPixmap = new QPixmap(":/trolltech/styles/commonstyle/images/diropen-16.png");
+	dirClosedPixmap = new QPixmap(":/trolltech/styles/commonstyle/images/dirclosed-16.png");
+	filelinkPixmap = new QPixmap(":/trolltech/styles/commonstyle/images/filelink-16.png");
 }
 
 Viewer::Viewer(QWidget *parent, const FileInfo &info)
