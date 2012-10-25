@@ -1,5 +1,16 @@
-First of all, test SST connectivity. Compare how much of it is done to the spec?
-Second, try the file synchronization (SaveDialog) and how it manages to deliver the chunks.
-Third, since there is no naming/routing we should limit work to LAN only.
-Fourth, synchronize arbitrary file chunks and their metadata between devices in the cluster (hardcoded for start).
-Fifth, add features for capturing the data into the system.
+First of all:
+ ☐ test SST connectivity. 
+ ☐ Compare how much of it is done to the spec?
+
+Second:
+ ☐ try the file synchronization (SaveDialog) 
+ ☐ and how it manages to deliver the chunks.
+
+Third:
+ ☐ since there is no naming/routing we should limit work to LAN only.
+
+Fourth:
+ ☐ synchronize arbitrary file chunks and their metadata between devices in the cluster (hardcoded for start).
+
+Fifth:
+ ☐ add features for capturing the data into the system. Agreed to do it Dropbox-style, so need to add and watch a directory.
