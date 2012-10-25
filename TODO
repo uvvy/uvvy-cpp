@@ -3,8 +3,9 @@ First of all:
  ☐ Compare how much of it is done to the spec?
 
 Second:
- ☐ try the file synchronization (SaveDialog) 
- ☐ and how it manages to deliver the chunks.
+ ✔ try the file synchronization (SaveDialog) @done (12-10-25 04:53)
+ ✔ and how it manages to deliver the chunks. @done (12-10-25 04:53)
+ works via Chat Dialog - just drag and drop the file there.
 
 Third:
  ☐ since there is no naming/routing we should limit work to LAN only.
