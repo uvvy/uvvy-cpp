@@ -1,0 +1,3 @@
+
+all:
+	doxygen lib.conf

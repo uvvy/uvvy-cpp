@@ -1,0 +1,7 @@
+/* doxygen index page */
+/** @mainpage Netsteria library
+
+Netsteria library provides chat, voice, file synchronization capabilities for MettaNodes.
+
+Work in progress!
+*/
