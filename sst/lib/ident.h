@@ -58,6 +58,19 @@ public:
 /** Represents an endpoint identifier
  * and optionally an associated cryptographic signing key.
  */
+/** An sst_ident represents an SST endpoint identifier (EID).
+ * SST uses EIDs in place of IP addresses to identify hosts
+ * or virtual endpoint identities on a particular host
+ * (e.g., identites for specific user accounts on multiuser hosts).
+ * An EID is a variable-length binary string of bytes,
+ * whose exact interpretation depends on the scheme number
+ * embedded in the first 6 bits of each EID.
+ * EIDs can represent both cryptographically self-certifying identifiers
+ * and legacy addresses such as IP addresses and IP/port pairs.
+ * Although EIDs are not usually intended to be seen by the user,
+ * they have a standard filename/URL-compatible base64 text encoding,
+ * in which the first character encodes the scheme number.
+ */
 class Ident
 {
 	QSharedDataPointer<IdentData> d;
