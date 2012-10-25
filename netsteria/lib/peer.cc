@@ -335,7 +335,7 @@ void PeerService::updateStatusAll()
 
 void PeerService::updateStatus(const QByteArray &hostid)
 {
-	statusChanged(hostid);
+	emit statusChanged(hostid);
 
 	if (!peers || statcol < 0)
 		return;
@@ -538,9 +538,6 @@ void PeerService::inDisconnected()
 
 	QByteArray hostid = stream->remoteHostId();
 
-	// Update our peer table if appropriate
-	updateStatus(hostid);
-
 	QSet<Stream*> &inset = in[hostid];
 	bool contained = inset.remove(stream);
 	if (inset.isEmpty())
@@ -549,6 +546,9 @@ void PeerService::inDisconnected()
 	// Notify our client
 	if (contained)
 		inStreamDisconnected(stream);
+
+	// Update our peer table if appropriate
+	updateStatus(hostid);
 
 	stream->deleteLater();
 }

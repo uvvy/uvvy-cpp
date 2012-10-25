@@ -1,8 +1,8 @@
 //
 // Sharing of files and directory trees on the local file system.
+// This is the basis for filesync/backup.
 //
-#ifndef ARCH_SHARE_H
-#define ARCH_SHARE_H
+#pragma once
 
 #include <QSet>
 #include <QList>
@@ -84,6 +84,3 @@ private:
 
 	void checkparent();
 };
-
-
-#endif	// ARCH_SHARE_H

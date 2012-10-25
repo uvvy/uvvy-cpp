@@ -109,12 +109,13 @@ private:
 	void writePeers();
 };
 
-
-// This class represents a peer-to-peer service,
-// consisting of a StreamServer to accept incoming connections from peers,
-// and a set of outgoing streams, one per interesting host ID.
-// Can be set up to track the peers in a given PeerTable automatically
-// and maintain service availability/status information in the PeerTable.
+/**
+ * This class represents a peer-to-peer service,
+ * consisting of a StreamServer to accept incoming connections from peers,
+ * and a set of outgoing streams, one per interesting host ID.
+ * Can be set up to track the peers in a given PeerTable automatically
+ * and maintain service availability/status information in the PeerTable.
+ */
 class PeerService : public QObject
 {
 	Q_OBJECT
