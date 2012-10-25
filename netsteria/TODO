@@ -1,16 +1,15 @@
 
 Most immediate usability necessities:
-* Indicator showing when audio is being received, and from whom.
-* Bandwidth indicator during downloads
-* Make ongoing downloads automatically persist across restarts
-* ALSA backend for Linux and/or upgrade to PortAudio V19
-* Make configure script detect absence of OSS, disable audio on Unix
-* Event bells/notifications: friend online, chat/talk started, etc.
-* Some documentation, both user and technical
-* Automatic launching on host OS login
-* Public/friends-only choices on profile items
+ ☐ Indicator showing when audio is being received, and from whom.
+ ☐ Bandwidth indicator during downloads
+ ☐ Make ongoing downloads automatically persist across restarts
+ ✔ ALSA backend for Linux and/or upgrade to PortAudio V19 @done (12-10-26 01:19)
+ ✔ Make configure script detect absence of OSS, disable audio on Unix @done (12-10-26 01:19)
+ ☐ Event bells/notifications: friend online, chat/talk started, etc.
+ ☐ Some documentation, both user and technical
+ ☐ Automatic launching on host OS login
+ ☐ Public/friends-only choices on profile items
 
 Larger features planned:
-* Integration with UIA - personal device cluster management, etc.
-* Secure VNC-like remote desktop access
-
+ ☐ Integration with UIA - personal device cluster management, etc.
+ ☐ Secure VNC-like remote desktop access
