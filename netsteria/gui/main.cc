@@ -37,9 +37,6 @@
 using namespace SST;
 
 
-#define NCOLS		4
-#define COL_TALK	2
-#define COL_LISTEN	3
 
 
 Host *ssthost;
@@ -103,11 +100,9 @@ MainWindow::MainWindow()
 	friendslist->setModel(friends);
 	friendslist->setSelectionBehavior(QTableView::SelectRows);
 	//friendslist->setStretchLastColumn(true);
-	friendslist->setColumnWidth(0, 150);
-	friendslist->setColumnWidth(1, 250);
-	friendslist->setColumnWidth(2, 75);
-	// friendslist->setColumnHidden(1, true);
-	// friendslist->setColumnHidden(COL_LISTEN, true);	// XXX
+	friendslist->setColumnWidth(COL_NAME, 150);
+	friendslist->setColumnWidth(COL_EID, 250);
+	friendslist->setColumnWidth(COL_TALK, 75);
 	friendslist->verticalHeader()->hide();
 	connect(friendslist, SIGNAL(clicked(const QModelIndex&)),
 		this, SLOT(friendsClicked(const QModelIndex&)));
@@ -182,7 +177,7 @@ MainWindow::MainWindow()
 	// Retrieve the main window settings
 	settings->beginGroup("MainWindow");
 	move(settings->value("pos", QPoint(100, 100)).toPoint());
-	resize(settings->value("size", QSize(500, 300)).toSize());
+	resize(settings->value("size", QSize(800, 300)).toSize());
 	settings->endGroup();
 
 	updateMenus();
@@ -497,6 +492,10 @@ int main(int argc, char **argv)
 
 	// Load and initialize our friends table
 	friends = new PeerTable(NCOLS);
+	friends->setHeaderData(COL_ONLINE, Qt::Horizontal,
+				QObject::tr("Online"), Qt::DisplayRole);
+	friends->setHeaderData(COL_FILES, Qt::Horizontal,
+				QObject::tr("Files"), Qt::DisplayRole);
 	friends->setHeaderData(COL_TALK, Qt::Horizontal,
 				QObject::tr("Talk"), Qt::DisplayRole);
 	friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
@@ -505,11 +504,12 @@ int main(int argc, char **argv)
 
 	// Initialize our chunk sharing service
 	ChunkShare::instance()->setPeerTable(friends);
+	ChunkShare::instance()->setStatusColumn(COL_FILES);
 
 	talksrv = new VoiceService();
 	talksrv->setPeerTable(friends);
-	talksrv->setTalkColumn(2);
-	talksrv->setListenColumn(3);
+	talksrv->setTalkColumn(COL_TALK);
+	talksrv->setListenColumn(COL_LISTEN);
 
 	// Start our chat server to accept chat connections
 	ChatServer *chatsrv = new ChatServer();

@@ -95,7 +95,7 @@ int PeerTable::insert(const QByteArray &id, QString name)
 	insertAt(row, id, name);
 	endInsertRows();
 
-	// Update our persistent peers list
+	// Update our persistent peers list - @todo berkus: umm, friend list management.
 	writePeers();
 
 	// Signal anyone interested
@@ -350,7 +350,7 @@ void PeerService::updateStatus(const QByteArray &hostid)
 
 	// Update the status indicator
 	Stream *stream = out.value(hostid);
-	bool online = stream && stream->isConnected();
+	bool online = stream && stream->isLinkUp(); // @todo isConnected() returns true erroneously?
 	QModelIndex idx = peers->index(row, statcol);
 	const QVariant &val = online
 			? (onlineval.isNull() ? tr("Online") : onlineval)

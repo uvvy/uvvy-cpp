@@ -423,10 +423,10 @@ void VoiceService::updateStatus(const QByteArray &id)
 
 	if (talkcol >= 0) {
 		QVariant val = !online
-				? (talkoff.isNull() ? tr("Offline") : talkoff)
+				? (talkoff.isNull() ? tr("Off") : talkoff)
 			: sending.contains(stream)
 				? (talkena.isNull() ? tr("Talking") : talkena)
-				: (talkdis.isNull() ? tr("Online") : talkdis);
+				: (talkdis.isNull() ? tr("Muted") : talkdis);
 		QModelIndex idx = ptab->index(row, talkcol);
 		ptab->setData(idx, val, Qt::DisplayRole);
 		ptab->setFlags(idx, Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -434,6 +434,10 @@ void VoiceService::updateStatus(const QByteArray &id)
 
 	if (lisncol >= 0) {
 		// XXX
+		QVariant val = tr("Off");
+		QModelIndex idx = ptab->index(row, lisncol);
+		ptab->setData(idx, val, Qt::DisplayRole);
+		ptab->setFlags(idx, Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 	}
 }
 
