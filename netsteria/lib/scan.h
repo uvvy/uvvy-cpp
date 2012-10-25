@@ -13,7 +13,7 @@ class ScanItem;
 class Scanner;
 
 /**
- * Asynchronous directory and file scanning.
+ * Action: Asynchronous directory and file scanning.
  */
 class Scan : public Action
 {

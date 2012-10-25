@@ -37,7 +37,7 @@ struct FileTreeStats
 
 
 /**
- * FileInfo represents a Netsteria file metadata record.
+ * FileInfo represents a file metadata record.
  * The contents of a directory is a sequence of encoded FileInfo records.
  */
 class FileInfo

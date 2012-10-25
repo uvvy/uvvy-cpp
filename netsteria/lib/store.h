@@ -7,7 +7,7 @@
 class QByteArray;
 
 /**
- * A ChunkSearch represents an in-progress asynchronous search for a chunk.
+ * Represents an in-progress asynchronous search for a chunk.
  */
 struct ChunkSearch : public QObject
 {
