@@ -1,3 +1,6 @@
+Fixes:
+ ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
+
 First of all:
  ☐ test SST connectivity. 
  ☐ Compare how much of it is done to the spec?
