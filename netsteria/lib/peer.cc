@@ -536,10 +536,15 @@ void PeerService::inDisconnected()
 	Q_ASSERT(stream);
 	Q_ASSERT(!stream->isConnected());
 
-	QSet<Stream*> &inset = in[stream->remoteHostId()];
+	QByteArray hostid = stream->remoteHostId();
+
+	// Update our peer table if appropriate
+	updateStatus(hostid);
+
+	QSet<Stream*> &inset = in[hostid];
 	bool contained = inset.remove(stream);
 	if (inset.isEmpty())
-		in.remove(stream->remoteHostId());
+		in.remove(hostid);
 
 	// Notify our client
 	if (contained)
