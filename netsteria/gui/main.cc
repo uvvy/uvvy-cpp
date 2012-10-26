@@ -1,4 +1,4 @@
-#define VERSION	"0.01"
+#define VERSION "0.01"
 
 #include <cstdio>
 
@@ -57,247 +57,247 @@ bool spewdebug;
 
 void myMsgHandler(QtMsgType type, const char *msg)
 {
-	QTextStream strm(&logfile);
-	switch (type) {
-	case QtDebugMsg:
-		strm << "Debug: " << msg << '\n';
-		// std::cout << "Debug: " << msg << '\n';
-		break;
-	case QtWarningMsg:
-		strm << "Warning: " << msg << '\n';
-		std::cout << "Warning: " << msg << '\n';
-		break;
-	case QtCriticalMsg:
-		strm << "Critical: " << msg << '\n';
-		strm.flush();
-		std::cout << "Critical: " << msg << '\n';
-		QMessageBox::critical(NULL,
-			QObject::tr("Netsteria: Critical Error"), msg,
-			QMessageBox::Ok, QMessageBox::NoButton);
-		break;
-	case QtFatalMsg:
-		strm << "Fatal: " << msg << '\n';
-		strm.flush();
-		std::cout << "Fatal: " << msg << '\n';
-		QMessageBox::critical(NULL,
-			QObject::tr("Netsteria: Critical Error"), msg,
-			QMessageBox::Ok, QMessageBox::NoButton);
-		abort();
-	}
+    QTextStream strm(&logfile);
+    switch (type) {
+    case QtDebugMsg:
+        strm << "Debug: " << msg << '\n';
+        // std::cout << "Debug: " << msg << '\n';
+        break;
+    case QtWarningMsg:
+        strm << "Warning: " << msg << '\n';
+        std::cout << "Warning: " << msg << '\n';
+        break;
+    case QtCriticalMsg:
+        strm << "Critical: " << msg << '\n';
+        strm.flush();
+        std::cout << "Critical: " << msg << '\n';
+        QMessageBox::critical(NULL,
+            QObject::tr("Netsteria: Critical Error"), msg,
+            QMessageBox::Ok, QMessageBox::NoButton);
+        break;
+    case QtFatalMsg:
+        strm << "Fatal: " << msg << '\n';
+        strm.flush();
+        std::cout << "Fatal: " << msg << '\n';
+        QMessageBox::critical(NULL,
+            QObject::tr("Netsteria: Critical Error"), msg,
+            QMessageBox::Ok, QMessageBox::NoButton);
+        abort();
+    }
 }
 
 MainWindow::MainWindow()
-:	searcher(NULL)
+:   searcher(NULL)
 {
-	QIcon appicon(":/img/mettanode.png");
+    QIcon appicon(":/img/mettanode.png");
 
-	setWindowTitle(tr("Netsteria"));
-	setWindowIcon(appicon);
+    setWindowTitle(tr("Netsteria"));
+    setWindowIcon(appicon);
 
-	// Create a ListView onto our friends list, as the central widget
-	Q_ASSERT(friends != NULL);
-	friendslist = new QTableView(this);
-	friendslist->setModel(friends);
-	friendslist->setSelectionBehavior(QTableView::SelectRows);
-	//friendslist->setStretchLastColumn(true);
-	friendslist->setColumnWidth(COL_NAME, 150);
-	friendslist->setColumnWidth(COL_EID, 250);
-	friendslist->setColumnWidth(COL_TALK, 75);
-	friendslist->verticalHeader()->hide();
-	connect(friendslist, SIGNAL(clicked(const QModelIndex&)),
-		this, SLOT(friendsClicked(const QModelIndex&)));
-	connect(friendslist->selectionModel(),
-		SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
-		this, SLOT(updateMenus()));
-	setCentralWidget(friendslist);
+    // Create a ListView onto our friends list, as the central widget
+    Q_ASSERT(friends != NULL);
+    friendslist = new QTableView(this);
+    friendslist->setModel(friends);
+    friendslist->setSelectionBehavior(QTableView::SelectRows);
+    //friendslist->setStretchLastColumn(true);
+    friendslist->setColumnWidth(COL_NAME, 150);
+    friendslist->setColumnWidth(COL_EID, 250);
+    friendslist->setColumnWidth(COL_TALK, 75);
+    friendslist->verticalHeader()->hide();
+    connect(friendslist, SIGNAL(clicked(const QModelIndex&)),
+        this, SLOT(friendsClicked(const QModelIndex&)));
+    connect(friendslist->selectionModel(),
+        SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
+        this, SLOT(updateMenus()));
+    setCentralWidget(friendslist);
 
-	// Create a "Friends" toolbar providing friends list controls
-	// XX need icons
-	QToolBar *friendsbar = new QToolBar(tr("Friends"), this);
-	taMessage = friendsbar->addAction(tr("Message"),
-					this, SLOT(openChat()));
-	taTalk = friendsbar->addAction(tr("Talk"), this, SLOT(startTalk()));
-	friendsbar->addSeparator();
-	friendsbar->addAction(tr("My Profile"), this, SLOT(openProfile()));
-	friendsbar->addAction(tr("Find Friends"), this, SLOT(openSearch()));
-	taRename = friendsbar->addAction(tr("Rename"),
-					this, SLOT(renameFriend()));
-	taDelete = friendsbar->addAction(tr("Delete"),
-					this, SLOT(deleteFriend()));
-	addToolBar(friendsbar);
+    // Create a "Friends" toolbar providing friends list controls
+    // XX need icons
+    QToolBar *friendsbar = new QToolBar(tr("Friends"), this);
+    taMessage = friendsbar->addAction(tr("Message"),
+                    this, SLOT(openChat()));
+    taTalk = friendsbar->addAction(tr("Talk"), this, SLOT(startTalk()));
+    friendsbar->addSeparator();
+    friendsbar->addAction(tr("My Profile"), this, SLOT(openProfile()));
+    friendsbar->addAction(tr("Find Friends"), this, SLOT(openSearch()));
+    taRename = friendsbar->addAction(tr("Rename"),
+                    this, SLOT(renameFriend()));
+    taDelete = friendsbar->addAction(tr("Delete"),
+                    this, SLOT(deleteFriend()));
+    addToolBar(friendsbar);
 
-	// Create a "Friends" menu providing the same basic controls
-	QMenu *friendsmenu = new QMenu(tr("Friends"), this);
-	maMessage = friendsmenu->addAction(tr("&Message"),
-				this, SLOT(openChat()),
-				tr("Ctrl+M", "Friends|Message"));
-	maTalk = friendsmenu->addAction(tr("&Talk"), this, SLOT(startTalk()),	
-				tr("Ctrl+T", "Friends|Talk"));
-	friendsmenu->addSeparator();
-	friendsmenu->addAction(tr("&Find Friends"), this, SLOT(openSearch()),
-				tr("Ctrl+F", "Friends|Find"));
-	maRename = friendsmenu->addAction(tr("&Rename Friend"),
-				this, SLOT(renameFriend()),
-				tr("Ctrl+R", "Friends|Rename"));
-	maDelete = friendsmenu->addAction(tr("&Delete Friend"),
-				this, SLOT(deleteFriend()),
-				tr("Ctrl+Delete", "Friends|Delete"));
-	friendsmenu->addSeparator();
-	friendsmenu->addAction(tr("&Settings..."), this,
-				SLOT(openSettings()),
-				tr("Ctrl+S", "Friends|Settings"));
-	friendsmenu->addSeparator();
-	friendsmenu->addAction(tr("E&xit"), this, SLOT(exitApp()),
-				tr("Ctrl+X", "Friends|Exit"));
-	menuBar()->addMenu(friendsmenu);
+    // Create a "Friends" menu providing the same basic controls
+    QMenu *friendsmenu = new QMenu(tr("Friends"), this);
+    maMessage = friendsmenu->addAction(tr("&Message"),
+                this, SLOT(openChat()),
+                tr("Ctrl+M", "Friends|Message"));
+    maTalk = friendsmenu->addAction(tr("&Talk"), this, SLOT(startTalk()),   
+                tr("Ctrl+T", "Friends|Talk"));
+    friendsmenu->addSeparator();
+    friendsmenu->addAction(tr("&Find Friends"), this, SLOT(openSearch()),
+                tr("Ctrl+F", "Friends|Find"));
+    maRename = friendsmenu->addAction(tr("&Rename Friend"),
+                this, SLOT(renameFriend()),
+                tr("Ctrl+R", "Friends|Rename"));
+    maDelete = friendsmenu->addAction(tr("&Delete Friend"),
+                this, SLOT(deleteFriend()),
+                tr("Ctrl+Delete", "Friends|Delete"));
+    friendsmenu->addSeparator();
+    friendsmenu->addAction(tr("&Settings..."), this,
+                SLOT(openSettings()),
+                tr("Ctrl+S", "Friends|Settings"));
+    friendsmenu->addSeparator();
+    friendsmenu->addAction(tr("E&xit"), this, SLOT(exitApp()),
+                tr("Ctrl+X", "Friends|Exit"));
+    menuBar()->addMenu(friendsmenu);
 
-	// Create a "Window" menu
-	QMenu *windowmenu = new QMenu(tr("Window"), this);
-	windowmenu->addAction(tr("Friends"), this, SLOT(openFriends()));
-	windowmenu->addAction(tr("Search"), this, SLOT(openSearch()));
-	windowmenu->addAction(tr("Download"), this, SLOT(openDownload()));
-	windowmenu->addAction(tr("Settings"), this, SLOT(openSettings()));
-	menuBar()->addMenu(windowmenu);
+    // Create a "Window" menu
+    QMenu *windowmenu = new QMenu(tr("Window"), this);
+    windowmenu->addAction(tr("Friends"), this, SLOT(openFriends()));
+    windowmenu->addAction(tr("Search"), this, SLOT(openSearch()));
+    windowmenu->addAction(tr("Download"), this, SLOT(openDownload()));
+    windowmenu->addAction(tr("Settings"), this, SLOT(openSettings()));
+    menuBar()->addMenu(windowmenu);
 
-	// Create a "Help" menu
-	QMenu *helpmenu = new QMenu(tr("Help"), this);
-	helpmenu->addAction(tr("Netsteria &Help"), this, SLOT(openHelp()),
-				tr("Ctrl+H", "Help|Help"));
-	helpmenu->addAction(tr("Netsteria Home Page"), this, SLOT(openWeb()));
-	helpmenu->addAction(tr("About Netsteria..."), this, SLOT(openAbout()));
-	//menuBar()->addMenu(helpmenu);
+    // Create a "Help" menu
+    QMenu *helpmenu = new QMenu(tr("Help"), this);
+    helpmenu->addAction(tr("Netsteria &Help"), this, SLOT(openHelp()),
+                tr("Ctrl+H", "Help|Help"));
+    helpmenu->addAction(tr("Netsteria Home Page"), this, SLOT(openWeb()));
+    helpmenu->addAction(tr("About Netsteria..."), this, SLOT(openAbout()));
+    //menuBar()->addMenu(helpmenu);
 
-	// Watch for state changes that require updating the menus.
-	connect(friendslist->selectionModel(),
-		SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
-		this, SLOT(updateMenus()));
-	connect(talksrv, SIGNAL(statusChanged(const QByteArray&)),
-		this, SLOT(updateMenus()));
+    // Watch for state changes that require updating the menus.
+    connect(friendslist->selectionModel(),
+        SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
+        this, SLOT(updateMenus()));
+    connect(talksrv, SIGNAL(statusChanged(const QByteArray&)),
+        this, SLOT(updateMenus()));
 
-	// Retrieve the main window settings
-	settings->beginGroup("MainWindow");
-	move(settings->value("pos", QPoint(100, 100)).toPoint());
-	resize(settings->value("size", QSize(800, 300)).toSize());
-	settings->endGroup();
+    // Retrieve the main window settings
+    settings->beginGroup("MainWindow");
+    move(settings->value("pos", QPoint(100, 100)).toPoint());
+    resize(settings->value("size", QSize(800, 300)).toSize());
+    settings->endGroup();
 
-	updateMenus();
+    updateMenus();
 
-	// Add a Netsteria icon to the system tray, if possible
-	QSystemTrayIcon *trayicon = new QSystemTrayIcon(appicon, this);
-	connect(trayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-		this, SLOT(trayActivate(QSystemTrayIcon::ActivationReason)));
-	trayicon->show();
+    // Add a Netsteria icon to the system tray, if possible
+    QSystemTrayIcon *trayicon = new QSystemTrayIcon(appicon, this);
+    connect(trayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+        this, SLOT(trayActivate(QSystemTrayIcon::ActivationReason)));
+    trayicon->show();
 }
 
 MainWindow::~MainWindow()
 {
-	qDebug("MainWindow destructor");
+    qDebug("MainWindow destructor");
 
-	// Save the main window settings
-	settings->beginGroup("MainWindow");
-	settings->setValue("pos", pos());
-	settings->setValue("size", size());
-	settings->endGroup();
+    // Save the main window settings
+    settings->beginGroup("MainWindow");
+    settings->setValue("pos", pos());
+    settings->setValue("size", size());
+    settings->endGroup();
 }
 
 void MainWindow::trayActivate(QSystemTrayIcon::ActivationReason reason)
 {
-	qDebug("MainWindow::trayActivate - reason %d", (int)reason);
-	openFriends();
+    qDebug("MainWindow::trayActivate - reason %d", (int)reason);
+    openFriends();
 }
 
 int MainWindow::selectedFriend()
 {
-	return friendslist->selectionModel()->currentIndex().row();
+    return friendslist->selectionModel()->currentIndex().row();
 }
 
 void MainWindow::updateMenus()
 {
-	int row = selectedFriend();
-	bool sel = isActiveWindow() && row >= 0;
-	QByteArray id = sel ? friends->id(row) : QByteArray();
+    int row = selectedFriend();
+    bool sel = isActiveWindow() && row >= 0;
+    QByteArray id = sel ? friends->id(row) : QByteArray();
 
-	maMessage->setEnabled(sel);
-	taMessage->setEnabled(sel);
-	maTalk->setEnabled(sel && talksrv->outConnected(id));
-	taTalk->setEnabled(sel && talksrv->outConnected(id));
-	maRename->setEnabled(sel);
-	taRename->setEnabled(sel);
-	maDelete->setEnabled(sel);
-	taDelete->setEnabled(sel);
+    maMessage->setEnabled(sel);
+    taMessage->setEnabled(sel);
+    maTalk->setEnabled(sel && talksrv->outConnected(id));
+    taTalk->setEnabled(sel && talksrv->outConnected(id));
+    maRename->setEnabled(sel);
+    taRename->setEnabled(sel);
+    maDelete->setEnabled(sel);
+    taDelete->setEnabled(sel);
 }
 
 bool MainWindow::event(QEvent *event)
 {
-	switch (event->type()) {
-	case QEvent::WindowActivate:
-	case QEvent::WindowDeactivate:
-		updateMenus();
-		break;
-	default:
-		break;
-	}
+    switch (event->type()) {
+    case QEvent::WindowActivate:
+    case QEvent::WindowDeactivate:
+        updateMenus();
+        break;
+    default:
+        break;
+    }
 
-	return QMainWindow::event(event);
+    return QMainWindow::event(event);
 }
 
 void MainWindow::friendsClicked(const QModelIndex &index)
 {
-	int row = index.row();
-	if (row < 0 || row >= friends->count())
-		return;
-	QByteArray hostid = friends->id(row);
+    int row = index.row();
+    if (row < 0 || row >= friends->count())
+        return;
+    QByteArray hostid = friends->id(row);
 
-	int col = index.column();
-	if (col == COL_TALK)
-		talksrv->toggleTalkEnabled(hostid);
+    int col = index.column();
+    if (col == COL_TALK)
+        talksrv->toggleTalkEnabled(hostid);
 }
 
 void MainWindow::openFriends()
 {
-	show();
-	raise();
-	activateWindow();
+    show();
+    raise();
+    activateWindow();
 }
 
 void MainWindow::openSearch()
 {
-	if (!searcher)
-		searcher = new SearchDialog(this);
-	searcher->present();
+    if (!searcher)
+        searcher = new SearchDialog(this);
+    searcher->present();
 }
 
 void MainWindow::openDownload()
 {
-	SaveDialog::present();
+    SaveDialog::present();
 }
 
 void MainWindow::openChat()
 {
-	int row = friendslist->selectionModel()->currentIndex().row();
-	if (row < 0 || row >= friends->count())
-		return;
+    int row = friendslist->selectionModel()->currentIndex().row();
+    if (row < 0 || row >= friends->count())
+        return;
 
-	ChatDialog::open(friends->id(row), friends->name(row));
+    ChatDialog::open(friends->id(row), friends->name(row));
 }
 
 void MainWindow::startTalk()
 {
-	int row = selectedFriend();
-	if (row <= 0 || row >= friends->count())
-		return;
+    int row = selectedFriend();
+    if (row <= 0 || row >= friends->count())
+        return;
 
-	talksrv->toggleTalkEnabled(friends->id(row));
+    talksrv->toggleTalkEnabled(friends->id(row));
 }
 
 void MainWindow::openSettings()
 {
-	SettingsDialog::openSettings();
+    SettingsDialog::openSettings();
 }
 
 void MainWindow::openProfile()
 {
-	SettingsDialog::openProfile();
+    SettingsDialog::openProfile();
 }
 
 void MainWindow::openHelp()
@@ -310,118 +310,118 @@ void MainWindow::openWeb()
 
 void MainWindow::openAbout()
 {
-	QMessageBox *mbox = new QMessageBox(tr("About Netsteria"),
-				tr("Netsteria version %0\n"
-				   "Copyright 2006 Bryan Ford").arg(VERSION),
-				QMessageBox::Information,
-				QMessageBox::Ok, QMessageBox::NoButton,
-				QMessageBox::NoButton, this);
-	mbox->show();
-	//mbox->setAttribute(Qt::WA_DeleteOnClose, true);
+    QMessageBox *mbox = new QMessageBox(tr("About Netsteria"),
+                tr("Netsteria version %0\n"
+                   "Copyright 2006 Bryan Ford").arg(VERSION),
+                QMessageBox::Information,
+                QMessageBox::Ok, QMessageBox::NoButton,
+                QMessageBox::NoButton, this);
+    mbox->show();
+    //mbox->setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
 void MainWindow::renameFriend()
 {
-	int row = friendslist->selectionModel()->currentIndex().row();
-	if (row < 0 || row >= friends->count())
-		return;
+    int row = friendslist->selectionModel()->currentIndex().row();
+    if (row < 0 || row >= friends->count())
+        return;
 
-	friendslist->edit(friends->index(row, 0));
+    friendslist->edit(friends->index(row, 0));
 }
 
 void MainWindow::deleteFriend()
 {
-	int row = friendslist->selectionModel()->currentIndex().row();
-	if (row < 0 || row >= friends->count())
-		return;
-	QString name = friends->name(row);
-	QByteArray id = friends->id(row);
+    int row = friendslist->selectionModel()->currentIndex().row();
+    if (row < 0 || row >= friends->count())
+        return;
+    QString name = friends->name(row);
+    QByteArray id = friends->id(row);
 
-	if (QMessageBox::question(this, tr("Confirm Delete"),
-			tr("Delete '%0' from your contacts?").arg(name),
-			QMessageBox::Yes | QMessageBox::Default,
-			QMessageBox::No | QMessageBox::Escape)
-			!= QMessageBox::Yes)
-		return;
+    if (QMessageBox::question(this, tr("Confirm Delete"),
+            tr("Delete '%0' from your contacts?").arg(name),
+            QMessageBox::Yes | QMessageBox::Default,
+            QMessageBox::No | QMessageBox::Escape)
+            != QMessageBox::Yes)
+        return;
 
-	qDebug() << "Removing" << name;
-	friends->remove(id);
+    qDebug() << "Removing" << name;
+    friends->remove(id);
 }
 
 void MainWindow::addPeer(const QByteArray &id, QString name, bool edit)
 {
-	int row = friends->insert(id, name);
+    int row = friends->insert(id, name);
 
-	if (edit) {
-		qDebug() << "Edit friend" << row;
-		//friendslist->setCurrentIndex(peersmodel->index(row, 0));
-		friendslist->edit(friends->index(row, 0));
-	}
+    if (edit) {
+        qDebug() << "Edit friend" << row;
+        //friendslist->setCurrentIndex(peersmodel->index(row, 0));
+        friendslist->edit(friends->index(row, 0));
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-	qDebug("MainWindow close");
+    qDebug("MainWindow close");
 
-	// If there's no system tray, exit immediately
-	// because the user would have no way to get us open again.
-	if (!QSystemTrayIcon::isSystemTrayAvailable())
-		exitApp();
+    // If there's no system tray, exit immediately
+    // because the user would have no way to get us open again.
+    if (!QSystemTrayIcon::isSystemTrayAvailable())
+        exitApp();
 
-	// Hide our main window but otherwise ignore the event,
-	// waiting quietly in the background until we're re-activated.
-	event->ignore();
-	hide();
+    // Hide our main window but otherwise ignore the event,
+    // waiting quietly in the background until we're re-activated.
+    event->ignore();
+    hide();
 }
 
 void MainWindow::exitApp()
 {
-	qDebug("MainWindow exit");
+    qDebug("MainWindow exit");
 
-	QApplication::exit(0);
+    QApplication::exit(0);
 }
 
 static void regclient(const QString &hostname)
 {
-	RegClient *regcli = new RegClient(ssthost);
-	regcli->setInfo(myreginfo);
-	regcli->registerAt(hostname);
-	regclients.append(regcli);
+    RegClient *regcli = new RegClient(ssthost);
+    regcli->setInfo(myreginfo);
+    regcli->registerAt(hostname);
+    regclients.append(regcli);
 }
 
 static void usage()
 {
-	qCritical("Usage: netsteria [-d] [<configdir>]\n"
-		"  -d              Enable debugging output\n"
-		"  <configdir>     Optional config state directory\n");
-	exit(1);
+    qCritical("Usage: netsteria [-d] [<configdir>]\n"
+        "  -d              Enable debugging output\n"
+        "  <configdir>     Optional config state directory\n");
+    exit(1);
 }
 
 int main(int argc, char **argv)
 {
-	QApplication app(argc, argv);
-	app.setOrganizationName("Exquance.com");
-	app.setOrganizationDomain("exquance.com"); // for OSX
-	app.setApplicationName("MettaNode");
-	app.setQuitOnLastWindowClosed(false);
+    QApplication app(argc, argv);
+    app.setOrganizationName("Exquance.com");
+    app.setOrganizationDomain("exquance.com"); // for OSX
+    app.setApplicationName("MettaNode");
+    app.setQuitOnLastWindowClosed(false);
 
-	while (argc > 1 && argv[1][0] == '-') {
-		switch (argv[1][1]) {
-		case 'd':
-			spewdebug = true;
-			break;
-		default:
-			usage();
-		}
-		argc--, argv++;
-	}
+    while (argc > 1 && argv[1][0] == '-') {
+        switch (argv[1][1]) {
+        case 'd':
+            spewdebug = true;
+            break;
+        default:
+            usage();
+        }
+        argc--, argv++;
+    }
 
-	if (argc > 1) {
-		if (argc > 2 || argv[1][0] == '-') {
-			usage();
-		}
-		QDir::current().mkdir(argv[1]);
-		appdir.setPath(argv[1]);
+    if (argc > 1) {
+        if (argc > 2 || argv[1][0] == '-') {
+            usage();
+        }
+        QDir::current().mkdir(argv[1]);
+        appdir.setPath(argv[1]);
 
         settings = new QSettings(appdir.path() + "/config",
                                 QSettings::IniFormat);
@@ -429,107 +429,107 @@ int main(int argc, char **argv)
                 qFatal("Can't open config file in dir '%s'\n",
                         argv[1]);
         }
- 	} else {
-		QDir homedir = QDir::home();
-		QString homedirpath = homedir.path();
+    } else {
+        QDir homedir = QDir::home();
+        QString homedirpath = homedir.path();
 
-		QString appdirname = ".netsteria";
-		homedir.mkdir(appdirname);
-		appdir.setPath(homedirpath + "/" + appdirname);
+        QString appdirname = ".netsteria";
+        homedir.mkdir(appdirname);
+        appdir.setPath(homedirpath + "/" + appdirname);
 
-		settings = new QSettings();
-	}
+        settings = new QSettings();
+    }
 
-	// Send debugging output to a log file
-	QString logname(appdir.path() + "/log");
-	QString logbakname(appdir.path() + "/log.bak");
-	QFile::remove(logbakname);
-	QFile::rename(logname, logbakname);
-	logfile.setFileName(logname);
-	if (!logfile.open(QFile::WriteOnly | QFile::Truncate))
-		qWarning("Can't open log file '%s'",
-			logname.toLocal8Bit().data());
-	else
-		qInstallMsgHandler(myMsgHandler);
-	qDebug() << "Netsteria starting";
+    // Send debugging output to a log file
+    QString logname(appdir.path() + "/log");
+    QString logbakname(appdir.path() + "/log.bak");
+    QFile::remove(logbakname);
+    QFile::rename(logname, logbakname);
+    logfile.setFileName(logname);
+    if (!logfile.open(QFile::WriteOnly | QFile::Truncate))
+        qWarning("Can't open log file '%s'",
+            logname.toLocal8Bit().data());
+    else
+        qInstallMsgHandler(myMsgHandler);
+    qDebug() << "Netsteria starting";
 
 #if 0
-//	openDefaultLog();
+//  openDefaultLog();
 
-//	assert(argc == 3);	// XXX
-//	mydev.setUserName(QString::fromAscii(argv[1]));
-//	mydev.setDevName(QString::fromAscii(argv[2]));
-	mydev.setUserName(QString::fromAscii("Bob"));
-	mydev.setDevName(QString::fromAscii("phone"));
+//  assert(argc == 3);  // XXX
+//  mydev.setUserName(QString::fromAscii(argv[1]));
+//  mydev.setDevName(QString::fromAscii(argv[2]));
+    mydev.setUserName(QString::fromAscii("Bob"));
+    mydev.setDevName(QString::fromAscii("phone"));
 
-	keyinit();
-	mydev.setEID(mykey->eid);
+    keyinit();
+    mydev.setEID(mykey->eid);
 #endif
 
-	// Initialize the Structured Stream Transport
-	ssthost = new Host(settings, NETSTERIA_DEFAULT_PORT);
+    // Initialize the Structured Stream Transport
+    ssthost = new Host(settings, NETSTERIA_DEFAULT_PORT);
 
-	// Initialize the settings system, read user profile
-	SettingsDialog::init();
+    // Initialize the settings system, read user profile
+    SettingsDialog::init();
 
-	// XXX user info dialog
-	myreginfo.setHostName(profile->hostName());
-	myreginfo.setOwnerName(profile->ownerName());
-	myreginfo.setCity(profile->city());
-	myreginfo.setRegion(profile->region());
-	myreginfo.setCountry(profile->country());
-	myreginfo.setEndpoints(ssthost->activeLocalEndpoints());
-	qDebug() << "local endpoints" << myreginfo.endpoints().size();
+    // XXX user info dialog
+    myreginfo.setHostName(profile->hostName());
+    myreginfo.setOwnerName(profile->ownerName());
+    myreginfo.setCity(profile->city());
+    myreginfo.setRegion(profile->region());
+    myreginfo.setCountry(profile->country());
+    myreginfo.setEndpoints(ssthost->activeLocalEndpoints());
+    qDebug() << "local endpoints" << myreginfo.endpoints().size();
 
-	if (!settings->contains("regservers"))
-	{
-		QStringList rs;
-		rs << "pdos.csail.mit.edu" << "motoko.madfire.net";
-		settings->setValue("regservers", rs);
-	}
+    if (!settings->contains("regservers"))
+    {
+        QStringList rs;
+        rs << "pdos.csail.mit.edu" << "motoko.madfire.net";
+        settings->setValue("regservers", rs);
+    }
 
-	// XXX allow user-modifiable set of regservers
-	for (QString server : settings->value("regservers").toStringList())
-	{
-		regclient(server);
-	}
+    // XXX allow user-modifiable set of regservers
+    for (QString server : settings->value("regservers").toStringList())
+    {
+        regclient(server);
+    }
 
-	// Load and initialize our friends table
-	friends = new PeerTable(NCOLS);
-	friends->setHeaderData(COL_ONLINE, Qt::Horizontal,
-				QObject::tr("Online"), Qt::DisplayRole);
-	friends->setHeaderData(COL_FILES, Qt::Horizontal,
-				QObject::tr("Files"), Qt::DisplayRole);
-	friends->setHeaderData(COL_TALK, Qt::Horizontal,
-				QObject::tr("Talk"), Qt::DisplayRole);
-	friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
-				QObject::tr("Listen"), Qt::DisplayRole);
-	friends->useSettings(settings, "Friends");
+    // Load and initialize our friends table
+    friends = new PeerTable(NCOLS);
+    friends->setHeaderData(COL_ONLINE, Qt::Horizontal,
+                QObject::tr("Online"), Qt::DisplayRole);
+    friends->setHeaderData(COL_FILES, Qt::Horizontal,
+                QObject::tr("Files"), Qt::DisplayRole);
+    friends->setHeaderData(COL_TALK, Qt::Horizontal,
+                QObject::tr("Talk"), Qt::DisplayRole);
+    friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
+                QObject::tr("Listen"), Qt::DisplayRole);
+    friends->useSettings(settings, "Friends");
 
-	// Initialize our chunk sharing service
-	ChunkShare::instance()->setPeerTable(friends);
-	ChunkShare::instance()->setStatusColumn(COL_FILES);
+    // Initialize our chunk sharing service
+    ChunkShare::instance()->setPeerTable(friends);
+    ChunkShare::instance()->setStatusColumn(COL_FILES);
 
-	// Share default directory
-	// QDir shareDir;
-	// appdir.mkdir(appdir.path() + "/Fileshare");
-	qDebug() << "Would share files from " << appdir.path() + "/Files";
-	// or read from Settings...
+    // Share default directory
+    // QDir shareDir;
+    // appdir.mkdir(appdir.path() + "/Fileshare");
+    qDebug() << "Would share files from " << appdir.path() + "/Files";
+    // or read from Settings...
 
-	talksrv = new VoiceService();
-	talksrv->setPeerTable(friends);
-	talksrv->setTalkColumn(COL_TALK);
-	talksrv->setListenColumn(COL_LISTEN);
+    talksrv = new VoiceService();
+    talksrv->setPeerTable(friends);
+    talksrv->setTalkColumn(COL_TALK);
+    talksrv->setListenColumn(COL_LISTEN);
 
-	// Start our chat server to accept chat connections
-	ChatServer *chatsrv = new ChatServer();
-	(void)chatsrv;
+    // Start our chat server to accept chat connections
+    ChatServer *chatsrv = new ChatServer();
+    (void)chatsrv;
 
-	// Re-start incomplete downloads
-	SaveDialog::init();
+    // Re-start incomplete downloads
+    SaveDialog::init();
 
-	mainwin = new MainWindow;
-	mainwin->show();
-	return app.exec();
+    mainwin = new MainWindow;
+    mainwin->show();
+    return app.exec();
 }
 
