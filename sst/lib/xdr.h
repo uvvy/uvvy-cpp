@@ -180,7 +180,7 @@ public:
 
 	/// Encode a 64-bit integer (XDR 'hyper').
 	inline XdrStream &operator<<(qint64 i) {
-		qint32 v[2] = { htonl(i >> 32), htonl(i) };
+		qint32 v[2] = { static_cast<qint32>(htonl(i >> 32)), static_cast<qint32>(htonl(i)) };
 		Q_ASSERT(sizeof(v) == 8);
 		writeRawData(&v, 8);
 		return *this;

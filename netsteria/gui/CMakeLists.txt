@@ -2,6 +2,8 @@ set(QT_USE_QTNETWORK TRUE)
 include(${QT_USE_FILE})
 include_directories(../lib ../../sst/lib ../../routing/lib ../3rdparty/opus-1.0.1/include ../3rdparty/rtaudio-4.0.11)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 set(netsteria_SOURCES main.cc search.cc chat.cc view.cc save.cc settings.cc logarea.cc meter.cc)
 
 set(netsteria_HEADERS chat.h logarea.h main.h meter.h save.h search.h settings.h)
