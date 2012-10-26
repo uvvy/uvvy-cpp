@@ -19,6 +19,8 @@
 #include <QSettings>
 #include <QHostInfo>
 #include <QDir>
+#include <QDesktopServices>
+#include <QUrl>
 #include <QtDebug>
 
 #include "arch.h"
@@ -50,6 +52,7 @@ RegInfo myreginfo;
 
 QSettings *settings;
 QDir appdir;
+QDir shareDir;
 QFile logfile;
 
 bool spewdebug;
@@ -158,6 +161,8 @@ MainWindow::MainWindow()
     windowmenu->addAction(tr("Search"), this, SLOT(openSearch()));
     windowmenu->addAction(tr("Download"), this, SLOT(openDownload()));
     windowmenu->addAction(tr("Settings"), this, SLOT(openSettings()));
+    windowmenu->addSeparator();
+    windowmenu->addAction(tr("Go to files"), this, SLOT(gotoFiles()));
     menuBar()->addMenu(windowmenu);
 
     // Create a "Help" menu
@@ -271,6 +276,12 @@ void MainWindow::openSearch()
 void MainWindow::openDownload()
 {
     SaveDialog::present();
+}
+
+void MainWindow::gotoFiles()
+{
+    QString dir = QString("file://") + shareDir.path();
+    QDesktopServices::openUrl(QUrl(dir, QUrl::TolerantMode));
 }
 
 void MainWindow::openChat()
@@ -512,9 +523,9 @@ int main(int argc, char **argv)
     ChunkShare::instance()->setStatusColumn(COL_FILES);
 
     // Share default directory
-    // QDir shareDir;
-    // appdir.mkdir(appdir.path() + "/Fileshare");
-    qDebug() << "Would share files from " << appdir.path() + "/Files";
+    appdir.mkdir("Files");
+    shareDir = appdir.path() + "/Files";
+    qDebug() << "Would share files from " << shareDir.path();
     // or read from Settings...
 
     talksrv = new VoiceService();

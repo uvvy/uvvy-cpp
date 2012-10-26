@@ -68,6 +68,7 @@ private slots:
 	void openDownload();
 	void openSettings();
 	void openProfile();
+	void gotoFiles();
 	void openHelp();
 	void openWeb();
 	void openAbout();
