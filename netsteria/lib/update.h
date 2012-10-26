@@ -11,6 +11,8 @@
  */
 class Update : public Action
 {
+    Q_OBJECT
+
     class FileReader : public AbstractOpaqueReader
     {
         Update *up;
