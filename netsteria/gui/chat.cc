@@ -1,8 +1,8 @@
-
 #include <QFont>
 #include <QLabel>
 #include <QLineEdit>
 #include <QTextEdit>
+#include <QPushButton>
 #include <QTreeView>
 #include <QHeaderView>
 #include <QVBoxLayout>
@@ -58,11 +58,22 @@ ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
 	connect(textentry, SIGNAL(returnPressed()),
 		this, SLOT(returnPressed()));
 
+	button = new QPushButton(this);
+	button->setText(tr("Send"));
+	connect(button, SIGNAL(clicked()),
+		this, SLOT(returnPressed()));
+
+	QHBoxLayout *inputl = new QHBoxLayout;
+	inputl->setContentsMargins(0,0,0,0);
+	inputl->setSpacing(1);
+	inputl->addWidget(textentry);
+	inputl->addWidget(button);
+
 	QVBoxLayout *layout = new QVBoxLayout;
 	layout->setContentsMargins(2,2,2,2);
 	layout->setSpacing(1);
 	layout->addWidget(logview);
-	layout->addWidget(textentry);
+	layout->addLayout(inputl);
 	setLayout(layout);
 
 	if (!strm) {

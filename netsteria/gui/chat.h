@@ -13,6 +13,7 @@
 class QLabel;
 class QGridLayout;
 class QLineEdit;
+class QPushButton;
 class LogArea;
 class ChatServer;
 class FileInfo;
@@ -48,9 +49,9 @@ class ChatDialog : public QDialog, public ChatProtocol
 	QWidget *logwidget;		// Virtual widget displaying the log
 	QGridLayout *loglayout;
 
-	LogArea *logview;		// Scrolling view onto the logwidget
+	LogArea *logview;		    // Scrolling view onto the logwidget
 	QLineEdit *textentry;		// Text entry line
-
+	QPushButton *button;        // Send button
 
 	// Global hash table of open chat dialogs by ID
 	//static QHash<QByteArray, ChatDialog*> chathash;
