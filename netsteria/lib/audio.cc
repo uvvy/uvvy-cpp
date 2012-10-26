@@ -764,7 +764,7 @@ void AudioOutput::reset()
 
 AudioLoop::AudioLoop(QObject *parent)
 :	AudioStream(parent),
-	delay(5.0)
+	delay(2.0)
 {
 	connect(&in, SIGNAL(readyRead()), this, SLOT(inReadyRead()));
 }

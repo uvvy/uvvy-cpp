@@ -173,7 +173,7 @@ AudioControl::AudioControl(QWidget *parent)
 	// Loopback test area
 	loopbox = new QCheckBox(tr("Audio Loopback Test"), this);
 	loopbox->setToolTip(tr("When enabled, you should hear whatever you say "
-				"echoed back to you after 5 seconds."));
+				"echoed back to you after 2 seconds."));
 	connect(loopbox, SIGNAL(stateChanged(int)), this, SLOT(loopChanged()));
 
 	looplabel = new QLabel(this);
