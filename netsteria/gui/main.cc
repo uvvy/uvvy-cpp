@@ -1,6 +1,4 @@
-#define VERSION "0.01"
-
-#include <cstdio>
+#define VERSION "0.02"
 
 #include <QHash>
 #include <QMenu>
@@ -38,8 +36,7 @@
 
 using namespace SST;
 
-
-
+// Globals (yuck!)
 
 Host *ssthost;
 
@@ -509,7 +506,7 @@ int main(int argc, char **argv)
     // Load and initialize our friends table
     friends = new PeerTable(NCOLS);
     friends->setHeaderData(COL_ONLINE, Qt::Horizontal,
-                QObject::tr("Online"), Qt::DisplayRole);
+                QObject::tr("Presence"), Qt::DisplayRole);
     friends->setHeaderData(COL_FILES, Qt::Horizontal,
                 QObject::tr("Files"), Qt::DisplayRole);
     friends->setHeaderData(COL_TALK, Qt::Horizontal,
@@ -517,6 +514,11 @@ int main(int argc, char **argv)
     friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
                 QObject::tr("Listen"), Qt::DisplayRole);
     friends->useSettings(settings, "Friends");
+
+    PeerService* s = new PeerService("Presence", QObject::tr("Presence updates"),
+                                     "NstPresence", QObject::tr("Netsteria presence protocol"));
+    s->setPeerTable(friends);
+    s->setStatusColumn(COL_ONLINE);
 
     // Initialize our chunk sharing service
     ChunkShare::instance()->setPeerTable(friends);
