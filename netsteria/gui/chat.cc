@@ -59,6 +59,8 @@ ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
 		this, SLOT(returnPressed()));
 
 	QVBoxLayout *layout = new QVBoxLayout;
+	layout->setContentsMargins(2,2,2,2);
+	layout->setSpacing(1);
 	layout->addWidget(logview);
 	layout->addWidget(textentry);
 	setLayout(layout);
