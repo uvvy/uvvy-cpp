@@ -11,6 +11,7 @@
 #include <QMimeData>
 #include <QUrl>
 #include <QLocale>
+#include <QSettings>
 #include <QtDebug>
 
 #include "chat.h"
@@ -36,9 +37,13 @@ ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
 	otherid(otherid), othername(othername),
 	stream(NULL)
 {
-	setWindowTitle(tr("Netsteria Chat: %0").arg(othername));
+	setWindowTitle(tr("Netsteria chat with %0").arg(othername));
 	setAcceptDrops(true);
-	resize(400, 500);
+
+    settings->beginGroup("ChatWindows/"+othername);
+    move(settings->value("pos", QPoint(100, 100)).toPoint());
+    resize(settings->value("size", QSize(400, 500)).toSize());
+    settings->endGroup();
 
 	logwidget = new QWidget(this);
 	loglayout = new QGridLayout();
@@ -79,6 +84,11 @@ ChatDialog::~ChatDialog()
 
 void ChatDialog::closeEvent(QCloseEvent *event)
 {
+    settings->beginGroup("ChatWindows/"+othername);
+    settings->setValue("pos", pos());
+    settings->setValue("size", size());
+    settings->endGroup();
+
 	// Close our window as usual
 	QDialog::closeEvent(event);
 
