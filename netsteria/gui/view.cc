@@ -1,4 +1,3 @@
-
 #include <QIcon>
 #include <QLabel>
 #include <QPixmap>
@@ -8,6 +7,7 @@
 #include <QMouseEvent>
 #include <QMenu>
 #include <QFileDialog>
+#include <QProgressBar>
 #include <QApplication>
 #include <QLocale>
 #include <QtDebug>
@@ -39,7 +39,7 @@ Viewer::Viewer(QWidget *parent, const FileInfo &info)
 	info(info),
 	content(NULL)
 {
-	// Top-level layout is a 2x2 grid.
+	// Top-level layout is a 3x2 grid.
 	layout = new QGridLayout();
 	layout->setMargin(0);
 	layout->setSpacing(0);
@@ -78,12 +78,16 @@ Viewer::Viewer(QWidget *parent, const FileInfo &info)
 		hdrlayout->addWidget(sizeLabel);
 	}
 
-	// Content area: lower-right grid area.
+	// Content area: middle-right grid area.
 	if (info.isDirectory()) {
 		content = new DirView(this, info);
 		content->hide();
 		layout->addWidget(content, 1, 1);
 	}
+
+	// Progress bar: lower-right grid area
+	QProgressBar* progress = new QProgressBar(this);
+	layout->addWidget(progress, 1, 2);
 
 	setLayout(layout);
 }
