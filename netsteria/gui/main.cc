@@ -400,8 +400,9 @@ static void usage()
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
-	app.setOrganizationName("MIT-PDOS");
-	app.setApplicationName("Netsteria");
+	app.setOrganizationName("Exquance.com");
+	app.setOrganizationDomain("exquance.com"); // for OSX
+	app.setApplicationName("MettaNode");
 	app.setQuitOnLastWindowClosed(false);
 
 	while (argc > 1 && argv[1][0] == '-') {
@@ -422,13 +423,13 @@ int main(int argc, char **argv)
 		QDir::current().mkdir(argv[1]);
 		appdir.setPath(argv[1]);
 
-		settings = new QSettings(appdir.path() + "/config",
-					QSettings::IniFormat);
-		if (settings->status() != QSettings::NoError) {
-			qFatal("Can't open config file in dir '%s'\n",
-				argv[1]);
-		}
-	} else {
+        settings = new QSettings(appdir.path() + "/config",
+                                QSettings::IniFormat);
+        if (settings->status() != QSettings::NoError) {
+                qFatal("Can't open config file in dir '%s'\n",
+                        argv[1]);
+        }
+ 	} else {
 		QDir homedir = QDir::home();
 		QString homedirpath = homedir.path();
 
@@ -463,16 +464,10 @@ int main(int argc, char **argv)
 
 	keyinit();
 	mydev.setEID(mykey->eid);
-
-	netinit();
-
-	mainwin = new MainWindow;
-	return mainwin->exec();
 #endif
 
 	// Initialize the Structured Stream Transport
 	ssthost = new Host(settings, NETSTERIA_DEFAULT_PORT);
-
 
 	// Initialize the settings system, read user profile
 	SettingsDialog::init();
@@ -486,9 +481,18 @@ int main(int argc, char **argv)
 	myreginfo.setEndpoints(ssthost->activeLocalEndpoints());
 	qDebug() << "local endpoints" << myreginfo.endpoints().size();
 
+	if (!settings->contains("regservers"))
+	{
+		QStringList rs;
+		rs << "pdos.csail.mit.edu" << "motoko.madfire.net";
+		settings->setValue("regservers", rs);
+	}
+
 	// XXX allow user-modifiable set of regservers
-	regclient("pdos.csail.mit.edu");
-	regclient("motoko.madfire.net");
+	for (QString server : settings->value("regservers").toStringList())
+	{
+		regclient(server);
+	}
 
 	// Load and initialize our friends table
 	friends = new PeerTable(NCOLS);
@@ -505,6 +509,12 @@ int main(int argc, char **argv)
 	// Initialize our chunk sharing service
 	ChunkShare::instance()->setPeerTable(friends);
 	ChunkShare::instance()->setStatusColumn(COL_FILES);
+
+	// Share default directory
+	// QDir shareDir;
+	// appdir.mkdir(appdir.path() + "/Fileshare");
+	qDebug() << "Would share files from " << appdir.path() + "/Files";
+	// or read from Settings...
 
 	talksrv = new VoiceService();
 	talksrv->setPeerTable(friends);
