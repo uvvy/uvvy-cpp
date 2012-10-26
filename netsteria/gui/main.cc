@@ -59,30 +59,31 @@ void myMsgHandler(QtMsgType type, const char *msg)
 {
     QTextStream strm(&logfile);
     switch (type) {
-    case QtDebugMsg:
-        strm << "Debug: " << msg << '\n';
-        // std::cout << "Debug: " << msg << '\n';
-        break;
-    case QtWarningMsg:
-        strm << "Warning: " << msg << '\n';
-        std::cout << "Warning: " << msg << '\n';
-        break;
-    case QtCriticalMsg:
-        strm << "Critical: " << msg << '\n';
-        strm.flush();
-        std::cout << "Critical: " << msg << '\n';
-        QMessageBox::critical(NULL,
-            QObject::tr("Netsteria: Critical Error"), msg,
-            QMessageBox::Ok, QMessageBox::NoButton);
-        break;
-    case QtFatalMsg:
-        strm << "Fatal: " << msg << '\n';
-        strm.flush();
-        std::cout << "Fatal: " << msg << '\n';
-        QMessageBox::critical(NULL,
-            QObject::tr("Netsteria: Critical Error"), msg,
-            QMessageBox::Ok, QMessageBox::NoButton);
-        abort();
+        case QtDebugMsg:
+            strm << "D: " << msg << '\n';
+            if (spewdebug)
+                std::cout << msg << '\n';
+            break;
+        case QtWarningMsg:
+            strm << "W: " << msg << '\n';
+            std::cout << "Warning: " << msg << '\n';
+            break;
+        case QtCriticalMsg:
+            strm << "C: " << msg << '\n';
+            strm.flush();
+            std::cout << "Critical: " << msg << '\n';
+            QMessageBox::critical(NULL,
+                QObject::tr("Netsteria: Critical Error"), msg,
+                QMessageBox::Ok, QMessageBox::NoButton);
+            break;
+        case QtFatalMsg:
+            strm << "F: " << msg << '\n';
+            strm.flush();
+            std::cout << "Fatal: " << msg << '\n';
+            QMessageBox::critical(NULL,
+                QObject::tr("Netsteria: Critical Error"), msg,
+                QMessageBox::Ok, QMessageBox::NoButton);
+            abort();
     }
 }
 
@@ -521,15 +522,14 @@ int main(int argc, char **argv)
     talksrv->setTalkColumn(COL_TALK);
     talksrv->setListenColumn(COL_LISTEN);
 
+    mainwin = new MainWindow;
+
     // Start our chat server to accept chat connections
-    ChatServer *chatsrv = new ChatServer();
-    (void)chatsrv;
+    new ChatServer(mainwin);
 
     // Re-start incomplete downloads
     SaveDialog::init();
 
-    mainwin = new MainWindow;
     mainwin->show();
     return app.exec();
 }
-
