@@ -1,5 +1,4 @@
-#ifndef VIEW_H
-#define VIEW_H
+#pragma once
 
 #include <QWidget>
 
@@ -42,5 +41,3 @@ private:
 				const QList<FileInfo> &ents);
 	void noEntries(int pos, qint64 recno, int nents);
 };
-
-#endif	// VIEW_H

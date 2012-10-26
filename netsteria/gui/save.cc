@@ -1,4 +1,3 @@
-
 #include <QLabel>
 #include <QPushButton>
 #include <QProgressBar>
