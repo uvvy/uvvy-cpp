@@ -81,6 +81,7 @@ ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
 		strm->connectTo(otherid, "IM", "NstChat");
 		textentry->setText(tr("Contacting %0...").arg(othername));
 		textentry->setReadOnly(true);
+		button->setEnabled(false);
 		connect(strm, SIGNAL(linkUp()), this, SLOT(connected()));
 	}
 	connect(strm, SIGNAL(readyReadMessage()),
@@ -119,6 +120,7 @@ void ChatDialog::connected()
 	// XXX only if not already enabled...
 	textentry->clear();
 	textentry->setReadOnly(false);
+	button->setEnabled(true);
 }
 
 void ChatDialog::streamError(const QString &err)
@@ -129,8 +131,9 @@ void ChatDialog::streamError(const QString &err)
 		deleteLater();
 
 	textentry->setReadOnly(true);
+	button->setEnabled(false);
 	textentry->setText(tr("Chat connection to %0 failed") .arg(othername));
-	// XX make err details available somehow
+	// XX make err details available somehow - write in the chat window
 }
 
 void ChatDialog::returnPressed()
@@ -353,8 +356,8 @@ void ChatDialog::readyReadMessage()
 			deleteLater();
 
 		textentry->setReadOnly(true);
-		textentry->setText(tr("Chat session closed by %0")
-					.arg(othername));
+		button->setEnabled(false);
+		textentry->setText(tr("Chat session closed by %0").arg(othername));
 	}
 }
 
@@ -373,31 +376,32 @@ ChatServer::ChatServer(QObject *parent)
 
 void ChatServer::incoming()
 {
-	Stream *strm = accept();
-	if (!strm)
-		return;
+	while (1) {
+		Stream *strm = accept();
+		if (!strm)
+			return;
 
-	QByteArray id = strm->remoteHostId();
-	QString name = friends->name(id);
-	if (name.isEmpty())
-		name = tr("unknown host %0").arg(QString(id.toBase64()));
+		QByteArray id = strm->remoteHostId();
+		QString name = friends->name(id);
+		if (name.isEmpty())
+			name = tr("unknown host %0").arg(QString(id.toBase64()));
 
-	qDebug() << "ChatServer: accepting incoming stream from"
-		<< id.toBase64() << name;
+		qDebug() << "ChatServer: accepting incoming stream from"
+			<< id.toBase64() << name;
 
-	ChatDialog *dlg = new ChatDialog(id, name, strm);
-	dlg->show();
+		ChatDialog *dlg = new ChatDialog(id, name, strm);
+		dlg->show();
 
-	// Check for more queued incoming connections
-	incoming();
+		// Check for more queued incoming connections
+	}
 }
 
 
 ////////// ChatScanner //////////
 
 ChatScanner::ChatScanner(ChatDialog *parent, const QStringList &files)
-:	QProgressDialog(parent),
-	chat(parent)
+	: QProgressDialog(parent)
+	, chat(parent)
 {
 	connect(parent, SIGNAL(finished(int)), this, SLOT(scanCanceled()));
 	connect(this, SIGNAL(canceled()), this, SLOT(scanCanceled()));
