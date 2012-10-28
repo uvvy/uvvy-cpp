@@ -195,12 +195,12 @@ MainWindow::MainWindow()
         this, SLOT(trayActivate(QSystemTrayIcon::ActivationReason)));
     trayicon->show();
 
-    #ifdef MAC_OS_X_VERSION_10_6
+#ifdef MAC_OS_X_VERSION_10_6
     MacSupport *m = new MacSupport();
     connect(m, SIGNAL(dockClicked()), this, SLOT(show()));
 //    connect(m, SIGNAL(dockClicked()), m, SLOT(requestAttention()));
 //    connect(m, SIGNAL(dockClicked()), m, SLOT(setDockBadge("ololo"));
-    #endif
+#endif
 }
 
 MainWindow::~MainWindow()
