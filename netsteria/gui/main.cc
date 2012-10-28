@@ -21,6 +21,10 @@
 #include <QUrl>
 #include <QtDebug>
 
+#ifdef MAC_OS_X_VERSION_10_6
+#include "macsupport.h"
+#endif
+
 #include "arch.h"
 #include "env.h"
 #include "main.h"
@@ -190,6 +194,13 @@ MainWindow::MainWindow()
     connect(trayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
         this, SLOT(trayActivate(QSystemTrayIcon::ActivationReason)));
     trayicon->show();
+
+    #ifdef MAC_OS_X_VERSION_10_6
+    MacSupport *m = new MacSupport();
+    connect(m, SIGNAL(dockClicked()), this, SLOT(show()));
+//    connect(m, SIGNAL(dockClicked()), m, SLOT(requestAttention()));
+//    connect(m, SIGNAL(dockClicked()), m, SLOT(setDockBadge("ololo"));
+    #endif
 }
 
 MainWindow::~MainWindow()
