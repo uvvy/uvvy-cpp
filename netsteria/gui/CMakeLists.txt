@@ -9,8 +9,8 @@ set(netsteria_HEADERS chat.h logarea.h main.h meter.h save.h search.h settings.h
 set(netsteria_RESOURCES gui.qrc)
 
 if (APPLE)
-    set(netsteria_SOURCES ${netsteria_SOURCES} macsupport.mm)
-    set(netsteria_HEADERS ${netsteria_HEADERS} macsupport.h)
+    list(APPEND netsteria_SOURCES macsupport.mm)
+    list(APPEND netsteria_HEADERS macsupport.h)
 endif (APPLE)
 
 qt4_wrap_cpp(netsteria_HEADERS_MOC ${netsteria_HEADERS})
