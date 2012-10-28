@@ -1,4 +1,3 @@
-
 #include <QTimer>
 
 #include "action.h"

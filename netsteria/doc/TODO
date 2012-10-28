@@ -2,7 +2,7 @@
 Most immediate usability necessities:
  ☐ Indicator showing when audio is being received, and from whom.
  ☐ Bandwidth indicator during downloads
- ☐ Show file transfer progress on both sending and receiving sides.
+ ☐ Show file transfer progress on both sending and receiving sides. Also inside chat.
  ☐ Make ongoing downloads automatically persist across restarts
  ✔ ALSA backend for Linux and/or upgrade to PortAudio V19 @done (12-10-26 01:19)
  ✔ Make configure script detect absence of OSS, disable audio on Unix @done (12-10-26 01:19)
