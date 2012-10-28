@@ -9,8 +9,8 @@ set(netsteria_HEADERS chat.h logarea.h main.h meter.h save.h search.h settings.h
 set(netsteria_RESOURCES gui.qrc)
 
 if (APPLE)
-        set(netsteria_SOURCES ${netsteria_SOURCES} macsupport.mm)
-        set(netsteria_HEADERS ${netsteria_HEADERS} macsupport.h)
+    set(netsteria_SOURCES ${netsteria_SOURCES} macsupport.mm)
+    set(netsteria_HEADERS ${netsteria_HEADERS} macsupport.h)
 endif (APPLE)
 
 qt4_wrap_cpp(netsteria_HEADERS_MOC ${netsteria_HEADERS})
@@ -20,15 +20,15 @@ add_executable(Netsteria ${GUI_TYPE} ${netsteria_SOURCES} ${netsteria_HEADERS_MO
 target_link_libraries(Netsteria sst routing netsteria opus rtaudio ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 if (WIN32)
-	target_link_libraries(Netsteria ws2_32 gdi32 winmm)
-#	RC_FILE = gui.rc
+    target_link_libraries(Netsteria ws2_32 gdi32 winmm)
+#   RC_FILE = gui.rc
 endif (WIN32)
 
 if (APPLE)
-	find_library(COREFOUNDATION_LIB CoreFoundation)
-	find_library(COREAUDIO_LIB CoreAudio)
-	find_library(AUDIOTOOLBOX_LIB AudioToolbox)
-        find_library(COCOA_LIB Cocoa)
-        target_link_libraries(Netsteria ${COREFOUNDATION_LIB} ${COREAUDIO_LIB} ${AUDIOTOOLBOX_LIB} ${COCOA_LIB})
-#	ICON = img/netsteria.icns
+    find_library(COREFOUNDATION_LIB CoreFoundation)
+    find_library(COREAUDIO_LIB CoreAudio)
+    find_library(AUDIOTOOLBOX_LIB AudioToolbox)
+    find_library(COCOA_LIB Cocoa)
+    target_link_libraries(Netsteria ${COREFOUNDATION_LIB} ${COREAUDIO_LIB} ${AUDIOTOOLBOX_LIB} ${COCOA_LIB})
+#   ICON = img/netsteria.icns
 endif (APPLE)
