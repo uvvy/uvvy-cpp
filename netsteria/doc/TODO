@@ -10,6 +10,9 @@ Most immediate usability necessities:
  ☐ Some documentation, both user and technical
  ☐ Automatic launching on host OS login
  ☐ Public/friends-only choices on profile items
+ ☐ Save/load chat history, how to synchronize history between devices?
+ ☐ Group chat.
+ ☐ Chat join urls like nstchat://someblob or nst://chat?someblob
 
 Larger features planned:
  ☐ Integration with UIA - personal device cluster management, etc.
