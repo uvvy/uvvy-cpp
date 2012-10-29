@@ -11,6 +11,12 @@ Most immediate usability necessities:
  ☐ Automatic launching on host OS login
  ☐ Public/friends-only choices on profile items
  ☐ Save/load chat history, how to synchronize history between devices?
+     Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull non-existant entries
+     once activated. How to track joins/leaves (+ history available to new joiners)?
+     (unread, originator, timestamp, target, msg_hash) - tuple for syncing messages.
+     Unread is not synced, it is implicitly 1 for synced messages. Actually, it can be synced, for example
+     if the chat was already read on a device, then unread=0 may be synced).
+     metakit could be used as storage for message view (easier to experiment - we only need a hashed view).
  ☐ Group chat.
  ☐ Chat join urls like nstchat://someblob or nst://chat?someblob
 
