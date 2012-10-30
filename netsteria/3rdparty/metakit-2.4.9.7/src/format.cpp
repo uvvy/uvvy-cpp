@@ -331,7 +331,7 @@ d4_inline bool c4_FormatB::ShouldBeMemo(int length_)const {
   // as is, and so do memos which have not been modified
 
   int rows = _memos.GetSize() + 1; // avoids divide by zero
-  return length_ > 10000 || length_ > 100 && length_ > 1000000 / rows;
+  return length_ > 10000 || (length_ > 100 && length_ > 1000000 / rows);
 }
 
 int c4_FormatB::ItemLenOffCol(int index_, t4_i32 &off_, c4_Column * &col_) {
@@ -356,13 +356,15 @@ c4_Column *c4_FormatB::GetNthMemoCol(int index_, bool alloc_) {
     _memos.SetAt(index_, col);
 
     if (n > 0)
-    if (_data.IsDirty()) {
-      c4_Bytes temp;
-      _data.FetchBytes(start, n, temp, true);
-      col->SetBuffer(n);
-      col->StoreBytes(0, temp);
-    } else
-      col->SetLocation(_data.Position() + start, n);
+    {
+      if (_data.IsDirty()) {
+        c4_Bytes temp;
+        _data.FetchBytes(start, n, temp, true);
+        col->SetBuffer(n);
+        col->StoreBytes(0, temp);
+      } else
+        col->SetLocation(_data.Position() + start, n);
+    }
   }
 
   return col;
@@ -809,8 +811,8 @@ void c4_FormatB::Commit(c4_SaveContext &ar_) {
   // both _sizeCol and _memoCol will be clean again when it has
   // but be careful because dirty flag is only useful if size is nonzero
   if (_recalc && !ar_.Serializing())
-    _recalc = _sizeCol.ColSize() > 0 && _sizeCol.IsDirty() || _memoCol.ColSize()
-      > 0 && _memoCol.IsDirty();
+    _recalc = (_sizeCol.ColSize() > 0 && _sizeCol.IsDirty())
+           || (_memoCol.ColSize() > 0 && _memoCol.IsDirty());
 }
 
 /////////////////////////////////////////////////////////////////////////////
