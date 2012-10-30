@@ -17,7 +17,7 @@ qt4_wrap_cpp(netsteria_HEADERS_MOC ${netsteria_HEADERS})
 qt4_add_resources(netsteria_RESOURCES_RCC ${netsteria_RESOURCES})
 
 add_executable(Netsteria ${GUI_TYPE} ${netsteria_SOURCES} ${netsteria_HEADERS_MOC} ${netsteria_RESOURCES_RCC})
-target_link_libraries(Netsteria sst routing netsteria opus rtaudio ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(Netsteria sst routing netsteria opus rtaudio mk4 ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 if (WIN32)
     target_link_libraries(Netsteria ws2_32 gdi32 winmm)
