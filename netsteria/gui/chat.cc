@@ -15,6 +15,7 @@
 #include <QtDebug>
 
 #include "chat.h"
+#include "chathistory.h"
 #include "main.h"
 #include "share.h"
 #include "view.h"
@@ -35,7 +36,7 @@ ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
             Stream *strm)
 :   QDialog(NULL),
     otherid(otherid), othername(othername),
-    stream(NULL)
+    stream(NULL), history(nullptr)
 {
     setWindowTitle(tr("Netsteria chat with %0").arg(othername));
     setAcceptDrops(true);
@@ -56,18 +57,24 @@ ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
 
     textentry = new QLineEdit(this);
     connect(textentry, SIGNAL(returnPressed()),
-        this, SLOT(returnPressed()));
+        this, SLOT(sendTextLine()));
 
     button = new QPushButton(this);
     button->setText(tr("Send"));
     connect(button, SIGNAL(clicked()),
-        this, SLOT(returnPressed()));
+        this, SLOT(sendTextLine()));
+
+    QPushButton* hbutton = new QPushButton(this);
+    hbutton->setText(tr("History"));
+    connect(hbutton, SIGNAL(clicked()),
+        this, SLOT(loadHistory()));
 
     QHBoxLayout *inputl = new QHBoxLayout;
     inputl->setContentsMargins(0,0,0,0);
     inputl->setSpacing(1);
     inputl->addWidget(textentry);
     inputl->addWidget(button);
+    inputl->addWidget(hbutton);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setContentsMargins(2,2,2,2);
@@ -82,13 +89,16 @@ ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
         textentry->setText(tr("Contacting %0...").arg(othername));
         textentry->setReadOnly(true);
         button->setEnabled(false);
-        connect(strm, SIGNAL(linkUp()), this, SLOT(connected()));
+        connect(strm, SIGNAL(linkUp()),
+            this, SLOT(connected()));
     }
     connect(strm, SIGNAL(readyReadMessage()),
         this, SLOT(readyReadMessage()));
     connect(strm, SIGNAL(error(const QString &)),
         this, SLOT(streamError(const QString &)));
     stream = strm;
+
+    history = new ChatHistory(otherid, this);
 }
 
 ChatDialog::~ChatDialog()
@@ -136,7 +146,7 @@ void ChatDialog::streamError(const QString &err)
     // XX make err details available somehow - write in the chat window
 }
 
-void ChatDialog::returnPressed()
+void ChatDialog::sendTextLine()
 {
     if (!active())
         return;
@@ -361,6 +371,9 @@ void ChatDialog::readyReadMessage()
     }
 }
 
+void ChatDialog::loadHistory()
+{
+}
 
 ////////// ChatServer //////////
 

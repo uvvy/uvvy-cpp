@@ -1,5 +1,4 @@
-#ifndef CHAT_H
-#define CHAT_H
+#pragma once
 
 #include <QList>
 #include <QLineEdit>
@@ -17,7 +16,7 @@ class QPushButton;
 class LogArea;
 class ChatServer;
 class FileInfo;
-
+class ChatHistory;
 
 struct ChatProtocol
 {
@@ -42,6 +41,8 @@ class ChatDialog : public QDialog, public ChatProtocol
 	const QString othername;
 
 	SST::Stream *stream;		// Connection we chat over
+
+	ChatHistory* history;       // History storage for this chat
 
 	QList<QLabel*> labels;		// List of log entry sender labels
 	QList<QWidget*> entries;	// List of log entry display widgets
@@ -78,7 +79,11 @@ private slots:
 	void connected();
 	void readyReadMessage();
 	void streamError(const QString &err);
-	void returnPressed();
+	void sendTextLine();
+	/**
+	 * Load available chat history. Currently tries to load everything, for simplicity.
+	 */
+	void loadHistory();
 };
 
 
@@ -112,5 +117,3 @@ private slots:
 	void scanCanceled();
 };
 
-
-#endif	// CHAT_H
