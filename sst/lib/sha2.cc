@@ -21,7 +21,7 @@
 
 #include <QtEndian>
 #include <QByteArray>
-
+#include <stdint.h>
 #include "sha2.h"
 
 using namespace SST;
