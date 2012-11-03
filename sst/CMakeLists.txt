@@ -1,4 +1,3 @@
-
 # This is transitional for extracting pieces of routing-related functionality from SST
 include_directories(../routing/lib)
 
@@ -9,9 +8,11 @@ set(CMAKE_CXX_CFLAGS "${CMAKE_CXX_CFLAGS} -fno-strict-aliasing")
 
 add_subdirectory(rpcgen)
 add_subdirectory(lib)
-add_subdirectory(test)
 
-if (UNIX)
+if (BUILD_TESTS)
+	add_subdirectory(test)
+endif (BUILD_TESTS)
+
+if (UNIX AND BUILD_TESTS)
     add_subdirectory(shell)
-endif (UNIX)
-
+endif (UNIX AND BUILD_TESTS)

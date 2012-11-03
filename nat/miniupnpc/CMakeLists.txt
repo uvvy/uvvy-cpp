@@ -4,9 +4,6 @@ add_definitions(-DOS_STRING=\"${CMAKE_SYSTEM_NAME}\")
 
 option (UPNPC_BUILD_STATIC "Build static library" TRUE)
 option (UPNPC_BUILD_SHARED "Build shared library" FALSE)
-if (NOT WIN32)
-  option (UPNPC_BUILD_TESTS "Build test executables" TRUE)
-endif (NOT WIN32)
 option (NO_GETADDRINFO "Define NO_GETADDRINFO" FALSE)
 
 mark_as_advanced (NO_GETADDRINFO)
@@ -75,7 +72,7 @@ if (UPNPC_BUILD_SHARED)
   target_link_libraries (upnpc-shared ${LDLIBS})
 endif (UPNPC_BUILD_SHARED)
 
-if (UPNPC_BUILD_TESTS)
+if (BUILD_TESTS)
   include_directories(.)
   
   add_executable (testminixml test/testminixml.c minixml.c igd_desc_parse.c)
@@ -102,4 +99,4 @@ if (UPNPC_BUILD_TESTS)
   )
   target_link_libraries (testminiwget ${LDLIBS})
 
-endif (UPNPC_BUILD_TESTS)
+endif (BUILD_TESTS)
