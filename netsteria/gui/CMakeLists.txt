@@ -33,3 +33,7 @@ if (APPLE)
     target_link_libraries(Netsteria ${COREFOUNDATION_LIB} ${COREAUDIO_LIB} ${AUDIOTOOLBOX_LIB} ${COCOA_LIB})
 #   ICON = img/netsteria.icns
 endif (APPLE)
+
+if (UNIX AND NOT APPLE)
+	target_link_libraries(Netsteria asound rt)
+endif (UNIX AND NOT APPLE)
