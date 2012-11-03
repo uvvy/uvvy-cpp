@@ -23,6 +23,7 @@
 #define SST_HMAC_H
 
 #include "sha2.h"
+#include <stdint.h>
 
 namespace SST {
 
