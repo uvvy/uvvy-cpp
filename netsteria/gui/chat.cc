@@ -165,7 +165,7 @@ void ChatDialog::sendTextLine()
     qint64 actsize = stream->writeMessage(msg);
     Q_ASSERT(actsize == msg.size());
 
-    history->insertHistoryLine("Me", QDateTime::currentDateTimeUtc(), text);
+    history->insertHistoryLine("Me", QDateTime::currentDateTime(), text);
 
     // Get ready for another line of text...
     textentry->clear();
@@ -336,7 +336,7 @@ void ChatDialog::readyReadMessage()
                 break;
             }
             addText(othername, text);
-            history->insertHistoryLine(othername, QDateTime::currentDateTimeUtc(), text); // @todo timestamp should come from network??
+            history->insertHistoryLine(othername, QDateTime::currentDateTime(), text); // @todo timestamp should come from network??
             break; }
         case Files: {
             qint32 nfiles;
