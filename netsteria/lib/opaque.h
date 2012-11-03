@@ -13,7 +13,7 @@
 #include "chunk.h"
 
 class QIODevice;
-class SST::XdrStream;
+namespace SST { class XdrStream; }
 class OpaqueCoder;
 class OpaqueReader;
 

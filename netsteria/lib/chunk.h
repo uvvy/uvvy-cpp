@@ -10,8 +10,10 @@
 #include "util.h"
 #include "peer.h"
 
-class SST::XdrStream;
-class SST::Stream;
+namespace SST {
+    class XdrStream;
+    class Stream;
+}
 class AbstractChunkReader;
 class ChunkShare;
 class ChunkPeer;
