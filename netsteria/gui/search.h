@@ -1,5 +1,4 @@
-#ifndef SEARCH_H
-#define SEARCH_H
+#pragma once
 
 #include <QSet>
 #include <QList>
@@ -13,9 +12,10 @@
 class QLineEdit;
 class QTableView;
 class QTableWidgetItem;
-class SST::RegInfo;
-class SST::Endpoint;
-
+namespace SST {
+	class RegInfo;
+	class Endpoint;
+}
 
 class SearchDialog : public QDialog
 {
@@ -50,6 +50,3 @@ private slots:
 			const RegInfo &info);
 	void addPeer();
 };
-
-
-#endif	// SEARCH_H

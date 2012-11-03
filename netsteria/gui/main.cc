@@ -509,7 +509,7 @@ int main(int argc, char **argv)
     }
 
     // XXX allow user-modifiable set of regservers
-    for (QString server : settings->value("regservers").toStringList())
+    foreach (QString server, settings->value("regservers").toStringList())
     {
         regclient(server);
     }
