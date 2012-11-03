@@ -82,7 +82,7 @@ int Audio::scan()
 	qDebug() << "Audio::scan:" << ndevs << "devices found.";
 
 	int n = 0;
-	for(auto s : deviceNames())
+	foreach(QString s, deviceNames())
 	{
 		qWarning() << "Device" << n << ":" << s;
 		++n;
@@ -228,7 +228,7 @@ double Audio::minSampleRate(int dev)
     }
 	Q_ASSERT(info.sampleRates.size() != 0);
 	int minrate = INT_MAX;
-	for (int rate : info.sampleRates)
+	foreach (int rate, info.sampleRates)
 		minrate = qMin(minrate, rate);
 	return minrate;
 }
@@ -245,7 +245,7 @@ double Audio::maxSampleRate(int dev)
     }
 	Q_ASSERT(info.sampleRates.size() != 0);
 	int maxrate = 0;
-	for (int rate : info.sampleRates)
+	foreach (int rate, info.sampleRates)
 		maxrate = qMax(maxrate, rate);
 	return maxrate;
 }

@@ -10,7 +10,7 @@
 #include "opaque.h"
 #include "util.h"
 
-class SST::XdrStream;
+namespace SST { class XdrStream; }
 class QFileInfo;
 
 
