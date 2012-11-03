@@ -5,6 +5,7 @@
 //
 #include <QObject>
 #include <QByteArray>
+#include <QDateTime>
 // #include "store.h"
 #include "mk4.h"
 
@@ -23,6 +24,9 @@ public:
 	 */
 	ChatHistory(const QByteArray& id, QObject* parent = 0);
 	~ChatHistory();
+
+public slots:
+	void insertHistoryLine(const QString& originator, const QDateTime timestamp, const QString& message);
 
 private slots:
 	void newHistorySynced();

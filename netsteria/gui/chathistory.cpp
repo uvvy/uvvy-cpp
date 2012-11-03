@@ -5,6 +5,7 @@
 ChatHistory::ChatHistory(const QByteArray& id, QObject* parent)
 	: QObject(parent)
 {
+	appdir.mkdir("ChatHistory");
 	// Use base32 for naming the files, it's more filesystem-compatible.
 	// QString filename = QString(Base32(id));
 	QString filename = id.toBase64();
@@ -19,6 +20,18 @@ ChatHistory::~ChatHistory()
 
 	delete view;
 	delete storage;
+}
+
+void ChatHistory::insertHistoryLine(const QString& originator, const QDateTime timestamp, const QString& message)
+{
+	c4_Row row;
+	c4_StringProp pOriginator("originator");
+	c4_StringProp pMsg("msg");
+
+	pOriginator(row) = originator.toUtf8().constData();
+	pMsg(row) = message.toUtf8().constData();
+
+	view->Add(row);
 }
 
 void ChatHistory::newHistorySynced()

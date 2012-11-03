@@ -36,7 +36,7 @@ ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
             Stream *strm)
 :   QDialog(NULL),
     otherid(otherid), othername(othername),
-    stream(NULL), history(nullptr)
+    stream(NULL), history(NULL)
 {
     setWindowTitle(tr("Netsteria chat with %0").arg(othername));
     setAcceptDrops(true);
@@ -164,6 +164,8 @@ void ChatDialog::sendTextLine()
     ws << (qint32)Text << text;
     qint64 actsize = stream->writeMessage(msg);
     Q_ASSERT(actsize == msg.size());
+
+    history->insertHistoryLine("Me", QDateTime::currentDateTimeUtc(), text);
 
     // Get ready for another line of text...
     textentry->clear();
@@ -334,6 +336,7 @@ void ChatDialog::readyReadMessage()
                 break;
             }
             addText(othername, text);
+            history->insertHistoryLine(othername, QDateTime::currentDateTimeUtc(), text); // @todo timestamp should come from network??
             break; }
         case Files: {
             qint32 nfiles;
