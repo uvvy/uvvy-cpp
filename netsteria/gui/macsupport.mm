@@ -1,5 +1,4 @@
 #include "macsupport.h"
-#include <QWidget>
 
 #import <Cocoa/Cocoa.h>
 #import <objc/runtime.h>
