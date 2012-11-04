@@ -37,6 +37,7 @@
 #include "save.h"
 #include "host.h"
 #include "settings.h"
+#include "filesync.h"
 
 using namespace SST;
 
@@ -540,6 +541,7 @@ int main(int argc, char **argv)
     shareDir = appdir.path() + "/Files";
     qDebug() << "Would share files from " << shareDir.path();
     // or read from Settings...
+    FileSync *syncwatch = new FileSync;
 
     talksrv = new VoiceService();
     talksrv->setPeerTable(friends);
@@ -555,5 +557,8 @@ int main(int argc, char **argv)
     SaveDialog::init();
 
     mainwin->show();
-    return app.exec();
+    int r = app.exec();
+
+    delete syncwatch;
+    return r;
 }
