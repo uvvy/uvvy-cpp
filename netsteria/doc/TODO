@@ -11,11 +11,18 @@ Larger features planned:
 
 Chat synchronization:
  ☐ Save/load chat history, how to synchronize history between devices?
+   ✔ Save history locally @done (12-11-04 00:33)
+   ☐ Load history locally
+   ☐ Sync history between instances
      Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull non-existant entries
      once activated. How to track joins/leaves (+ history available to new joiners)?
      (unread, originator, timestamp, target, msg_hash) - tuple for syncing messages.
      Unread is not synced, it is implicitly 1 for synced messages. Actually, it can be synced, for example
      if the chat was already read on a device, then unread=0 may be synced).
+     (originator_user, originator_eid, originator_timestamp) - to track source of the message.
+     (rx_timestamp) - to measure interdevice synchronization time.
+     (chat_id) - a hashed concatenation of originator and receiver ids plus, perhaps, some nonce.
+ ☐ Draw possible chat synchronization graph ideas between Alice's and Bob's personal cluser devices.
  ✔ Add Metakit in distribution. @done (12-10-30 10:52)
      metakit could be used as storage for message view (easier to experiment - we only need a hashed view).
  ☐ Group chat.
@@ -25,6 +32,9 @@ File synchronization:
  ☐ Bandwidth indicator during downloads
  ☐ Show file transfer progress on both sending and receiving sides. Also inside chat.
  ☐ Make ongoing downloads automatically persist across restarts
+ ☐ Watch Files directory for new files and file changes (QFileSystemWatcher)
+ ☐ Initiate file resync operation when change is detected.
+     Should work pretty much like file transfer, just the file save locations are predefined.
 
 Voice and video communication:
  ☐ Indicator showing when audio is being received, and from whom.
