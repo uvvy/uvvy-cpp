@@ -12,12 +12,15 @@ set(netsteria_RESOURCES gui.qrc)
 if (APPLE)
     list(APPEND netsteria_SOURCES macsupport.mm)
     list(APPEND netsteria_HEADERS macsupport.h)
+	set(MACOSX_BUNDLE_ICON_FILE "mettanode.icns")
+	set_source_files_properties("img/${MACOSX_BUNDLE_ICON_FILE}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+	set(APPLE_BUNDLE_SRC "img/${MACOSX_BUNDLE_ICON_FILE}")
 endif (APPLE)
 
 qt4_wrap_cpp(netsteria_HEADERS_MOC ${netsteria_HEADERS})
 qt4_add_resources(netsteria_RESOURCES_RCC ${netsteria_RESOURCES})
 
-add_executable(Netsteria ${GUI_TYPE} ${netsteria_SOURCES} ${netsteria_HEADERS_MOC} ${netsteria_RESOURCES_RCC})
+add_executable(Netsteria ${GUI_TYPE} ${netsteria_SOURCES} ${netsteria_HEADERS_MOC} ${netsteria_RESOURCES_RCC} ${APPLE_BUNDLE_SRC})
 target_link_libraries(Netsteria sst routing netsteria opus rtaudio mk4 ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 if (WIN32)
@@ -31,7 +34,6 @@ if (APPLE)
     find_library(AUDIOTOOLBOX_LIB AudioToolbox)
     find_library(COCOA_LIB Cocoa)
     target_link_libraries(Netsteria ${COREFOUNDATION_LIB} ${COREAUDIO_LIB} ${AUDIOTOOLBOX_LIB} ${COCOA_LIB})
-#   ICON = img/netsteria.icns
 endif (APPLE)
 
 if (UNIX AND NOT APPLE)
