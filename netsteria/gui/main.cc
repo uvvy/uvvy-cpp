@@ -46,6 +46,7 @@ using namespace SST;
 Host *ssthost;
 
 MainWindow *mainwin;
+// LogWindow *logwin;
 PeerTable *friends;
 VoiceService *talksrv;
 
@@ -97,7 +98,7 @@ MainWindow::MainWindow()
 {
     QIcon appicon(":/img/mettanode.png");
 
-    setWindowTitle(tr("Netsteria"));
+    setWindowTitle(tr("Metta node"));
     setWindowIcon(appicon);
 
     // Create a ListView onto our friends list, as the central widget
