@@ -33,6 +33,5 @@ add_subdirectory(sst)
 add_subdirectory(routing)
 #add_subdirectory(naming)
 add_subdirectory(nat)
-add_subdirectory(netsteria)
+add_subdirectory(ui)
 
-#add_subdirectory(ui)

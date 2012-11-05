@@ -332,9 +332,9 @@ void MainWindow::openWeb()
 
 void MainWindow::openAbout()
 {
-    QMessageBox *mbox = new QMessageBox(tr("About Netsteria"),
-                tr("Netsteria version %0\n"
-                   "Copyright 2006 Bryan Ford").arg(VERSION),
+    QMessageBox *mbox = new QMessageBox(tr("About MettaNode"),
+                tr("Based on Netsteria version %0\n"
+                   "by Bryan Ford, © 2006").arg(VERSION),
                 QMessageBox::Information,
                 QMessageBox::Ok, QMessageBox::NoButton,
                 QMessageBox::NoButton, this);
