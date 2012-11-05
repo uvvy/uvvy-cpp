@@ -4,8 +4,16 @@
 #include "filesync.h"
 #include "env.h"
 
-FileSync::FileSync(QObject* parent)
+//=====================================================================================================================
+// FileWatcher
+//=====================================================================================================================
+
+FileWatcher::FileWatcher(QObject* parent)
 	: QObject(parent)
+	, ignoreChanges(false)
+	, files()
+	, directories()
+	, watcher(0)
 {
 	watcher = new QFileSystemWatcher(this);
 	connect(watcher, SIGNAL(fileChanged(const QString&)),
@@ -16,18 +24,16 @@ FileSync::FileSync(QObject* parent)
 	watchPath(shareDir, true);
 }
 
-void FileSync::watchPath(const QDir& path, bool isDir)
+void FileWatcher::populateDirectoryWatch(const QString& path)
 {
-
-	watcher->addPath(path.path());
 	QDir d(path);
 	d.setFilter(QDir::AllDirs|QDir::NoSymLinks|QDir::NoDotAndDotDot|QDir::Hidden);
 	QStringList dirs = d.entryList();
 	foreach(QString dir, dirs)
 	{
-		QString dpath = path.path() + "/" + dir;
+		QString dpath = path + "/" + dir;
 		qDebug() << "Adding watch on directory" << dpath;
-		watcher->addPath(dpath);
+		watchPath(QDir(dpath), true);
 	}
 
 	d.setFilter(QDir::Files|QDir::Hidden);
@@ -36,22 +42,135 @@ void FileSync::watchPath(const QDir& path, bool isDir)
 	{
 		if (file == ".DS_Store")
 			continue;
-		QString fpath = path.path() + "/" + file;
+		QString fpath = path + "/" + file;
 		qDebug() << "Adding watch on file" << fpath;
-		watcher->addPath(fpath);
+		watchPath(QDir(fpath), false);
 	}
 }
 
-void FileSync::fileChanged(const QString& path)
+/*
+ * Qt docs:
+ * Note that QFileSystemWatcher stops monitoring files once they have been renamed or removed from disk,
+ * and directories once they have been removed from disk.
+ */
+
+void FileWatcher::watchPath(const QDir& path, bool isDir)
 {
-	qDebug() << "FILE CHANGE NOTIFY IN" << path;
-	QStringList origFiles = watcher->files();
-	watchPath(QDir(path), false);
+	qDebug() << "FILES" << files << "DIRECTORIES" << directories;
+
+	QString pathname = path.path();
+	if (isDir)
+	{
+		if (!path.exists())
+		{
+			emit directoryRemoved(pathname);
+			directories.removeAll(pathname);
+		}
+		else
+		if (!directories.contains(pathname))
+		{
+			emit directoryAdded(pathname);
+			watcher->addPath(pathname);
+			directories.append(pathname);
+			populateDirectoryWatch(pathname);
+		}
+		else
+		{
+			emit directoryModified(pathname);
+			populateDirectoryWatch(pathname);
+		}
+	}
+	else
+	{
+		if (!path.exists(pathname))
+		{
+			emit fileRemoved(pathname);
+			files.removeAll(pathname);
+		}
+		else
+		if (!files.contains(pathname))
+		{
+			emit fileAdded(pathname);
+			watcher->addPath(pathname);
+			files.append(pathname);
+		}
+		else
+		{
+			emit fileModified(pathname);
+		}
+	}
 }
 
-void FileSync::directoryChanged(const QString& path)
+void FileWatcher::fileChanged(const QString& path)
 {
+	if (ignoreChanges)
+		return;
+
+	ignoreChanges = true;
+	qDebug() << "FILE CHANGE NOTIFY IN" << path;
+	watchPath(QDir(path), false);
+	ignoreChanges = false;
+}
+
+void FileWatcher::directoryChanged(const QString& path)
+{
+	if (ignoreChanges)
+		return;
+
+	ignoreChanges = true;
 	qDebug() << "DIRECTORY CHANGE NOTIFY IN" << path;
-	QStringList origDirs = watcher->directories();
 	watchPath(QDir(path), true);
+	ignoreChanges = false;
+}
+
+//=====================================================================================================================
+// FileSync
+//=====================================================================================================================
+
+FileSync::FileSync(QObject* parent)
+	: QObject(parent)
+{
+	watcher = new FileWatcher(this);
+	connect(watcher, SIGNAL(fileAdded(const QString&)),
+		this, SLOT(fileAdded(const QString&)));
+	connect(watcher, SIGNAL(fileRemoved(const QString&)),
+		this, SLOT(fileRemoved(const QString&)));
+	connect(watcher, SIGNAL(fileModified(const QString&)),
+		this, SLOT(fileModified(const QString&)));
+	connect(watcher, SIGNAL(directoryAdded(const QString&)),
+		this, SLOT(directoryAdded(const QString&)));
+	connect(watcher, SIGNAL(directoryRemoved(const QString&)),
+		this, SLOT(directoryRemoved(const QString&)));
+	connect(watcher, SIGNAL(directoryModified(const QString&)),
+		this, SLOT(directoryModified(const QString&)));
+}
+
+void FileSync::fileAdded(const QString& path)
+{
+	qDebug() << "fileAdded" << path;
+}
+
+void FileSync::fileRemoved(const QString& path)
+{
+	qDebug() << "fileRemoved" << path;
+}
+
+void FileSync::fileModified(const QString& path)
+{
+	qDebug() << "fileModified" << path;
+}
+
+void FileSync::directoryAdded(const QString& path)
+{
+	qDebug() << "directoryAdded" << path;
+}
+
+void FileSync::directoryRemoved(const QString& path)
+{
+	qDebug() << "directoryRemoved" << path;
+}
+
+void FileSync::directoryModified(const QString& path)
+{
+	qDebug() << "directoryModified" << path;
 }
