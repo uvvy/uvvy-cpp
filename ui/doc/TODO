@@ -36,6 +36,11 @@ File synchronization:
  ☐ Watch Files directory for new files and file changes (QFileSystemWatcher)
  ☐ Initiate file resync operation when change is detected.
      Should work pretty much like file transfer, just the file save locations are predefined.
+     Different changes cause different synchronization commands to be sent.
+     E.g. moving a file issues RENAME, while deleting it issues REMOVE and changing it issues UPDATE_SYNC.
+     What to do with conflicting changes? One node sends rename, one remove and one modify?
+     Something like full-fledged git might be needed. At the very least a key-value like store, that resolves modifications using full file path 
+     as just another attribute (change in FILE_PATH attribute might cause a rename, for example).
 
 Voice and video communication:
  ☐ Indicator showing when audio is being received, and from whom.
