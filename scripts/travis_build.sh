@@ -2,6 +2,6 @@
 
 mkdir -p _build_
 cd _build_
-cmake -G "Ninja" .. || exit 1
-ninja || exit 1
+cmake -G "Unix Makefiles" .. || exit 1
+make -j2 || exit 1
 
