@@ -1,0 +1,8 @@
+language: c++
+script: ./scripts/travis_build.sh
+branches:
+  only:
+    - master
+notifications:
+  email: false
+
