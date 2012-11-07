@@ -34,3 +34,6 @@ Not yet required
 * libqxt at http://libqxt.org/
 * boost at http://boost.org/
 
+CI status
+=========
+[![Build Status](https://secure.travis-ci.org/berkus/metta-grabber.png)](http://travis-ci.org/berkus/metta-grabber)
