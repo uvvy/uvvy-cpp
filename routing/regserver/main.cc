@@ -28,22 +28,18 @@ void myMsgHandler(QtMsgType type, const char *msg)
     QTextStream strm(&logfile);
     switch (type) {
         case QtDebugMsg:
-            strm << ts << "D: " << msg << '\n';
-            std::cout << msg << '\n';
+            strm << ts << " D: " << msg << '\n';
             break;
         case QtWarningMsg:
-            strm << ts << "W: " << msg << '\n';
-            std::cout << "Warning: " << msg << '\n';
+            strm << ts << " W: " << msg << '\n';
             break;
         case QtCriticalMsg:
-            strm << ts << "C: " << msg << '\n';
+            strm << ts << " C: " << msg << '\n';
             strm.flush();
-            std::cout << "Critical: " << msg << '\n';
             break;
         case QtFatalMsg:
-            strm << ts << "F: " << msg << '\n';
+            strm << ts << " F: " << msg << '\n';
             strm.flush();
-            std::cout << "Fatal: " << msg << '\n';
             abort();
     }
 }
@@ -488,6 +484,8 @@ int main(int argc, char **argv)
         qWarning("Can't open log file '%s'", logname.toLocal8Bit().data());
     else
         qInstallMsgHandler(myMsgHandler);
+
+    std::cout << "Writing to log " << logname.constData() << '\n';
 
 	QCoreApplication app(argc, argv);
 	RegServer regserv;
