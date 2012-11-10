@@ -140,7 +140,7 @@ RegServer::replyInsert1(const Endpoint &srcep, const QByteArray &idi,
 	// XX really should use a proper HMAC here.
 	QByteArray chal = calcCookie(srcep, idi, nhi);
 
-	qDebug() << this << "replyInsert1 challenge" << chal;
+	qDebug() << this << "replyInsert1 challenge" << chal.toBase64();
 
 	// Send back the challenge cookie in our INSERT1 response,
 	// in order to verify round-trip connectivity
