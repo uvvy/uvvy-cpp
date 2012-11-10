@@ -1,5 +1,4 @@
-#ifndef MAIN_H
-#define MAIN_H
+#pragma once
 
 #include <QSet>
 #include <QHash>
@@ -94,5 +93,3 @@ private slots:
 };
 
 } // namespace SST
-
-#endif	// MAIN_H
