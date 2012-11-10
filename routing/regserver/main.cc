@@ -24,23 +24,24 @@ QFile logfile;
 
 void myMsgHandler(QtMsgType type, const char *msg)
 {
+	QString ts = QDateTime::currentDateTime().toString(Qt::ISODate);
     QTextStream strm(&logfile);
     switch (type) {
         case QtDebugMsg:
-            strm << "D: " << msg << '\n';
+            strm << ts << "D: " << msg << '\n';
             std::cout << msg << '\n';
             break;
         case QtWarningMsg:
-            strm << "W: " << msg << '\n';
+            strm << ts << "W: " << msg << '\n';
             std::cout << "Warning: " << msg << '\n';
             break;
         case QtCriticalMsg:
-            strm << "C: " << msg << '\n';
+            strm << ts << "C: " << msg << '\n';
             strm.flush();
             std::cout << "Critical: " << msg << '\n';
             break;
         case QtFatalMsg:
-            strm << "F: " << msg << '\n';
+            strm << ts << "F: " << msg << '\n';
             strm.flush();
             std::cout << "Fatal: " << msg << '\n';
             abort();
@@ -139,6 +140,8 @@ RegServer::replyInsert1(const Endpoint &srcep, const QByteArray &idi,
 	// XX really should use a proper HMAC here.
 	QByteArray chal = calcCookie(srcep, idi, nhi);
 
+	qDebug() << this << "replyInsert1 challenge" << chal;
+
 	// Send back the challenge cookie in our INSERT1 response,
 	// in order to verify round-trip connectivity
 	// before spending CPU time checking the client's signature.
@@ -147,6 +150,7 @@ RegServer::replyInsert1(const Endpoint &srcep, const QByteArray &idi,
 	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_INSERT1)
 		<< nhi << chal;
 	sock.writeDatagram(resp, srcep.addr, srcep.port);
+	qDebug() << this << "replyInsert1 sent to" << srcep.addr << srcep.port;
 }
 
 QByteArray RegServer::calcCookie(const Endpoint &srcep, const QByteArray &idi,
