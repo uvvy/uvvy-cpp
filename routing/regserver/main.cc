@@ -1,9 +1,12 @@
-
+#include <QDir>
+#include <QFile>
+#include <QDateTime>
 #include <QByteArray>
 #include <QStringList>
 #include <QUdpSocket>
 #include <QCoreApplication>
 #include <QtDebug>
+#include <iostream>
 
 #include "main.h"
 #include "ident.h"
@@ -11,6 +14,40 @@
 #include "reginfo.h"
 #include "xdr.h"
 #include "sha2.h"
+
+
+//=====================================================================================================================
+// Qt logger function.
+//=====================================================================================================================
+
+QFile logfile;
+
+void myMsgHandler(QtMsgType type, const char *msg)
+{
+    QTextStream strm(&logfile);
+    switch (type) {
+        case QtDebugMsg:
+            strm << "D: " << msg << '\n';
+            std::cout << msg << '\n';
+            break;
+        case QtWarningMsg:
+            strm << "W: " << msg << '\n';
+            std::cout << "Warning: " << msg << '\n';
+            break;
+        case QtCriticalMsg:
+            strm << "C: " << msg << '\n';
+            strm.flush();
+            std::cout << "Critical: " << msg << '\n';
+            break;
+        case QtFatalMsg:
+            strm << "F: " << msg << '\n';
+            strm.flush();
+            std::cout << "Fatal: " << msg << '\n';
+            abort();
+    }
+}
+
+//=====================================================================================================================
 
 using namespace SST;
 
@@ -26,8 +63,7 @@ RegServer::RegServer()
 {
 	int port = REGSERVER_DEFAULT_PORT;
 	if (!sock.bind(port, QUdpSocket::DontShareAddress))
-		qFatal("Can't bind to UDP port %d: %s",
-			port, sock.errorString().toLocal8Bit().data());
+		qFatal("Can't bind to UDP port %d: %s", port, sock.errorString().toLocal8Bit().data());
 	Q_ASSERT(sock.state() == sock.BoundState);
 	qDebug() << "RegServer bound on port" << port;
 
@@ -42,8 +78,7 @@ RegServer::udpReadyRead()
 	while ((size = sock.pendingDatagramSize()) >= 0) {
 		msg.resize(size);
 		Endpoint ep;
-		if (sock.readDatagram(msg.data(), size,
-				&ep.addr, &ep.port) != size)
+		if (sock.readDatagram(msg.data(), size, &ep.addr, &ep.port) != size)
 			qWarning("Error receiving %d-byte UDP datagram", size);
 		udpDispatch(msg, ep);
 	}
@@ -386,6 +421,8 @@ RegRecord::RegRecord(RegServer *srv,
 	srv->idhash[id] = this;
 	srv->allrecords += this;
 
+	qDebug() << "Registering record for" << id.toBase64() << "at" << ep.addr.toString() << ep.port;
+
 	// Register all our keywords in the RegServer's keyword table.
 	regKeywords(true);
 
@@ -395,7 +432,7 @@ RegRecord::RegRecord(RegServer *srv,
 
 RegRecord::~RegRecord()
 {
-	//qDebug("~RegRecord");
+	qDebug() << "~RegRecord: deleting record for" << id.toBase64();
 
 	Q_ASSERT(srv->idhash.value(id) == this);
 	srv->idhash.remove(id);
@@ -420,20 +457,35 @@ void RegRecord::regKeywords(bool insert)
 
 void RegRecord::timerEvent(QTimerEvent *)
 {
-	qDebug() << "Timed out record for" << id.toBase64() << "at"
-		<< ep.addr.toString() << ep.port;
+	qDebug() << "Timed out record for" << id.toBase64() << "at" << ep.addr.toString() << ep.port;
 
 	// Our timeout expired - just silently delete this record.
 	deleteLater();
 }
 
-
+//
 // Main application entrypoint
-
+//
 int main(int argc, char **argv)
 {
+    QDir homedir = QDir::home();
+    QDir appdir;
+    QString appdirname = ".regserver";
+    homedir.mkdir(appdirname);
+    appdir.setPath(homedir.path() + "/" + appdirname);
+
+    // Send debugging output to a log file
+    QString logname(appdir.path() + "/log");
+    QString logbakname(appdir.path() + "/log-before-restart-on-"+QDateTime::currentDateTime().toString()+".bak");
+    QFile::remove(logbakname);
+    QFile::rename(logname, logbakname);
+    logfile.setFileName(logname);
+    if (!logfile.open(QFile::WriteOnly | QFile::Truncate))
+        qWarning("Can't open log file '%s'", logname.toLocal8Bit().data());
+    else
+        qInstallMsgHandler(myMsgHandler);
+
 	QCoreApplication app(argc, argv);
 	RegServer regserv;
 	return app.exec();
 }
-
