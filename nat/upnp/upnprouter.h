@@ -24,6 +24,8 @@
 #include <QStringList>
 // #include <net/portlist.h>
 
+class QNetworkReply;
+
 namespace bt
 {
 	class HTTPRequest;
@@ -182,6 +184,7 @@ namespace bt
 		void forwardResult(HTTPRequest* r);
 		void undoForwardResult(HTTPRequest* r);
 		void getExternalIPResult(HTTPRequest* r);
+		void downloadFinished(QNetworkReply*);
 		
 	signals:
 		/**
