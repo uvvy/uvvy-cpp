@@ -439,17 +439,6 @@ static void regclient(const QString &hostname)
     regcli->setInfo(myreginfo);
     regcli->registerAt(hostname);
     regclients.append(regcli);
-
-    // uint16_t private_port = ssthost->activeLocalEndpoints()[0].port;
-    // uint16_t public_port = 0; //auto-assign
-    // uint32_t lifetime = 3600;
-    // if (!pmp::CreateMap(pmp::UDP, private_port, &public_port, &lifetime)) {
-        // qWarning() << "pmp::CreateMap failed";
-    // }
-    // else
-    // {
-        // qDebug() << "Port map created:" << public_port << "=>" << private_port << "with lifetime" << lifetime;
-    // }
 }
 
 static void usage()
