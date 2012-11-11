@@ -32,7 +32,7 @@ void FileWatcher::populateDirectoryWatch(const QString& path)
 	foreach(QString dir, dirs)
 	{
 		QString dpath = path + "/" + dir;
-		qDebug() << "Adding watch on directory" << dpath;
+		// qDebug() << "Adding watch on directory" << dpath;
 		watchPath(QDir(dpath), true);
 	}
 
@@ -40,10 +40,10 @@ void FileWatcher::populateDirectoryWatch(const QString& path)
 	QStringList files = d.entryList();
 	foreach(QString file, files)
 	{
-		if (file == ".DS_Store")
+		if (file == ".DS_Store") // @todo if file in metadata_filenames: pass
 			continue;
 		QString fpath = path + "/" + file;
-		qDebug() << "Adding watch on file" << fpath;
+		// qDebug() << "Adding watch on file" << fpath;
 		watchPath(QDir(fpath), false);
 	}
 }
@@ -53,10 +53,14 @@ void FileWatcher::populateDirectoryWatch(const QString& path)
  * Note that QFileSystemWatcher stops monitoring files once they have been renamed or removed from disk,
  * and directories once they have been removed from disk.
  */
+/*
+ * To track directory or file renames, keep merkle tree of directory hashes and compare newly added directory or file
+ * hash with existing one - if match exists, it's a rename.
+ */
 
 void FileWatcher::watchPath(const QDir& path, bool isDir)
 {
-	qDebug() << "FILES" << files << "DIRECTORIES" << directories;
+	// qDebug() << "FILES" << files << "DIRECTORIES" << directories;
 
 	QString pathname = path.path();
 	if (isDir)
@@ -107,7 +111,7 @@ void FileWatcher::fileChanged(const QString& path)
 		return;
 
 	ignoreChanges = true;
-	qDebug() << "FILE CHANGE NOTIFY IN" << path;
+	// qDebug() << "FILE CHANGE NOTIFY IN" << path;
 	watchPath(QDir(path), false);
 	ignoreChanges = false;
 }
@@ -118,7 +122,7 @@ void FileWatcher::directoryChanged(const QString& path)
 		return;
 
 	ignoreChanges = true;
-	qDebug() << "DIRECTORY CHANGE NOTIFY IN" << path;
+	// qDebug() << "DIRECTORY CHANGE NOTIFY IN" << path;
 	watchPath(QDir(path), true);
 	ignoreChanges = false;
 }
@@ -144,6 +148,8 @@ FileSync::FileSync(QObject* parent)
 	connect(watcher, SIGNAL(directoryModified(const QString&)),
 		this, SLOT(directoryModified(const QString&)));
 }
+
+// @todo Go via Index::store(), also see Share/ShareFile, ChunkShare. ShareFile::update()
 
 void FileSync::fileAdded(const QString& path)
 {
