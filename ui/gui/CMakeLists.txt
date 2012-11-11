@@ -1,7 +1,8 @@
 set(QT_USE_QTNETWORK TRUE)
+set(QT_USE_QTXML TRUE) # upnp stuff :(
 include(${QT_USE_FILE})
 include_directories(../lib ../../sst/lib ../../routing/lib ../3rdparty/opus-1.0.1/include ../3rdparty/rtaudio-4.0.11)
-include_directories(../3rdparty/metakit-2.4.9.7/include)
+include_directories(../3rdparty/metakit-2.4.9.7/include ../../nat)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
@@ -39,3 +40,7 @@ endif (APPLE)
 if (UNIX AND NOT APPLE)
 	target_link_libraries(MettaNode asound rt)
 endif (UNIX AND NOT APPLE)
+
+#if (NAT_UPNPC_ENABLED)
+target_link_libraries(MettaNode upnp)
+#endif (NAT_UPNPC_ENABLED)

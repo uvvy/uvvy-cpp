@@ -79,6 +79,24 @@ private slots:
 	void exitApp();
 };
 
+//=============================================================================
+// TEST ZONE
+//=============================================================================
+namespace bt { class UPnPRouter; }
+
+class Puncher : public QObject
+{
+    Q_OBJECT
+
+    int port;
+public:
+    Puncher(int port);
+
+public slots:
+    void routerFound(bt::UPnPRouter*);
+};
+//=============================================================================
+
 
 extern MainWindow *mainwin;
 extern PeerTable *friends;

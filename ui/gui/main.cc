@@ -34,10 +34,14 @@
 #include "regcli.h"
 #include "peer.h"
 #include "chunk.h"
+#include "share.h"
 #include "save.h"
 #include "host.h"
 #include "settings.h"
 #include "filesync.h"
+
+#include "upnp/upnpmcastsocket.h"
+#include "upnp/upnprouter.h"
 
 using namespace SST;
 
@@ -416,12 +420,36 @@ void MainWindow::exitApp()
 // Helper functions.
 //=====================================================================================================================
 
+Puncher::Puncher(int p)
+    : QObject()
+    , port(p)
+{
+    qDebug() << "Puncher waiting for victims";
+}
+
+void Puncher::routerFound(bt::UPnPRouter* r)
+{
+    qDebug() << "Router detected, punching a hole.";
+    r->forward(port);
+}
+
 static void regclient(const QString &hostname)
 {
     RegClient *regcli = new RegClient(ssthost);
     regcli->setInfo(myreginfo);
     regcli->registerAt(hostname);
     regclients.append(regcli);
+
+    // uint16_t private_port = ssthost->activeLocalEndpoints()[0].port;
+    // uint16_t public_port = 0; //auto-assign
+    // uint32_t lifetime = 3600;
+    // if (!pmp::CreateMap(pmp::UDP, private_port, &public_port, &lifetime)) {
+        // qWarning() << "pmp::CreateMap failed";
+    // }
+    // else
+    // {
+        // qDebug() << "Port map created:" << public_port << "=>" << private_port << "with lifetime" << lifetime;
+    // }
 }
 
 static void usage()
@@ -508,6 +536,12 @@ int main(int argc, char **argv)
     // Initialize the Structured Stream Transport
     ssthost = new Host(settings, NETSTERIA_DEFAULT_PORT);
 
+    Puncher* p = new Puncher(NETSTERIA_DEFAULT_PORT);
+    bt::UPnPMCastSocket* sock = new bt::UPnPMCastSocket(true);
+    QObject::connect(sock, SIGNAL(discovered(bt::UPnPRouter*)),
+        p, SLOT(routerFound(bt::UPnPRouter*)));
+    sock->discover();
+
     // Initialize the settings system, read user profile
     SettingsDialog::init();
 
@@ -520,10 +554,10 @@ int main(int argc, char **argv)
     myreginfo.setEndpoints(ssthost->activeLocalEndpoints());
     qDebug() << "local endpoints" << myreginfo.endpoints().size();
 
-    if (!settings->contains("regservers"))
+    // if (!settings->contains("regservers"))
     {
         QStringList rs;
-        rs << "pdos.csail.mit.edu" << "motoko.madfire.net";
+        rs << "212.7.7.70" << "192.168.1.94";
         settings->setValue("regservers", rs);
     }
 
@@ -560,6 +594,7 @@ int main(int argc, char **argv)
     qDebug() << "Would share files from " << shareDir.path();
     // or read from Settings...
     FileSync *syncwatch = new FileSync;
+    Share* share = new Share(0, shareDir.path());
 
     talksrv = new VoiceService();
     talksrv->setPeerTable(friends);
