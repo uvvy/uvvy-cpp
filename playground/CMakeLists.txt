@@ -1,3 +1,4 @@
+set(QT_DONT_USE_QTGUI TRUE)
 set(QT_USE_QTNETWORK TRUE)
 include(${QT_USE_FILE})
 
