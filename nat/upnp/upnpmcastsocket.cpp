@@ -102,7 +102,7 @@ namespace bt
                 "ST:urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\n"
                 "MAN:\"ssdp:discover\"\r\n"
                 "MX:3\r\n"
-                "\r\n\0";
+                "\r\n";
         
         if (d->verbose)
         {
@@ -182,7 +182,7 @@ namespace bt
     {
         qWarning() << "UPnPMCastSocket Error : " << errorString();
     }
-    
+
     void UPnPMCastSocket::saveRouters(const QString & file)
     {
         qDebug() << __PRETTY_FUNCTION__;

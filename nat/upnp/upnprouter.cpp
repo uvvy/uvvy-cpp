@@ -131,7 +131,7 @@ namespace bt
     UPnPRouter::UPnPRouter(const QString & server,const QUrl & location,bool verbose) 
         : d(new UPnPRouterPrivate(server,location,verbose,this))
     {
-        qDebug() << __PRETTY_FUNCTION__;
+        qDebug() << __PRETTY_FUNCTION__ << server << location;
     }
     
     
@@ -243,10 +243,11 @@ namespace bt
     
     void UPnPRouter::forwardResult(HTTPRequest* r)
     {
-        qDebug() << __PRETTY_FUNCTION__;
+        qDebug() << __PRETTY_FUNCTION__ << r->succeeded();
         if (r->succeeded())
         {
             d->httpRequestDone(r,false);
+            stateChanged();
         }
         else
         {
@@ -303,15 +304,27 @@ namespace bt
     }
 
     
-#if 0
-    
     void UPnPRouter::isPortForwarded(const uint16_t & port)
     {
         qDebug() << __PRETTY_FUNCTION__;
+
         // first find the right service
-        QList<UPnPService>::iterator i = findPortForwardingService();
-        if (i == services.end())
-            throw Error(("Cannot find port forwarding service in the device's description."));
+        const UPnPService* service = 0;
+        foreach (const UPnPService& s, d->services)
+        {
+            if (s.servicetype.contains("WANIPConnection") || s.servicetype.contains("WANPPPConnection"))
+            {
+                service = &s;
+                break;
+            }
+        }
+
+        if (!service)
+        {
+            d->error = tr("Cannot find port forwarding service in the device's description.");
+            qWarning() << d->error;
+            stateChanged();
+        }
         
         // add all the arguments for the command
         QList<SOAP::Arg> args;
@@ -321,20 +334,18 @@ namespace bt
         
         // the external port
         a.element = "NewExternalPort";
-        a.value = QString::number(port.number);
+        a.value = QString::number(port);
         args.append(a);
         
         // the protocol
         a.element = "NewProtocol";
-        a.value = port.proto == TCP ? "TCP" : "UDP";
+        a.value = /*port.proto == TCP ? "TCP" :*/ "UDP";
         args.append(a);
-        
-        UPnPService & s = *i;
+
         QString action = "GetSpecificPortMappingEntry";
-        QString comm = SOAP::createCommand(action,s.servicetype,args);
-        sendSoapQuery(comm,s.servicetype + "#" + action,s.controlurl);
+        QString comm = SOAP::createCommand(action,service->servicetype,args);
+        HTTPRequest* r = d->sendSoapQuery(comm,service->servicetype + "#" + action,service->controlurl);
     }
-#endif
 
     
     void UPnPRouter::setVerbose(bool v) 
@@ -443,7 +454,7 @@ namespace bt
         
         // the external port
         a.element = "NewExternalPort";
-        a.value = QString::number(port);
+        a.value = QString::number(0); // Automatic port selection ///port);
         args.append(a);
         
         // the protocol
@@ -488,12 +499,12 @@ namespace bt
             else
                 itr++;
         }
-        
+
         fw.pending_req = sendSoapQuery(comm,srv->servicetype + "#" + action,srv->controlurl);
         connect(fw.pending_req,SIGNAL(result(HTTPRequest*)),parent,SLOT(forwardResult(HTTPRequest*)));
         fwds.append(fw);
     }
-    
+
     void UPnPRouter::UPnPRouterPrivate::undoForward(const UPnPService* srv,const uint16_t & port)
     {
         qDebug() << __PRETTY_FUNCTION__;

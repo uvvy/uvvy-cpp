@@ -32,6 +32,10 @@ namespace bt
     HTTPRequest::HTTPRequest(const QString & hdr,const QString & payload,const QString & host,uint16_t port,bool verbose) 
         : hdr(hdr),payload(payload),verbose(verbose),host(host),port(port),finished(false),success(false)
     {
+        qDebug() << "Constructed HTTPRequest";
+        qDebug() << hdr;
+        qDebug() << payload;
+
         sock = new QTcpSocket(this);
         connect(sock,SIGNAL(readyRead()),this,SLOT(onReadyRead()));
         connect(sock,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(onError(QAbstractSocket::SocketError)));
@@ -70,12 +74,12 @@ namespace bt
         QString req = hdr + payload;
         if (verbose)
         {
-            qDebug() << "Sending " << endl;
+            qDebug() << "Sending:";
             QStringList lines = hdr.split("\r\n");
             foreach (const QString &line,lines)
-                qDebug() << line << endl;
+                qDebug() << line;
             
-            qDebug() << payload << endl;
+            qDebug() << payload;
         }
 
         sock->write(req.toAscii());
@@ -91,11 +95,10 @@ namespace bt
         {
             if (!finished)
             {
-                error = ("Connection closed unexpectedly");
+                error = tr("Connection closed unexpectedly");
                 success = false;
                 finished = true;
                 result(this);
-                // operationFinished(this);
             }
             sock->close();
             return;
@@ -106,6 +109,8 @@ namespace bt
         if (eoh != -1)
         {
             reply_header = QHttpResponseHeader(QString::fromAscii(reply.mid(0,eoh + 4)));
+            qDebug() << reply_header.toString();
+            
             if (reply_header.contentLength() > 0 && reply.size() < eoh + 4 + reply_header.contentLength())
             {
                 // Haven't got full content yet, so return and wait for more
@@ -119,11 +124,8 @@ namespace bt
                     error = reply_header.reasonPhrase();
                 finished = true;
                 result(this);
-                // operationFinished(this);
             }
         }
-        else
-            return;
     }
     
     void HTTPRequest::onError(QAbstractSocket::SocketError err)

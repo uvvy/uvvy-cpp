@@ -133,14 +133,12 @@ namespace bt
          * @param s The service
          */
         void addService(const UPnPService & s);
-            
-#if 0
+
         /**
          * See if a port is forwarded
          * @param port The Port
          */
         void isPortForwarded(const uint16_t & port);    
-#endif
         
         /**
          * Forward a local port

@@ -31,7 +31,8 @@ namespace bt
      * @author Joris Guisson
      * 
      * Simple HTTP request class. 
-     * TODO: switch to KIO for this
+
+     * TODO: use QNetworkAccessManager/QNetworkReply for this??!?
      */
     class HTTPRequest : public QObject
     {
@@ -93,6 +94,7 @@ namespace bt
         void parseReply(int eoh);
         
     private:
+        // QNetworkAccessManager* manager;
         QTcpSocket* sock;
         QString hdr,payload;
         bool verbose;
