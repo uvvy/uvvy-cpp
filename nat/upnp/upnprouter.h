@@ -22,7 +22,7 @@
 
 #include <QUrl>
 #include <QStringList>
-// #include <net/portlist.h>
+#include <stdint.h>
 
 class QNetworkReply;
 

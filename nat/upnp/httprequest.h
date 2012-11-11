@@ -22,7 +22,7 @@
 
 #include <QTcpSocket>
 #include <QHttpResponseHeader>
-
+#include <stdint.h>
 
 namespace bt
 {

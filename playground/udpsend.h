@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QUdpSocket>
+#include <stdint.h>
 
 class UdpTestSender : public QUdpSocket
 {
