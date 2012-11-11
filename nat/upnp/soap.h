@@ -26,36 +26,36 @@
 namespace bt
 {
 
-	/**
-	@author Joris Guisson
-	*/
-	class SOAP
-	{
-	public:
-		
-		/**
-		 * Create a simple UPnP SOAP command without parameters.
-		 * @param action The name of the action
-		 * @param service The name of the service
-		 * @return The command
-		 */
-		static QString createCommand(const QString & action,const QString & service);
-		
-		struct Arg
-		{
-			QString element;
-			QString value;
-		};
+    /**
+    @author Joris Guisson
+    */
+    class SOAP
+    {
+    public:
+        
+        /**
+         * Create a simple UPnP SOAP command without parameters.
+         * @param action The name of the action
+         * @param service The name of the service
+         * @return The command
+         */
+        static QString createCommand(const QString & action,const QString & service);
+        
+        struct Arg
+        {
+            QString element;
+            QString value;
+        };
 
-		/**
-		 * Create a UPnP SOAP command with parameters.
-		 * @param action The name of the action
-		 * @param service The name of the service
-		 * @param args Arguments for command
-		 * @return The command
-		 */
-		static QString createCommand(const QString & action,const QString & service,const QList<Arg> & args);
-	};
+        /**
+         * Create a UPnP SOAP command with parameters.
+         * @param action The name of the action
+         * @param service The name of the service
+         * @param args Arguments for command
+         * @return The command
+         */
+        static QString createCommand(const QString & action,const QString & service,const QList<Arg> & args);
+    };
 
 }
 

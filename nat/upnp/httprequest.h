@@ -26,84 +26,84 @@
 
 namespace bt
 {
-	
-	/**
-	 * @author Joris Guisson
-	 * 
-	 * Simple HTTP request class. 
-	 * TODO: switch to KIO for this
-	 */
-	class HTTPRequest : public QObject
-	{
-		Q_OBJECT
-	public:
-		/**
-		 * Constructor, set the url and the request header.
-		 * @param hdr The http request header
-		 * @param payload The payload
-		 * @param host The host
-		 * @param port THe port
-		 * @param verbose Print traffic to the log
-		 */
-		HTTPRequest(const QString & hdr,const QString & payload,const QString & host,
-					uint16_t port,bool verbose);
-		virtual ~HTTPRequest();
-		
-		/**
-		 * Open a connetion and send the request.
-		 */
-		void start();
-		
-		/**
-			Cancel the request, no result signal will be emitted.
-		*/
-		void cancel();
-		
-		/**
-			Get the reply data
-		*/
-		QByteArray replyData() const {return reply;}
-		
-		/**
-			Did the request succeed
-		*/
-		bool succeeded() const {return success;}
-		
-		/**
-			In case of failure this function will return an error string
-		*/
-		QString errorString() const {return error;}
-		
-	signals:
-		/**
-		 * An OK reply was sent.
-		 * @param r The sender of the request
-		 * @param data The data of the reply
-		 */
-		void result(HTTPRequest* r);
-		
-		
-	private slots:
-		void onReadyRead();
-		void onError(QAbstractSocket::SocketError err);
-		void onTimeout();
-		void onConnect();
-	
-	private:
-		void parseReply(int eoh);
-		
-	private:
-		QTcpSocket* sock;
-		QString hdr,payload;
-		bool verbose;
-		QString host;
-		uint16_t port;
-		bool finished;
-		QHttpResponseHeader reply_header;
-		QByteArray reply;
-		bool success;
-		QString error;
-	};
+    
+    /**
+     * @author Joris Guisson
+     * 
+     * Simple HTTP request class. 
+     * TODO: switch to KIO for this
+     */
+    class HTTPRequest : public QObject
+    {
+        Q_OBJECT
+    public:
+        /**
+         * Constructor, set the url and the request header.
+         * @param hdr The http request header
+         * @param payload The payload
+         * @param host The host
+         * @param port THe port
+         * @param verbose Print traffic to the log
+         */
+        HTTPRequest(const QString & hdr,const QString & payload,const QString & host,
+                    uint16_t port,bool verbose);
+        virtual ~HTTPRequest();
+        
+        /**
+         * Open a connetion and send the request.
+         */
+        void start();
+        
+        /**
+            Cancel the request, no result signal will be emitted.
+        */
+        void cancel();
+        
+        /**
+            Get the reply data
+        */
+        QByteArray replyData() const {return reply;}
+        
+        /**
+            Did the request succeed
+        */
+        bool succeeded() const {return success;}
+        
+        /**
+            In case of failure this function will return an error string
+        */
+        QString errorString() const {return error;}
+        
+    signals:
+        /**
+         * An OK reply was sent.
+         * @param r The sender of the request
+         * @param data The data of the reply
+         */
+        void result(HTTPRequest* r);
+        
+        
+    private slots:
+        void onReadyRead();
+        void onError(QAbstractSocket::SocketError err);
+        void onTimeout();
+        void onConnect();
+    
+    private:
+        void parseReply(int eoh);
+        
+    private:
+        QTcpSocket* sock;
+        QString hdr,payload;
+        bool verbose;
+        QString host;
+        uint16_t port;
+        bool finished;
+        QHttpResponseHeader reply_header;
+        QByteArray reply;
+        bool success;
+        QString error;
+    };
 
 }
 
