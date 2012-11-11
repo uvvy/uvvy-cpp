@@ -8,6 +8,9 @@ Most immediate usability necessities:
  ☐ Registration server logging to file.
  ☐ Registration server proper handling of registrations from the same LAN (second client to register disconnects first).
 
+NAT and UPnP:
+ ☐ Download router XML file using QNetworkAccessManager/QNetworkReply
+
 Larger features planned:
  ☐ Integration with UIA - personal device cluster management, etc.
  ☐ Secure VNC-like remote desktop access
