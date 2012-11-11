@@ -131,16 +131,19 @@ namespace bt
     UPnPRouter::UPnPRouter(const QString & server,const QUrl & location,bool verbose) 
         : d(new UPnPRouterPrivate(server,location,verbose,this))
     {
+        qDebug() << __PRETTY_FUNCTION__;
     }
     
     
     UPnPRouter::~UPnPRouter()
     {
+        qDebug() << __PRETTY_FUNCTION__;
         delete d;
     }
     
     void UPnPRouter::addService(const UPnPService & s)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         foreach (const UPnPService & os,d->services)
         {
             if (s.servicetype == os.servicetype)
@@ -151,6 +154,7 @@ namespace bt
     
     void UPnPRouter::downloadFinished(QNetworkReply* j)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         if (j->error())
         {
             d->error = QString("Failed to download %1: %2").arg(d->location.toString()).arg(j->error());
@@ -172,6 +176,7 @@ namespace bt
     
     void UPnPRouter::downloadXMLFile()
     {
+        qDebug() << __PRETTY_FUNCTION__;
         d->error = QString();
         // downlaod XML description into a temporary file in /tmp
         qDebug() << "Downloading XML file" << d->location;
@@ -183,6 +188,7 @@ namespace bt
 
     void UPnPRouter::forward(const uint16_t & port)
     {
+        qDebug() << __PRETTY_FUNCTION__ << port;
         if (!d->error.isEmpty())
         {
             d->error = QString();
@@ -237,6 +243,7 @@ namespace bt
     
     void UPnPRouter::forwardResult(HTTPRequest* r)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         if (r->succeeded())
         {
             d->httpRequestDone(r,false);
@@ -254,19 +261,21 @@ namespace bt
     
     void UPnPRouter::undoForwardResult(HTTPRequest* r)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         d->active_reqs.removeAll(r);
         r->deleteLater();
     }
     
     void UPnPRouter::getExternalIPResult(HTTPRequest* r)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         d->active_reqs.removeAll(r);
         if (r->succeeded())
         {
             QDomDocument doc;
             if (!doc.setContent(r->replyData()))
             {
-                qDebug() << "UPnP: GetExternalIP failed: invalid reply" << endl;
+                qDebug() << "UPnP: GetExternalIP failed: invalid reply";
             }
             else
             {
@@ -274,15 +283,15 @@ namespace bt
                 if (nodes.count() > 0)
                 {
                     d->external_ip = nodes.item(0).firstChild().nodeValue();
-                    qDebug() << "UPnP: External IP: " << d->external_ip << endl;
+                    qDebug() << "UPnP: External IP: " << d->external_ip;
                 }
                 else
-                    qDebug() << "UPnP: GetExternalIP failed: no IP address returned" << endl;
+                    qDebug() << "UPnP: GetExternalIP failed: no IP address returned";
             }
         }
         else
         {
-            qDebug() << "UPnP: GetExternalIP failed: " << r->errorString() << endl;
+            qDebug() << "UPnP: GetExternalIP failed: " << r->errorString();
         }
         
         r->deleteLater();
@@ -298,6 +307,7 @@ namespace bt
     
     void UPnPRouter::isPortForwarded(const uint16_t & port)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         // first find the right service
         QList<UPnPService>::iterator i = findPortForwardingService();
         if (i == services.end())
@@ -372,10 +382,12 @@ namespace bt
     UPnPRouter::UPnPRouterPrivate::UPnPRouterPrivate(const QString& server, const QUrl& location,bool verbose,UPnPRouter* parent)
         : server(server),location(location),verbose(verbose),parent(parent)
     {
+        qDebug() << __PRETTY_FUNCTION__;
     }
     
     UPnPRouter::UPnPRouterPrivate::~UPnPRouterPrivate()
     {
+        qDebug() << __PRETTY_FUNCTION__;
         foreach (HTTPRequest* r,active_reqs)
         {
             r->cancel();
@@ -385,6 +397,7 @@ namespace bt
 
     HTTPRequest* UPnPRouter::UPnPRouterPrivate::sendSoapQuery(const QString & query,const QString & soapact,const QString & controlurl,bool at_exit)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         // if port is not set, 0 will be returned 
         // thanks to Diego R. Brogna for spotting this bug
         if (location.port()<=0)
@@ -421,6 +434,7 @@ namespace bt
     
     void UPnPRouter::UPnPRouterPrivate::forward(const UPnPService* srv,const uint16_t & port)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         // add all the arguments for the command
         QList<SOAP::Arg> args;
         SOAP::Arg a;
@@ -482,6 +496,7 @@ namespace bt
     
     void UPnPRouter::UPnPRouterPrivate::undoForward(const UPnPService* srv,const uint16_t & port)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         // add all the arguments for the command
         QList<SOAP::Arg> args;
         SOAP::Arg a;
@@ -511,6 +526,7 @@ namespace bt
     
     void UPnPRouter::UPnPRouterPrivate::getExternalIP()
     {
+        qDebug() << __PRETTY_FUNCTION__;
         foreach (const UPnPService & s,services)
         {
             if (s.servicetype.contains("WANIPConnection") || s.servicetype.contains("WANPPPConnection"))
@@ -526,6 +542,7 @@ namespace bt
     
     void UPnPRouter::UPnPRouterPrivate::httpRequestDone(HTTPRequest* r,bool erase_fwd)
     {
+        qDebug() << __PRETTY_FUNCTION__;
         QList<Forwarding>::iterator i = fwds.begin();
         while (i != fwds.end())
         {

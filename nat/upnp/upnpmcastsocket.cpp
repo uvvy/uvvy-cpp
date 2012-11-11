@@ -69,13 +69,14 @@ namespace bt
 	
 	UPnPMCastSocket::UPnPMCastSocket(bool verbose) : d(new UPnPMCastSocketPrivate(verbose))
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		QObject::connect(this,SIGNAL(readyRead()),this,SLOT(onReadyRead()));
 		QObject::connect(this,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(error(QAbstractSocket::SocketError)));
 	
 		for (uint32_t i = 0;i < 10;i++)
 		{
 			if (!bind(1900 + i,QUdpSocket::ShareAddress))
-				qWarning() << "Cannot bind to UDP port 1900 : " << errorString() << endl;
+				qWarning() << "Cannot bind to UDP port 1900: " << errorString();
 			else
 				break;
 		}
@@ -86,13 +87,14 @@ namespace bt
 	
 	UPnPMCastSocket::~UPnPMCastSocket()
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		d->leaveUPnPMCastGroup(socketDescriptor());
 		delete d;
 	}
 	
 	void UPnPMCastSocket::discover()
 	{
-		qDebug() << "Trying to find UPnP devices on the local network" << endl;
+		qDebug() << "Trying to find UPnP devices on the local network";
 		
 		// send a HTTP M-SEARCH message to 239.255.255.250:1900
 		const char* data = "M-SEARCH * HTTP/1.1\r\n" 
@@ -104,8 +106,7 @@ namespace bt
 		
 		if (d->verbose)
 		{
-			qDebug() << "Sending : " << endl;
-			qDebug() << data << endl;
+			qDebug() << "Sending: " << data;
 		}
 		
 		writeDatagram(data,strlen(data),QHostAddress("239.255.255.250"),1900);
@@ -144,7 +145,7 @@ namespace bt
 
 		if (pendingDatagramSize() == 0)
 		{
-			qDebug() << "0 byte UDP packet " << endl;
+			qDebug() << "0 byte UDP packet ";
 			// KDatagramSocket wrongly handles UDP packets with no payload
 			// so we need to deal with it oursleves
 			int fd = socketDescriptor();
@@ -159,8 +160,7 @@ namespace bt
 		
 		if (d->verbose)
 		{
-			qDebug() << "Received : " << endl;
-			qDebug() << QString(data) << endl;
+			qDebug() << "Received: " << QString(data);
 		}
 		
 		// try to make a router of it
@@ -180,7 +180,7 @@ namespace bt
 	
 	void UPnPMCastSocket::error(QAbstractSocket::SocketError )
 	{
-		qWarning() << "UPnPMCastSocket Error : " << errorString() << endl;
+		qWarning() << "UPnPMCastSocket Error : " << errorString();
 	}
 	
 	void UPnPMCastSocket::saveRouters(const QString & file)
@@ -189,7 +189,7 @@ namespace bt
 		QFile fptr(file);
 		if (!fptr.open(QIODevice::WriteOnly))
 		{
-			qWarning() << "Cannot open file " << file << " : " << fptr.errorString() << endl;
+			qWarning() << "Cannot open file " << file << " : " << fptr.errorString();
 			return;
 		}
 		
@@ -209,7 +209,7 @@ namespace bt
 		QFile fptr(file);
 		if (!fptr.open(QIODevice::ReadOnly))
 		{
-			qWarning() << "Cannot open file " << file << " : " << fptr.errorString() << endl;
+			qWarning() << "Cannot open file " << file << " : " << fptr.errorString();
 			return;
 		}
 		
@@ -233,11 +233,13 @@ namespace bt
 	
 	uint32_t UPnPMCastSocket::getNumDevicesDiscovered() const 
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		return d->routers.count();
 	}
 	
 	UPnPRouter* UPnPMCastSocket::findDevice(const QString & name) 
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		QUrl location(name);
 		return d->findDevice(location);
 	}
@@ -251,16 +253,19 @@ namespace bt
 	
 	UPnPMCastSocket::UPnPMCastSocketPrivate::UPnPMCastSocketPrivate(bool verbose) : verbose(verbose)
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 	}
 	
 	UPnPMCastSocket::UPnPMCastSocketPrivate::~UPnPMCastSocketPrivate()
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		qDeleteAll(pending_routers);
 		qDeleteAll(routers);
 	}
 	
 	void UPnPMCastSocket::UPnPMCastSocketPrivate::joinUPnPMCastGroup(int fd)
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		struct ip_mreq mreq;
 		memset(&mreq,0,sizeof(struct ip_mreq));
 		
@@ -273,12 +278,13 @@ namespace bt
 		if (setsockopt(fd,IPPROTO_IP,IP_ADD_MEMBERSHIP,(char *)&mreq,sizeof(struct ip_mreq)) < 0)
 #endif
 		{
-			qDebug() << "Failed to join multicast group 239.255.255.250" << endl; 
+			qDebug() << "Failed to join multicast group 239.255.255.250";
 		} 
 	}
 	
 	void UPnPMCastSocket::UPnPMCastSocketPrivate::leaveUPnPMCastGroup(int fd)
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		struct ip_mreq mreq;
 		memset(&mreq,0,sizeof(struct ip_mreq));
 		
@@ -291,20 +297,21 @@ namespace bt
 		if (setsockopt(fd,IPPROTO_IP,IP_DROP_MEMBERSHIP,(char *)&mreq,sizeof(struct ip_mreq)) < 0)
 #endif
 		{
-			qDebug() << "Failed to leave multicast group 239.255.255.250" << endl; 
+			qDebug() << "Failed to leave multicast group 239.255.255.250";
 		} 
 	}
 	
 	UPnPRouter* UPnPMCastSocket::UPnPMCastSocketPrivate::parseResponse(const QByteArray & arr)
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		QStringList lines = QString::fromAscii(arr).split("\r\n");
 		QString server;
 		QUrl location;
 		
 		
-		qDebug() << "Received : " << endl;
+		qDebug() << "Received:";
 		for (uint32_t idx = 0;idx < lines.count(); idx++)
-			qDebug() << lines[idx] << endl;
+			qDebug() << lines[idx];
 		
 		
 		// first read first line and see if contains a HTTP 200 OK message
@@ -330,7 +337,7 @@ namespace bt
 		} 
 		if (!validDevice)
 		{
-			//	qWarning() << "Not a valid Internet Gateway Device" << endl;
+			qWarning() << "Not a valid Internet Gateway Device";
 			return 0; 
 		}
 		
@@ -359,7 +366,7 @@ namespace bt
 		}
 		else
 		{
-			qDebug() << "Detected IGD " << server << endl;
+			qDebug() << "Detected IGD " << server;
 			// everything OK, make a new UPnPRouter
 			return new UPnPRouter(server,location,verbose); 
 		}
@@ -367,6 +374,7 @@ namespace bt
 	
 	UPnPRouter* UPnPMCastSocket::UPnPMCastSocketPrivate::findDevice(const QUrl& location)
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		foreach (UPnPRouter* r, routers)
 		{
 			if (UrlCompare(r->getLocation(),location))

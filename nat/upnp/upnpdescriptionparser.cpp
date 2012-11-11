@@ -65,6 +65,7 @@ namespace bt
 
 	bool UPnPDescriptionParser::parse(const QString & file,UPnPRouter* router)
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		bool ret = true;
 		QFile fptr(file);
 		if (!fptr.open(QIODevice::ReadOnly))
@@ -87,6 +88,7 @@ namespace bt
 	
 	bool UPnPDescriptionParser::parse(const QByteArray & data,UPnPRouter* router)
 	{
+        qDebug() << __PRETTY_FUNCTION__;
 		bool ret = true;
 		QXmlInputSource input;
 		input.setData(data);
