@@ -158,8 +158,6 @@ namespace bt
             return;
         }
 
-    //  KIO::StoredTransferJob* st = (KIO::StoredTransferJob*)j;
-    //  // load in the file (target is always local)
         UPnPDescriptionParser desc_parse;
         bool ret = desc_parse.parse(j->readAll(),this);
         if (!ret)
@@ -175,17 +173,12 @@ namespace bt
     void UPnPRouter::downloadXMLFile()
     {
         d->error = QString();
-//
-//berkus: Set up QNetworkAccessManager request here
-//
         // downlaod XML description into a temporary file in /tmp
         qDebug() << "Downloading XML file" << d->location;
         QNetworkAccessManager* manager = new QNetworkAccessManager(this);
         connect(manager, SIGNAL(finished(QNetworkReply*)),
-         this, SLOT(downloadFinished(QNetworkReply*)));
+            this, SLOT(downloadFinished(QNetworkReply*)));
         manager->get(QNetworkRequest(d->location));
-        // KIO::Job* job = KIO::storedGet(d->location,KIO::NoReload, KIO::Overwrite | KIO::HideProgressInfo);
-        // connect(job,SIGNAL(result(KJob*)),this,SLOT(downloadFinished(KJob*)));
     }
 
     void UPnPRouter::forward(const uint16_t & port)
@@ -460,7 +453,7 @@ namespace bt
         
         a.element = "NewPortMappingDescription";
         static uint32_t cnt = 0;
-        a.value = QString("MettaNode UPNP %1").arg(cnt++);  // TODO: change this
+        a.value = QString("MettaNode UPnP %1").arg(cnt++);  // TODO: change this
         args.append(a);
         
         a.element = "NewLeaseDuration";
