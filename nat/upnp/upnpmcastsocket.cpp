@@ -113,6 +113,8 @@ namespace bt
 	
 	void UPnPMCastSocket::onXmlFileDownloaded(UPnPRouter* r,bool success)
 	{
+		qDebug() << __PRETTY_FUNCTION__;
+
 		d->pending_routers.remove(r);
 		if (!success)
 		{
@@ -138,6 +140,8 @@ namespace bt
 	
 	void UPnPMCastSocket::onReadyRead()
 	{
+		qDebug() << __PRETTY_FUNCTION__;
+
 		if (pendingDatagramSize() == 0)
 		{
 			qDebug() << "0 byte UDP packet " << endl;
@@ -181,25 +185,27 @@ namespace bt
 	
 	void UPnPMCastSocket::saveRouters(const QString & file)
 	{
-		// QFile fptr(file);
-		// if (!fptr.open(QIODevice::WriteOnly))
-		// {
-		// 	qWarning() << "Cannot open file " << file << " : " << fptr.errorString() << endl;
-		// 	return;
-		// }
+		qDebug() << __PRETTY_FUNCTION__;
+		QFile fptr(file);
+		if (!fptr.open(QIODevice::WriteOnly))
+		{
+			qWarning() << "Cannot open file " << file << " : " << fptr.errorString() << endl;
+			return;
+		}
 		
-		// // file format is simple : 2 lines per router, 
-		// // one containing the server, the other the location
-		// QTextStream fout(&fptr);
-		// foreach (UPnPRouter* r,d->routers)
-		// {
-		// 	fout << r->getServer() << ::endl;
-		// 	fout << r->getLocation().prettyUrl() << ::endl;
-		// }
+		// file format is simple : 2 lines per router, 
+		// one containing the server, the other the location
+		QTextStream fout(&fptr);
+		foreach (UPnPRouter* r,d->routers)
+		{
+			fout << r->getServer() << ::endl;
+			fout << r->getLocation().toString() << ::endl;
+		}
 	}
 	
 	void UPnPMCastSocket::loadRouters(const QString & file)
 	{
+		qDebug() << __PRETTY_FUNCTION__;
 		QFile fptr(file);
 		if (!fptr.open(QIODevice::ReadOnly))
 		{
@@ -295,11 +301,11 @@ namespace bt
 		QString server;
 		QUrl location;
 		
-		/*
+		
 		qDebug() << "Received : " << endl;
-		for (Uint32 idx = 0;idx < lines.count(); idx++)
+		for (uint32_t idx = 0;idx < lines.count(); idx++)
 			qDebug() << lines[idx] << endl;
-		*/
+		
 		
 		// first read first line and see if contains a HTTP 200 OK message
 		QString line = lines.first();
