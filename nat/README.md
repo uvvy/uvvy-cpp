@@ -3,6 +3,7 @@ Libraries for NAT traversal and hole punching
 
 * miniupnpc from https://github.com/miniupnp/miniupnp/tree/master/miniupnpc
 * libnatpmp from http://thebends.googlecode.com/svn/trunk/nat/pmp
+* upnp based on upnp implementation in ktorrent http://ktorrent.sourceforce.net
 
 Notes
 =====
