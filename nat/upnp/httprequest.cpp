@@ -26,13 +26,14 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+#include <QHostInfo>
 
 namespace bt
 {
 
-HTTPRequest::HTTPRequest(const QNetworkRequest& rq, const QString& payload, bool verbose)
+HTTPRequest::HTTPRequest(const QNetworkRequest& rq, const QString& payld, bool verbose)
     : req(rq)
-    , payload(payload)
+    , payload(payld)
     , verbose(verbose)
     , finished(false)
     , success(false)
@@ -40,7 +41,9 @@ HTTPRequest::HTTPRequest(const QNetworkRequest& rq, const QString& payload, bool
 {
     manager = new QNetworkAccessManager(this);
 
-    // payload = payload.replace("$LOCAL_IP", sock->localAddress().toString());
+    QHostInfo info = QHostInfo::fromName(QHostInfo::localHostName());
+
+    payload = payload.replace("$LOCAL_IP", info.addresses()[0].toString());
     req.setHeader(QNetworkRequest::ContentLengthHeader, payload.length());
 
     qDebug() << req.url();
