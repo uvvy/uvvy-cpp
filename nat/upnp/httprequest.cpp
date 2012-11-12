@@ -23,139 +23,90 @@
 #include <QStringList>
 #include "httprequest.h"
 
-
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 
 namespace bt
 {
 
-    HTTPRequest::HTTPRequest(const QString & hdr,const QString & payload,const QString & host,uint16_t port,bool verbose) 
-        : hdr(hdr),payload(payload),verbose(verbose),host(host),port(port),finished(false),success(false)
-    {
-        qDebug() << "Constructed HTTPRequest";
-        qDebug() << hdr;
-        qDebug() << payload;
+HTTPRequest::HTTPRequest(const QNetworkRequest& rq, const QString& payload, bool verbose)
+    : req(rq)
+    , payload(payload)
+    , verbose(verbose)
+    , finished(false)
+    , success(false)
+    , running(0)
+{
+    manager = new QNetworkAccessManager(this);
 
-        sock = new QTcpSocket(this);
-        connect(sock,SIGNAL(readyRead()),this,SLOT(onReadyRead()));
-        connect(sock,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(onError(QAbstractSocket::SocketError)));
-        connect(sock,SIGNAL(connected()),this, SLOT(onConnect()));
-    }
-    
-    
-    HTTPRequest::~HTTPRequest()
-    {
-        sock->close();
-    }
-    
-    void HTTPRequest::start()
+    // payload = payload.replace("$LOCAL_IP", sock->localAddress().toString());
+    req.setHeader(QNetworkRequest::ContentLengthHeader, payload.length());
+
+    qDebug() << req.url();
+    foreach (QByteArray h, req.rawHeaderList())
+        qDebug() << h << req.rawHeader(h);
+    qDebug() << payload;
+}
+
+HTTPRequest::~HTTPRequest()
+{
+    delete running;
+    delete manager;
+}
+
+void HTTPRequest::start()
+{
+    success = false;
+    finished = false;
+    reply.clear();
+
+    connect(manager, SIGNAL(finished(QNetworkReply*)),
+        this, SLOT(requestFinished(QNetworkReply*)));
+    running = manager->post(req, payload.toUtf8());
+
+    QTimer::singleShot(30000,this,SLOT(onTimeout()));
+}
+
+void HTTPRequest::cancel()
+{
+    finished = true;
+    delete running; running = 0;
+}
+
+void HTTPRequest::requestFinished(QNetworkReply* netreply)
+{
+    if (finished)
+        return;
+
+    if (netreply->error())
     {
         success = false;
-        finished = false;
-        reply.clear();
-        sock->connectToHost(host,port);
-        QTimer::singleShot(30000,this,SLOT(onTimeout()));
-    }
-    
-    void HTTPRequest::cancel()
-    {
         finished = true;
-        sock->close();
-    }
-    
-    void HTTPRequest::onConnect()
-    {
-        if (finished)
-            return;
-        
-        payload = payload.replace("$LOCAL_IP",sock->localAddress().toString());
-        hdr = hdr.replace("$CONTENT_LENGTH",QString::number(payload.length()));
-            
-        QString req = hdr + payload;
-        if (verbose)
-        {
-            qDebug() << "Sending:";
-            QStringList lines = hdr.split("\r\n");
-            foreach (const QString &line,lines)
-                qDebug() << line;
-            
-            qDebug() << payload;
-        }
-
-        sock->write(req.toAscii());
-    }
-    
-    void HTTPRequest::onReadyRead()
-    {
-        if (finished)
-            return;
-        
-        uint32_t ba = sock->bytesAvailable();
-        if (ba == 0)
-        {
-            if (!finished)
-            {
-                error = tr("Connection closed unexpectedly");
-                success = false;
-                finished = true;
-                result(this);
-            }
-            sock->close();
-            return;
-        }
-        
-        reply.append(sock->read(ba));
-        int eoh = reply.indexOf("\r\n\r\n");
-        if (eoh != -1)
-        {
-            reply_header = QHttpResponseHeader(QString::fromAscii(reply.mid(0,eoh + 4)));
-            qDebug() << reply_header.toString();
-            
-            if (reply_header.contentLength() > 0 && reply.size() < eoh + 4 + reply_header.contentLength())
-            {
-                // Haven't got full content yet, so return and wait for more
-                return;
-            }
-            else
-            {
-                reply = reply.mid(eoh + 4);
-                success = reply_header.statusCode() == 200;
-                if (!success)
-                    error = reply_header.reasonPhrase();
-                finished = true;
-                result(this);
-            }
-        }
-    }
-    
-    void HTTPRequest::onError(QAbstractSocket::SocketError err)
-    {
-        Q_UNUSED(err);
-        if (finished)
-            return;
-        
-        qDebug() << "HTTPRequest error : " << sock->errorString() << endl;
-        success = false;
-        finished = true;
-        sock->close();
-        error = sock->errorString();
-        result(this);
-        // operationFinished(this);
-    }
-    
-    void HTTPRequest::onTimeout()
-    {
-        if (finished)
-            return;
-
-        qDebug() << "HTTPRequest timeout" << endl;
-        success = false;
-        finished = true;
-        sock->close();
-        error = ("Operation timed out");
-        result(this);
-        // operationFinished(this);
+        error = netreply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
+        reply = netreply->readAll();
+        qDebug() << "Received reply:" << reply << ", error:" << error << ", status code" << netreply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+        return result(this);
     }
 
+    reply = netreply->readAll();
+    qDebug() << "Received reply:" << reply;
+    success = true;
+    finished = true;
+    result(this);
+}
+
+void HTTPRequest::onTimeout()
+{
+    if (finished)
+        return;
+
+    qDebug() << "HTTPRequest timeout" << endl;
+    success = false;
+    finished = true;
+    // sock->close();
+    error = tr("Operation timed out");
+    result(this);
+}
 
 }

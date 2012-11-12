@@ -19,14 +19,15 @@
  ***************************************************************************/
 #include <stdlib.h>
 #include <QDir>
-#include <qstringlist.h>
+#include <QtDebug>
+#include <QStringList>
+#include <QDomElement>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
 #include "upnprouter.h"
 #include "upnpdescriptionparser.h"
 #include "soap.h"
 #include "httprequest.h"
-#include <QDomElement>
-#include <QNetworkReply>
-#include <QNetworkAccessManager>
 
 // using namespace net;
 
@@ -418,21 +419,31 @@ namespace bt
         QUrl ctrlurl(controlurl);
         QString host = !ctrlurl.host().isEmpty() ? ctrlurl.host() : location.host();
         uint16_t port = ctrlurl.port() != -1 ? ctrlurl.port() : location.port(80);
+
+        QUrl fullurl(ctrlurl);
+        fullurl.setHost(host);
+        fullurl.setPort(port);
+        fullurl.setScheme("http");
+
+        // QString http_hdr;
+        // QTextStream out(&http_hdr);
+        // QByteArray encoded_query = ctrlurl.encodedQuery();
+        // if (encoded_query.isEmpty())
+        //     out << "POST " << ctrlurl.encodedPath() << " HTTP/1.1\r\n";
+        // else
+        //     out << "POST " << ctrlurl.encodedPath() << "?" << encoded_query << " HTTP/1.1\r\n";
+
+        QByteArray s(soapact.toAscii());
+        s.prepend("\"");
+        s.append("\"");
+
+        QNetworkRequest req(fullurl);
+        req.setHeader(QNetworkRequest::ContentTypeHeader, "text/xml");
+        req.setRawHeader("Host", QString("%1:%2").arg(host).arg(port).toAscii());
+        req.setRawHeader("User-Agent", "MettaNode/Test");
+        req.setRawHeader("SOAPAction", s);
         
-        QString http_hdr;
-        QTextStream out(&http_hdr);
-        QByteArray encoded_query = ctrlurl.encodedQuery();
-        if (encoded_query.isEmpty())
-            out << "POST " << ctrlurl.encodedPath() << " HTTP/1.1\r\n";
-        else
-            out << "POST " << ctrlurl.encodedPath() << "?" << encoded_query << " HTTP/1.1\r\n";
-        out << "Host: " << host << ":" << port << "\r\n";
-        out << "User-Agent: MettaNode/Test\r\n";
-        out << "Content-length: $CONTENT_LENGTH\r\n";
-        out << "Content-Type: text/xml\r\n";
-        out << "SOAPAction: \"" << soapact << "\"\r\n\r\n";
-        
-        HTTPRequest* r = new HTTPRequest(http_hdr,query,host,port,verbose);
+        HTTPRequest* r = new HTTPRequest(req, query, verbose);
         if (!at_exit)
         {
             // Only listen for results when we are not exiting
