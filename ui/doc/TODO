@@ -5,11 +5,13 @@ Most immediate usability necessities:
  ☐ Public/friends-only choices on profile items
  ☐ Profile picture
  ☐ Log window for log display in real-time.
- ☐ Registration server logging to file.
- ☐ Registration server proper handling of registrations from the same LAN (second client to register disconnects first).
+ ✔ Registration server logging to file. @done (12-11-18 16:30)
+ ☐ Registration server proper handling of registrations from the same LAN.
+    (second client to register disconnects first). The problem appears to be more serious and is related to insufficient NAT handling.
 
 NAT and UPnP:
- ☐ Download router XML file using QNetworkAccessManager/QNetworkReply
+ ✔ Download router XML file using QNetworkAccessManager/QNetworkReply @done (12-11-18 16:24)
+ ☐ Punching TCP holes via UPnP works, but UDP doesn't (apparently, Skype can do it!) - figure out why, find a workaround.
 
 Larger features planned:
  ☐ Integration with UIA - personal device cluster management, etc.
