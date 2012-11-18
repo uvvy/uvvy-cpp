@@ -2,6 +2,8 @@
 add_definitions(-DMINIUPNPC_VERSION_STRING=\"1.7\")
 add_definitions(-DOS_STRING=\"${CMAKE_SYSTEM_NAME}\")
 
+add_definitions(-DDEBUG)
+
 option (UPNPC_BUILD_STATIC "Build static library" TRUE)
 option (UPNPC_BUILD_SHARED "Build shared library" FALSE)
 option (NO_GETADDRINFO "Define NO_GETADDRINFO" FALSE)
@@ -61,7 +63,6 @@ endif (NOT UPNPC_BUILD_STATIC AND NOT UPNPC_BUILD_SHARED)
 
 if (UPNPC_BUILD_STATIC)
   add_library (upnpc STATIC ${MINIUPNPC_SOURCES})
-  target_link_libraries (upnpc ${LDLIBS})
 endif (UPNPC_BUILD_STATIC)
 
 if (UPNPC_BUILD_SHARED)
@@ -71,6 +72,9 @@ if (UPNPC_BUILD_SHARED)
   set_target_properties (upnpc-shared PROPERTIES SOVERSION ${MINIUPNPC_API_VERSION})
   target_link_libraries (upnpc-shared ${LDLIBS})
 endif (UPNPC_BUILD_SHARED)
+
+add_executable(upnpc-static upnpc.c)
+target_link_libraries(upnpc-static upnpc ${LDLIBS})
 
 if (BUILD_TESTS)
   include_directories(.)
