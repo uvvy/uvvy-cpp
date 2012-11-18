@@ -3,12 +3,13 @@
 #include <QUdpSocket>
 #include <stdint.h>
 
-namespace bt { class UPnPRouter; class UPnPMCastSocket; }
+class UPnPRouter;
+namespace bt { class UPnPMCastSocket; }
 
 class UdpTestSender : public QUdpSocket
 {
 	Q_OBJECT
-	bt::UPnPRouter* router;
+	UPnPRouter* router;
 	bt::UPnPMCastSocket* upnp;
 
 public:
@@ -21,7 +22,7 @@ public:
 	void ping(QHostAddress remote, uint16_t port);
 
 public slots:
-	void routerFound(bt::UPnPRouter*);
+	void routerFound(UPnPRouter*);
 	void routerStateChanged();
 
 private slots:

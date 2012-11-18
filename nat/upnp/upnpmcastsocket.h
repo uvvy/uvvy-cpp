@@ -22,12 +22,11 @@
 
 #include <QSet>
 #include <QUdpSocket>
-#include "upnprouter.h"
 
+class UPnPRouter;
+    
 namespace bt
 {
-    class UPnPRouter;
-    
     /**
      * @author Joris Guisson
      * 
@@ -73,7 +72,7 @@ namespace bt
          * Emitted when a router or internet gateway device is detected.
          * @param router The router
          */
-        void discovered(bt::UPnPRouter* router);
+        void discovered(UPnPRouter* router);
 
     private:
         class UPnPMCastSocketPrivate;

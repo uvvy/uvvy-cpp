@@ -1,5 +1,5 @@
 #include "udpsend.h"
-#include "upnp/upnprouter.h"
+#include "upnp/router.h"
 #include "upnp/upnpmcastsocket.h"
 
 #define LOCAL_PORT 9660
@@ -46,14 +46,17 @@ void UdpTestSender::error(QAbstractSocket::SocketError err)
     qWarning() << "Socket error" << err;
 }
 
-void UdpTestSender::routerFound(bt::UPnPRouter* r)
+void UdpTestSender::routerFound(UPnPRouter* r)
 {
     qDebug() << "Router detected, punching a hole.";
     // upnp->saveRouters("routers.txt");
     router = r;
     connect(router, SIGNAL(stateChanged()),
         this, SLOT(routerStateChanged()));
-    router->forward(LOCAL_PORT);
+    Port p(LOCAL_PORT, Port::TCP);
+    router->forward(p);
+    Port p2(LOCAL_PORT, Port::UDP);
+    router->forward(p2);
 }
 
 void UdpTestSender::routerStateChanged()

@@ -20,7 +20,7 @@
 #include <QtDebug>
 #include <qxml.h>
 #include <qstack.h>
-#include "upnprouter.h"
+#include "router.h"
 #include "upnpdescriptionparser.h"
 
 using namespace bt;

@@ -41,7 +41,7 @@
 #include "filesync.h"
 
 #include "upnp/upnpmcastsocket.h"
-#include "upnp/upnprouter.h"
+#include "upnp/router.h"
 
 using namespace SST;
 
@@ -427,10 +427,11 @@ Puncher::Puncher(int p)
     qDebug() << "Puncher waiting for victims";
 }
 
-void Puncher::routerFound(bt::UPnPRouter* r)
+void Puncher::routerFound(UPnPRouter* r)
 {
     qDebug() << "Router detected, punching a hole.";
-    r->forward(port);
+    Port p(port, Port::UDP);
+    r->forward(p);
 }
 
 static void regclient(const QString &hostname)

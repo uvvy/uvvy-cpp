@@ -32,6 +32,7 @@
 #include <QFile>
 #include <QTextStream>
 #include "upnpmcastsocket.h"
+#include "router.h"
 
 
 namespace bt
@@ -99,11 +100,11 @@ namespace bt
         // send a HTTP M-SEARCH message to 239.255.255.250:1900
         const char* data = "M-SEARCH * HTTP/1.1\r\n" 
                 "HOST: 239.255.255.250:1900\r\n"
-                "ST:urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\n"
-                "MAN:\"ssdp:discover\"\r\n"
-                "MX:3\r\n"
+                "ST: urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\n"
+                "MAN: \"ssdp:discover\"\r\n"
+                "MX: 2\r\n"
                 "\r\n";
-        
+
         if (d->verbose)
         {
             qDebug() << "Sending: " << data;

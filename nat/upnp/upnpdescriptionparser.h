@@ -22,10 +22,10 @@
 
 #include <QString>
 
+class UPnPRouter;
+
 namespace bt
 {
-    class UPnPRouter;
-
     /**
      * @author Joris Guisson
      * 

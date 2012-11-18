@@ -82,7 +82,7 @@ private slots:
 //=============================================================================
 // TEST ZONE
 //=============================================================================
-namespace bt { class UPnPRouter; }
+class UPnPRouter;
 
 class Puncher : public QObject
 {
@@ -93,7 +93,7 @@ public:
     Puncher(int port);
 
 public slots:
-    void routerFound(bt::UPnPRouter*);
+    void routerFound(UPnPRouter*);
 };
 //=============================================================================
 
