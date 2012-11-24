@@ -1,3 +1,5 @@
+  ☐ Ubuntu 32/64 bit binaries repo for Matti.
+  ☐ Deploy nshd to motoko?
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
@@ -11,7 +13,14 @@ Most immediate usability necessities:
 
 NAT and UPnP:
  ✔ Download router XML file using QNetworkAccessManager/QNetworkReply @done (12-11-18 16:24)
- ☐ Punching TCP holes via UPnP works, but UDP doesn't (apparently, Skype can do it!) - figure out why, find a workaround.
+ ✔ Punching TCP holes via UPnP works, but UDP doesn't (apparently, Skype can do it!) - figure out why, find a workaround. @done (12-11-24 10:45)
+   ✔ miniupnpc could punch a hole when specifying a lease duration @done (12-11-23 19:24)
+   ✔ try TCP before UDP (cplx @easy) - didn't help @done (12-11-24 10:45)
+   ✔ try with lease duration using upnp lib - this worked! @done (12-11-24 10:44)
+   ✔ wireshark requests from utorrent/skype - was not necessary @done (12-11-24 10:46)
+ ☐ Assign a new Endpoint with public IP and UPnP-assigned port number.
+   ☐ Use it to register on regserver as primary.
+ ☐ Integrate hole punching machinery with SST::Host.
 
 Larger features planned:
  ☐ Integration with UIA - personal device cluster management, etc.
