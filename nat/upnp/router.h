@@ -8,14 +8,11 @@
 #pragma once
 
 #include <QString>
+#include <QHostAddress>
 #include <QDebug>
-// #include <QUrl>
-// #include <QStringList>
-// #include <stdint.h>
 
 class QNetworkReply;
-
-namespace bt { class HTTPRequest; }
+class HTTPRequest;
 
 struct Port
 {
@@ -149,15 +146,30 @@ public:
     /**
      * Forward a local port
      * @param port The local port to forward
+     * @param extPort The external port number to use, automatically assign if zero.
      */
-    void forward(const Port & port);
-    
+    void forward(const Port & port, int leaseDuration = 0, uint16_t extPort = 0);
+
     /**
      * Undo forwarding
      * @param port The port
      */
     void undoForward(const Port & port);
-    
+
+    /**
+     * Description of an UPnP forwarding.
+     */
+    struct ForwardingEntry {
+        QHostAddress remoteHost;
+        QHostAddress internalClient;
+        Port port;
+        uint16_t extPort;
+        QString description;
+        int leaseDuration;
+    };
+
+    void getPortForwardings(QList<ForwardingEntry>& entries);
+
     /**
         In order to iterate over all forwardings, the visitor pattern must be used.
     */
@@ -183,9 +195,10 @@ public:
 
     
 private slots:
-    void forwardResult(bt::HTTPRequest* r);
-    void undoForwardResult(bt::HTTPRequest* r);
-    void getExternalIPResult(bt::HTTPRequest* r);
+    void forwardResult(HTTPRequest* r);
+    void undoForwardResult(HTTPRequest* r);
+    void getExternalIPResult(HTTPRequest* r);
+    void getNumPortForwardingsResult(HTTPRequest* r);
     void downloadFinished(QNetworkReply*);
     
 signals:
@@ -200,7 +213,10 @@ signals:
      * @param success Whether or not it succeeded
      */
     void xmlFileDownloaded(UPnPRouter* r,bool success);
-    
+
+private:
+    void getNumPortForwardings(int);
+   
 private:
     class UPnPRouterPrivate;
     UPnPRouterPrivate* d;
