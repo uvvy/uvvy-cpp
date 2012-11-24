@@ -66,6 +66,8 @@ QFile logfile;
 
 bool spewdebug;
 
+volatile int finished_punch = 0;
+
 //=====================================================================================================================
 // Qt logger function.
 //=====================================================================================================================
@@ -431,7 +433,9 @@ void Puncher::routerFound(UPnPRouter* r)
 {
     qDebug() << "Router detected, punching a hole.";
     Port p(port, Port::UDP);
-    r->forward(p);
+    r->forward(p, /*leaseDuration:*/ 3600, /*extPort:*/ p.number/*0*/);
+
+    finished_punch = 1;
 }
 
 static void regclient(const QString &hostname)
@@ -523,14 +527,17 @@ int main(int argc, char **argv)
     mydev.setEID(mykey->eid);
 #endif
 
-    // Initialize the Structured Stream Transport
-    ssthost = new Host(settings, NETSTERIA_DEFAULT_PORT);
-
     Puncher* p = new Puncher(NETSTERIA_DEFAULT_PORT);
     bt::UPnPMCastSocket* sock = new bt::UPnPMCastSocket(true);
-    QObject::connect(sock, SIGNAL(discovered(bt::UPnPRouter*)),
-        p, SLOT(routerFound(bt::UPnPRouter*)));
+    QObject::connect(sock, SIGNAL(discovered(UPnPRouter*)),
+        p, SLOT(routerFound(UPnPRouter*)));
     sock->discover();
+
+    while (!finished_punch)
+        qApp->processEvents();
+
+    // Initialize the Structured Stream Transport
+    ssthost = new Host(settings, NETSTERIA_DEFAULT_PORT);
 
     // Initialize the settings system, read user profile
     SettingsDialog::init();
@@ -547,7 +554,7 @@ int main(int argc, char **argv)
     // if (!settings->contains("regservers"))
     {
         QStringList rs;
-        rs << "212.7.7.70" << "192.168.1.94";
+        rs << "212.7.7.70"; // << "192.168.1.94";
         settings->setValue("regservers", rs);
     }
 
