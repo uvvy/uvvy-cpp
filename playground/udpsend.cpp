@@ -2,6 +2,8 @@
 #include "upnp/router.h"
 #include "upnp/upnpmcastsocket.h"
 
+#include <iostream>
+
 #define LOCAL_PORT 9660
 
 UdpTestSender::UdpTestSender(bt::UPnPMCastSocket* up)
@@ -49,24 +51,34 @@ void UdpTestSender::error(QAbstractSocket::SocketError err)
 void UdpTestSender::routerFound(UPnPRouter* r)
 {
     qDebug() << "Router detected, punching a hole.";
-    // upnp->saveRouters("routers.txt");
+    upnp->saveRouters("routers.txt");
     router = r;
     connect(router, SIGNAL(stateChanged()),
         this, SLOT(routerStateChanged()));
-    Port p(LOCAL_PORT, Port::TCP);
-    router->forward(p);
+
     Port p2(LOCAL_PORT, Port::UDP);
-    router->forward(p2);
+    // router->undoForward(p2);
+    router->forward(p2, /*leaseDuration:*/ 3600, /*extPort:*/ 0/*p2.number*/);
+
+    ping(QHostAddress("212.7.7.70"), LOCAL_PORT);
+    std::string text;
+    std::cin >> text;
+    ping(QHostAddress("212.7.7.70"), LOCAL_PORT);
+
+    // QList<UPnPRouter::ForwardingEntry> list;
+    // router->getPortForwardings(list);
 }
 
 void UdpTestSender::routerStateChanged()
 {
+    ping(QHostAddress("212.7.7.70"), LOCAL_PORT);
+
     QString err = router->getError();
     if (err != QString::null)
     {
         qWarning() << "Routing setup error" << err;
         qWarning() << "Giving up";
-        exit(1);
+        // exit(1);
     }
     else
     {

@@ -12,8 +12,8 @@ int main(int argc, char **argv)
 
     bt::UPnPMCastSocket* upnp = new bt::UPnPMCastSocket(true);
     UdpTestSender sock(upnp);
-    QObject::connect(upnp, SIGNAL(discovered(bt::UPnPRouter*)),
-        &sock, SLOT(routerFound(bt::UPnPRouter*)));
+    QObject::connect(upnp, SIGNAL(discovered(UPnPRouter*)),
+        &sock, SLOT(routerFound(UPnPRouter*)));
 
     // upnp->loadRouters("routers.txt");
     upnp->discover();
