@@ -101,8 +101,9 @@ namespace bt
         const char* data = "M-SEARCH * HTTP/1.1\r\n" 
                 "HOST: 239.255.255.250:1900\r\n"
                 "ST: urn:schemas-upnp-org:device:InternetGatewayDevice:1\r\n"
+                "User-Agent: Darwin/13 UPnP/1.1 MettaNode/Test\r\n"
                 "MAN: \"ssdp:discover\"\r\n"
-                "MX: 2\r\n"
+                "MX: 3\r\n"
                 "\r\n";
 
         if (d->verbose)
