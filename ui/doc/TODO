@@ -21,6 +21,12 @@ NAT and UPnP:
  ☐ Assign a new Endpoint with public IP and UPnP-assigned port number.
    ☐ Use it to register on regserver as primary.
  ☐ Integrate hole punching machinery with SST::Host.
+ ☐ UPnP event variables that need to be checked:
+     NATEnabled - if not, portmapping setting will fail.
+     ConnectionStatus - if not connected, setting forwarding is useless.
+     PortMappingNumberOfEntries - if changed, might need to re-read the actual mapping information.
+     PortMappingLeaseDuration - is decremented and needs to be checked regularly, some seconds before the lease time out the lease must be extended for our port forwardings.
+     Therefore, we need to maintain the status of UPnPRouter endpoint.
 
 Larger features planned:
  ☐ Integration with UIA - personal device cluster management, etc.
