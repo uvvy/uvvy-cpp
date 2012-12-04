@@ -13,7 +13,7 @@ First prototype requirements
 * UIP-like routing (EID's + extended DHT based routing through EID space)
 
 GUI features
-* drag-n-drop data to basket
+* monitor Files folder for stuff to sync.
 * metadata assignments - how?
 * how to perform search? an ESC-interface sounds intriguing
 
