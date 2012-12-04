@@ -36,4 +36,4 @@ Not yet required
 
 CI status
 =========
-[![Build Status](https://secure.travis-ci.org/berkus/metta-grabber.png)](http://travis-ci.org/berkus/metta-grabber)
+[![Build Status](https://secure.travis-ci.org/berkus/mettanode.png)](http://travis-ci.org/berkus/mettanode)
