@@ -560,7 +560,7 @@ int main(int argc, char **argv)
     // if (!settings->contains("regservers"))
     {
         QStringList rs;
-        rs << "212.7.7.70"; // << "192.168.1.94";
+        rs << "section4.madfire.net";
         settings->setValue("regservers", rs);
     }
 
