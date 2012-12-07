@@ -5,6 +5,11 @@ Libraries for NAT traversal and hole punching
 * libnatpmp from http://thebends.googlecode.com/svn/trunk/nat/pmp
 * upnp based on upnp implementation in ktorrent http://ktorrent.sourceforce.net
 
+
+- http://pupnp.sourceforge.net (BSD License) latest update Apr 2012, first code 2005
+- http://www.keymolen.com/ssdp.html C++ SSDP library, non-OSS
+- https://code.google.com/p/upnpx/ objc/C++ upnp and ssdp lib, BSD License, based on pupnp, abandoned Nov 2012
+
 Notes
 =====
 
