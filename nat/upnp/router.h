@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <QUrl>
 #include <QString>
 #include <QHostAddress>
 #include <QDebug>
