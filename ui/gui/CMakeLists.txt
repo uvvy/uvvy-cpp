@@ -22,7 +22,7 @@ qt4_wrap_cpp(mettanode_HEADERS_MOC ${mettanode_HEADERS})
 qt4_add_resources(mettanode_RESOURCES_RCC ${mettanode_RESOURCES})
 
 add_executable(MettaNode ${GUI_TYPE} ${mettanode_SOURCES} ${mettanode_HEADERS_MOC} ${mettanode_RESOURCES_RCC} ${APPLE_BUNDLE_SRC})
-target_link_libraries(MettaNode sst routing netsteria opus rtaudio mk4 ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(MettaNode sst routing netsteria opus rtaudio mk4 upnp ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 if (WIN32)
     target_link_libraries(MettaNode ws2_32 gdi32 winmm)
@@ -40,7 +40,3 @@ endif (APPLE)
 if (UNIX AND NOT APPLE)
 	target_link_libraries(MettaNode asound rt)
 endif (UNIX AND NOT APPLE)
-
-#if (NAT_UPNPC_ENABLED)
-target_link_libraries(MettaNode upnp)
-#endif (NAT_UPNPC_ENABLED)

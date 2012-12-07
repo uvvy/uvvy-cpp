@@ -10,7 +10,10 @@
 #include <QString>
 #include <QHostAddress>
 #include <QDebug>
-
+#ifdef Q_WS_X11
+#include <stdint.h>
+#endif
+ 
 class QNetworkReply;
 class HTTPRequest;
 
