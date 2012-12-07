@@ -55,34 +55,29 @@ void UdpTestSender::routerFound(UPnPRouter* r)
     router = r;
     connect(router, SIGNAL(stateChanged()),
         this, SLOT(routerStateChanged()));
+    connect(router, SIGNAL(portForwarded(bool)),
+        this, SLOT(portForwarded(bool)));
 
     Port p2(LOCAL_PORT, Port::UDP);
-    // router->undoForward(p2);
-    router->forward(p2, /*leaseDuration:*/ 3600, /*extPort:*/ 0/*p2.number*/);
+    router->forward(p2, /*leaseDuration:*/ 3600, /*extPort:*/ 0);
+}
 
-    ping(QHostAddress("212.7.7.70"), LOCAL_PORT);
-    std::string text;
-    std::cin >> text;
-    ping(QHostAddress("212.7.7.70"), LOCAL_PORT);
-
-    // QList<UPnPRouter::ForwardingEntry> list;
-    // router->getPortForwardings(list);
+void UdpTestSender::portForwarded(bool success)
+{
+    if (success)
+    {
+        qDebug() << "Port forwarding succeeded, sending UDP.";
+        ping(QHostAddress("212.7.7.70"), LOCAL_PORT);
+    }
 }
 
 void UdpTestSender::routerStateChanged()
 {
-    ping(QHostAddress("212.7.7.70"), LOCAL_PORT);
-
     QString err = router->getError();
     if (err != QString::null)
     {
         qWarning() << "Routing setup error" << err;
         qWarning() << "Giving up";
         // exit(1);
-    }
-    else
-    {
-        qDebug() << "Router state changed, sending UDP.";
-        ping(QHostAddress("212.7.7.70"), LOCAL_PORT);
     }
 }

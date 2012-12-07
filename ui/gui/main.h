@@ -94,6 +94,7 @@ public:
 
 public slots:
     void routerFound(UPnPRouter*);
+    void portForwarded(bool);
 };
 //=============================================================================
 

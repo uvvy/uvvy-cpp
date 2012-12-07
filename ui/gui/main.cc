@@ -433,8 +433,14 @@ void Puncher::routerFound(UPnPRouter* r)
 {
     qDebug() << "Router detected, punching a hole.";
     Port p(port, Port::UDP);
-    r->forward(p, /*leaseDuration:*/ 3600, /*extPort:*/ p.number/*0*/);
+    connect(r, SIGNAL(portForwarded(bool)),
+        this, SLOT(portForwarded(bool)));
+    r->forward(p, /*leaseDuration:*/ 3600, /*extPort:*/ 0);
+}
 
+void Puncher::portForwarded(bool success)
+{
+    qDebug() << __PRETTY_FUNCTION__ << success;
     finished_punch = 1;
 }
 

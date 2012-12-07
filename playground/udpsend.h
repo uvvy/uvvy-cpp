@@ -23,6 +23,7 @@ public:
 
 public slots:
 	void routerFound(UPnPRouter*);
+	void portForwarded(bool);
 	void routerStateChanged();
 
 private slots:
