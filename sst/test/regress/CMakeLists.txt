@@ -6,6 +6,6 @@ set(sstregress_HEADERS srv.h cli.h dgram.h migrate.h seg.h)
 qt4_wrap_cpp(sstregress_HEADERS_MOC ${sstregress_HEADERS})
 
 add_executable(sstregress  main.cc srv.cc cli.cc dgram.cc migrate.cc seg.cc ${sstregress_HEADERS_MOC})
-target_link_libraries(sstregress sst routing sst_test ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(sstregress sst_test sst routing ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS sstregress
 	RUNTIME DESTINATION tests)
