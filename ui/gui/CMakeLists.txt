@@ -40,3 +40,9 @@ endif (APPLE)
 if (UNIX AND NOT APPLE)
 	target_link_libraries(MettaNode asound rt)
 endif (UNIX AND NOT APPLE)
+
+install(TARGETS MettaNode
+    RUNTIME DESTINATION .
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)

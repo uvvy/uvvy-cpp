@@ -9,3 +9,5 @@ qt4_wrap_cpp(route_HEADERS_MOC ${route_HEADERS})
 
 add_executable(route main.cc route.cc stats.cc view.cc ${route_HEADERS_MOC})
 target_link_libraries(route sst routing sst_test ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+install(TARGETS route
+	RUNTIME DESTINATION tests)

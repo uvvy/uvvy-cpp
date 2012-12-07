@@ -11,3 +11,5 @@ qt4_wrap_cpp(udpsender_HEADERS_MOC ${udpsender_HEADERS})
 
 add_executable(udpsender ${udpsender_SOURCES} ${udpsender_HEADERS_MOC})
 target_link_libraries(udpsender upnp ${QT_LIBRARIES})
+install(TARGETS udpsender
+	RUNTIME DESTINATION tools)

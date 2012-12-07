@@ -75,19 +75,27 @@ endif (UPNPC_BUILD_SHARED)
 
 add_executable(upnpc-static upnpc.c)
 target_link_libraries(upnpc-static upnpc ${LDLIBS})
+install(TARGETS upnpc-static
+  RUNTIME DESTINATION tools)
 
 if (BUILD_TESTS)
   include_directories(.)
   
   add_executable (testminixml test/testminixml.c minixml.c igd_desc_parse.c)
   target_link_libraries (testminixml ${LDLIBS})
+  install(TARGETS testminixml
+    RUNTIME DESTINATION tests)
 
   add_executable (minixmlvalid test/minixmlvalid.c minixml.c)
   target_link_libraries (minixmlvalid ${LDLIBS})
+  install(TARGETS minixmlvalid
+    RUNTIME DESTINATION tests)
 
   add_executable (testupnpreplyparse test/testupnpreplyparse.c
                                      minixml.c upnpreplyparse.c)
   target_link_libraries (testupnpreplyparse ${LDLIBS})
+  install(TARGETS testupnpreplyparse
+    RUNTIME DESTINATION tests)
 
   add_executable (testigddescparse test/testigddescparse.c
                                    igd_desc_parse.c minixml.c miniupnpc.c miniwget.c minissdpc.c
@@ -95,6 +103,8 @@ if (BUILD_TESTS)
                                    portlistingparse.c receivedata.c
   )
   target_link_libraries (testigddescparse ${LDLIBS})
+  install(TARGETS testigddescparse
+    RUNTIME DESTINATION tests)
 
   add_executable (testminiwget test/testminiwget.c
                                miniwget.c miniupnpc.c minisoap.c upnpcommands.c minissdpc.c
@@ -102,5 +112,7 @@ if (BUILD_TESTS)
                                portlistingparse.c receivedata.c
   )
   target_link_libraries (testminiwget ${LDLIBS})
+  install(TARGETS testminiwget
+    RUNTIME DESTINATION tests)
 
 endif (BUILD_TESTS)
