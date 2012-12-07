@@ -233,6 +233,7 @@ void UPnPRouter::forwardResult(HTTPRequest* r)
     {
         d->httpRequestDone(r,false);
         stateChanged();
+        portForwarded(true);
     }
     else
     {
@@ -242,6 +243,7 @@ void UPnPRouter::forwardResult(HTTPRequest* r)
             d->error = r->errorString();
             stateChanged();
         }
+        portForwarded(false);
     }
 }
 

@@ -209,6 +209,12 @@ signals:
      * Internal state has changed, a forwarding succeeded or failed, or an undo forwarding succeeded or failed.
      */
     void stateChanged();
+
+    /**
+     * Port has been forwarded.
+     * @param success true if forward succeeded, false otherwise.
+     */
+    void portForwarded(bool success);
     
     /**
      * Signal which indicates that the XML was downloaded successfully or not.
