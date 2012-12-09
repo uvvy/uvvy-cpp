@@ -5,6 +5,7 @@ if (WIN32)
 endif (WIN32)
 
 if (UNIX AND NOT APPLE)
+	#find_package(ALSA REQUIRED)
 	add_definitions(-D__LINUX_ALSA__)
 	#-D__LINUX_PULSE__
 	#-D__LINUX_OSS__

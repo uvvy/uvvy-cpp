@@ -15,7 +15,7 @@ TODO
 ----
 The following items would be nice to have, and are supported by the nat-pmp
 protocol:
-- Support for notification of public ip address changes
+- Support for notification of public ip address changes (multicast notify on port 5350)
 - Support for retrying failed requests
 - In memory table of requested mappings and re-creation of mappings on
   gateway restart.

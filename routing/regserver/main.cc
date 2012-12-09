@@ -22,7 +22,8 @@
 
 QFile logfile;
 
-void myMsgHandler(QtMsgType type, const char *msg)
+void
+myMsgHandler(QtMsgType type, const char *msg)
 {
 	QString ts = QDateTime::currentDateTime().toString(Qt::ISODate);
     QTextStream strm(&logfile);
@@ -128,29 +129,29 @@ RegServer::doInsert1(XdrStream &rxs, const Endpoint &srcep)
 	replyInsert1(srcep, idi, nhi);
 }
 
+/**
+ * Send back the challenge cookie in our INSERT1 response,
+ * in order to verify round-trip connectivity
+ * before spending CPU time checking the client's signature.
+ */
 void
-RegServer::replyInsert1(const Endpoint &srcep, const QByteArray &idi,
-			const QByteArray &nhi)
+RegServer::replyInsert1(const Endpoint &srcep, const QByteArray &idi, const QByteArray &nhi)
 {
 	// Compute the correct challenge cookie for the message.
 	// XX really should use a proper HMAC here.
-	QByteArray chal = calcCookie(srcep, idi, nhi);
+	QByteArray challenge = calcCookie(srcep, idi, nhi);
 
-	qDebug() << this << "replyInsert1 challenge" << chal.toBase64();
+	qDebug() << this << "replyInsert1 challenge" << challenge.toBase64();
 
-	// Send back the challenge cookie in our INSERT1 response,
-	// in order to verify round-trip connectivity
-	// before spending CPU time checking the client's signature.
 	QByteArray resp;
 	XdrStream wxs(&resp, QIODevice::WriteOnly);
-	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_INSERT1)
-		<< nhi << chal;
+	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_INSERT1) << nhi << challenge;
 	sock.writeDatagram(resp, srcep.addr, srcep.port);
 	qDebug() << this << "replyInsert1 sent to" << srcep.addr << srcep.port;
 }
 
-QByteArray RegServer::calcCookie(const Endpoint &srcep, const QByteArray &idi,
-				const QByteArray &nhi)
+QByteArray
+RegServer::calcCookie(const Endpoint &srcep, const QByteArray &idi, const QByteArray &nhi)
 {
 	// Make sure we have a host secret to key the challenge with
 	if (secret.isEmpty())
@@ -161,8 +162,7 @@ QByteArray RegServer::calcCookie(const Endpoint &srcep, const QByteArray &idi,
 	// XX really should use a proper HMAC here.
 	Sha256 chalsha;
 	XdrStream chalwxs(&chalsha);
-	chalwxs << secret << srcep.addr.toString() << srcep.port
-		<< idi << nhi << secret;
+	chalwxs << secret << srcep.addr.toString() << srcep.port << idi << nhi << secret;
 	return chalsha.final();
 }
 
@@ -213,16 +213,15 @@ RegServer::doInsert2(XdrStream &rxs, const Endpoint &srcep)
 	// XX would probably be good to send back an error response.
 	Ident identi(idi);
 	if (identi.scheme() != identi.RSA160) {
-		qDebug("Received Insert for unsupported ID scheme %d",
-			identi.scheme());
+		qDebug() << "Received Insert for unsupported ID scheme" << identi.scheme();
 		chalhash.insert(chal, QByteArray());
 		return;
 	}
 
 	// Parse the client's public key and make sure it matches its EID.
-	if (!identi.setKey(key)) {
-		qDebug("Received bad identity from client %s:%d on insert",
-			srcep.addr.toString().toAscii().data(), srcep.port);
+	if (!identi.setKey(key))
+	{
+		qDebug() << "Received bad identity from client" << srcep.addr << ":" << srcep.port << "on insert"; //@todo 'srcep' only
 		chalhash.insert(chal, QByteArray());
 		return;
 	}
@@ -233,9 +232,9 @@ RegServer::doInsert2(XdrStream &rxs, const Endpoint &srcep)
 	sigwxs << idi << ni << chal << info;
 
 	// Verify the client's signature using his public key.
-	if (!identi.verify(sigsha.final(), sig)) {
-		qDebug("Signature check for client %s:%d failed on Insert2",
-			srcep.addr.toString().toAscii().data(), srcep.port);
+	if (!identi.verify(sigsha.final(), sig))
+	{
+		qDebug() << "Signature check for client" << srcep.addr << ":" << srcep.port << "failed on Insert2"; //@todo 'srcep' only
 		chalhash.insert(chal, QByteArray());
 		return;
 	}
@@ -249,12 +248,10 @@ RegServer::doInsert2(XdrStream &rxs, const Endpoint &srcep)
 	// so it knows how soon it will need to refresh the record.
 	QByteArray resp;
 	XdrStream wxs(&resp, QIODevice::WriteOnly);
-	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_INSERT2)
-		<< nhi << (quint32)TIMEOUT_SEC << srcep;
+	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_INSERT2) << nhi << (quint32)TIMEOUT_SEC << srcep;
 	sock.writeDatagram(resp, srcep.addr, srcep.port);
 
-	qDebug() << "Inserted record for" << idi.toBase64() << "at"
-		<< srcep.addr.toString() << srcep.port;
+	qDebug() << "Inserted record for" << idi.toBase64() << "at" << srcep.addr.toString() << srcep.port;
 }
 
 void
@@ -292,8 +289,8 @@ RegServer::doLookup(XdrStream &rxs, const Endpoint &srcep)
 		replyLookup(recr, REG_NOTIFY | REG_LOOKUP, idi, reci);
 }
 
-void RegServer::replyLookup(RegRecord *reci, quint32 replycode,
-				const QByteArray &idr, RegRecord *recr)
+void
+RegServer::replyLookup(RegRecord *reci, quint32 replycode, const QByteArray &idr, RegRecord *recr)
 {
 	qDebug() << this << "replyLookup" << replycode;
 
@@ -382,8 +379,8 @@ RegServer::doSearch(XdrStream &rxs, const Endpoint &srcep)
 	sock.writeDatagram(resp, srcep.addr, srcep.port);
 }
 
-RegRecord *RegServer::findCaller(const Endpoint &ep, const QByteArray &idi,
-				const QByteArray &nhi)
+RegRecord*
+RegServer::findCaller(const Endpoint &ep, const QByteArray &idi, const QByteArray &nhi)
 {
 	RegRecord *reci = idhash.value(idi);
 	if (reci == NULL) {
@@ -408,7 +405,11 @@ RegRecord *RegServer::findCaller(const Endpoint &ep, const QByteArray &idi,
 RegRecord::RegRecord(RegServer *srv,
 		const QByteArray &id, const QByteArray &nhi,
 		const Endpoint &ep, const QByteArray &info)
-:	srv(srv), id(id), nhi(nhi), ep(ep), info(info)
+	: srv(srv)
+	, id(id)
+	, nhi(nhi)
+	, ep(ep)
+	, info(info)
 {
 	// Register us in the RegServer's ID-lookup table,
 	// replacing any existing entry with this ID.
@@ -441,7 +442,8 @@ RegRecord::~RegRecord()
 	regKeywords(false);
 }
 
-void RegRecord::regKeywords(bool insert)
+void
+RegRecord::regKeywords(bool insert)
 {
 	foreach (QString kw, RegInfo(info).keywords()) {
 		QSet<RegRecord*> &set = srv->kwhash[kw];
@@ -455,7 +457,8 @@ void RegRecord::regKeywords(bool insert)
 	}
 }
 
-void RegRecord::timerEvent(QTimerEvent *)
+void
+RegRecord::timerEvent(QTimerEvent *)
 {
 	qDebug() << "Timed out record for" << id.toBase64() << "at" << ep.addr.toString() << ep.port;
 
@@ -466,7 +469,8 @@ void RegRecord::timerEvent(QTimerEvent *)
 //
 // Main application entrypoint
 //
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
     QDir homedir = QDir::home();
     QDir appdir;

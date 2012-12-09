@@ -108,7 +108,7 @@ void RegClient::disconnect()
 void RegClient::registerAt(const QString &srvname, quint16 srvport)
 {
 	Q_ASSERT(state == Idle);
-	qDebug() << "registerAt" << srvname << srvport;
+	qDebug() << this << "registerAt" << srvname << srvport;
 
 	this->srvname = srvname;
 	this->srvport = srvport;
@@ -177,19 +177,18 @@ void RegClient::goInsert1()
 
 void RegClient::sendInsert1()
 {
-	qDebug("Insert1");
+	qDebug() << this << "Insert1";
 
 	// Send our Insert1 message
 	QByteArray msg;
 	XdrStream ws(&msg, QIODevice::WriteOnly);
-	ws << (quint32)REG_MAGIC << (quint32)(REG_REQUEST | REG_INSERT1)
-		<< idi << nhi;
+	ws << (quint32)REG_MAGIC << (quint32)(REG_REQUEST | REG_INSERT1) << idi << nhi;
 	send(msg);
 }
 
 void RegClient::gotInsert1Reply(XdrStream &rs)
 {
-	qDebug("Insert1 reply");
+	qDebug() << this << "Insert1 reply";
 
 	// Decode the rest of the reply
 	rs >> chal;
@@ -199,6 +198,7 @@ void RegClient::gotInsert1Reply(XdrStream &rs)
 	}
 
 	// Looks good - go to Insert2 state.
+	qDebug() << this << "Insert1 reply looks good!";
 	goInsert2();
 }
 

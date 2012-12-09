@@ -67,6 +67,7 @@ private slots:
 	void openChat();
 	void openDownload();
 	void openSettings();
+	void openLogWindow();
 	void openProfile();
 	void gotoFiles();
 	void openHelp();
@@ -78,6 +79,25 @@ private slots:
 	void updateMenus();
 	void exitApp();
 };
+
+//=============================================================================
+// TEST ZONE
+//=============================================================================
+class UPnPRouter;
+
+class Puncher : public QObject
+{
+    Q_OBJECT
+
+    int port;
+public:
+    Puncher(int port);
+
+public slots:
+    void routerFound(UPnPRouter*);
+    void portForwarded(bool);
+};
+//=============================================================================
 
 
 extern MainWindow *mainwin;

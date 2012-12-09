@@ -1,3 +1,6 @@
+  ☐ Ubuntu 32/64 bit binaries repo for Matti.
+    ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
+  ☐ Deploy nshd to motoko?
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
@@ -5,8 +8,36 @@ Most immediate usability necessities:
  ☐ Public/friends-only choices on profile items
  ☐ Profile picture
  ☐ Log window for log display in real-time.
- ☐ Registration server logging to file.
- ☐ Registration server proper handling of registrations from the same LAN (second client to register disconnects first).
+ ✔ Registration server logging to file. @done (12-11-18 16:30)
+ ✔ Registration server proper handling of registrations from the same LAN. @done (12-12-09 16:26)
+    (second client to register disconnects first). The problem appears to be more serious and is related to insufficient NAT handling.
+
+NAT and UPnP:
+  ✔ hmm, even with UPnP succeeding the pings never get back?? wtf @done (12-12-07 13:23)
+    ✔ can it be motoko traffic filtered? try with a different server, e.g. amazon t1.micro instance. @done (12-12-07 13:23)
+       and it was motoko firewalls indeed, 
+       ☐ call infonet about it
+    ☐ http://tools.ietf.org/html/draft-cheshire-nat-pmp-05
+    ☐ http://miniupnp.free.fr/nat-pmp.html
+      ☐ needs default gateway knowledge, thus platform-dependent routing information access, e.g. http://qt-project.org/forums/viewthread/7497,
+         http://stackoverflow.com/questions/1738733/how-to-get-internal-ip-external-ip-and-default-gateway-for-upnp  
+         ☐ libnatpmp impl already has this!
+  ☐ Integrate UPnP into SST::Host.
+ ✔ Download router XML file using QNetworkAccessManager/QNetworkReply @done (12-11-18 16:24)
+ ✔ Punching TCP holes via UPnP works, but UDP doesn't (apparently, Skype can do it!) - figure out why, find a workaround. @done (12-11-24 10:45)
+   ✔ miniupnpc could punch a hole when specifying a lease duration @done (12-11-23 19:24)
+   ✔ try TCP before UDP (cplx @easy) - didn't help @done (12-11-24 10:45)
+   ✔ try with lease duration using upnp lib - this worked! @done (12-11-24 10:44)
+   ✔ wireshark requests from utorrent/skype - was not necessary @done (12-11-24 10:46)
+ ☐ Assign a new Endpoint with public IP and UPnP-assigned port number.
+   ☐ Use it to register on regserver as primary.
+ ☐ Integrate hole punching machinery with SST::Host.
+ ☐ UPnP event variables that need to be checked:
+     NATEnabled - if not, portmapping setting will fail.
+     ConnectionStatus - if not connected, setting forwarding is useless.
+     PortMappingNumberOfEntries - if changed, might need to re-read the actual mapping information.
+     PortMappingLeaseDuration - is decremented and needs to be checked regularly, some seconds before the lease time out the lease must be extended for our port forwardings.
+     Therefore, we need to maintain the status of UPnPRouter endpoint.
 
 Larger features planned:
  ☐ Integration with UIA - personal device cluster management, etc.
@@ -32,7 +63,7 @@ Chat synchronization:
  ☐ Chat join urls like nstchat://authblob or nst://chat?authblob
 
 File synchronization:
- ☐ Bandwidth indicator during downloads
+ ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
  ☐ Show file transfer progress on both sending and receiving sides. Also inside chat.
  ☐ Make ongoing downloads automatically persist across restarts
  ✔ Watch Files directory for new files and file changes (QFileSystemWatcher) @done (12-11-05 23:49)
@@ -44,8 +75,15 @@ File synchronization:
      Something like full-fledged git might be needed. At the very least a key-value like store, that resolves modifications using full file path 
      as just another attribute (change in FILE_PATH attribute might cause a rename, for example).
 
+     Try git model approach - files are in trees, trees are hashed and upon change a Change of tree is recorded with the link to previous (parent)
+     tree(s). Files are like git blobs but assembled of multiple chunks.
+
 Voice and video communication:
+ ☐ Missing libalsa check in cmake
  ☐ Indicator showing when audio is being received, and from whom.
  ✔ ALSA backend for Linux and/or upgrade to PortAudio V19 @done (12-10-26 01:19)
  ✔ Make configure script detect absence of OSS, disable audio on Unix @done (12-10-26 01:19)
  ☐ Event bells/notifications: friend online, chat/talk started, etc.
+
+Names:
+  ☐ a "mongus" - nice name
