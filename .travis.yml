@@ -5,7 +5,6 @@ script: ./scripts/travis_build.sh
 branches:
   only:
     - master
-    - nat-upnp
 notifications:
   email: false
 
