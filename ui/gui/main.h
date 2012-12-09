@@ -67,6 +67,7 @@ private slots:
 	void openChat();
 	void openDownload();
 	void openSettings();
+	void openLogWindow();
 	void openProfile();
 	void gotoFiles();
 	void openHelp();

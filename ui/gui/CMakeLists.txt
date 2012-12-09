@@ -6,8 +6,8 @@ include_directories(../3rdparty/metakit-2.4.9.7/include ../../nat)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(mettanode_SOURCES main.cc search.cc chat.cc chathistory.cpp view.cc save.cc settings.cc logarea.cc meter.cc)
-set(mettanode_HEADERS chat.h chathistory.h logarea.h main.h meter.h save.h search.h settings.h)
+set(mettanode_SOURCES main.cc search.cc chat.cc chathistory.cpp view.cc save.cc settings.cc logarea.cc logwindow.cpp meter.cc)
+set(mettanode_HEADERS chat.h chathistory.h logarea.h logwindow.h main.h meter.h save.h search.h settings.h)
 set(mettanode_RESOURCES gui.qrc)
 
 if (APPLE)

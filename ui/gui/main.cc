@@ -39,6 +39,7 @@
 #include "host.h"
 #include "settings.h"
 #include "filesync.h"
+#include "logwindow.h"
 
 #include "upnp/upnpmcastsocket.h"
 #include "upnp/router.h"
@@ -52,7 +53,6 @@ using namespace SST;
 Host *ssthost;
 
 MainWindow *mainwin;
-// LogWindow *logwin;
 PeerTable *friends;
 VoiceService *talksrv;
 
@@ -78,17 +78,20 @@ void myMsgHandler(QtMsgType type, const char *msg)
     switch (type) {
         case QtDebugMsg:
             strm << "D: " << msg << '\n';
+            LogWindow::get() << msg;
             if (spewdebug)
                 std::cout << msg << '\n';
             break;
         case QtWarningMsg:
             strm << "W: " << msg << '\n';
             std::cout << "Warning: " << msg << '\n';
+            LogWindow::get() << msg;
             break;
         case QtCriticalMsg:
             strm << "C: " << msg << '\n';
             strm.flush();
             std::cout << "Critical: " << msg << '\n';
+            LogWindow::get() << msg;
             QMessageBox::critical(NULL,
                 QObject::tr("Netsteria: Critical Error"), msg,
                 QMessageBox::Ok, QMessageBox::NoButton);
@@ -97,6 +100,7 @@ void myMsgHandler(QtMsgType type, const char *msg)
             strm << "F: " << msg << '\n';
             strm.flush();
             std::cout << "Fatal: " << msg << '\n';
+            LogWindow::get() << msg;
             QMessageBox::critical(NULL,
                 QObject::tr("Netsteria: Critical Error"), msg,
                 QMessageBox::Ok, QMessageBox::NoButton);
@@ -179,6 +183,8 @@ MainWindow::MainWindow()
     windowmenu->addAction(tr("Search"), this, SLOT(openSearch()));
     windowmenu->addAction(tr("Download"), this, SLOT(openDownload()));
     windowmenu->addAction(tr("Settings"), this, SLOT(openSettings()));
+    windowmenu->addSeparator();
+    windowmenu->addAction(tr("Log window"), this, SLOT(openLogWindow()));
     windowmenu->addSeparator();
     windowmenu->addAction(tr("Go to files"), this, SLOT(gotoFiles()));
     menuBar()->addMenu(windowmenu);
@@ -301,6 +307,11 @@ void MainWindow::openSearch()
 void MainWindow::openDownload()
 {
     SaveDialog::present();
+}
+
+void MainWindow::openLogWindow()
+{
+    LogWindow::get().show();
 }
 
 void MainWindow::gotoFiles()
