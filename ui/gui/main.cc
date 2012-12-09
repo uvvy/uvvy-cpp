@@ -1,4 +1,4 @@
-#define VERSION "0.02"
+#define VERSION "0.03"
 
 #include <QHash>
 #include <QMenu>
@@ -359,8 +359,8 @@ void MainWindow::openWeb()
 void MainWindow::openAbout()
 {
     QMessageBox *mbox = new QMessageBox(tr("About MettaNode"),
-                tr("Based on Netsteria version %0\n"
-                   "by Bryan Ford, © 2006").arg(VERSION),
+                tr("Based on Netsteria version 0.01\n"
+                   "by Bryan Ford, © 2006"),
                 QMessageBox::Information,
                 QMessageBox::Ok, QMessageBox::NoButton,
                 QMessageBox::NoButton, this);
