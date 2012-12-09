@@ -407,6 +407,7 @@ Stream *PeerService::connectToPeer(const QByteArray &hostId)
 
 Stream *PeerService::reconnectToPeer(const QByteArray &id)
 {
+	qDebug() << "Attempt to reconnect peer" << id.toBase64();
 	disconnectFromPeer(id);
 	return connectToPeer(id);
 }

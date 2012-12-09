@@ -1,5 +1,9 @@
 // messages.h
 // Author: Allen Porter <allen@thebends.org>
+#pragma once
+
+#include <stdint.h>
+#include <netinet/in.h>
 
 namespace pmp {
 

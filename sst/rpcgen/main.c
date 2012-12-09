@@ -217,7 +217,7 @@ main(argc, argv)
 			reinitialize();
 			mkfile_output(&cmd);
 		}
-#endif 0
+#endif
 
 	}
 	exit(nonfatalerrors);

@@ -10,6 +10,7 @@ Most immediate usability necessities:
  ☐ specify and fix negotiation protocol format
  ☐ registration protocol: specify, add explicit deregistration on shutdown
     ☐ would be nice to move registration protocol details to the routing lib if possible?
+        move started, but there are still deps on SST::Host
 
 Renaming and restructuring to do at some point (tentative list):
  ☐ Socket -> Network (or -> Adapter?); Channel -> ChannelID (or -> FlowID?)
@@ -19,8 +20,6 @@ Renaming and restructuring to do at some point (tentative list):
  ☐ Message -> Record (e.g., readMesage() -> readRecord)?
      Might help avoid confusion between "Message" and "Datagram".
 
---- ✄ -----------------------
-
 Qt wishlist for SST:
  ☐ Base64 conversion flags for URL-safe and/or '='-padding free variants.
  ☐ QTimer hooks allowing time virtualization for simulation purposes.
@@ -28,4 +27,3 @@ Qt wishlist for SST:
  ☐ Make QAbstractSocket a "real" abstract base class that can be subclassed for reasons other than to wrap a different kind of native socket.
  ☐ Make Qt's signal/slot mechanism handle namespaces in type names properly.
  ☐ Access to OS's path MTU detection facilities under UDP
-

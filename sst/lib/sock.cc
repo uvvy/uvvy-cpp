@@ -67,7 +67,7 @@ uint qHash(const SST::SocketEndpoint &sep)
 
 Socket::~Socket()
 {
-	//qDebug() << this << "~Socket()";
+	qDebug() << this << "~Socket()";
 
 	// Unbind all flows
 	foreach (SocketFlow *f, flows.values())
@@ -122,8 +122,7 @@ Socket::receive(QByteArray &msg, const SocketEndpoint &src)
 	if (rcv)
 		return rcv->receive(msg, rs, src);
 
-	qDebug("Received control message for unknown flow/receiver %08x",
-		magic);
+	qDebug("Received control message for unknown flow/receiver %08x", magic);
 }
 
 bool Socket::isCongestionControlled(const Endpoint &)
@@ -175,7 +174,7 @@ UdpSocket::send(const Endpoint &ep, const char *data, int size)
 	// but after our first attempt to send an IPv6 packet,
 	// all the subsequent IPv4 packets we send
 	// appear on the wire with newly-allocated port numbers.
-	if (ep.addr.protocol() != QAbstractSocket::IPv4Protocol)
+	if (ep.addr.protocol() != QAbstractSocket::IPv4Protocol) //@IPV6
 		return false;
 
 	bool rc = usock.writeDatagram(data, size, ep.addr, ep.port) == size;
@@ -195,12 +194,13 @@ UdpSocket::udpReadyRead()
 	src.sock = this;
 	QByteArray msg;
 	int size;
-	while ((size = usock.pendingDatagramSize()) >= 0) {
 
+	while ((size = usock.pendingDatagramSize()) >= 0)
+	{
 		// Read the datagram
 		msg.resize(size);
-		if (usock.readDatagram(msg.data(), size, &src.addr, &src.port)
-				!= size) {
+		if (usock.readDatagram(msg.data(), size, &src.addr, &src.port) != size)
+		{
 			qWarning("Error reading %d-byte UDP datagram", size);
 			break;
 		}

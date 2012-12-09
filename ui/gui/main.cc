@@ -1,4 +1,4 @@
-#define VERSION "0.02"
+#define VERSION "0.03"
 
 #include <QHash>
 #include <QMenu>
@@ -39,9 +39,10 @@
 #include "host.h"
 #include "settings.h"
 #include "filesync.h"
+#include "logwindow.h"
 
 #include "upnp/upnpmcastsocket.h"
-#include "upnp/upnprouter.h"
+#include "upnp/router.h"
 
 using namespace SST;
 
@@ -52,7 +53,6 @@ using namespace SST;
 Host *ssthost;
 
 MainWindow *mainwin;
-// LogWindow *logwin;
 PeerTable *friends;
 VoiceService *talksrv;
 
@@ -66,6 +66,8 @@ QFile logfile;
 
 bool spewdebug;
 
+volatile int finished_punch = 0;
+
 //=====================================================================================================================
 // Qt logger function.
 //=====================================================================================================================
@@ -76,17 +78,20 @@ void myMsgHandler(QtMsgType type, const char *msg)
     switch (type) {
         case QtDebugMsg:
             strm << "D: " << msg << '\n';
+            LogWindow::get() << msg;
             if (spewdebug)
                 std::cout << msg << '\n';
             break;
         case QtWarningMsg:
             strm << "W: " << msg << '\n';
             std::cout << "Warning: " << msg << '\n';
+            LogWindow::get() << msg;
             break;
         case QtCriticalMsg:
             strm << "C: " << msg << '\n';
             strm.flush();
             std::cout << "Critical: " << msg << '\n';
+            LogWindow::get() << msg;
             QMessageBox::critical(NULL,
                 QObject::tr("Netsteria: Critical Error"), msg,
                 QMessageBox::Ok, QMessageBox::NoButton);
@@ -95,6 +100,7 @@ void myMsgHandler(QtMsgType type, const char *msg)
             strm << "F: " << msg << '\n';
             strm.flush();
             std::cout << "Fatal: " << msg << '\n';
+            LogWindow::get() << msg;
             QMessageBox::critical(NULL,
                 QObject::tr("Netsteria: Critical Error"), msg,
                 QMessageBox::Ok, QMessageBox::NoButton);
@@ -177,6 +183,8 @@ MainWindow::MainWindow()
     windowmenu->addAction(tr("Search"), this, SLOT(openSearch()));
     windowmenu->addAction(tr("Download"), this, SLOT(openDownload()));
     windowmenu->addAction(tr("Settings"), this, SLOT(openSettings()));
+    windowmenu->addSeparator();
+    windowmenu->addAction(tr("Log window"), this, SLOT(openLogWindow()));
     windowmenu->addSeparator();
     windowmenu->addAction(tr("Go to files"), this, SLOT(gotoFiles()));
     menuBar()->addMenu(windowmenu);
@@ -301,6 +309,11 @@ void MainWindow::openDownload()
     SaveDialog::present();
 }
 
+void MainWindow::openLogWindow()
+{
+    LogWindow::get().show();
+}
+
 void MainWindow::gotoFiles()
 {
     QString dir = QString("file://") + shareDir.path();
@@ -346,8 +359,8 @@ void MainWindow::openWeb()
 void MainWindow::openAbout()
 {
     QMessageBox *mbox = new QMessageBox(tr("About MettaNode"),
-                tr("Based on Netsteria version %0\n"
-                   "by Bryan Ford, © 2006").arg(VERSION),
+                tr("Based on Netsteria version 0.01\n"
+                   "by Bryan Ford, © 2006"),
                 QMessageBox::Information,
                 QMessageBox::Ok, QMessageBox::NoButton,
                 QMessageBox::NoButton, this);
@@ -427,10 +440,19 @@ Puncher::Puncher(int p)
     qDebug() << "Puncher waiting for victims";
 }
 
-void Puncher::routerFound(bt::UPnPRouter* r)
+void Puncher::routerFound(UPnPRouter* r)
 {
     qDebug() << "Router detected, punching a hole.";
-    r->forward(port);
+    Port p(port, Port::UDP);
+    connect(r, SIGNAL(portForwarded(bool)),
+        this, SLOT(portForwarded(bool)));
+    r->forward(p, /*leaseDuration:*/ 3600, /*extPort:*/ 0);
+}
+
+void Puncher::portForwarded(bool success)
+{
+    qDebug() << __PRETTY_FUNCTION__ << success;
+    finished_punch = 1;
 }
 
 static void regclient(const QString &hostname)
@@ -439,17 +461,6 @@ static void regclient(const QString &hostname)
     regcli->setInfo(myreginfo);
     regcli->registerAt(hostname);
     regclients.append(regcli);
-
-    // uint16_t private_port = ssthost->activeLocalEndpoints()[0].port;
-    // uint16_t public_port = 0; //auto-assign
-    // uint32_t lifetime = 3600;
-    // if (!pmp::CreateMap(pmp::UDP, private_port, &public_port, &lifetime)) {
-        // qWarning() << "pmp::CreateMap failed";
-    // }
-    // else
-    // {
-        // qDebug() << "Port map created:" << public_port << "=>" << private_port << "with lifetime" << lifetime;
-    // }
 }
 
 static void usage()
@@ -532,15 +543,18 @@ int main(int argc, char **argv)
     keyinit();
     mydev.setEID(mykey->eid);
 #endif
-
-    // Initialize the Structured Stream Transport
-    ssthost = new Host(settings, NETSTERIA_DEFAULT_PORT);
-
+/*
     Puncher* p = new Puncher(NETSTERIA_DEFAULT_PORT);
     bt::UPnPMCastSocket* sock = new bt::UPnPMCastSocket(true);
-    QObject::connect(sock, SIGNAL(discovered(bt::UPnPRouter*)),
-        p, SLOT(routerFound(bt::UPnPRouter*)));
+    QObject::connect(sock, SIGNAL(discovered(UPnPRouter*)),
+        p, SLOT(routerFound(UPnPRouter*)));
     sock->discover();
+
+    while (!finished_punch)
+        qApp->processEvents();
+*/
+    // Initialize the Structured Stream Transport
+    ssthost = new Host(settings, NETSTERIA_DEFAULT_PORT);
 
     // Initialize the settings system, read user profile
     SettingsDialog::init();
@@ -557,7 +571,7 @@ int main(int argc, char **argv)
     // if (!settings->contains("regservers"))
     {
         QStringList rs;
-        rs << "212.7.7.70" << "192.168.1.94";
+        rs << "section4.madfire.net";
         settings->setValue("regservers", rs);
     }
 

@@ -8,3 +8,5 @@ qt4_wrap_cpp(nshd_HEADERS_MOC ${nshd_HEADERS})
 
 add_executable(nshd main.cc srv.cc ../proto.cc ../asyncfile.cc ${nshd_HEADERS_MOC})
 target_link_libraries(nshd sst routing ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+install(TARGETS nshd
+	RUNTIME DESTINATION tools)

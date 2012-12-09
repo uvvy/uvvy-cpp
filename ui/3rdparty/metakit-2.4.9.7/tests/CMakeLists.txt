@@ -4,6 +4,8 @@ set(tests_SOURCES regress.cpp tbasic1.cpp tbasic2.cpp tcusto1.cpp tcusto2.cpp td
 
 add_executable(regress ${tests_SOURCES})
 target_link_libraries(regress mk4)
+install(TARGETS regress
+	RUNTIME DESTINATION tests)
 
 #test -d tests || mkdir tests
 #test -d ../tests/ok/CVS && (test -d tests/CVS || mkdir tests/CVS)

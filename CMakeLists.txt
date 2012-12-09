@@ -35,3 +35,4 @@ add_subdirectory(routing)
 add_subdirectory(nat)
 add_subdirectory(ui)
 
+add_subdirectory(playground)

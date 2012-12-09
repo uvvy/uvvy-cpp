@@ -29,6 +29,8 @@ bool GetGatewayInfo(in_addr* public_ip, uint32_t* uptime) {
   bzero(&request, sizeof(struct public_ip_request));
   request.header.vers = 0;
   request.header.op = 0;
+
+printf("request.op=%d\n", request.header.op);
   struct public_ip_response resp;
   if (!op->Run(&name, (const char*)&request,
                sizeof(struct public_ip_request),

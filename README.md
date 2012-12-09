@@ -13,7 +13,7 @@ First prototype requirements
 * UIP-like routing (EID's + extended DHT based routing through EID space)
 
 GUI features
-* drag-n-drop data to basket
+* monitor Files folder for stuff to sync.
 * metadata assignments - how?
 * how to perform search? an ESC-interface sounds intriguing
 
@@ -36,4 +36,4 @@ Not yet required
 
 CI status
 =========
-[![Build Status](https://secure.travis-ci.org/berkus/metta-grabber.png)](http://travis-ci.org/berkus/metta-grabber)
+[![Build Status](https://secure.travis-ci.org/berkus/mettanode.png)](http://travis-ci.org/berkus/mettanode)

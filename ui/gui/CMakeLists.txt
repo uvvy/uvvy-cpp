@@ -6,8 +6,8 @@ include_directories(../3rdparty/metakit-2.4.9.7/include ../../nat)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(mettanode_SOURCES main.cc search.cc chat.cc chathistory.cpp view.cc save.cc settings.cc logarea.cc meter.cc)
-set(mettanode_HEADERS chat.h chathistory.h logarea.h main.h meter.h save.h search.h settings.h)
+set(mettanode_SOURCES main.cc search.cc chat.cc chathistory.cpp view.cc save.cc settings.cc logarea.cc logwindow.cpp meter.cc)
+set(mettanode_HEADERS chat.h chathistory.h logarea.h logwindow.h main.h meter.h save.h search.h settings.h)
 set(mettanode_RESOURCES gui.qrc)
 
 if (APPLE)
@@ -22,7 +22,7 @@ qt4_wrap_cpp(mettanode_HEADERS_MOC ${mettanode_HEADERS})
 qt4_add_resources(mettanode_RESOURCES_RCC ${mettanode_RESOURCES})
 
 add_executable(MettaNode ${GUI_TYPE} ${mettanode_SOURCES} ${mettanode_HEADERS_MOC} ${mettanode_RESOURCES_RCC} ${APPLE_BUNDLE_SRC})
-target_link_libraries(MettaNode sst routing netsteria opus rtaudio mk4 ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(MettaNode sst routing netsteria opus rtaudio mk4 upnp ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 
 if (WIN32)
     target_link_libraries(MettaNode ws2_32 gdi32 winmm)
@@ -41,6 +41,8 @@ if (UNIX AND NOT APPLE)
 	target_link_libraries(MettaNode asound rt)
 endif (UNIX AND NOT APPLE)
 
-#if (NAT_UPNPC_ENABLED)
-target_link_libraries(MettaNode upnp)
-#endif (NAT_UPNPC_ENABLED)
+install(TARGETS MettaNode
+    RUNTIME DESTINATION .
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib)

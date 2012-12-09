@@ -67,6 +67,7 @@ private slots:
 	void openChat();
 	void openDownload();
 	void openSettings();
+	void openLogWindow();
 	void openProfile();
 	void gotoFiles();
 	void openHelp();
@@ -82,7 +83,7 @@ private slots:
 //=============================================================================
 // TEST ZONE
 //=============================================================================
-namespace bt { class UPnPRouter; }
+class UPnPRouter;
 
 class Puncher : public QObject
 {
@@ -93,7 +94,8 @@ public:
     Puncher(int port);
 
 public slots:
-    void routerFound(bt::UPnPRouter*);
+    void routerFound(UPnPRouter*);
+    void portForwarded(bool);
 };
 //=============================================================================
 
