@@ -532,7 +532,7 @@ int main(int argc, char **argv)
     keyinit();
     mydev.setEID(mykey->eid);
 #endif
-
+/*
     Puncher* p = new Puncher(NETSTERIA_DEFAULT_PORT);
     bt::UPnPMCastSocket* sock = new bt::UPnPMCastSocket(true);
     QObject::connect(sock, SIGNAL(discovered(UPnPRouter*)),
@@ -541,7 +541,7 @@ int main(int argc, char **argv)
 
     while (!finished_punch)
         qApp->processEvents();
-
+*/
     // Initialize the Structured Stream Transport
     ssthost = new Host(settings, NETSTERIA_DEFAULT_PORT);
 
