@@ -14,16 +14,11 @@
 #include "util.h"
 #include "google/gflags.h"
 
-DEFINE_int32(private_port, 0,
-             "The private port on this computer used for the mapping.");
-DEFINE_int32(public_port, 0,
-             "The desired public port (or 0 to be assigned a port).");
-DEFINE_bool(udp, false,
-            "If true, a port mapping will be made for UDP packets.");
-DEFINE_bool(tcp, false,
-            "If true, a port mapping will be made for TCP packets.");
-DEFINE_int32(lifetime, 3600,
-             "The lifetime of the port mapping.");
+DEFINE_int32(private_port, 0, "The private port on this computer used for the mapping.");
+DEFINE_int32(public_port, 0, "The desired public port (or 0 to be assigned a port).");
+DEFINE_bool(udp, false, "If true, a port mapping will be made for UDP packets.");
+DEFINE_bool(tcp, false, "If true, a port mapping will be made for TCP packets.");
+DEFINE_int32(lifetime, 3600, "The lifetime of the port mapping.");
 
 using namespace std;
 
