@@ -256,8 +256,8 @@ void MainWindow::updateMenus()
 
     maMessage->setEnabled(sel);
     taMessage->setEnabled(sel);
-    maTalk->setEnabled(sel && talksrv->outConnected(id));
-    taTalk->setEnabled(sel && talksrv->outConnected(id));
+    // maTalk->setEnabled(sel && talksrv->outConnected(id));
+    // taTalk->setEnabled(sel && talksrv->outConnected(id));
     maRename->setEnabled(sel);
     taRename->setEnabled(sel);
     maDelete->setEnabled(sel);
