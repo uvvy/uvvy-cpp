@@ -2,9 +2,6 @@ language: c++
 before_install:
   - sudo apt-get install -qq libasound2-dev
 script: ./scripts/travis_build.sh
-branches:
-  only:
-    - master
 notifications:
   email: false
 
