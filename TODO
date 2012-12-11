@@ -1,5 +1,6 @@
 Fixes:
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
+    Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
 
 First of all:
  ☐ test SST connectivity. 
