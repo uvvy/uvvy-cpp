@@ -345,8 +345,7 @@ void PeerService::updateStatus(const QByteArray &hostid)
 	if (row < 0)
 		return;
 
-	qDebug() << "PeerService" << svname << prname
-		<< "update status" << peerNameOrId(hostid) << "row" << row;
+	qDebug() << "PeerService" << svname << prname << "update status" << peerNameOrId(hostid) << "row" << row;
 
 	// Update the status indicator
 	Stream *stream = out.value(hostid);
