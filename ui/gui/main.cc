@@ -201,8 +201,8 @@ MainWindow::MainWindow()
     connect(friendslist->selectionModel(),
         SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
         this, SLOT(updateMenus()));
-    connect(talksrv, SIGNAL(statusChanged(const QByteArray&)),
-        this, SLOT(updateMenus()));
+/**    connect(talksrv, SIGNAL(statusChanged(const QByteArray&)),
+        this, SLOT(updateMenus()));*/
 
     // Retrieve the main window settings
     settings->beginGroup("MainWindow");
