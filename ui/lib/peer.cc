@@ -354,7 +354,12 @@ void PeerService::updateStatus(const QByteArray &hostid)
 	const QVariant &val = online
 			? (onlineval.isNull() ? tr("Online") : onlineval)
 			: (offlineval.isNull() ? tr("Offline") : offlineval);
-	peers->setData(idx, val, Qt::DisplayRole);
+	Qt::ItemDataRole role;
+	if (val.type() == QVariant::Icon)
+		role = Qt::DecorationRole;
+	else
+		role = Qt::DisplayRole;
+	peers->setData(idx, val, role);
 	peers->setFlags(idx, Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 }
 
