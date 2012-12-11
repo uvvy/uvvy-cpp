@@ -582,25 +582,25 @@ int main(int argc, char **argv)
     }
 
     // Load and initialize our friends table
-    friends = new PeerTable(NCOLS);
+    friends = new PeerTable(NCOLS - 3);
     friends->setHeaderData(COL_ONLINE, Qt::Horizontal,
                 QObject::tr("Presence"), Qt::DisplayRole);
-    friends->setHeaderData(COL_FILES, Qt::Horizontal,
-                QObject::tr("Files"), Qt::DisplayRole);
-    friends->setHeaderData(COL_TALK, Qt::Horizontal,
-                QObject::tr("Talk"), Qt::DisplayRole);
-    friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
-                QObject::tr("Listen"), Qt::DisplayRole);
+    // friends->setHeaderData(COL_FILES, Qt::Horizontal,
+    //             QObject::tr("Files"), Qt::DisplayRole);
+    // friends->setHeaderData(COL_TALK, Qt::Horizontal,
+    //             QObject::tr("Talk"), Qt::DisplayRole);
+    // friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
+    //             QObject::tr("Listen"), Qt::DisplayRole);
     friends->useSettings(settings, "Friends");
 
     PeerService* s = new PeerService("Presence", QObject::tr("Presence updates"),
                                      "NstPresence", QObject::tr("Netsteria presence protocol"));
     s->setPeerTable(friends);
-    s->setStatusColumn(COL_ONLINE);
+    s->setStatusColumn(COL_ONLINE, QIcon(":/img/status-online.png"), QIcon(":/img/status-offline.png"));
 
     // Initialize our chunk sharing service
-    ChunkShare::instance()->setPeerTable(friends);
-    ChunkShare::instance()->setStatusColumn(COL_FILES);
+    // ChunkShare::instance()->setPeerTable(friends);
+    // ChunkShare::instance()->setStatusColumn(COL_FILES);
 
     // Share default directory
     appdir.mkdir("Files");
@@ -610,10 +610,10 @@ int main(int argc, char **argv)
     FileSync *syncwatch = new FileSync;
     Share* share = new Share(0, shareDir.path());
 
-    talksrv = new VoiceService();
-    talksrv->setPeerTable(friends);
-    talksrv->setTalkColumn(COL_TALK);
-    talksrv->setListenColumn(COL_LISTEN);
+    // talksrv = new VoiceService();
+    // talksrv->setPeerTable(friends);
+    // talksrv->setTalkColumn(COL_TALK, QObject::tr("Talking"), QObject::tr("Silent"), QObject::tr("Offline"));
+    // talksrv->setListenColumn(COL_LISTEN);
 
     mainwin = new MainWindow;
 
