@@ -183,7 +183,7 @@ void SearchDialog::lookupDone(const QByteArray &id, const Endpoint &loc,
 	results->setItem(idrow, 4, item(info.country()));
 	results->setItem(idrow, 5, item(loc.toString()));
 
-	foreach (Endpoint& e, info.endpoints())
+	foreach (const Endpoint e, info.endpoints())
 	{
 		qDebug() << "** Endpoint" << e;
 	}
