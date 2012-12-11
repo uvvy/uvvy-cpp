@@ -392,8 +392,7 @@ Stream *PeerService::connectToPeer(const QByteArray &hostId)
 	if (stream != NULL)
 		return stream;
 
-	qDebug() << "PeerService" << svname << prname
-		<< "connecting to peer" << peerNameOrId(hostId);
+	qDebug() << "PeerService" << svname << prname << "connecting to peer" << peerNameOrId(hostId);
 
 	// Create a primary outgoing connection to this peer
 	stream = new Stream(ssthost, this);
@@ -499,8 +498,7 @@ void PeerService::inConnection()
 
 		QByteArray id = stream->remoteHostId();
 		if (!allowConnection(id)) {
-			qDebug() << "Rejected connection from "
-				<< peerNameOrId(id);
+			qDebug() << "Rejected connection from" << peerNameOrId(id);
 			stream->deleteLater();	// XX right way to reject?
 			continue;
 		}
