@@ -75,7 +75,7 @@ volatile int finished_punch = 0;
 void myMsgHandler(QtMsgType type, const char *msg)
 {
     QTextStream strm(&logfile);
-    QString now = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
+    QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
     switch (type) {
         case QtDebugMsg:
             strm << now << " D: " << msg << '\n';
