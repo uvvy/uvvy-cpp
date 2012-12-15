@@ -731,8 +731,7 @@ KeyInitiator::sendI1()
 }
 
 void
-KeyInitiator::gotChkR1(Host *h, KeyChunkChkR1Data &r1,
-			const SocketEndpoint &src)
+KeyInitiator::gotChkR1(Host *h, KeyChunkChkR1Data &r1, const SocketEndpoint &src)
 {
 	qDebug() << "got ChkR1 from" << src.toString();
 
@@ -777,7 +776,7 @@ KeyInitiator::gotChkR1(Host *h, KeyChunkChkR1Data &r1,
 void
 KeyInitiator::gotDhR1(Host *h, KeyChunkDhR1Data &r1)
 {
-	// Lookup the Initor based on the received nhi
+	// Lookup the Initiator based on the received nhi
 	KeyInitiator *i = h->initnhis.value(r1.nhi);
 	if (i == NULL || i->state == Done || i->dhgroup != r1.group)
 		return qDebug("Got DhR1 for unknown I1");
