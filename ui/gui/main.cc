@@ -593,22 +593,22 @@ int main(int argc, char **argv)
     //             QObject::tr("Listen"), Qt::DisplayRole);
     friends->useSettings(settings, "Friends");
 
-    PeerService* s = new PeerService("Presence", QObject::tr("Presence updates"),
-                                     "NstPresence", QObject::tr("Netsteria presence protocol"));
-    s->setPeerTable(friends);
-    s->setStatusColumn(COL_ONLINE, QIcon(":/img/status-online.png"), QIcon(":/img/status-offline.png"));
+    // PeerService* s = new PeerService("Presence", QObject::tr("Presence updates"),
+    //                                  "NstPresence", QObject::tr("Netsteria presence protocol"));
+    // s->setPeerTable(friends);
+    // s->setStatusColumn(COL_ONLINE, QIcon(":/img/status-online.png"), QIcon(":/img/status-offline.png"));
 
     // Initialize our chunk sharing service
     // ChunkShare::instance()->setPeerTable(friends);
     // ChunkShare::instance()->setStatusColumn(COL_FILES);
 
     // Share default directory
-    appdir.mkdir("Files");
-    shareDir = appdir.path() + "/Files";
-    qDebug() << "Would share files from " << shareDir.path();
+    // appdir.mkdir("Files");
+    // shareDir = appdir.path() + "/Files";
+    // qDebug() << "Would share files from " << shareDir.path();
     // or read from Settings...
-    FileSync *syncwatch = new FileSync;
-    Share* share = new Share(0, shareDir.path());
+    // FileSync *syncwatch = new FileSync;
+    // Share* share = new Share(0, shareDir.path());
 
     // talksrv = new VoiceService();
     // talksrv->setPeerTable(friends);
@@ -626,6 +626,6 @@ int main(int argc, char **argv)
     mainwin->show();
     int r = app.exec();
 
-    delete syncwatch;
+    // delete syncwatch;
     return r;
 }
