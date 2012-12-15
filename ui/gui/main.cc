@@ -75,20 +75,21 @@ volatile int finished_punch = 0;
 void myMsgHandler(QtMsgType type, const char *msg)
 {
     QTextStream strm(&logfile);
+    QString now = QDateTime::currentDateTimeUtc().toString(Qt::ISODate);
     switch (type) {
         case QtDebugMsg:
-            strm << "D: " << msg << '\n';
+            strm << now << " D: " << msg << '\n';
             LogWindow::get() << msg;
             if (spewdebug)
                 std::cout << msg << '\n';
             break;
         case QtWarningMsg:
-            strm << "W: " << msg << '\n';
+            strm << now << " W: " << msg << '\n';
             std::cout << "Warning: " << msg << '\n';
             LogWindow::get() << msg;
             break;
         case QtCriticalMsg:
-            strm << "C: " << msg << '\n';
+            strm << now << " C: " << msg << '\n';
             strm.flush();
             std::cout << "Critical: " << msg << '\n';
             LogWindow::get() << msg;
@@ -97,7 +98,7 @@ void myMsgHandler(QtMsgType type, const char *msg)
                 QMessageBox::Ok, QMessageBox::NoButton);
             break;
         case QtFatalMsg:
-            strm << "F: " << msg << '\n';
+            strm << now << " F: " << msg << '\n';
             strm.flush();
             std::cout << "Fatal: " << msg << '\n';
             LogWindow::get() << msg;
