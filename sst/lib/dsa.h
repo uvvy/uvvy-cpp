@@ -17,12 +17,10 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef SST_DSA_H
-#define SST_DSA_H
-
-#include <openssl/dsa.h>
+#pragma once
 
 #include "sign.h"
+#include <openssl/dsa.h>
 
 namespace SST {
 
@@ -47,5 +45,3 @@ public:
 };
 
 } // namespace SST
-
-#endif	// SST_DSA_H
