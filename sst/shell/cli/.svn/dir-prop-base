@@ -1,9 +1,0 @@
-K 10
-svn:ignore
-V 30
-Makefile
-moc_*.cpp
-nsh
-.gdb_*
-
-END
