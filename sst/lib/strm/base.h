@@ -1,5 +1,4 @@
-#ifndef SST_STRM_BASE_H
-#define SST_STRM_BASE_H
+#pragma once
 
 #include <QSet>
 #include <QQueue>
@@ -403,5 +402,3 @@ signals:
 };
 
 } // namespace SST
-
-#endif	// SST_STRM_BASE_H

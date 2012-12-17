@@ -193,6 +193,7 @@ void BasicClient::reqDone()
 		success = true;
 }
 
+// basic test
 void BasicClient::run()
 {
 	Simulator sim;

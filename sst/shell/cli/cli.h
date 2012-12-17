@@ -1,5 +1,4 @@
-#ifndef SHELL_CLI_H
-#define SHELL_CLI_H
+#pragma once
 
 #include "stream.h"
 
@@ -42,5 +41,3 @@ private slots:
 	void inReady();
 	void outReady();
 };
-
-#endif	// SHELL_CLI_H

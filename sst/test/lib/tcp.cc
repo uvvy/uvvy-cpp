@@ -170,8 +170,7 @@ qint64 TcpFlow::writeData(const char *data, qint64 totsize)
 			flags = PSH;
 			size = totsize;
 		}
-		//qDebug() << "Transmit segment at" << txasn.v
-		//	<< "size" << size;
+		qDebug() << "Transmit segment at" << txasn.v << "size" << size;
 
 		// Set up the segment info block and packet payload,
 		// but leave the header to be filled in on each retransmission.
@@ -218,7 +217,7 @@ void TcpFlow::endWrite()
 void TcpFlow::tryTransmit()
 {
 	while (true) {
-		//qDebug() << "flightsize" << flightsize << "cwnd" << cwnd;
+		qDebug() << "flightsize" << flightsize << "cwnd" << cwnd;
 		if (flightsize > cwnd) {
 			cwndlim = true;
 			return;		// No space in congestion window.
@@ -304,7 +303,7 @@ void TcpFlow::txInsert(QQueue<TxSegment> &q, const TxSegment &seg)
 // Transmit or retransmit a data segment.
 void TcpFlow::txSegment(TxSegment &seg, TcpSeq ackno)
 {
-	if (0) qDebug() << "TX"
+	if (1) qDebug() << "TX"
 		<< (seg.flags & SYN ? "SYN" : "")
 		<< (seg.flags & FIN ? "FIN" : "")
 		<< (seg.flags & RST ? "RST" : "")

@@ -592,7 +592,8 @@ void Simulator::run()
 		qFatal("Simulator::run() is only for use with virtual time:\n"
 			"for real time, use QCoreApplication::exec() instead.");
 
-	while (!timers.isEmpty()) {
+	while (!timers.isEmpty())
+	{
 		SimTimerEngine *next = timers.dequeue();
 		Q_ASSERT(next->wake >= cur.usecs);
 

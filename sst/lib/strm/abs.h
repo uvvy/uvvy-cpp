@@ -1,5 +1,4 @@
-#ifndef SST_STRM_ABS_H
-#define SST_STRM_ABS_H
+#pragma once
 
 #include "stream.h"
 #include "strm/proto.h"
@@ -241,6 +240,3 @@ protected:
 };
 
 } // namespace SST
-
-#endif	// SST_STRM_ABS_H
-

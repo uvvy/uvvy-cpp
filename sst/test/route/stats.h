@@ -17,8 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef STATS_H
-#define STATS_H
+#pragma once
 
 #include <QList>
 
@@ -90,5 +89,3 @@ public:
 };
 
 QDebug &operator<<(QDebug &debug, const Stats &s);
-
-#endif	// STATS_H

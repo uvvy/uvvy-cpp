@@ -1,5 +1,4 @@
-#ifndef SST_STRM_PEER_H
-#define SST_STRM_PEER_H
+#pragma once
 
 #include <QSet>
 #include <QHash>
@@ -105,5 +104,3 @@ private slots:
 };
 
 } // namespace SST
-
-#endif  // SST_STRM_PEER_H

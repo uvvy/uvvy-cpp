@@ -17,8 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef SST_KEY_H
-#define SST_KEY_H
+#pragma once
 
 #include <QHash>
 #include <QMultiHash>
@@ -278,5 +277,3 @@ public:
 
 
 } // namespace SST
-
-#endif	// SST_KEY_H

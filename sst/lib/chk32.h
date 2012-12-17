@@ -17,8 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef SST_CHK32_H
-#define SST_CHK32_H
+#pragma once
 
 #include <stdint.h>
 
@@ -73,5 +72,3 @@ public:
 
 
 } // namespace SST
-
-#endif	// SST_CHK32_H

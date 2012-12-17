@@ -1,5 +1,4 @@
-#ifndef SHELL_PROTO_H
-#define SHELL_PROTO_H
+#pragma once
 
 #include <termios.h>
 
@@ -181,5 +180,3 @@ signals:
 	// Emitted when a protocol error is detected.
 	void error(const QString &msg);
 };
-
-#endif	// SHELL_PROTO_H

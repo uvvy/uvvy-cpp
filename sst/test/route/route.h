@@ -17,8 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef ROUTE_H
-#define ROUTE_H
+#pragma once
 
 #include <QObject>
 #include <QByteArray>
@@ -203,6 +202,3 @@ public:
 } // namespace SST
 
 QDebug operator<<(QDebug debug, const SST::Path &p);
-
-
-#endif	// ROUTE_H

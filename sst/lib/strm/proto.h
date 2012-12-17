@@ -1,5 +1,4 @@
-#ifndef SST_STRM_PROTO_H
-#define SST_STRM_PROTO_H
+#pragma once
 
 #include <QPair>
 
@@ -193,5 +192,3 @@ inline uint qHash(const SST::StreamProtocol::ServicePair &svpair)
 
 inline uint qHash(const SST::UniqueStreamId &usid)
 	{ return qHash(usid.streamCtr) + qHash(usid.chanId); }
-
-#endif	// SST_STRM_PROTO_H

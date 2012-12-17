@@ -1,5 +1,4 @@
-#ifndef SST_STRM_DGRAM_H
-#define SST_STRM_DGRAM_H
+#pragma once
 
 #include "strm/abs.h"
 
@@ -63,5 +62,3 @@ public:
 };
 
 } // namespace SST
-
-#endif	// SST_STRM_DGRAM_H

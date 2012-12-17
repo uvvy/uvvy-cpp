@@ -1,5 +1,4 @@
-#ifndef SST_STRM_SFLOW_H
-#define SST_STRM_SFLOW_H
+#pragma once
 
 #include <QHash>
 #include <QList>
@@ -108,5 +107,3 @@ private slots:
 };
 
 } // namespace SST
-
-#endif	// SST_STRM_SFLOW_H

@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 // Visualization of the simulated network
-#ifndef NETVIEW_H
-#define NETVIEW_H
+#pragma once
 
 #include <QHash>
 #include <QWidget>
@@ -79,5 +78,3 @@ private slots:
 
 inline uint qHash(const QPair<QByteArray,QByteArray> &edge)
 	{ return qHash(edge.first) + qHash(edge.second); }
-
-#endif	// NETVIEW_H

@@ -17,8 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef SST_SEG_H
-#define SST_SEG_H
+#pragma once
 
 #include <QQueue>	// XXX FlowSegment
 
@@ -138,5 +137,3 @@ private:
 
 
 } // namespace SST
-
-#endif	// SST_SEG_H

@@ -1,7 +1,6 @@
 /** @file bdr.h		Compact byte-oriented data encoding/decoding
  */
-#ifndef SST_BDR_H
-#define SST_BDR_H
+#pragma once
 
 #include <QIODevice>
 
@@ -436,6 +435,3 @@ BdrStream &operator>>(BdrStream &xs, BdrOption<T> &o)
 #endif
 
 } // namespace SST
-
-#endif	// SST_BDR_H
-

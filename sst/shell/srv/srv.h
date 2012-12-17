@@ -1,5 +1,4 @@
-#ifndef SHELL_H
-#define SHELL_H
+#pragma once
 
 #include <QThread>
 
@@ -78,5 +77,3 @@ public:
 private slots:
 	void gotConnection();
 };
-
-#endif	// SHELL_H

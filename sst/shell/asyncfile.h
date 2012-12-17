@@ -1,5 +1,4 @@
-#ifndef SST_ASYNCFILE_H
-#define SST_ASYNCFILE_H
+#pragma once
 
 #include <QQueue>
 #include <QIODevice>
@@ -62,6 +61,3 @@ private:
 private slots:
 	void readyWrite();
 };
-
-
-#endif	// SST_ASYNCFILE_H

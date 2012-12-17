@@ -19,8 +19,7 @@
  */
 /** @file xdr.h		Qt-oriented implementation of XDR encoding/decoding.
  */
-#ifndef SST_XDR_H
-#define SST_XDR_H
+#pragma once
 
 #include <QIODevice>
 
@@ -523,5 +522,3 @@ XdrStream &operator>>(XdrStream &xs, XdrOption<T> &o)
 }
 
 } // namespace SST
-
-#endif	// SST_XDR_H

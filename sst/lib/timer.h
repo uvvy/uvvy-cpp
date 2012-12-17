@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 // Timing and timers for SST protocol use.
-#ifndef SST_TIMER_H
-#define SST_TIMER_H
+#pragma once
 
 #include <QObject>
 
@@ -262,6 +261,3 @@ public:
 };
 
 } // namespace SST
-
-
-#endif	// SST_TIMER_H

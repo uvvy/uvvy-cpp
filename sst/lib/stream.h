@@ -22,8 +22,7 @@
  * which represent the primary high-level communication abstractions
  * that the SST provides to the application.
  */
-#ifndef SST_STREAM_H
-#define SST_STREAM_H
+#pragma once
 
 #include <QSet>
 #include <QQueue>
@@ -773,5 +772,3 @@ public:
 };
 
 } // namespace SST
-
-#endif	// SST_STREAM_H

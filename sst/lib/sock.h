@@ -17,14 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-//
-// Class implementing a UDP socket for Netsteria use.
-// Multiplexes between flow-setup/key exchange traffic (which goes to key.cc)
-// and per-flow data traffic (which goes to flow.cc).
-// XX Rename Socket* to Net* or Link*?
-// 
-#ifndef SST_SOCK_H
-#define SST_SOCK_H
+#pragma once
 
 #include <QHash>
 #include <QPair>
@@ -186,6 +179,11 @@ protected:
 
 
 /// Main class representing a UDP socket running our transport protocol.
+///
+/// Class implementing a UDP socket for Netsteria use.
+/// Multiplexes between flow-setup/key exchange traffic (which goes to key.cc)
+/// and per-flow data traffic (which goes to flow.cc).
+/// XX Rename Socket* to Net* or Link*? 
 class UdpSocket : public Socket
 {
 	Q_OBJECT
@@ -412,6 +410,3 @@ uint qHash(const SST::SocketEndpoint &ep);
 // Hash function for (Endpoint,Channel) tuples
 inline uint qHash(const QPair<SST::Endpoint,SST::Channel> fl)
 	{ return qHash(fl.first) + qHash(fl.second); }
-
-
-#endif	// SST_SOCK_H

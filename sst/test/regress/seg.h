@@ -17,8 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef SEG_H
-#define SEG_H
+#pragma once
 
 #include "stream.h"
 #include "sim.h"
@@ -75,5 +74,3 @@ private slots:
 
 
 } // namespace SST
-
-#endif	// SEG_H

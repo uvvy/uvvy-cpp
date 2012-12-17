@@ -525,22 +525,15 @@ h_output(infile, define, extend, outfile)
 	definition *def;
 	char *outfilename;
 	long tell;
-	char *guard;
 	list *l;
 	xdrfunc *xdrfuncp;
-	int i;
 
 	open_input(infile, define);
 	outfilename =  extend ? extendfile(infile, outfile) : outfile;
 	open_output(infile, outfilename);
 	add_warning();
-	if (outfilename || infile){
-		guard = generate_guard(outfilename ? outfilename: infile);
-	} else
-		guard = "STDIN_";
 
-	f_print(fout, "#ifndef _%s\n#define	_%s\n\n", guard,
-		guard);
+	f_print(fout, "#pragma once\n");
 
 	f_print(fout, "#include \"xdr.h\"\n");
 
@@ -590,7 +583,7 @@ h_output(infile, define, extend, outfile)
 		f_print(fout, "%s", rpcgen_table_dcl);
 	}
 
-	f_print(fout, "\n#endif /* !_%s */\n", guard);
+	f_print(fout, "\n");
 }
 
 #if 0

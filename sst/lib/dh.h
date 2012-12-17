@@ -17,19 +17,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef SST_DH_H
-#define SST_DH_H
+#pragma once
 
 #include <QObject>
 #include <QHash>
-
 #include <openssl/dh.h>
-
 #include "timer.h"
 
-
 namespace SST {
-
 
 #define HOSTKEY_TIMEOUT		(60*60)	// Host key timeout in seconds - 1 hr
 
@@ -101,5 +96,3 @@ QDataStream &operator>>(QDataStream &ds, DH *dh);
 
 
 } // namespace SST
-
-#endif	// SST_DH_H

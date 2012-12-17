@@ -17,8 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-#ifndef SST_UTIL_H
-#define SST_UTIL_H
+#pragma once
 
 #include <QList>
 #include <QHash>
@@ -192,6 +191,3 @@ uint qHash(const QHostAddress &addr);
 
 // Hash function for SST Endpoint structs
 uint qHash(const SST::Endpoint &ep);
-
-
-#endif	// SST_UTIL_H

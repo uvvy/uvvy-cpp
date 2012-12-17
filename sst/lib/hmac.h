@@ -17,10 +17,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-/*** Simple HMAC-SHA256-128 implementation ***/
-
-#ifndef SST_HMAC_H
-#define SST_HMAC_H
+#pragma once
 
 #include "sha2.h"
 #include <stdint.h>
@@ -44,7 +41,9 @@ void hmac_update(hmac_ctx *ctx, const void *data, size_t len);
 void hmac_final(hmac_ctx *ctx, const uint8_t *hkey,
 			uint8_t *outbuf, unsigned outlen);
 
-
+/**
+ * Simple HMAC-SHA256-128 implementation
+ */
 class HMAC : public SecureHash
 {
 private:
@@ -95,5 +94,3 @@ public:
 };
 
 } // namespace SST
-
-#endif	// SST_HMAC_H
