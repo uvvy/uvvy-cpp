@@ -31,12 +31,6 @@
 
 namespace SST {
 
-// Control chunk magic value for the Netsteria key exchange protocol.
-// The upper byte is zero to distinguish control packets from flow packets.
-// 0x4e6b78 = 'Nkx': 'Netsteria key exchange'
-//#define KEY_MAGIC	(qint32)0x004e6b78
-
-
 // Bit mask of allowable key security methods
 #define KEYMETH_NONE		0x0001	// No security at all
 #define KEYMETH_CHK		0x0002	// Weak 32-bit keyed checksum
@@ -69,15 +63,16 @@ class KeyChunkDhR1Data;
 class KeyChunkDhI2Data;
 class KeyChunkDhR2Data;
 
-
-// This class manages the initiator side of the key exchange.
-// We create one instance for each outgoing connection we attempt.
-//
-// XXX we should really have a separate Idle state,
-// so that clients can hookup signals before starting key exchange.
-// XXX make KeyInitiator an abstract base class like KeyResponder,
-// calling a newFlow() method when it needs to set up a flow
-// rather than requiring the flow to be passed in at the outset.
+/**
+ * This class manages the initiator side of the key exchange.
+ * We create one instance for each outgoing connection we attempt.
+ *
+ * XXX we should really have a separate Idle state, 
+ * so that clients can hookup signals before starting key exchange.
+ * XXX make KeyInitiator an abstract base class like KeyResponder,
+ * calling a newFlow() method when it needs to set up a flow
+ * rather than requiring the flow to be passed in at the outset.
+ */
 class KeyInitiator : public QObject
 {
 	Q_OBJECT
@@ -128,13 +123,13 @@ class KeyInitiator : public QObject
 
 
 public:
-	// Start key negotiation for a Flow
-	// that has been bound to a socket but not yet activated.
-	// If 'idr' is non-empty, only connect to specified host ID.
-	// The KeyInitiator makes itself the parent of the provided Flow,
-	// so that if it is deleted the incomplete Flow will be too.
-	// The client must therefore re-parent the flow
-	// after successful key exchange before deleting the KeyInitiator.
+	/// Start key negotiation for a Flow
+	/// that has been bound to a socket but not yet activated.
+	/// If 'idr' is non-empty, only connect to specified host ID.
+	/// The KeyInitiator makes itself the parent of the provided Flow,
+	/// so that if it is deleted the incomplete Flow will be too.
+	/// The client must therefore re-parent the flow
+	/// after successful key exchange before deleting the KeyInitiator.
 	KeyInitiator(Flow *flow, quint32 magic,
 			const QByteArray &idr = QByteArray(),
 			quint8 dhgroup = 0);
@@ -145,27 +140,27 @@ public:
 	inline Flow *flow() { return fl; }
 	inline bool isDone() { return state == Done; }
 
-	// Returns true if this KeyInitiator hasn't gotten far enough
-	// so that the remote peer might possibly create permanent state
-	// if we cancel the process at our end now.
-	// We use this if we're trying to initiate a connection to a peer
-	// but that peer contacts us first, giving us a primary flow;
-	// we can then abort our outstanding active initiation attempts
-	// ONLY if they're still in an early enough stage that we know
-	// the responder won't be left with a dangling end of a new flow.
+	/// Returns true if this KeyInitiator hasn't gotten far enough
+	/// so that the remote peer might possibly create permanent state
+	/// if we cancel the process at our end now.
+	/// We use this if we're trying to initiate a connection to a peer
+	/// but that peer contacts us first, giving us a primary flow;
+	/// we can then abort our outstanding active initiation attempts
+	/// ONLY if they're still in an early enough stage that we know
+	/// the responder won't be left with a dangling end of a new flow.
 	inline bool isEarly() { return early; }
 
 	inline SocketEndpoint remoteEndpoint() { return sepr; }
 
-	// Set/get the opaque information block to pass to the responder.
-	// the info block is passed encrypted and authenticated in our I2;
-	// the responder can use it to decide whether to accept the connection
-	// and to setup any upper-layer protocol parameters for the new flow.
+	/// Set/get the opaque information block to pass to the responder.
+	/// the info block is passed encrypted and authenticated in our I2;
+	/// the responder can use it to decide whether to accept the connection
+	/// and to setup any upper-layer protocol parameters for the new flow.
 	inline QByteArray info() { return ulpi; }
 	inline void setInfo(const QByteArray &info) { ulpi = info; }
 
-	// Cancel all of this KeyInitiator's activities
-	// (without actually deleting the object just yet).
+	/// Cancel all of this KeyInitiator's activities
+	/// (without actually deleting the object just yet).
 	void cancel();
 
 signals:
@@ -175,7 +170,7 @@ private:
 	void sendI1();
 	void sendDhI2();
 
-	// Called by KeyResponder::receive() when we get a response packet.
+	/// Called by KeyResponder::receive() when we get a response packet.
 	static void gotR0(Host *h, const Endpoint &src);
 	static void gotChkR1(Host *h, KeyChunkChkR1Data &r1,
 				const SocketEndpoint &ep);
@@ -186,8 +181,9 @@ private slots:
 	void retransmit(bool fail);
 };
 
-
-// This abstract base class manages the responder side of the key exchange.
+/**
+ * This abstract base class manages the responder side of the key exchange.
+ */
 class KeyResponder : public SocketReceiver
 {
 	friend class KeyInitiator;
@@ -201,37 +197,37 @@ private:
 	QHash<QByteArray,ChecksumArmor*> chkflows;
 
 public:
-	// Create a KeyResponder and set it listening on a particular Socket
-	// for control messages with the specified magic protocol identifier.
-	// The new KeyResponder becomes a child of the Socket.
+	/// Create a KeyResponder and set it listening on a particular Socket
+	/// for control messages with the specified magic protocol identifier.
+	/// The new KeyResponder becomes a child of the Socket.
 	KeyResponder(Host *host, quint32 magic, QObject *parent = NULL);
 
 	inline Host *host() { return h; }
 
-	// Socket module calls this with control messages intended for us
+	/// Socket module calls this with control messages intended for us
 	void receive(QByteArray &msg, XdrStream &rs,
 			const SocketEndpoint &src);
 
-	// Send an R0 chunk to some network address,
-	// presumably a client we've discovered somehow is trying to reach us,
-	// in order to punch a hole in any NATs we may be behind
-	// and prod the client into (re-)sending us its I1 immediately.
+	/// Send an R0 chunk to some network address,
+	/// presumably a client we've discovered somehow is trying to reach us,
+	/// in order to punch a hole in any NATs we may be behind
+	/// and prod the client into (re-)sending us its I1 immediately.
 	void sendR0(const Endpoint &dst);
 
 
 protected:
-	// KeyResponder calls this to check whether to accept a connection,
-	// before actually bothering to verify the initiator's identity.
-	// The default implementation always just returns true.
+	/// KeyResponder calls this to check whether to accept a connection,
+	/// before actually bothering to verify the initiator's identity.
+	/// The default implementation always just returns true.
 	virtual bool checkInitiator(const SocketEndpoint &epi,
 			const QByteArray &eidi, const QByteArray &ulpi);
 
-	// KeyResponder calls this to create a flow requested by a client.
-	// The returned flow must be bound to the specified source endpoint,
-	// but not yet active (started).
-	// The 'ulpi' contains the information block passed by the client,
-	// and the 'ulpr' block will be passed back to the client.
-	// This method can return NULL to reject the incoming connection.
+	/// KeyResponder calls this to create a flow requested by a client.
+	/// The returned flow must be bound to the specified source endpoint,
+	/// but not yet active (started).
+	/// The 'ulpi' contains the information block passed by the client,
+	/// and the 'ulpr' block will be passed back to the client.
+	/// This method can return NULL to reject the incoming connection.
 	virtual Flow *newFlow(const SocketEndpoint &epi,
 			const QByteArray &eidi, const QByteArray &ulpi,
 			QByteArray &ulpr) = 0;

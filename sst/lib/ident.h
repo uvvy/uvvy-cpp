@@ -54,10 +54,10 @@ public:
 	void clearKey();
 };
 
-/** Represents an endpoint identifier
- * and optionally an associated cryptographic signing key.
- */
-/** An sst_ident represents an SST endpoint identifier (EID).
+/** 
+ * Represents an endpoint identifier and optionally an associated cryptographic signing key.
+ *
+ * An sst_ident represents an SST endpoint identifier (EID).
  * SST uses EIDs in place of IP addresses to identify hosts
  * or virtual endpoint identities on a particular host
  * (e.g., identites for specific user accounts on multiuser hosts).
@@ -75,10 +75,12 @@ class Ident
 	QSharedDataPointer<IdentData> d;
 
 public:
-	/** Endpoint identifier scheme numbers.
+	/**
+	 * Endpoint identifier scheme numbers.
 	 * The scheme number occupies the top 6 bits in any EID,
 	 * making the EID's scheme easily recognizable
-	 * via the first character in its Base64 representation. */
+	 * via the first character in its Base64 representation.
+	 */
 	enum Scheme {
 		NoScheme = 0,	///< Reserved for the "null" Ident.
 
@@ -101,8 +103,7 @@ public:
 
 	/** Create an Ident with a binary identifier and corresponding key.
 	 * @param id the binary identifier.
-	 * @param key the binary representation of the key
-	 *	associated with the identifier.
+	 * @param key the binary representation of the key associated with the identifier.
 	 */
 	Ident(const QByteArray &id, const QByteArray &key);
 
@@ -249,7 +250,9 @@ public:
 };
 
 
-/** Per-host state for the Ident module. */
+/**
+ * Per-host state for the Ident module.
+ */
 class IdentHostState
 {
 	Ident hid;

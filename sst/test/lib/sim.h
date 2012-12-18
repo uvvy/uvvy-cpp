@@ -32,21 +32,21 @@ class SimLink;
 class Simulator;
 
 struct LinkParams {
-	int rate;	// Bandwidth in bytes per second
-	int delay;	// Link delay in microseconds
-	int qlen;	// Router queue length in microseconds
-	float loss;	// Random loss rate, form 0.0 to 1.0
+	int rate;	///< Bandwidth in bytes per second
+	int delay;	///< Link delay in microseconds
+	int qlen;	///< Router queue length in microseconds
+	float loss;	///< Random loss rate, form 0.0 to 1.0
 
 	QString toString();
 };
 
 enum LinkPreset {
-	DSL15,		// 1.5Mbps/384Kbps DSL link
-	Cable5,		// 5Mbps cable modem link
-	Sat10,		// 10Mbps satellite link with 500ms delay
-	Eth10,		// 10Mbps Ethernet link
-	Eth100,		// 100Mbps Ethernet link
-	Eth1000,	// 1000Mbps Ethernet link
+	DSL15,		///< 1.5Mbps/384Kbps DSL link
+	Cable5,		///< 5Mbps cable modem link
+	Sat10,		///< 10Mbps satellite link with 500ms delay
+	Eth10,		///< 10Mbps Ethernet link
+	Eth100,		///< 100Mbps Ethernet link
+	Eth1000,	///< 1000Mbps Ethernet link
 };
 
 class SimTimerEngine : public TimerEngine
