@@ -92,16 +92,16 @@ class Flow : public SocketFlow
 
 private:
     Host *const h;
-    FlowArmor *armr;    ///< Encryption/authentication method
-    //FlowCC *cc;       ///< Congestion control method
-    CCMode ccmode;      ///< Congestion control method
-    bool nocc;      ///< Disable congestion control.  XXX
-    unsigned missthresh;    ///< Threshold at which to infer packets dropped
+    FlowArmor *armr;     ///< Encryption/authentication method
+    //FlowCC *cc;        ///< Congestion control method
+    CCMode ccmode;       ///< Congestion control method
+    bool nocc;           ///< Disable congestion control.  XXX
+    unsigned missthresh; ///< Threshold at which to infer packets dropped
 
     // Per-direction unique channel IDs for this channel.
     // Stream layer uses these in assigning USIDs to new streams.
-    QByteArray txchanid;    ///< Transmit channel ID
-    QByteArray rxchanid;    ///< Receive channel ID
+    QByteArray txchanid; ///< Transmit channel ID
+    QByteArray rxchanid; ///< Receive channel ID
 
 
 public:
@@ -173,9 +173,9 @@ protected:
     static const int maskBits = 32;
 
     struct TxEvent {
-        qint32  size;   // Total size of packet including hdr
-        bool    data;   // Was an upper-layer data packet
-        bool    pipe;   // Currently counted toward txdatpipe
+        qint32  size;   ///< Total size of packet including hdr
+        bool    data;   ///< Was an upper-layer data packet
+        bool    pipe;   ///< Currently counted toward txdatpipe
 
         inline TxEvent(qint32 size, bool isdata)
             : size(size), data(isdata), pipe(isdata) { }
@@ -224,58 +224,58 @@ protected:
     quint32 rxmask;     ///< Mask of packets received so far
 
     // Receive-side ACK state
-    quint64 rxackseq;   // Highest sequence number acknowledged so far
+    quint64 rxackseq;   ///< Highest sequence number acknowledged so far
     //quint32 rxackmask;    // Mask of packets received & acknowledged
-    quint8 rxackct;     // # contiguous packets received before rxackseq
-    quint8 rxunacked;   // # contiguous packets not yet ACKed
-    bool delayack;      // Enable delayed acknowledgments
-    Timer acktimer;     // Delayed ACK timer
+    quint8 rxackct;     ///< # contiguous packets received before rxackseq
+    quint8 rxunacked;   ///< # contiguous packets not yet ACKed
+    bool delayack;      ///< Enable delayed acknowledgments
+    Timer acktimer;     ///< Delayed ACK timer
 
     // Statistics gathering
-    float cumrtt;       // Cumulative measured RTT in milliseconds
-    float cumrttvar;    // Cumulative variation in RTT
-    float cumpps;       // Cumulative measured packets per second
-    float cumppsvar;    // Cumulative variation in PPS
-    float cumpwr;       // Cumulative measured network power (pps/rtt)
-    float cumbps;       // Cumulative measured bytes per second
-    float cumloss;      // Cumulative measured packet loss ratio
+    float cumrtt;       ///< Cumulative measured RTT in milliseconds
+    float cumrttvar;    ///< Cumulative variation in RTT
+    float cumpps;       ///< Cumulative measured packets per second
+    float cumppsvar;    ///< Cumulative variation in PPS
+    float cumpwr;       ///< Cumulative measured network power (pps/rtt)
+    float cumbps;       ///< Cumulative measured bytes per second
+    float cumloss;      ///< Cumulative measured packet loss ratio
     Timer statstimer;
 
 
-    // Transmit a packet across the flow.
-    // Caller must leave hdrlen bytes at the beginning for the header.
-    // The packet is armored in-place in the provided QByteArray.
-    // It is the caller's responsibility to transmit
-    // only when flow control says it's OK (mayTransmit())
-    // or upon getting a readyTransmit() signal.
-    // Provides in 'pktseq' the transmit sequence number
-    // that was assigned to the packet.
-    // Returns true if the transmit was successful,
-    // or false if it failed (e.g., due to lack of buffer space);
-    // a sequence number is assigned even on failure however.
+    /// Transmit a packet across the flow.
+    /// Caller must leave hdrlen bytes at the beginning for the header.
+    /// The packet is armored in-place in the provided QByteArray.
+    /// It is the caller's responsibility to transmit
+    /// only when flow control says it's OK (mayTransmit())
+    /// or upon getting a readyTransmit() signal.
+    /// Provides in 'pktseq' the transmit sequence number
+    /// that was assigned to the packet.
+    /// Returns true if the transmit was successful,
+    /// or false if it failed (e.g., due to lack of buffer space);
+    /// a sequence number is assigned even on failure however.
     bool flowTransmit(QByteArray &pkt, quint64 &pktseq);
 
 
-    // Check congestion control state and return the number of new packets,
-    // if any, that flow control says we may transmit now.
+    /// Check congestion control state and return the number of new packets,
+    /// if any, that flow control says we may transmit now.
     virtual int mayTransmit();
 
-    // Compute current number of transmitted but un-acknowledged packets.
-    // This count may include raw ACK packets,
-    // for which we expect no acknowledgments
-    // unless they happen to be piggybacked on data coming back.
+    /// Compute current number of transmitted but un-acknowledged packets.
+    /// This count may include raw ACK packets,
+    /// for which we expect no acknowledgments
+    /// unless they happen to be piggybacked on data coming back.
     inline qint64 unackedPackets()
         { return txseq - txackseq; }
 
-    // Compute the time elapsed since the mark in microseconds.
+    /// Compute the time elapsed since the mark in microseconds.
     qint64 markElapsed();
 
 public:
-    // May be called by upper-level protocols during receive
-    // to indicate that the packet has been received and processed,
-    // so that subsequently transmitted packets include this ack info.
-    // if 'sendack' is true, make sure an acknowledgment gets sent soon:
-    // in the next transmitted packet, or in an ack packet if needed.
+    /// May be called by upper-level protocols during receive
+    /// to indicate that the packet has been received and processed,
+    /// so that subsequently transmitted packets include this ack info.
+    /// if 'sendack' is true, make sure an acknowledgment gets sent soon:
+    /// in the next transmitted packet, or in an ack packet if needed.
     void acknowledge(quint16 pktseq, bool sendack);
 
     inline bool deleyedAcks() const { return delayack; }
@@ -285,27 +285,27 @@ public:
     inline CCMode ccMode() const { return ccmode; }
     inline void setCCMode(CCMode mode) { ccmode = mode; ccReset(); }
 
-    // for CC_FIXED: fixed congestion window for reserved-bandwidth links
+    /// for CC_FIXED: fixed congestion window for reserved-bandwidth links
     inline void setCCWindow(int cwnd) { this->cwnd = cwnd; }
 
-    // Congestion information accessors for flow monitoring purposes
+    /// Congestion information accessors for flow monitoring purposes
     inline int txCongestionWindow() { return cwnd; }
     inline int txBytesInFlight() { return txfltsize; }
     inline int txPacketsInFlight() { return txfltcnt; }
 
 signals:
-    // Indicates when this flow observes a change in link status.
+    /// Indicates when this flow observes a change in link status.
     void linkStatusChanged(LinkStatus newstatus);
 
 protected:
-    // Main method for upper-layer subclass to receive a packet on a flow.
-    // Should return true if the packet was processed and should be acked,
-    // or false to silently pretend we never received the packet.
+    /// Main method for upper-layer subclass to receive a packet on a flow.
+    /// Should return true if the packet was processed and should be acked,
+    /// or false to silently pretend we never received the packet.
     virtual bool flowReceive(qint64 pktseq, QByteArray &pkt) = 0;
 
-    // Create and transmit a packet for acknowledgment purposes only.
-    // Upper layer may override this if ack packets should contain
-    // more than an just an empty flow payload.
+    /// Create and transmit a packet for acknowledgment purposes only.
+    /// Upper layer may override this if ack packets should contain
+    /// more than an just an empty flow payload.
     virtual bool transmitAck(QByteArray &pkt,
                 quint64 ackseq, unsigned ackct);
 
@@ -315,10 +315,10 @@ protected:
 
 
 private:
-    // Called by Socket to dispatch a received packet to this flow.
+    /// Called by Socket to dispatch a received packet to this flow.
     virtual void receive(QByteArray &msg, const SocketEndpoint &src);
 
-    // Internal transmit methods.
+    /// Internal transmit methods.
     bool tx(QByteArray &pkt, quint32 packseq, quint64 &pktseq, bool isdata);
     inline bool txack(quint64 ackseq, unsigned ackct)
         { QByteArray pkt; return transmitAck(pkt, ackseq, ackct); }
@@ -329,21 +329,21 @@ private:
     inline void rtxstart()
         { rtxtimer.start((int)(cumrtt * 2.0)); }
 
-    // Repeat stall indications but not other link status changes.
-    // XXX hack - maybe "stall severity" or "stall time"
-    // should be part of status?
-    // Or perhaps status should be (up, stalltime)?
+    /// Repeat stall indications but not other link status changes.
+    /// XXX hack - maybe "stall severity" or "stall time"
+    /// should be part of status?
+    /// Or perhaps status should be (up, stalltime)?
     inline void setLinkStatus(LinkStatus newstat)
         { if (linkstat != newstat || newstat == LinkStalled) {
             linkStatusChanged(linkstat = newstat); } }
 
-    // Congestion control
+    /// Congestion control
     void ccMissed(quint64 pktseq);
 
 
 private slots:
-    void rtxTimeout(bool failed);   // Retransmission timeout
-    void ackTimeout();  // Delayed ACK timeout
+    void rtxTimeout(bool failed);   ///< Retransmission timeout
+    void ackTimeout();  ///< Delayed ACK timeout
     void statsTimeout();
 };
 
@@ -351,13 +351,13 @@ private slots:
 
 // XX break this stuff into separate module
 
-// Simple 32-bit keyed checksum protection with no encryption,
-// to defend only against off-the-path attackers
-// who can inject forged packets but not monitor the flow.
+/// Simple 32-bit keyed checksum protection with no encryption,
+/// to defend only against off-the-path attackers
+/// who can inject forged packets but not monitor the flow.
 class ChecksumArmor : public FlowArmor
 {
     const uint32_t txkey, rxkey;    // flow authentication parameters
-    const QByteArray armorid;   // for key protocol duplicate detection
+    const QByteArray armorid;       // for key protocol duplicate detection
 
 public:
     ChecksumArmor(uint32_t txkey, uint32_t rxkey,
@@ -369,7 +369,7 @@ public:
     inline QByteArray id() { return armorid; }
 };
 
-
+/// AES protection with encryption.
 class AESArmor : public FlowArmor
 {
     const AES txaes, rxaes;

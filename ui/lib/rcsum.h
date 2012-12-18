@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 /**
-Simple 32-bite rolling checksum algorithm inspired by Adler-32,
+Simple 32-bit rolling checksum algorithm inspired by Adler-32,
 which can be easily rolled through a buffer at byte granularity.
 Not exactly Adler-32 because we use mod-65536 instead of mod-65521,
 for simplicity and efficiency of the checksum calculations.
