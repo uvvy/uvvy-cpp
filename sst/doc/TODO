@@ -1,5 +1,12 @@
 SST unfinished business
 
+ ☐ make regression tests pass and not crash
+   ☐ dgram - passed
+   ☐ migrate - sigsegv
+   ☐ basic - passed or sigsegv
+   ☐ seg - rtxTimeout - FAILED period 20000000
+   ☐ all - gets stuck in seg test
+
 Most immediate usability necessities:
  ☐ finish implementing wire protocol to specs.  Specifically:
    ☐ receiver-directed flow control
@@ -11,6 +18,8 @@ Most immediate usability necessities:
  ☐ registration protocol: specify, add explicit deregistration on shutdown
     ☐ would be nice to move registration protocol details to the routing lib if possible?
         move started, but there are still deps on SST::Host
+
+  Possibly PID (Proportional-Integral-Differential) flow control.
 
 Renaming and restructuring to do at some point (tentative list):
  ☐ Socket -> Network (or -> Adapter?); Channel -> ChannelID (or -> FlowID?)
