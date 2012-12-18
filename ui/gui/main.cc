@@ -79,20 +79,20 @@ void myMsgHandler(QtMsgType type, const char *msg)
     switch (type) {
         case QtDebugMsg:
             strm << now << " D: " << msg << '\n';
-            LogWindow::get() << msg;
+            // LogWindow::get() << msg;
             if (spewdebug)
                 std::cout << msg << '\n';
             break;
         case QtWarningMsg:
             strm << now << " W: " << msg << '\n';
             std::cout << "Warning: " << msg << '\n';
-            LogWindow::get() << msg;
+            // LogWindow::get() << msg;
             break;
         case QtCriticalMsg:
             strm << now << " C: " << msg << '\n';
             strm.flush();
             std::cout << "Critical: " << msg << '\n';
-            LogWindow::get() << msg;
+            // LogWindow::get() << msg;
             QMessageBox::critical(NULL,
                 QObject::tr("Netsteria: Critical Error"), msg,
                 QMessageBox::Ok, QMessageBox::NoButton);
@@ -101,7 +101,7 @@ void myMsgHandler(QtMsgType type, const char *msg)
             strm << now << " F: " << msg << '\n';
             strm.flush();
             std::cout << "Fatal: " << msg << '\n';
-            LogWindow::get() << msg;
+            // LogWindow::get() << msg;
             QMessageBox::critical(NULL,
                 QObject::tr("Netsteria: Critical Error"), msg,
                 QMessageBox::Ok, QMessageBox::NoButton);
@@ -312,7 +312,7 @@ void MainWindow::openDownload()
 
 void MainWindow::openLogWindow()
 {
-    LogWindow::get().show();
+    // LogWindow::get().show();
 }
 
 void MainWindow::gotoFiles()
