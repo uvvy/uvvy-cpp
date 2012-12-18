@@ -15,3 +15,5 @@
 _build_
 .DS_Store
 
+ui/doc/html
+sst/doc/html
