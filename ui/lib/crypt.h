@@ -1,5 +1,4 @@
-#ifndef ARCH_CRYPT_H
-#define ARCH_CRYPT_H
+#pragma once
 
 class QByteArray;
 
@@ -15,5 +14,3 @@ void convDecrypt(const void *in, void *out, int size,
 QByteArray passEncrypt(const QByteArray &data, const QByteArray &key);
 QByteArray passDecrypt(const QByteArray &data, const QByteArray &key);
 QByteArray passCheck(const QByteArray &data, const QByteArray &key);
-
-#endif	// ARCH_CRYPT_H

@@ -1,5 +1,4 @@
-#ifndef RCSUM_H
-#define RCSUM_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
@@ -73,5 +72,3 @@ public:
 	// typically only used for sanity-checking.
 	static uint32_t sumSlab(const void *data, int slabsize);
 };
-
-#endif	// RCSUM_H

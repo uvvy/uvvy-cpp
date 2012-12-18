@@ -3,8 +3,7 @@
 // described by hierarchically structured metadata.
 // XXX Just rename Opaque* to File*?
 //
-#ifndef OPAQUE_H
-#define OPAQUE_H
+#pragma once
 
 #include <QList>
 #include <QMultiHash>
@@ -409,5 +408,3 @@ class OpaqueKeyChunk : public FileChunk
 {
 };
 #endif
-
-#endif  // OPAQUE_H

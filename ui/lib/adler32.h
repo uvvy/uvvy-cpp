@@ -1,5 +1,4 @@
-#ifndef ADLER32_H
-#define ADLER32_H
+#pragma once
 
 #include <stdint.h>
 
@@ -15,6 +14,3 @@ uint32_t adler32(const void *data, int len, uint32_t init = ADLER32_INIT);
 // into the checksum for the concatenation of the two blocks.
 // To do this we only need the length of the second block.
 uint32_t adler32cat(uint32_t sum1, uint32_t sum2, uint64_t len2);
-
-
-#endif	// ADLER32_H
