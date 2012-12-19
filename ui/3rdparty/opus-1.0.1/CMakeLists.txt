@@ -13,12 +13,16 @@ silk/tables_pulses_per_block.c silk/VAD.c silk/control_audio_bandwidth.c silk/qu
 silk/VQ_WMat_EC.c silk/HP_variable_cutoff.c silk/NLSF_encode.c silk/NLSF_VQ.c silk/NLSF_unpack.c
 silk/NLSF_del_dec_quant.c silk/process_NLSFs.c silk/stereo_LR_to_MS.c silk/stereo_MS_to_LR.c silk/check_control_input.c
 silk/control_SNR.c silk/init_encoder.c silk/control_codec.c silk/A2NLSF.c silk/ana_filt_bank_1.c
-silk/biquad_alt.c silk/bwexpander_32.c silk/bwexpander.c silk/debug.c silk/decode_pitch.c silk/inner_prod_aligned.c
+silk/biquad_alt.c silk/bwexpander_32.c silk/bwexpander.c silk/decode_pitch.c silk/inner_prod_aligned.c
 silk/lin2log.c silk/log2lin.c silk/LPC_analysis_filter.c silk/LPC_inv_pred_gain.c silk/table_LSF_cos.c silk/NLSF2A.c
 silk/NLSF_stabilize.c silk/NLSF_VQ_weights_laroia.c silk/pitch_est_tables.c silk/resampler.c silk/resampler_down2_3.c
 silk/resampler_down2.c silk/resampler_private_AR2.c silk/resampler_private_down_FIR.c silk/resampler_private_IIR_FIR.c
 silk/resampler_private_up2_HQ.c silk/resampler_rom.c silk/sigm_Q15.c silk/sort.c silk/sum_sqr_shift.c
 silk/stereo_decode_pred.c silk/stereo_encode_pred.c silk/stereo_find_predictor.c silk/stereo_quant_pred.c)
+
+if (DEBUG)
+	list(APPEND SILK_SOURCES silk/debug.c)
+endif (DEBUG)
 
 if (FIXED_POINT)
 
