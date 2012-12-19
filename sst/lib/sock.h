@@ -85,8 +85,8 @@ struct SocketEndpoint : public Endpoint
 };
 
 
-/** Abstract base class representing network attachments
- * for the SST protocols to use.
+/** 
+ * Abstract base class representing network attachments for the SST protocols to use.
  * @see UdpSocket
  */
 class Socket : public QObject
@@ -178,12 +178,15 @@ protected:
 };
 
 
-/// Main class representing a UDP socket running our transport protocol.
-///
-/// Class implementing a UDP socket for Netsteria use.
-/// Multiplexes between flow-setup/key exchange traffic (which goes to key.cc)
-/// and per-flow data traffic (which goes to flow.cc).
-/// XX Rename Socket* to Net* or Link*? 
+/**
+ * Main class representing a UDP socket running our transport protocol.
+ *
+ * Class implementing a UDP socket for Netsteria use.
+ * Multiplexes between flow-setup/key exchange traffic (which goes to key.cc)
+ * and per-flow data traffic (which goes to flow.cc).
+ *
+ * XX Rename Socket* to Net* or Link*? 
+ */
 class UdpSocket : public Socket
 {
 	Q_OBJECT

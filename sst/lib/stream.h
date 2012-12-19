@@ -607,9 +607,10 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Stream::ListenMode)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Stream::ShutdownMode)
 
 
-/** This class represents a server that can accept incoming SST connections.
- * To use this class,
- * the application creates a StreamServer instance,
+/**
+ * This class represents a server that can accept incoming SST connections.
+ * 
+ * To use this class, the application creates a StreamServer instance,
  * calls listen() to begin listening for connections,
  * and upon arrival of a newConnection() signal
  * uses accept() to accept any queued incoming connections.
@@ -630,7 +631,8 @@ private:
     bool active;
 
 public:
-    /** Create a StreamServer instance.
+    /**
+     * Create a StreamServer instance.
      * The application must call listen()
      * before the StreamServer will actually accept incoming connections.
      *
@@ -667,7 +669,8 @@ public:
     /// Returns true if this StreamServer is currently listening.
     inline bool isListening() { return active; }
 
-    /** Accept an incoming connection as a top-level Stream.
+    /**
+     * Accept an incoming connection as a top-level Stream.
      * Upon receiving a newConnection() signal,
      * the application must call accept() in a loop
      * until there are no more incoming connections to accept.
