@@ -530,7 +530,7 @@ int main(int argc, char **argv)
             logname.toLocal8Bit().data());
     else
         qInstallMsgHandler(myMsgHandler);
-    qDebug() << "Netsteria starting";
+    qDebug() << "MettaNode starting";
 
 #if 0
 //  openDefaultLog();
