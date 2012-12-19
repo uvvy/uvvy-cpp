@@ -225,7 +225,7 @@ protected:
 
     // Receive-side ACK state
     quint64 rxackseq;   ///< Highest sequence number acknowledged so far
-    //quint32 rxackmask;    // Mask of packets received & acknowledged
+    //quint32 rxackmask;  // Mask of packets received & acknowledged
     quint8 rxackct;     ///< Number of contiguous packets received before rxackseq
     quint8 rxunacked;   ///< Number of contiguous packets not yet ACKed
     bool delayack;      ///< Enable delayed acknowledgments
@@ -255,7 +255,6 @@ protected:
     /// a sequence number is assigned even on failure however.
     bool flowTransmit(QByteArray &pkt, quint64 &pktseq);
 
-
     /// Check congestion control state and return the number of new packets,
     /// if any, that flow control says we may transmit now.
     virtual int mayTransmit();
@@ -264,8 +263,7 @@ protected:
     /// This count may include raw ACK packets,
     /// for which we expect no acknowledgments
     /// unless they happen to be piggybacked on data coming back.
-    inline qint64 unackedPackets()
-        { return txseq - txackseq; }
+    inline qint64 unackedPackets() { return txseq - txackseq; }
 
     /// Compute the time elapsed since the mark in microseconds.
     qint64 markElapsed();
