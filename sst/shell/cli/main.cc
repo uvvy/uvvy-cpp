@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 
 	QCoreApplication app(argc, argv);
 	app.setOrganizationName("MIT");
+    app.setOrganizationDomain("mit.edu"); // for OSX
 	app.setApplicationName("nsh");
 
 	// Grab the required nickname argument
