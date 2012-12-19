@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 
 	// Read or create the private settings file
 	QString privname = nshdir + "/private";
-	privsettings = new QSettings(nshdir + "/private", QSettings::IniFormat);
+	privsettings = new QSettings(privname, QSettings::IniFormat);
 	privsettings->setValue("dummy", "");
 	privsettings->sync();
 	if (privsettings->status() != QSettings::NoError)
