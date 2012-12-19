@@ -23,8 +23,7 @@ QSettings *privsettings;
 
 void usage()
 {
-	fprintf(stderr, "Usage: %s <nickname> [<hostname> [<port>]]\n",
-		progname);
+	fprintf(stderr, "Usage: %s <nickname> [<hostname> [<port>]]\n", progname);
 	exit(1);
 }
 
@@ -51,8 +50,7 @@ int main(int argc, char **argv)
 			bool ok;
 			port = QString(argv[3]).toInt(&ok);
 			if (!ok || port <= 0 || port > 65535) {
-				fprintf(stderr,
-					"Port must be between 1 and 65535\n");
+				fprintf(stderr, "Port must be between 1 and 65535\n");
 				usage();
 			}
 		}
@@ -94,14 +92,13 @@ int main(int argc, char **argv)
 
 	// Find any existing information we have about the requested nickname.
 	privsettings->beginGroup(QString("nickname:") + nickname);
-	QByteArray eid = QByteArray::fromBase64(
-			privsettings->value("eid").toString().toAscii());
+	QByteArray eid = QByteArray::fromBase64(privsettings->value("eid").toString().toAscii());
 	// XX address hints?
 	privsettings->endGroup();
 
-	if (eid.isNull() && eps.isEmpty()) {
-		fprintf(stderr, "Host nickname '%s' not known: "
-			"please specify host's DNS name or IP address.\n",
+	if (eid.isNull() and eps.isEmpty())
+	{
+		fprintf(stderr, "Host nickname '%s' not known: please specify host's DNS name or IP address.\n",
 			nickname.toLocal8Bit().data());
 		usage();
 	}

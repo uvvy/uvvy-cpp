@@ -298,8 +298,7 @@ void Stream::connectNotify(const char *signal)
 
 void Stream::connectLinkStatusChanged()
 {
-	if (statconn || !as ||
-			receivers(SIGNAL(linkStatusChanged(LinkStatus))) <= 0)
+	if (statconn || !as || receivers(SIGNAL(linkStatusChanged(LinkStatus))) <= 0)
 		return;
 
 	StreamPeer *peer = host->streamPeer(as->peerid);
@@ -447,8 +446,7 @@ bool StreamServer::listen(
 	const QString &serviceName, const QString &serviceDesc,
 	const QString &protocolName, const QString &protocolDesc)
 {
-	qDebug() << "StreamServer: registering service" << serviceName
-		<< "protocol" << protocolName;
+	qDebug() << "StreamServer: registering service" << serviceName << "protocol" << protocolName;
 
 	Q_ASSERT(!serviceName.isEmpty());
 	Q_ASSERT(!serviceDesc.isEmpty());

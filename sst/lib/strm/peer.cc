@@ -158,8 +158,7 @@ void StreamPeer::foundEndpoint(const Endpoint &ep)
 	if (addrs.contains(ep))
 		return;	// We know; sit down...
 
-	qDebug() << "Found endpoint" << ep.toString()
-		<< "for target" << id.toBase64();
+	qDebug() << "Found endpoint" << ep.toString() << "for target" << id.toBase64();
 
 	// Add this endpoint to our set
 	addrs.insert(ep);
@@ -180,8 +179,7 @@ void StreamPeer::initiate(Socket *sock, const Endpoint &ep)
 	// Don't simultaneously initiate multiple flows to the same endpoint.
 	SocketEndpoint sep(ep, sock);
 	if (initors.contains(sep)) {
-		qDebug() << this << "already attmpting connection to"
-			<< ep.toString();
+		qDebug() << this << "already attempting connection to"<< ep.toString();
 		return;
 	}
 
@@ -194,8 +192,7 @@ void StreamPeer::initiate(Socket *sock, const Endpoint &ep)
 	// Create and bind a new flow
 	Flow *fl = new StreamFlow(h, this, id);
 	if (!fl->bind(sock, ep)) {
-		qDebug() << "StreamProtocol: could not bind new flow to target"
-			<< ep.toString();
+		qDebug() << "StreamProtocol: could not bind new flow to target"<< ep.toString();
 		delete fl;
 		return flowFailed();
 	}

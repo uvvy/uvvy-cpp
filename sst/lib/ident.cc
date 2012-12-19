@@ -313,8 +313,7 @@ void IdentHostState::initHostIdent(QSettings *settings)
 		if (hid.setKey(key) && hid.havePrivateKey())
 			return;		// Success
 
-		qWarning("Ident: invalid host identity in settings: "
-			"generating new identity.");
+		qWarning() << "Ident: invalid host identity in settings: generating new identity.";
 	}
 
 	// Generate a new key pair
