@@ -226,8 +226,8 @@ protected:
     // Receive-side ACK state
     quint64 rxackseq;   ///< Highest sequence number acknowledged so far
     //quint32 rxackmask;    // Mask of packets received & acknowledged
-    quint8 rxackct;     ///< # contiguous packets received before rxackseq
-    quint8 rxunacked;   ///< # contiguous packets not yet ACKed
+    quint8 rxackct;     ///< Number of contiguous packets received before rxackseq
+    quint8 rxunacked;   ///< Number of contiguous packets not yet ACKed
     bool delayack;      ///< Enable delayed acknowledgments
     Timer acktimer;     ///< Delayed ACK timer
 
@@ -344,7 +344,7 @@ private:
 private slots:
     void rtxTimeout(bool failed);   ///< Retransmission timeout
     void ackTimeout();  ///< Delayed ACK timeout
-    void statsTimeout();
+    void statsTimeout(); ///< Stats gathering
 };
 
 
