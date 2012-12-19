@@ -516,7 +516,7 @@ int main(int argc, char **argv)
         homedir.mkdir(appdirname);
         appdir.setPath(homedirpath + "/" + appdirname);
 
-        settings = new QSettings();
+        settings = new QSettings;
     }
 
     // Send debugging output to a log file

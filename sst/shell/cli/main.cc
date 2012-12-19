@@ -83,12 +83,10 @@ int main(int argc, char **argv)
 	foreach (const QHostAddress &addr, addrs)
 		eps.append(Endpoint(addr, port));
 
-
-	privsettings = new QSettings();
+	privsettings = new QSettings;
 
 	// Initialize SST and read or create our own host identity
 	Host host(privsettings, NETSTERIA_DEFAULT_PORT);
-
 
 	// Find any existing information we have about the requested nickname.
 	privsettings->beginGroup(QString("nickname:") + nickname);
