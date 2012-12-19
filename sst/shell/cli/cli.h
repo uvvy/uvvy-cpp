@@ -22,12 +22,14 @@ private:
 public:
 	ShellClient(SST::Host *host, QObject *parent = NULL);
 
-	inline void connectTo(const QByteArray &dsteid) {
+	inline void connectTo(const QByteArray &dsteid, const SST::Endpoint &locationHint)
+	{
 		Q_ASSERT(!strm.isConnected());
-		strm.connectTo(dsteid, serviceName, protocolName);
+		strm.connectTo(dsteid, serviceName, protocolName, locationHint);
 	}
 
-	inline void connectAt(const SST::Endpoint &ep) {
+	inline void connectAt(const SST::Endpoint &ep)
+	{
 		strm.connectAt(ep);
 	}
 

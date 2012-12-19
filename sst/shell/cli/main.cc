@@ -28,9 +28,9 @@ int main(int argc, char **argv)
 	progname = argv[0];
 
 	QCoreApplication app(argc, argv);
-	app.setOrganizationName("MIT");
+    app.setOrganizationName("MIT");
     app.setOrganizationDomain("mit.edu"); // for OSX
-	app.setApplicationName("nsh");
+    app.setApplicationName("nsh");
 
 	// Grab the required nickname argument
 	if (argc < 2)
@@ -98,10 +98,9 @@ int main(int argc, char **argv)
 		usage();
 	}
 
-
 	// Connect to the shell service
 	ShellClient sc(&host);
-	sc.connectTo(eid);
+	sc.connectTo(eid, eps.at(0));
 
 	// Register the list of target address hints
 	foreach (const Endpoint &ep, eps)
