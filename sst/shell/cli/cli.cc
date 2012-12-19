@@ -1,15 +1,11 @@
-
 #include <string.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <errno.h>
 #include <sys/ioctl.h>
-
 #include <QSocketNotifier>
 #include <QCoreApplication>
-
 #include "xdr.h"
-
 #include "cli.h"
 
 using namespace SST;

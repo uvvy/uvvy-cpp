@@ -1,22 +1,18 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
 #include <sys/stat.h>
-
 #include <QDir>
 #include <QSettings>
 #include <QHostInfo>
 #include <QStringList>
 #include <QCoreApplication>
-
 #include "host.h"
 #include "cli.h"
 
 using namespace SST;
-
 
 char *progname;
 QSettings *privsettings;

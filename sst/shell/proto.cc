@@ -1,11 +1,8 @@
-
 #include <termios.h>
-
 #include "stream.h"
 #include "proto.h"
 
 using namespace SST;
-
 
 ////////// ShellProtocol //////////
 
