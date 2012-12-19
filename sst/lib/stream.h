@@ -691,10 +691,12 @@ public:
      * and obtain the EID of the originating host.
      * @overload
      */
-    inline Stream *accept(QByteArray &originHostId) {
+    inline Stream *accept(QByteArray &originHostId)
+    {
         Stream *strm = accept();
         if (strm) originHostId = strm->remoteHostId();
-        return strm; }
+        return strm;
+    }
 
     /// Returns the service name previously supplied to listen().
     inline QString serviceName() { return svname; }
