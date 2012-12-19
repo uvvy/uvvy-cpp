@@ -578,6 +578,7 @@ signals:
     void receiveBlocked();
 
     /** Emitted when the stream is reset by either endpoint. */
+    // @todo Error - 'SST::Stream::reset' hides overloaded virtual function bool QIODevice::reset()
     void reset(const QString &errorString);
 
     /** Emitted when an error condition is detected on the stream.
