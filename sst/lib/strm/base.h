@@ -249,22 +249,14 @@ private:
 
 	// Data reception
 	static bool receive(qint64 pktseq, QByteArray &pkt, StreamFlow *flow);
-	static bool rxInitPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow);
-	static bool rxReplyPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow);
-	static bool rxDataPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow);
-	static bool rxDatagramPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow);
-	static bool rxAckPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow);
-	static bool rxResetPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow);
-	static bool rxAttachPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow);
-	static bool rxDetachPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow);
+	static bool rxInitPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow);
+	static bool rxReplyPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow);
+	static bool rxDataPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow);
+	static bool rxDatagramPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow);
+	static bool rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow);
+	static bool rxResetPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow);
+	static bool rxAttachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow);
+	static bool rxDetachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow);
 	void rxData(QByteArray &pkt, quint32 byteseq);
 
 	BaseStream *rxSubstream(quint64 pktseq, StreamFlow *flow,
@@ -342,8 +334,7 @@ public:
 
 	/// Returns true if the underlying link is currently connected
 	/// and usable for data transfer.
-	inline bool isLinkUp()
-		{ return state == Connected; }
+	inline bool isLinkUp() { return state == Connected; }
 
 	/** Set the stream's transmit priority level.
 	 * This method overrides AbstractStream's default method
