@@ -21,7 +21,7 @@
 
 #include <QByteArray>
 #include <QSharedData>
-
+#include <QDebug>
 #include <openssl/dsa.h>
 #include <openssl/rsa.h>
 
@@ -249,6 +249,10 @@ public:
 	Endpoint endpoint();
 };
 
+inline QDebug& operator << (QDebug& d, Ident& e)
+{
+	return d << (int)e.scheme() << e.id() << e.key();
+}
 
 /**
  * Per-host state for the Ident module.
