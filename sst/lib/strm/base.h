@@ -17,7 +17,8 @@ class BaseStream;
 
 // Helper struct representing an attachment point on a stream
 // where the stream attaches to a flow/channel.
-struct StreamAttachment : public StreamProtocol {
+class StreamAttachment : public StreamProtocol {
+public:
 	BaseStream	*strm;		// Stream we're a part of
 	StreamFlow	*flow;		// Flow we're attached to
 	StreamId	sid;		// Stream ID in flow
@@ -27,8 +28,9 @@ struct StreamAttachment : public StreamProtocol {
 	inline StreamAttachment() { flow = NULL; }
 };
 
-struct StreamTxAttachment : public StreamAttachment
+class StreamTxAttachment : public StreamAttachment
 {
+public:
 	bool		active;		// Currently active and usable
 	bool		deprecated;	// Opening a replacement channel
 
@@ -55,8 +57,9 @@ struct StreamTxAttachment : public StreamAttachment
 	void clear();
 };
 
-struct StreamRxAttachment : public StreamAttachment
+class StreamRxAttachment : public StreamAttachment
 {
+public:
 	inline bool isActive() { return flow != NULL; }
 
 	// Transition from unused to active.

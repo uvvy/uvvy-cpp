@@ -142,8 +142,9 @@ XdrStream &operator>>(XdrStream &xs, BIGNUM *&bn);
 
 
 // Convenient representation for a network endpoint: an (address, port) pair.
-struct Endpoint
+class Endpoint
 {
+public:
 	// Type codes for XDR externalization
 	enum Type {
 		IPv4 = 1,
