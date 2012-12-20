@@ -1,0 +1,3 @@
+ ☐ unlock console fds once the shell connection ceases
+ ☐ don't crash in nshd
+
