@@ -1471,7 +1471,8 @@ void BaseStream::calcTransmitWindow(quint8 win)
 int BaseStream::readData(char *data, int maxSize)
 {
 	int actSize = 0;
-	while (maxSize > 0 && ravail > 0) {
+	while (maxSize > 0 && ravail > 0)
+	{
 		Q_ASSERT(!endread);
 		Q_ASSERT(!rsegs.isEmpty());
 		RxSegment rseg = rsegs.dequeue();
