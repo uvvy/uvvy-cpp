@@ -1298,8 +1298,7 @@ bool BaseStream::rxDatagramPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *f
 	return true;	// Acknowledge the packet
 }
 
-bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow)
+bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
 	//qDebug() << "rxAckPacket" << this;
 
