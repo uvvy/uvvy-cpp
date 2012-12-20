@@ -158,16 +158,19 @@ void ShellClient::gotControl(const QByteArray &msg)
 	qint32 cmd;
 	rxs >> cmd;
 	switch (cmd) {
-	case ExitStatus: {
+	case ExitStatus:
+	{
 		qint32 code;
 		rxs >> code;
 		if (rxs.status() != rxs.Ok)
 			qDebug() << "invalid ExitStatus control message";
 		qDebug() << "remote process exited with code" << code;
 		QCoreApplication::exit(code);
-		break; }
+		break;
+	}
 
-	case ExitSignal: {
+	case ExitSignal:
+	{
 		qint32 flags;
 		QString signame, errmsg, langtag;
 		rxs >> flags >> signame >> errmsg >> langtag;
@@ -177,7 +180,8 @@ void ShellClient::gotControl(const QByteArray &msg)
 		fprintf(stderr, "Remote process terminated by signal %s%s\n", signame.toLocal8Bit().data(),
 				(flags & 1) ? " (core dumped)" : "");
 		QCoreApplication::exit(1);
-		break; }
+		break;
+	}
 
 	default:
 		qDebug() << "unknown control message type" << cmd;
