@@ -7,8 +7,10 @@ namespace SST {
 
 class Stream;
 
-
-/** @internal Abstract base class for internal stream control objects.
+/** 
+ * @internal
+ * Abstract base class for internal stream control objects.
+ * 
  * The separation between the internal stream control object
  * and the application-visible Stream object is primarily needed
  * so that SST can hold onto a stream's state and gracefully shut it down

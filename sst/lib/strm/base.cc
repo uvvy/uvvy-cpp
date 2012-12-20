@@ -702,6 +702,18 @@ void BaseStream::txReset(StreamFlow */*flow*/, quint16 /*sid*/,
 			quint8 /*flags*/)
 {
 	qWarning("XXX txReset NOT IMPLEMENTED YET!!!");
+// as per the PDF:
+// As in TCP, either host may unilaterally terminate an SST stream in both directions and discard any buffered data. 
+// A host resets a stream by sending a Reset packet (Figure 6) containing an LSID in either the sender’s or
+// receiver’s LSID space, and an O (Orientation) flag indicating in which space the LSID is to be interpreted. 
+// When a host uses a Reset packet to terminate a stream it believes to be active, it uses its own LSID referring 
+// to the stream, and resends the Reset packet as necessary until it obtains an acknowledgment.
+// A host also sends a Reset in response to a packet it receives referring to an unknown LSID or USID. 
+// This situation may occur if the host has closed and garbage collected its state for a stream but one of its 
+// acknowledgments to its peer’s data segments is lost in transit, causing its peer to retransmit those segments. 
+// The stateless Reset response indicates to the peer that it can garbage collect its stream state as well. 
+// Stateless Reset responses always refer to the peer’s LSID space, since by definition the host itself does not 
+// have an LSID assigned to the unknown stream.
 }
 
 void BaseStream::acked(StreamFlow *flow, const Packet &pkt, quint64 rxseq)
@@ -1331,6 +1343,14 @@ bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt,
 
 bool BaseStream::rxResetPacket(quint64 pktseq, QByteArray &pkt,
 				StreamFlow *flow)
+/**
+ * Received a reset packet, forcefully reset stream.
+ * @todo
+ * @param  pktseq [description]
+ * @param  pkt    [description]
+ * @param  flow   [description]
+ * @return        [description]
+ */
 {
 	Q_ASSERT(0);	// XXX
 	(void)pktseq; (void)pkt; (void)flow;
