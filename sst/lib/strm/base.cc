@@ -354,8 +354,7 @@ void BaseStream::gotServiceRequest()
 	if (rs.status() != rs.Ok || code != (qint32)ConnectRequest)
 		return fail("Bad service request");
 
-	qDebug() << this << "gotServiceRequest service" << svpair.first
-		<< "protocol" << svpair.second;
+	qDebug() << this << "gotServiceRequest service" << svpair.first << "protocol" << svpair.second;
 
 	// Lookup the requested service
 	StreamServer *svr = h->listeners.value(svpair);
@@ -606,8 +605,9 @@ void BaseStream::txData(Packet &p)
 	quint64 pktseq;
 	flow->flowTransmit(p.buf, pktseq);
 	Q_ASSERT(pktseq);	// XXX
-	qDebug() << strm << "tx " << pktseq
-		<< "posn" << p.tsn << "size" << p.buf.size();
+
+	// XXX strm is QObject(0x0) here, no stream means it has been deleted by upper layer?
+	qDebug() << strm << "tx " << pktseq << "posn" << p.tsn << "size" << p.buf.size();
 
 	// Save the data packet in the flow's ackwait hash.
 	p.late = false;
@@ -698,8 +698,7 @@ void BaseStream::txAttach()
 	flow->ackwait.insert(pktseq, p);
 }
 
-void BaseStream::txReset(StreamFlow */*flow*/, quint16 /*sid*/,
-			quint8 /*flags*/)
+void BaseStream::txReset(StreamFlow* flow, quint16 sid, quint8 flags)
 {
 	qWarning("XXX txReset NOT IMPLEMENTED YET!!!");
 // as per the PDF:
@@ -865,8 +864,7 @@ bool BaseStream::receive(qint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 	case AttachPacket:	return rxAttachPacket(pktseq, pkt, flow);
 	case DetachPacket:	return rxDetachPacket(pktseq, pkt, flow);
 	default:
-		qDebug("BaseStream::receive: unknown packet type %x",
-			hdr->type);
+		qDebug("BaseStream::receive: unknown packet type %x", hdr->type);
 		return false;	// XX Protocol error: close flow?
 	};
 }
@@ -937,8 +935,7 @@ BaseStream *BaseStream::rxSubstream(
 	if (!isListening()) {
 		// The parent SID is not in error, so just reset the new child.
 		// Ack the pktseq first so peer won't ignore the reset!
-		qDebug("rxInitPacket: other side trying to create substream, "
-			"but we're not listening.");
+		qDebug("rxInitPacket: other side trying to create substream, but we're not listening.");
 		flow->acknowledge(pktseq, false);
 		txReset(flow, sid, resetDirFlag);
 		return NULL;
@@ -982,8 +979,7 @@ BaseStream *BaseStream::rxSubstream(
 	return nbs;
 }
 
-bool BaseStream::rxReplyPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow)
+bool BaseStream::rxReplyPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
 	if (pkt.size() < hdrlenReply) {
 		qDebug("BaseStream::receive: got runt packet");
@@ -1250,8 +1246,7 @@ void BaseStream::rxData(QByteArray &pkt, quint32 byteseq)
 	calcReceiveWindow();
 }
 
-bool BaseStream::rxDatagramPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow)
+bool BaseStream::rxDatagramPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
 	if (pkt.size() < hdrlenDatagram) {
 		qDebug("BaseStream::receive: got runt packet");
@@ -1341,8 +1336,6 @@ bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt,
 	return false;	// Already accepted the packet above.
 }
 
-bool BaseStream::rxResetPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow)
 /**
  * Received a reset packet, forcefully reset stream.
  * @todo
@@ -1351,14 +1344,14 @@ bool BaseStream::rxResetPacket(quint64 pktseq, QByteArray &pkt,
  * @param  flow   [description]
  * @return        [description]
  */
+bool BaseStream::rxResetPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
 	Q_ASSERT(0);	// XXX
 	(void)pktseq; (void)pkt; (void)flow;
 	return false;
 }
 
-bool BaseStream::rxAttachPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow)
+bool BaseStream::rxAttachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
 	qDebug() << "rxAttachPacket size" << pkt.size();
 	if (pkt.size() < hdrlenDatagram) {
@@ -1428,8 +1421,7 @@ bool BaseStream::rxAttachPacket(quint64 pktseq, QByteArray &pkt,
 	return false;
 }
 
-bool BaseStream::rxDetachPacket(quint64 pktseq, QByteArray &pkt,
-				StreamFlow *flow)
+bool BaseStream::rxDetachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
 	(void)pktseq; (void)pkt; (void)flow;
 	Q_ASSERT(0);	// XXX
@@ -1626,8 +1618,7 @@ int BaseStream::writeData(const char *data, int totsize, quint8 endflags)
 	return actsize;
 }
 
-qint32 BaseStream::writeDatagram(const char *data, qint32 totsize,
-				bool reliable)
+qint32 BaseStream::writeDatagram(const char* data, qint32 totsize, bool reliable)
 {
 	if (reliable || totsize > mtu /* XXX maxStatelessDatagram */ )
 	{
@@ -1757,8 +1748,7 @@ void BaseStream::subReadMessage()
 void BaseStream::setReceiveBuffer(int size)
 {
 	if (size < minReceiveBuffer) {
-		qWarning("Receive buffer size %d too small, using %d",
-			size, minReceiveBuffer);
+		qWarning("Receive buffer size %d too small, using %d", size, minReceiveBuffer);
 		size = minReceiveBuffer;
 	}
 	rcvbuf = size;
@@ -1767,8 +1757,7 @@ void BaseStream::setReceiveBuffer(int size)
 void BaseStream::setChildReceiveBuffer(int size)
 {
 	if (size < minReceiveBuffer) {
-		qWarning("Child receive buffer size %d too small, using %d",
-			size, minReceiveBuffer);
+		qWarning("Child receive buffer size %d too small, using %d", size, minReceiveBuffer);
 		size = minReceiveBuffer;
 	}
 	crcvbuf = size;

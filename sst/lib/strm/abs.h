@@ -111,8 +111,7 @@ public:
 	 * @return the number of bytes written (same as the size parameter),
 	 * 		or -1 if an error occurred.
 	 */
-	virtual int writeData(const char *data, int maxSize,
-				quint8 endflags) = 0;
+	virtual int writeData(const char *data, int maxSize, quint8 endflags) = 0;
 
 	/** Determine the number of bytes currently available to be read
 	 * via readData().

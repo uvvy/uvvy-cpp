@@ -87,8 +87,7 @@ void ShellSession::inReady()
 		case ShellStream::Data:
 			//qDebug() << this << "input:" << pkt.data;
 			if (!ttyopen) {
-				error(tr("Received shell data before command "
-					"to start shell"));
+				error(tr("Received shell data before command to start shell"));
 				break;
 			}
 			if (aftty.write(pkt.data) < 0)
@@ -163,8 +162,7 @@ void ShellSession::openPty(XdrStream &rxs)
 	if (rxs.status() != rxs.Ok)
 		return error(tr("Invalid Terminal request"));
 
-	qDebug() << "terminal" << termname
-		<< "window" << width << "x" << height;
+	qDebug() << "terminal" << termname << "window" << width << "x" << height;
 
 	ptyfd = posix_openpt(O_RDWR | O_NOCTTY);
 	if (ptyfd < 0)

@@ -83,12 +83,10 @@ void ShellClient::setupTerminal(int fd)
 void ShellClient::runShell(const QString &cmd, int infd, int outfd)
 {
 	if (!afin.open(infd, afin.ReadOnly))
-		qFatal("Error setting up input forwarding: %s",
-			afin.errorString().toLocal8Bit().data());
+		qFatal("Error setting up input forwarding: %s", afin.errorString().toLocal8Bit().data());
 
 	if (!afout.open(outfd, afout.WriteOnly))
-		qFatal("Error setting up output forwarding: %s",
-			afout.errorString().toLocal8Bit().data());
+		qFatal("Error setting up output forwarding: %s", afout.errorString().toLocal8Bit().data());
 
 	// Build the message to start the shell or command
 	QByteArray msg;
@@ -112,8 +110,8 @@ void ShellClient::inReady()
 		int act = afin.read(buf, sizeof(buf));
 		//qDebug() << this << "got:" << QByteArray(buf, act);
 		if (act < 0)
-			qFatal("Error reading input for remote shell: %s",
-				afin.errorString().toLocal8Bit().data());
+			qFatal("Error reading input for remote shell: %s", afin.errorString().toLocal8Bit().data());
+
 		if (act == 0) {
 			if (afin.atEnd()) {
 				qDebug() << "End of local input";
@@ -143,9 +141,7 @@ void ShellClient::outReady()
 			return;	// Nothing more to receive for now
 		case ShellStream::Data:
 			if (afout.write(pkt.data) < 0)
-				qFatal("Error writing remote shell output: %s",
-					afout.errorString()
-						.toLocal8Bit().data());
+				qFatal("Error writing remote shell output: %s", afout.errorString() .toLocal8Bit().data());
 			break;
 		case ShellStream::Control:
 			gotControl(pkt.data);
@@ -178,8 +174,7 @@ void ShellClient::gotControl(const QByteArray &msg)
 		if (rxs.status() != rxs.Ok)
 			qDebug() << "invalid ExitSignal control message";
 
-		fprintf(stderr, "Remote process terminated by signal %s%s\n",
-				signame.toLocal8Bit().data(),
+		fprintf(stderr, "Remote process terminated by signal %s%s\n", signame.toLocal8Bit().data(),
 				(flags & 1) ? " (core dumped)" : "");
 		QCoreApplication::exit(1);
 		break; }

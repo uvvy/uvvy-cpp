@@ -138,8 +138,8 @@ void AsyncFile::readyWrite()
 		QByteArray &buf = outq.head();
 		qint64 act = ::write(fd, buf.data(), buf.size());
 		if (act < 0) {
-			if (errno != EINTR && errno != EAGAIN
-					&& errno != EWOULDBLOCK) {
+			if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK)
+			{
 				// A real error: empty the output buffer
 				setError(strerror(errno));
 				outq.clear();
