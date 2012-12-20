@@ -1,6 +1,6 @@
 set(QT_USE_QTNETWORK TRUE)
 include(${QT_USE_FILE})
-include_directories(../../lib)
+include_directories(../../lib ..)
 add_definitions(-DETCDIR="/usr/local/etc")
 
 set(nshd_HEADERS srv.h ../proto.h ../asyncfile.h)

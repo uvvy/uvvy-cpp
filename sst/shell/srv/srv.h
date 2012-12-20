@@ -3,8 +3,8 @@
 #include <QThread>
 
 #include "stream.h"
-#include "../proto.h"
-#include "../asyncfile.h"
+#include "proto.h"
+#include "asyncfile.h"
 
 
 class PidWatcher : public QThread
