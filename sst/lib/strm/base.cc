@@ -181,7 +181,7 @@ void BaseStream::connectTo(const QString &service, const QString &protocol)
 	QByteArray msg;
 	XdrStream ws(&msg, QIODevice::WriteOnly);
 	ws << (qint32)ConnectRequest << service << protocol;
-	writeMessage(msg.data(), msg.size());
+	writeMessage(msg);
 
 	// Record that we're waiting for a response from the server.
 	state = WaitService;
@@ -368,7 +368,7 @@ void BaseStream::gotServiceRequest()
 	msg.clear();
 	XdrStream ws(&msg, QIODevice::WriteOnly);
 	ws << (qint32)ConnectReply << (qint32)0;
-	writeMessage(msg.data(), msg.size());
+	writeMessage(msg);
 
 	// Hand off the new stream to the chosen service
 	state = Connected;
