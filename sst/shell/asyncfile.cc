@@ -106,8 +106,8 @@ qint64 AsyncFile::writeData(const char *data, qint64 maxSize)
 	if (outq.isEmpty()) {
 		act = ::write(fd, data, maxSize);
 		if (act < 0) {
-			if (errno != EINTR && errno != EAGAIN
-					&& errno != EWOULDBLOCK) {
+			if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK)
+			{
 				setError(strerror(errno));
 				qDebug() << __PRETTY_FUNCTION__ << errorString();
 				return -1;	// a real error occurred

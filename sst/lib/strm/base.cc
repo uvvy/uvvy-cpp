@@ -1495,8 +1495,8 @@ int BaseStream::readData(char *data, int maxSize)
 		ravail -= size;
 		rbufused -= size;
 		Q_ASSERT(ravail >= 0);
-		if (hasPendingMessages()) {
-
+		if (hasPendingMessages())
+		{
 			// We're reading data from a queued message.
 			qint64 &headsize = rmsgsize.head();
 			headsize -= size;
