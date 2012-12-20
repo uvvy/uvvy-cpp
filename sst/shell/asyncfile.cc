@@ -37,6 +37,7 @@ bool AsyncFile::open(int fd, OpenMode mode)
 
 	if (this->fd >= 0) {
 		setError(tr("AsyncFile already open"));
+		qDebug() << this << __FUNCTION__ << errorString();
 		return false;
 	}
 
@@ -82,9 +83,14 @@ qint64 AsyncFile::readData(char *data, qint64 maxSize)
 
 	qint64 act = ::read(fd, data, maxSize);
 	if (act < 0) {
-		setError(strerror(errno));
-		qDebug() << __PRETTY_FUNCTION__ << errorString();
-		return -1;
+		if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK)
+		{
+			setError(strerror(errno));
+			qDebug() << this << __FUNCTION__ << errorString();
+			return -1;	// a real error occurred
+		}
+		else
+			return 0; // nothing serious
 	}
 	if (act == 0)
 		endread = true;
@@ -109,7 +115,7 @@ qint64 AsyncFile::writeData(const char *data, qint64 maxSize)
 			if (errno != EINTR && errno != EAGAIN && errno != EWOULDBLOCK)
 			{
 				setError(strerror(errno));
-				qDebug() << __PRETTY_FUNCTION__ << errorString();
+				qDebug() << this << __FUNCTION__ << errorString();
 				return -1;	// a real error occurred
 			}
 			act = 0;	// nothing serious
@@ -144,7 +150,7 @@ void AsyncFile::readyWrite()
 			{
 				// A real error: empty the output buffer
 				setError(strerror(errno));
-				qDebug() << __PRETTY_FUNCTION__ << errorString();
+				qDebug() << this << __FUNCTION__ << errorString();
 				outq.clear();
 				return;
 			}
