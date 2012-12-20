@@ -539,7 +539,7 @@ void BaseStream::transmit(StreamFlow *flow)
 				&& usid.chanId == flow->txChannelId()
 				&& (quint16)usid.streamCtr == tcuratt->sid
 			/* XXX	&& parent->tflt + segsize <= parent->twin*/) {
-			qDebug() << "sending Init packet";
+			qDebug() << "sending optimized Init packet";
 
 			// Adjust the in-flight byte count for flow control.
 			// Init packets get "charged" to the parent stream.
@@ -556,7 +556,7 @@ void BaseStream::transmit(StreamFlow *flow)
 			goto noReply;	// no room for data: just Attach
 		for (int i = 0; i < maxAttach; i++) {
 			if (ratt[i].flow == flow && ratt[i].isActive()) {
-				qDebug() << "sending Reply packet";
+				qDebug() << "sending optimized Reply packet";
 
 				// Adjust the in-flight byte count.
 				tflt += hp->payloadSize();
@@ -1574,7 +1574,7 @@ int BaseStream::writeData(const char *data, int totsize, quint8 endflags)
 			flags = dataPushFlag | endflags;
 			size = totsize;
 		}
-		//qDebug() << "Transmit segment at" << tasn << "size" << size;
+		qDebug() << "Transmit segment at" << tasn << "size" << size;
 
 		// Build the appropriate packet header.
 		Packet p(this, DataPacket);

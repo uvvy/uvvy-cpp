@@ -46,6 +46,7 @@ ShellSession::ShellSession(Stream *strm, QObject *parent)
 {
 	// Make sure the SST stream terminates when we do
 	strm->setParent(this);
+	qDebug() << this << "ShellSession (stream"<<strm<<"parent set)";
 
 	connect(&shs, SIGNAL(readyRead()), this, SLOT(inReady()));
 	connect(&aftty, SIGNAL(bytesWritten(qint64)), this, SLOT(inReady()));
@@ -85,7 +86,7 @@ void ShellSession::inReady()
 			return;	// nothing more to receive for now
 
 		case ShellStream::Data:
-			//qDebug() << this << "input:" << pkt.data;
+			qDebug() << this << "input:" << pkt.data;
 			if (!ttyopen) {
 				error(tr("Received shell data before command to start shell"));
 				break;
@@ -103,7 +104,7 @@ void ShellSession::inReady()
 
 void ShellSession::outReady()
 {
-	//qDebug() << this << "outReady: openmode" << aftty.openMode();
+	qDebug() << this << "outReady: openmode" << aftty.openMode();
 	Q_ASSERT(aftty.isOpen());
 
 	while (true) {
@@ -116,7 +117,7 @@ void ShellSession::outReady()
 				error(aftty.errorString());
 			return;
 		}
-		//qDebug() << this << "output:" << QByteArray(buf, act);
+		qDebug() << this << "output:" << QByteArray(buf, act);
 		shs.sendData(buf, act);
 
 		// When our child process(es) have no more output to send,
