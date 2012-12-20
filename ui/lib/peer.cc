@@ -345,8 +345,7 @@ void PeerService::updateStatus(const QByteArray &hostid)
 	if (row < 0)
 		return;
 
-	qDebug() << "PeerService" << svname << prname
-		<< "update status" << peerNameOrId(hostid) << "row" << row;
+	qDebug() << "PeerService" << svname << prname << "update status" << peerNameOrId(hostid) << "row" << row;
 
 	// Update the status indicator
 	Stream *stream = out.value(hostid);
@@ -355,7 +354,12 @@ void PeerService::updateStatus(const QByteArray &hostid)
 	const QVariant &val = online
 			? (onlineval.isNull() ? tr("Online") : onlineval)
 			: (offlineval.isNull() ? tr("Offline") : offlineval);
-	peers->setData(idx, val, Qt::DisplayRole);
+	Qt::ItemDataRole role;
+	if (val.type() == QVariant::Icon)
+		role = Qt::DecorationRole;
+	else
+		role = Qt::DisplayRole;
+	peers->setData(idx, val, role);
 	peers->setFlags(idx, Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 }
 
@@ -388,8 +392,7 @@ Stream *PeerService::connectToPeer(const QByteArray &hostId)
 	if (stream != NULL)
 		return stream;
 
-	qDebug() << "PeerService" << svname << prname
-		<< "connecting to peer" << peerNameOrId(hostId);
+	qDebug() << "PeerService" << svname << prname << "connecting to peer" << peerNameOrId(hostId);
 
 	// Create a primary outgoing connection to this peer
 	stream = new Stream(ssthost, this);
@@ -495,8 +498,7 @@ void PeerService::inConnection()
 
 		QByteArray id = stream->remoteHostId();
 		if (!allowConnection(id)) {
-			qDebug() << "Rejected connection from "
-				<< peerNameOrId(id);
+			qDebug() << "Rejected connection from" << peerNameOrId(id);
 			stream->deleteLater();	// XX right way to reject?
 			continue;
 		}

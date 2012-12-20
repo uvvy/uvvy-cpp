@@ -363,12 +363,9 @@ void Scanner::scanFile(ScanItem *item)
 ////////// ScanCoder //////////
 
 // Data chunk callback - runs in the context of scanner thread.
-bool ScanCoder::dataChunk(const QByteArray &chunk, const OpaqueKey &key,
-		qint64 ofs, qint32 size)
+bool ScanCoder::dataChunk(const QByteArray &chunk, const OpaqueKey &key, qint64 ofs, qint32 size)
 {
-//	qDebug("File %s: data chunk - offset %lld, size %d, hash %s",
-//		sh->path.toLocal8Bit().data(), ofs, size,
-//		key.ohash.toBase64().data());
+	qDebug() << "File" << item->path << ": data chunk - offset" << ofs << ", size" << size << ", hash" << key.ohash.toBase64();
 
 	if (item) {
 		if (!Index::addFileChunk(key.ohash, item->path, ofs, size))
@@ -389,11 +386,9 @@ bool ScanCoder::dataChunk(const QByteArray &chunk, const OpaqueKey &key,
 
 // Key chunk callback - runs in the context of scanner thread.
 bool ScanCoder::keyChunk(const QByteArray &chunk, const OpaqueKey &key,
-		const QList<OpaqueKey> &)
+		const QList<OpaqueKey>& subkeys)
 {
-//	qDebug("File %s: key chunk - %d keys, hash %s",
-//		sh->path.toLocal8Bit().data(), subkeys.size(),
-//		key.ohash.toBase64().data());
+	qDebug() << "File" << item->path << ": key chunk -" << subkeys.size() << "keys, hash" << key.ohash.toBase64();
 
 	return Index::addMetaChunk(key.ohash, chunk);
 }

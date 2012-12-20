@@ -182,6 +182,11 @@ void SearchDialog::lookupDone(const QByteArray &id, const Endpoint &loc,
 	results->setItem(idrow, 3, item(info.region()));
 	results->setItem(idrow, 4, item(info.country()));
 	results->setItem(idrow, 5, item(loc.toString()));
+
+	foreach (const Endpoint e, info.endpoints())
+	{
+		qDebug() << "** Endpoint" << e;
+	}
 }
 
 QTableWidgetItem *SearchDialog::item(const QString &text)

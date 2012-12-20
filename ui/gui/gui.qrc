@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
 	<file>img/mettanode.png</file>
+	<file>img/status-online.png</file>
+	<file>img/status-offline.png</file>
 </qresource>
 </RCC>
