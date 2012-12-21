@@ -202,8 +202,8 @@ MainWindow::MainWindow()
     connect(friendslist->selectionModel(),
         SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
         this, SLOT(updateMenus()));
-/**    connect(talksrv, SIGNAL(statusChanged(const QByteArray&)),
-        this, SLOT(updateMenus()));*/
+    connect(talksrv, SIGNAL(statusChanged(const QByteArray&)),
+        this, SLOT(updateMenus()));
 
     // Retrieve the main window settings
     settings->beginGroup("MainWindow");
@@ -257,8 +257,8 @@ void MainWindow::updateMenus()
 
     maMessage->setEnabled(sel);
     taMessage->setEnabled(sel);
-    // maTalk->setEnabled(sel && talksrv->outConnected(id));
-    // taTalk->setEnabled(sel && talksrv->outConnected(id));
+    maTalk->setEnabled(sel && talksrv->outConnected(id));
+    taTalk->setEnabled(sel && talksrv->outConnected(id));
     maRename->setEnabled(sel);
     taRename->setEnabled(sel);
     maDelete->setEnabled(sel);
@@ -583,15 +583,15 @@ int main(int argc, char **argv)
     }
 
     // Load and initialize our friends table
-    friends = new PeerTable(NCOLS - 3);
+    friends = new PeerTable(NCOLS);
     friends->setHeaderData(COL_ONLINE, Qt::Horizontal,
                 QObject::tr("Presence"), Qt::DisplayRole);
     // friends->setHeaderData(COL_FILES, Qt::Horizontal,
     //             QObject::tr("Files"), Qt::DisplayRole);
-    // friends->setHeaderData(COL_TALK, Qt::Horizontal,
-    //             QObject::tr("Talk"), Qt::DisplayRole);
-    // friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
-    //             QObject::tr("Listen"), Qt::DisplayRole);
+    friends->setHeaderData(COL_TALK, Qt::Horizontal,
+                QObject::tr("Talk"), Qt::DisplayRole);
+    friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
+                QObject::tr("Listen"), Qt::DisplayRole);
     friends->useSettings(settings, "Friends");
 
     PeerService* s = new PeerService("Presence", QObject::tr("Presence updates"),
@@ -611,10 +611,10 @@ int main(int argc, char **argv)
     // FileSync *syncwatch = new FileSync;
     // Share* share = new Share(0, shareDir.path());
 
-    // talksrv = new VoiceService();
-    // talksrv->setPeerTable(friends);
-    // talksrv->setTalkColumn(COL_TALK, QObject::tr("Talking"), QObject::tr("Silent"), QObject::tr("Offline"));
-    // talksrv->setListenColumn(COL_LISTEN);
+    talksrv = new VoiceService();
+    talksrv->setPeerTable(friends);
+    talksrv->setTalkColumn(COL_TALK, QObject::tr("Talking"), QObject::tr("Silent"), QObject::tr("Offline"));
+    talksrv->setListenColumn(COL_LISTEN);
 
     mainwin = new MainWindow;
 
