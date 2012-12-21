@@ -594,10 +594,10 @@ int main(int argc, char **argv)
     //             QObject::tr("Listen"), Qt::DisplayRole);
     friends->useSettings(settings, "Friends");
 
-    // PeerService* s = new PeerService("Presence", QObject::tr("Presence updates"),
-    //                                  "NstPresence", QObject::tr("Netsteria presence protocol"));
-    // s->setPeerTable(friends);
-    // s->setStatusColumn(COL_ONLINE, QIcon(":/img/status-online.png"), QIcon(":/img/status-offline.png"));
+    PeerService* s = new PeerService("Presence", QObject::tr("Presence updates"),
+                                     "NstPresence", QObject::tr("Netsteria presence protocol"));
+    s->setPeerTable(friends);
+    s->setStatusColumn(COL_ONLINE, QIcon(":/img/status-online.png"), QIcon(":/img/status-offline.png"));
 
     // Initialize our chunk sharing service
     // ChunkShare::instance()->setPeerTable(friends);
@@ -619,7 +619,7 @@ int main(int argc, char **argv)
     mainwin = new MainWindow;
 
     // Start our chat server to accept chat connections
-    new ChatServer(mainwin);
+    // new ChatServer(mainwin);
 
     // Re-start incomplete downloads
     SaveDialog::init();
