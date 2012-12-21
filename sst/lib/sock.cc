@@ -217,8 +217,7 @@ QList<Endpoint> UdpSocket::localEndpoints()
 
 	QList<Endpoint> eps;
 	foreach (const QHostAddress &addr, addrs) {
-		qDebug() << "Local endpoint"
-			<< Endpoint(addr, port).toString();
+		qDebug() << "Local endpoint" << Endpoint(addr, port);
 		eps.append(Endpoint(addr, port));
 	}
 	return eps;
