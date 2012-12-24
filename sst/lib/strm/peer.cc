@@ -125,8 +125,8 @@ void StreamPeer::lookupDone(const QByteArray &id, const Endpoint &loc,
 		return flowFailed();
 	}
 
-	qDebug() << "StreamResponder::lookupDone: primary" << loc.toString()
-		<< "secondaries" << info.endpoints().size();
+	qDebug() << "StreamResponder::lookupDone: primary" << loc
+		<< ", num secondaries" << info.endpoints().size();
 
 	// Add the endpoint information we've received to our address list,
 	// and initiate flow setup attempts to those endpoints.
@@ -183,7 +183,7 @@ void StreamPeer::initiate(Socket *sock, const Endpoint &ep)
 		return;
 	}
 
-	qDebug() << this << "initiate to" << sep.toString();
+	qDebug() << this << "initiate to" << sep;
 
 	// Make sure our StreamResponder exists
 	// to receive and dispatch incoming key exchange control packets.
@@ -192,7 +192,7 @@ void StreamPeer::initiate(Socket *sock, const Endpoint &ep)
 	// Create and bind a new flow
 	Flow *fl = new StreamFlow(h, this, id);
 	if (!fl->bind(sock, ep)) {
-		qDebug() << "StreamProtocol: could not bind new flow to target"<< ep.toString();
+		qDebug() << "StreamProtocol: could not bind new flow to target"<< ep;
 		delete fl;
 		return flowFailed();
 	}
@@ -234,8 +234,7 @@ void StreamPeer::completed(bool success)
 
 	// If unsuccessful, notify waiting streams.
 	if (!success) {
-		qDebug() << "Connection attempt for ID" << id.toBase64()
-			<< "to" << sep.toString() << "failed";
+		qDebug() << "Connection attempt for ID" << id.toBase64() << "to" << sep << "failed";
 		if (lookups.isEmpty() && initors.isEmpty())
 			return flowFailed();
 		return;	// There's still hope
@@ -322,7 +321,7 @@ void StreamPeer::primaryStatusChanged(LinkStatus newstatus)
 			if (!ki->isEarly())
 				continue;	// too late - let it finish
 			qDebug() << "deleting" << ki << "for" << id.toBase64()
-				<< "to" << ki->remoteEndpoint().toString();
+				<< "to" << ki->remoteEndpoint();
 			Q_ASSERT(initors.value(ki->remoteEndpoint()) == ki);
 			initors.remove(ki->remoteEndpoint());
 			ki->cancel();

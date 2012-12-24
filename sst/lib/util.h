@@ -177,7 +177,7 @@ inline XdrStream &operator>>(XdrStream &xs, Endpoint &ep)
 	{ ep.decode(xs); return xs; }
 
 inline QDebug &operator<<(QDebug &ts, const Endpoint &ep)
-	{ return ts << ep.addr.toString() << ':' << ep.port; }
+	{ return ts << ep.toString(); }
 
 
 // Convert a byte count to a string using standard notation: KB, MB, etc.

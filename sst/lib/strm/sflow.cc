@@ -43,7 +43,7 @@ StreamFlow::StreamFlow(Host *h, StreamPeer *peer, const QByteArray &peerid)
 
 StreamFlow::~StreamFlow()
 {
-	qDebug() << this << "~StreamFlow to" << remoteEndpoint().toString()
+	qDebug() << this << "~StreamFlow to" << remoteEndpoint()
 		<< "lchan" << localChannel() << "rchan" << remoteChannel();
 
 	disconnect(this, SIGNAL(linkStatusChanged(LinkStatus)),

@@ -44,8 +44,7 @@ bool FlowSegment::initiateTo(Socket *sock, const Endpoint &remoteep)
 {
 	// Bind the segment to the specified socket
 	if (!bind(sock, remoteep)) {
-		qDebug() << "FlowSegment::initiateTo" << remoteep.toString()
-			<< "failed";
+		qDebug() << "FlowSegment::initiateTo" << remoteep << "failed";
 		return false;
 	}
 
@@ -179,8 +178,7 @@ bool FlowSocket::bindFlow(const Endpoint &remoteep, Channel localchan,
 			SocketFlow *flow)
 {
 	if (remoteep != peer) {
-		qDebug() << "Can't bind flow to" << remoteep.toString()
-			<< "over FlowSocket to" << peer.toString();
+		qDebug() << "Can't bind flow to" << remoteep << "over FlowSocket to" << peer.toString();
 		return false;
 	}
 
@@ -299,8 +297,7 @@ Flow *FlowResponder::newFlow(const SocketEndpoint &epi, const QByteArray &,
 		Q_ASSERT(!targetep.isNull());
 		FlowSegment *oseg = new FlowSegment(host(), this);
 		if (!oseg->initiateTo(epi.sock, targetep)) {
-			qDebug() << "FlowResponder: couldn't initiate to next"
-				<< targetep.toString();
+			qDebug() << "FlowResponder: couldn't initiate to next" << targetep;
 			delete fseg;
 			return NULL;
 		}

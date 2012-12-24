@@ -1,4 +1,4 @@
  ☐ unlock console fds once the shell connection ceases
  ✔ don't crash in nshd @done (12-12-21 00:40)
-
+ ☐ after some waiting time the streams disconnect and mix up
 

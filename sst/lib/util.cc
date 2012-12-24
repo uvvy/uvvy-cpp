@@ -102,7 +102,10 @@ Endpoint::Endpoint(const QHostAddress &addr, quint16 port)
 
 QString Endpoint::toString() const
 {
-	return addr.toString() + ":" + QString::number(port);
+	if (addr.protocol() == QAbstractSocket::IPv6Protocol)
+		return QString("[") + addr.toString() + "]:" + QString::number(port);
+	else
+		return addr.toString() + ":" + QString::number(port);
 }
 
 void Endpoint::encode(XdrStream &xs) const

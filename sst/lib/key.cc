@@ -246,7 +246,7 @@ void KeyResponder::receive(QByteArray &pkt, XdrStream &,
 
 void KeyResponder::sendR0(const Endpoint &dst)
 {
-	qDebug() << this << "send R0 to" << dst.toString();
+	qDebug() << this << "send R0 to" << dst;
 	KeyMessage msg;
 	foreach (Socket *sock, h->activeSockets()) {
 		SocketEndpoint sdst(dst, sock);
@@ -677,7 +677,7 @@ KeyInitiator::gotR0(Host *h, const Endpoint &src)
 void
 KeyInitiator::sendI1()
 {
-	qDebug() << this << "send I1 to " << sepr.toString();
+	qDebug() << this << "send I1 to" << sepr.toString();
 	state = I1;
 
 	// Build a message containing an I1 chunk

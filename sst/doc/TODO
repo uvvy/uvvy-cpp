@@ -1,5 +1,4 @@
-SST unfinished business
-
+SST unfinished business:
  ☐ make regression tests pass and not crash
    ☐ dgram - passed
    ☐ migrate - sigsegv
@@ -8,6 +7,8 @@ SST unfinished business
    ☐ all - gets stuck in seg test
 
 Most immediate usability necessities:
+ ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document
+   ☐ assign IETF RFC number, see
  ☐ finish implementing wire protocol to specs.  Specifically:
    ☐ receiver-directed flow control
    ☐ datagram reassembly
