@@ -23,7 +23,7 @@
 
 
 namespace {
-const int8_t base32Table[] = {
+const qint8 base32Table[] = {
        -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
        -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
        -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -51,7 +51,7 @@ QString toBase32(const QByteArray& src)
 {
     // Code snagged from the bitzi bitcollider
     size_t i, index;
-    uint8_t word;
+    quint8 word;
     size_t len = src.length();
     QString dst;
     dst.reserve(((len * 8) / 5) + 1);
@@ -60,15 +60,15 @@ QString toBase32(const QByteArray& src)
     {
         /* Is the current word going to span a byte boundary? */
         if (index > 3) {
-            word = ((uint8_t)src.at(i) & (0xFF >> index));
+            word = ((quint8)src.at(i) & (0xFF >> index));
             index = (index + 5) % 8;
             word <<= index;
             if ((i + 1) < len) {
-                word |= ((uint8_t)src.at(i + 1) >> (8 - index));
+                word |= ((quint8)src.at(i + 1) >> (8 - index));
             }
             i++;
         } else {
-            word = ((uint8_t)src.at(i) >> (8 - (index + 5))) & 0x1F;
+            word = ((quint8)src.at(i) >> (8 - (index + 5))) & 0x1F;
             index = (index + 5) % 8;
             if (index == 0) {
                 i++;
@@ -91,7 +91,7 @@ QByteArray fromBase32(const QString& src)
     for(i = 0, index = 0, offset = 0; i < len; i++)
     {
         // Skip what we don't recognise
-        int8_t tmp = base32Table[(unsigned char)src.at(i).toAscii()];
+        qint8 tmp = base32Table[(quint8)src.at(i).toAscii()];
 
         if(tmp == -1)
             continue;
