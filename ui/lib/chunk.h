@@ -141,12 +141,12 @@ private:
     /**
      * Outstanding chunk requests
      */
-    static QHash<QByteArray, Request*> requests;
+    static QHash<SST::PeerId, Request*> requests;
 
     /**
      * Maintain a persistent chunk query stream for each of our peers.
      */
-    static QHash<QByteArray, ChunkPeer*> peers;
+    static QHash<SST::PeerId, ChunkPeer*> peers;
 
 
     ChunkShare();
@@ -160,7 +160,7 @@ public:
                 const QByteArray &ohash);
 
 private:
-    static ChunkPeer *peer(const QByteArray &hostid, bool create);
+    static ChunkPeer *peer(const SST::PeerId &hostid, bool create);
 
     /**
      * Check all peers for chunks they might be able to download.
@@ -194,15 +194,15 @@ private:
      */
     static const int reconDelay = 60*1000;
 
-    const QByteArray hostid;    // Host ID of peer
+    const SST::PeerId hostid;    // Host ID of peer
     QSet<QByteArray> wishlist;  // What we want from this host
     QByteArray current;     // Ohash of chunk being gotten
 
 
-    ChunkPeer(const QByteArray &hostid);
+    ChunkPeer(const SST::PeerId &hostid);
     ~ChunkPeer();
 
-    inline QByteArray peerHostId() { return hostid; }
+    inline SST::PeerId peerHostId() { return hostid; }
     QString peerName();
 
     void checkWork();

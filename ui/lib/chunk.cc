@@ -36,8 +36,8 @@ void AbstractChunkReader::readChunk(const QByteArray &ohash)
 
 ////////// ChunkShare //////////
 
-QHash<QByteArray, ChunkShare::Request*> ChunkShare::requests;
-QHash<QByteArray, ChunkPeer*> ChunkShare::peers;
+QHash<PeerId, ChunkShare::Request*> ChunkShare::requests;
+QHash<PeerId, ChunkPeer*> ChunkShare::peers;
 
 ChunkShare::ChunkShare()
 :	PeerService("Data", tr("Data sharing"),
@@ -59,7 +59,7 @@ ChunkShare *ChunkShare::instance()
 	return obj;
 }
 
-ChunkPeer *ChunkShare::peer(const QByteArray &hostid, bool create)
+ChunkPeer *ChunkShare::peer(const PeerId &hostid, bool create)
 {
 	if (!create)
 		return peers.value(hostid);
@@ -165,7 +165,7 @@ void ChunkShare::gotInStreamConnected(Stream *stream)
 
 ////////// ChunkPeer //////////
 
-ChunkPeer::ChunkPeer(const QByteArray &hostid)
+ChunkPeer::ChunkPeer(const PeerId &hostid)
 :	hostid(hostid)
 {
 }

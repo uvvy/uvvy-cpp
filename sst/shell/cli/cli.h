@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stream.h"
-
 #include "../proto.h"
 #include "../asyncfile.h"
 
@@ -22,7 +21,7 @@ private:
 public:
 	ShellClient(SST::Host *host, QObject *parent = NULL);
 
-	inline void connectTo(const QByteArray &dsteid, const SST::Endpoint &locationHint)
+	inline void connectTo(const SST::PeerId &dsteid, const SST::Endpoint &locationHint)
 	{
 		Q_ASSERT(!strm.isConnected());
 		strm.connectTo(dsteid, serviceName, protocolName, locationHint);

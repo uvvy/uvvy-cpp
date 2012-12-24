@@ -1,12 +1,11 @@
-
 #include <QMutexLocker>
 #include <QtDebug>
-
 #include "voice.h"
 #include "xdr.h"
 
-
-////////// OpusInput //////////
+//=====================================================================================================================
+// OpusInput
+//=====================================================================================================================
 
 OpusInput::OpusInput(QObject *parent)
 :	AbstractAudioInput(parent),
@@ -86,8 +85,9 @@ QByteArray OpusInput::readFrame()
 	return inqueue.dequeue();
 }
 
-
-////////// OpusOutput //////////
+//=====================================================================================================================
+// OpusOutput
+//=====================================================================================================================
 
 const int OpusOutput::maxSkip;
 
@@ -214,8 +214,9 @@ void OpusOutput::reset()
 	outqueue.clear();
 }
 
-
-////////// VoiceService //////////
+//=====================================================================================================================
+// VoiceService
+//=====================================================================================================================
 
 VoiceService::VoiceService(QObject *parent)
 :	PeerService("Voice", tr("Voice communication"),
@@ -233,7 +234,7 @@ VoiceService::VoiceService(QObject *parent)
 		this, SLOT(gotInStreamDisconnected(Stream*)));
 }
 
-void VoiceService::setTalkEnabled(const QByteArray &hostid, bool enable)
+void VoiceService::setTalkEnabled(const SST::PeerId& hostid, bool enable)
 {
 	if (enable) {
 		qDebug() << "VoiceService: talking to" << peerName(hostid);
@@ -264,7 +265,7 @@ void VoiceService::setTalkEnabled(const QByteArray &hostid, bool enable)
 	updateStatus(hostid);
 }
 
-void VoiceService::setListenEnabled(const QByteArray &hostid, bool enable)
+void VoiceService::setListenEnabled(const SST::PeerId& hostid, bool enable)
 {
 	// XXX
 }
@@ -407,7 +408,7 @@ void VoiceService::voutQueueEmpty()
 	}
 }
 
-void VoiceService::updateStatus(const QByteArray &id)
+void VoiceService::updateStatus(const SST::PeerId& id)
 {
 	PeerService::updateStatus(id);
 

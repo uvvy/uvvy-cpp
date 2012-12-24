@@ -65,14 +65,14 @@ Stream::~Stream()
 	Q_ASSERT(as == NULL);
 }
 
-bool Stream::connectTo(const QByteArray &dstid,
+bool Stream::connectTo(const PeerId &dstid,
 			const QString &service, const QString &protocol,
 			const Endpoint &dstep)
 {
 	// Determine a suitable target EID.
 	// If the caller didn't specify one (doesn't know the target's EID),
 	// then use the location hint as a surrogate peer identity.
-	QByteArray eid = dstid;
+	QByteArray eid = dstid.getId();
 	if (eid.isEmpty()) {
 		eid = Ident::fromEndpoint(dstep).id();
 		Q_ASSERT(!eid.isEmpty());
@@ -109,7 +109,7 @@ bool Stream::connectTo(const Ident &dstid,
 		const QString &service, const QString &protocol,
 		const Endpoint &dstep)
 {
-	return connectTo(dstid.id(), service, protocol, dstep);
+	return connectTo(PeerId(dstid.id()), service, protocol, dstep);
 }
 
 void Stream::disconnect()

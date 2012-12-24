@@ -8,7 +8,7 @@ SST unfinished business:
 
 Most immediate usability necessities:
  ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document
-   ☐ assign IETF RFC number, see
+   ☐ assign IETF RFC number, see http://www.ietf.org/id-info/
  ☐ finish implementing wire protocol to specs.  Specifically:
    ☐ receiver-directed flow control
    ☐ datagram reassembly
@@ -19,6 +19,9 @@ Most immediate usability necessities:
  ☐ registration protocol: specify, add explicit deregistration on shutdown
     ☐ would be nice to move registration protocol details to the routing lib if possible?
         move started, but there are still deps on SST::Host
+
+ ☐ give priority to local-network Endpoint addresses first (need to match network against available interfaces' IPs)
+ ☐ possible DOS if localhost is specified in Endpoints? try.
 
   Possibly PID (Proportional-Integral-Differential) flow control.
 

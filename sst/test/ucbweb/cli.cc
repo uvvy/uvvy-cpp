@@ -117,8 +117,7 @@ SockClient::SockClient(TestClient *tc, const QHostAddress &addr, quint16 port)
 		if (sockno == 2)
 			strm->setPriority(1);
 #endif
-		strm->connectTo(Ident::fromIpAddress(addr, port).id(),
-				"ucbtest", "ucbtestproto");
+		strm->connectTo(Ident::fromIpAddress(addr, port), "ucbtest", "ucbtestproto");
 		dev = strm;
 		break; }
 	case TESTPROTO_TCP: {

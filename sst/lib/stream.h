@@ -30,6 +30,7 @@
 
 #include "key.h"
 #include "strm/proto.h"
+#include "peerid.h"
 
 namespace SST {
 
@@ -181,7 +182,7 @@ public:
      * @return true if successful, false if an error occurred.
      * @see Ident
      */
-    bool connectTo(const QByteArray &dstid,
+    bool connectTo(const PeerId &dstid,
             const QString &service, const QString &protocol,
             const Endpoint &dstep = Endpoint());
 

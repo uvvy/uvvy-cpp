@@ -13,7 +13,6 @@
 #include <QLocale>
 #include <QSettings>
 #include <QtDebug>
-
 #include "chat.h"
 #include "chathistory.h"
 #include "main.h"
@@ -27,18 +26,20 @@
 
 using namespace SST;
 
+//=====================================================================================================================
+// ChatDialog
+//=====================================================================================================================
 
-////////// ChatDialog //////////
+//QHash<PeerId, ChatDialog*> ChatDialog::chathash;
 
-//QHash<QByteArray, ChatDialog*> ChatDialog::chathash;
-
-ChatDialog::ChatDialog(const QByteArray &otherid, const QString &othername,
-            Stream *strm)
-:   QDialog(NULL),
-    otherid(otherid), othername(othername),
-    stream(NULL), history(NULL)
+ChatDialog::ChatDialog(const SST::PeerId &otherid, const QString &othername, Stream *strm)
+    : QDialog(NULL)
+    , otherid(otherid)
+    , othername(othername)
+    , stream(NULL)
+    , history(NULL)
 {
-    setWindowTitle(tr("Netsteria chat with %0").arg(othername));
+    setWindowTitle(tr("MettaNode chat with %0").arg(othername));
     setAcceptDrops(true);
 
     settings->beginGroup("ChatWindows/"+othername);
@@ -301,9 +302,9 @@ void ChatDialog::sendFiles(const QList<FileInfo> &files)
     Q_ASSERT(actsize == msg.size());
 }
 
-ChatDialog *ChatDialog::open(const QByteArray &id, const QString &name)
+ChatDialog *ChatDialog::open(const SST::PeerId &id, const QString &name)
 {
-    Q_ASSERT(!id.isEmpty());
+    Q_ASSERT(!id.getId().isEmpty());
 
 //  ChatDialog *&dlg = chathash[id];
 //  if (dlg == NULL)
@@ -378,7 +379,9 @@ void ChatDialog::loadHistory()
 {
 }
 
-////////// ChatServer //////////
+//=====================================================================================================================
+// ChatServer
+//=====================================================================================================================
 
 ChatServer::ChatServer(QObject *parent)
 :   StreamServer(ssthost, parent)
@@ -397,13 +400,12 @@ void ChatServer::incoming()
         if (!strm)
             return;
 
-        QByteArray id = strm->remoteHostId();
+        PeerId id = strm->remoteHostId();
         QString name = friends->name(id);
         if (name.isEmpty())
-            name = tr("unknown host %0").arg(QString(id.toBase64()));
+            name = tr("unknown host %0").arg(QString(id.toString()));
 
-        qDebug() << "ChatServer: accepting incoming stream from"
-            << id.toBase64() << name;
+        qDebug() << "ChatServer: accepting incoming stream from"<< id << name;
 
         ChatDialog *dlg = new ChatDialog(id, name, strm);
         dlg->show();
@@ -412,8 +414,9 @@ void ChatServer::incoming()
     }
 }
 
-
-////////// ChatScanner //////////
+//=====================================================================================================================
+// ChatScanner
+//=====================================================================================================================
 
 ChatScanner::ChatScanner(ChatDialog *parent, const QStringList &files)
     : QProgressDialog(parent)
