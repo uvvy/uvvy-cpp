@@ -3,6 +3,7 @@
 
 #include "peer.h"
 #include "env.h"
+#include "base32.h"
 
 using namespace SST;
 
@@ -168,7 +169,7 @@ QVariant PeerTable::data(const QModelIndex &index, int role) const
 	if (col == 0 && (role == Qt::DisplayRole || role == Qt::EditRole))
 		return peers[row].name;
 	if (col == 1 && role == Qt::DisplayRole)
-		return peers[row].id.toBase64();
+		return Encode::toBase32(peers[row].id); //.toBase64();
 	return peers[row].dyndata.value(QPair<int,int>(col,role));
 }
 

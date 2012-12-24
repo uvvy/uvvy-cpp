@@ -18,9 +18,12 @@
 //from http://sourcecodebrowser.com/dc-qt/0.2.0.alpha/_encoder_8cpp_source.html
 // tables adjusted according to
 
-#include "Encoder.h"
+#include "base32.h"
+#include <QDebug>
 
-const int8_t Encoder::base32Table[] = {
+
+namespace {
+const int8_t base32Table[] = {
        -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
        -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
        -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -39,65 +42,78 @@ const int8_t Encoder::base32Table[] = {
        -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 };
 
-const char Encoder::base32Alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-
-string& Encoder::toBase32(const u_int8_t* src, size_t len, string& dst) {
-       // Code snagged from the bitzi bitcollider
-       size_t i, index;
-       u_int8_t word;
-       dst.reserve(((len * 8) / 5) + 1);
-
-       for(i = 0, index = 0; i < len;) {
-              /* Is the current word going to span a byte boundary? */
-              if (index > 3) {
-                     word = (u_int8_t)(src[i] & (0xFF >> index));
-                     index = (index + 5) % 8;
-                     word <<= index;
-                     if ((i + 1) < len)
-                            word |= src[i + 1] >> (8 - index);
-
-                     i++;
-              } else {
-                     word = (u_int8_t)(src[i] >> (8 - (index + 5))) & 0x1F;
-                     index = (index + 5) % 8;
-                     if (index == 0)
-                            i++;
-              }
-
-              dcassert(word < 32);
-              dst += base32Alphabet[word];
-       }
-       return dst;
+const char base32Alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 }
 
-void Encoder::fromBase32(const char* src, u_int8_t* dst, size_t len) {
-       size_t i, index, offset;
+namespace Encode {
 
-       memset(dst, 0, len);
-       for(i = 0, index = 0, offset = 0; src[i]; i++) {
-              // Skip what we don't recognise
-              int8_t tmp = base32Table[(unsigned char)src[i]];
+QString toBase32(const QByteArray& src)
+{
+    // Code snagged from the bitzi bitcollider
+    size_t i, index;
+    uint8_t word;
+    size_t len = src.length();
+    QString dst;
+    dst.reserve(((len * 8) / 5) + 1);
 
-              if(tmp == -1)
-                     continue;
+    for(i = 0, index = 0; i < len;)
+    {
+        qDebug() << "before" << i << src.at(i) << index << word;
+        /* Is the current word going to span a byte boundary? */
+        if (index > 3) {
+            word = (uint8_t)(src.at(i) & (0xFF >> index));
+            index = (index + 5) % 8;
+            word <<= index;
+            if ((i + 1) < len)
+                word |= (uint8_t)(src.at(i + 1) >> (8 - index));
 
-              if (index <= 3) {
-                     index = (index + 5) % 8;
-                     if (index == 0) {
-                            dst[offset] |= tmp;
-                            offset++;
-                            if(offset == len)
-                                   break;
-                     } else {
-                            dst[offset] |= tmp << (8 - index);
-                     }
-              } else {
-                     index = (index + 5) % 8;
-                     dst[offset] |= (tmp >> index);
-                     offset++;
-                     if(offset == len)
-                            break;
-                     dst[offset] |= tmp << (8 - index);
-              }
-       }
+            i++;
+        } else {
+            word = (uint8_t)(src.at(i) >> (8 - (index + 5))) & 0x1F;
+            index = (index + 5) % 8;
+            if (index == 0)
+                i++;
+        }
+        qDebug() << "after" << i << src.at(i) << index << word;
+        Q_ASSERT(word < 32);
+        dst += base32Alphabet[word];
+    }
+    return dst;
+}
+
+QByteArray fromBase32(const QString& src)
+{
+    size_t i, index, offset;
+    QByteArray dst;
+/*
+    for(i = 0, index = 0, offset = 0; src[i]; i++)
+    {
+        // Skip what we don't recognise
+        int8_t tmp = base32Table[(unsigned char)src[i]];
+
+        if(tmp == -1)
+            continue;
+
+        if (index <= 3) {
+            index = (index + 5) % 8;
+            if (index == 0) {
+                dst[offset] |= tmp;
+                offset++;
+                if(offset == len)
+                    break;
+            } else {
+                dst[offset] |= tmp << (8 - index);
+            }
+        } else {
+            index = (index + 5) % 8;
+            dst[offset] |= (tmp >> index);
+            offset++;
+            if(offset == len)
+                break;
+            dst[offset] |= tmp << (8 - index);
+        }
+    }*/
+    return dst;
+}
+
 }

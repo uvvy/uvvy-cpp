@@ -19,16 +19,13 @@
 
 #pragma once
 
-class Encoder
+#include <QString>
+#include <QByteArray>
+
+namespace Encode
 {
-public:
-       static string& toBase32(const u_int8_t* src, size_t len, string& tgt);
-       static string toBase32(const u_int8_t* src, size_t len) {
-              string tmp;
-              return toBase32(src, len, tmp);
-       }
-       static void fromBase32(const char* src, u_int8_t* dst, size_t len);
-private:
-       static const int8_t base32Table[];
-       static const char base32Alphabet[];
-};
+
+QString toBase32(const QByteArray& in);
+QByteArray fromBase32(const QString& in);
+
+}
