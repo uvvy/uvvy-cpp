@@ -40,7 +40,7 @@ protected:	// XXX private w/ accessors?
 	Stream		*strm;
 
 	// EID of peer we're connected to
-	QByteArray	peerid;
+	PeerId	peerid;
 
 private:
 	int 		pri;		// Current priority level
@@ -53,11 +53,11 @@ public:
 	/// Returns the endpoint identifier (EID) of the local host
 	/// as used in connecting the current stream.
 	/// Only valid if the stream is connected.
-	QByteArray localHostId();
+	PeerId localHostId();
 
 	/// Returns the endpoint identifier (EID) of the remote host
 	/// to which this stream is connected.
-	QByteArray remoteHostId();
+	PeerId remoteHostId();
 
 	/// Returns true if the underlying link is currently connected
 	/// and usable for data transfer.

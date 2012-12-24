@@ -12,7 +12,7 @@ using namespace SST;
 
 ////////// StreamFlow //////////
 
-StreamFlow::StreamFlow(Host *h, StreamPeer *peer, const QByteArray &peerid)
+StreamFlow::StreamFlow(Host *h, StreamPeer *peer, const PeerId &peerid)
 :	Flow(h, peer),
 	peer(peer),
 	root(h, peerid, NULL),
@@ -201,7 +201,7 @@ void StreamFlow::gotLinkStatusChanged(LinkStatus newstatus)
 
 	// If we were our target's primary flow, disconnect us.
 	if (peer->flow == this) {
-		qDebug() << "Primary flow to host ID" << peer->id.toBase64()
+		qDebug() << "Primary flow to host ID" << peer->id
 			<< "at endpoint" << remoteEndpoint().toString()
 			<< "failed";
 		peer->clearPrimary();

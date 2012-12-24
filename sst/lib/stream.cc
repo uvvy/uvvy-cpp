@@ -147,15 +147,15 @@ void Stream::connectAt(const Endpoint &ep)
 	host->streamPeer(as->peerid)->foundEndpoint(ep);
 }
 
-QByteArray Stream::localHostId()
+PeerId Stream::localHostId()
 {
-	if (!as) return QByteArray();
+	if (!as) return PeerId();
 	return as->localHostId();
 }
 
-QByteArray Stream::remoteHostId()
+PeerId Stream::remoteHostId()
 {
-	if (!as) return QByteArray();
+	if (!as) return PeerId();
 	return as->remoteHostId();
 }
 
@@ -381,9 +381,9 @@ void StreamResponder::conncli(RegClient *rc)
 
 	connrcs.insert(rc);
 	connect(rc, SIGNAL(stateChanged()), this, SLOT(clientStateChanged()));
-	connect(rc, SIGNAL(lookupNotify(const QByteArray &,
+	connect(rc, SIGNAL(lookupNotify(const SST::PeerId&,
 			const Endpoint &, const RegInfo &)),
-		this, SLOT(lookupNotify(const QByteArray &,
+		this, SLOT(lookupNotify(const SST::PeerId&,
 			const Endpoint &, const RegInfo &)));
 }
 
@@ -420,8 +420,7 @@ void StreamResponder::clientStateChanged()
 		peer->connectFlow();
 }
 
-void StreamResponder::lookupNotify(const QByteArray &,const Endpoint &loc,
-				 const RegInfo &)
+void StreamResponder::lookupNotify(const SST::PeerId&, const Endpoint &loc, const RegInfo &)
 {
 	qDebug() << "StreamResponder::lookupNotify";
 
@@ -508,7 +507,7 @@ StreamResponder *StreamHostState::streamResponder()
 	return rpndr;
 }
 
-StreamPeer *StreamHostState::streamPeer(const QByteArray &id, bool create)
+StreamPeer *StreamHostState::streamPeer(const PeerId &id, bool create)
 {
 	StreamPeer *&peer = peers[id];
 	if (!peer && create)

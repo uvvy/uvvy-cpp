@@ -565,11 +565,11 @@ bool KeyResponder::checkInitiator(const SocketEndpoint &,
 	return true;
 }
 
-
+//=====================================================================================================================
 ////////// KeyInitiator //////////
+//=====================================================================================================================
 
-KeyInitiator::KeyInitiator(Flow *fl, quint32 magic,
-			const QByteArray &idr, quint8 dhgroup)
+KeyInitiator::KeyInitiator(Flow *fl, quint32 magic, const PeerId &idr, quint8 dhgroup)
 :	h(fl->host()),
 	fl(fl),
 	sepr(fl->remoteEndpoint()),

@@ -408,11 +408,11 @@ public:
     /// Returns the endpoint identifier (EID) of the local host
     /// as used in connecting the current stream.
     /// Only valid if the stream is connected.
-    QByteArray localHostId();
+    PeerId localHostId();
 
     /// Returns the endpoint identifier (EID) of the remote host
     /// to which this stream is connected.
-    QByteArray remoteHostId();
+    PeerId remoteHostId();
 
     /** Returns true if the Stream is logically connected
      * and network connectivity is currently available.
@@ -692,7 +692,7 @@ public:
      * and obtain the EID of the originating host.
      * @overload
      */
-    inline Stream *accept(QByteArray &originHostId)
+    inline Stream *accept(PeerId &originHostId)
     {
         Stream *strm = accept();
         if (strm) originHostId = strm->remoteHostId();
@@ -748,8 +748,7 @@ class StreamResponder : public KeyResponder, public StreamProtocol
 private slots:
     void clientCreate(RegClient *rc);
     void clientStateChanged();
-    void lookupNotify(const QByteArray &id, const Endpoint &loc,
-            const RegInfo &info);
+    void lookupNotify(const SST::PeerId &id, const Endpoint &loc, const RegInfo &info);
 };
 
 
@@ -765,7 +764,7 @@ class StreamHostState : public QObject
 private:
     StreamResponder *rpndr;
     QHash<StreamProtocol::ServicePair,StreamServer*> listeners;
-    QHash<QByteArray,StreamPeer*> peers;
+    QHash<PeerId, StreamPeer*> peers;
 
 
     StreamResponder *streamResponder();
@@ -774,7 +773,7 @@ public:
     inline StreamHostState() : rpndr(NULL) { }
     virtual ~StreamHostState();
 
-    StreamPeer *streamPeer(const QByteArray &id, bool create = true);
+    StreamPeer *streamPeer(const PeerId &id, bool create = true);
 
     virtual Host *host() = 0;
 };

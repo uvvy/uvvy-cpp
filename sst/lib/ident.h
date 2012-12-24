@@ -26,6 +26,7 @@
 #include <openssl/rsa.h>
 
 #include "sign.h"
+#include "peerid.h"
 
 class QHostAddress;
 class QSettings;
@@ -100,6 +101,11 @@ public:
 	 * @param id the binary identifier.
  	 */
 	Ident(const QByteArray &id);
+
+	/** Create an Ident with a given binary identifier.
+	 * @param id the binary peer identifier.
+ 	 */
+	Ident(const PeerId &id);
 
 	/** Create an Ident with a binary identifier and corresponding key.
 	 * @param id the binary identifier.

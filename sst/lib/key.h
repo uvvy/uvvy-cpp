@@ -27,6 +27,7 @@
 
 #include "sock.h"
 #include "timer.h"
+#include "peerid.h"
 
 
 namespace SST {
@@ -85,14 +86,13 @@ class KeyInitiator : public QObject
 	};
 
 	// Basic parameters
-	Host *const h;		// Our per-host state
-	Flow *const fl;		// Flow we're trying to set up
-	SocketEndpoint sepr;	// Remote endpoint we're trying to contact
-	QByteArray idr;		// Target's host ID (empty if unspecified)
-	QByteArray ulpi;	// Opaque info block to pass to responder
-	const quint32 magic;	// Magic identifier for upper-layer protocol
-	quint32 methods;	// Security methods allowed
-
+    Host *const h;          ///< Our per-host state
+    Flow *const fl;         ///< Flow we're trying to set up
+    SocketEndpoint sepr;    ///< Remote endpoint we're trying to contact
+    PeerId idr;             ///< Target's host ID (empty if unspecified)
+    QByteArray ulpi;        ///< Opaque info block to pass to responder
+    const quint32 magic;    ///< Magic identifier for upper-layer protocol
+    quint32 methods;        ///< Security methods allowed
 
 	////////// Weak keyed checksum negotiation //////////
 
@@ -131,7 +131,7 @@ public:
 	/// The client must therefore re-parent the flow
 	/// after successful key exchange before deleting the KeyInitiator.
 	KeyInitiator(Flow *flow, quint32 magic,
-			const QByteArray &idr = QByteArray(),
+            const PeerId &idr = PeerId(),
 			quint8 dhgroup = 0);
 	~KeyInitiator();
 

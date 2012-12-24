@@ -117,6 +117,11 @@ Ident::Ident(const QByteArray &id)
 {
 }
 
+Ident::Ident(const PeerId &id)
+:	d(new IdentData(id.getId()))
+{
+}
+
 Ident::Ident(const QByteArray &id, const QByteArray &key)
 :	d(new IdentData(id))
 {

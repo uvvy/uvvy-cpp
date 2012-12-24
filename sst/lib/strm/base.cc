@@ -94,7 +94,7 @@ void StreamRxAttachment::clear()
 
 ////////// BaseStream //////////
 
-BaseStream::BaseStream(Host *h, QByteArray peerid, BaseStream *parent)
+BaseStream::BaseStream(Host *h, PeerId peerid, BaseStream *parent)
 :	AbstractStream(h),
 	parent(parent),
 	state(Fresh),

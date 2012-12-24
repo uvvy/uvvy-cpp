@@ -202,7 +202,7 @@ MainWindow::MainWindow()
     connect(friendslist->selectionModel(),
         SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
         this, SLOT(updateMenus()));
-    connect(talksrv, SIGNAL(statusChanged(const QByteArray&)),
+    connect(talksrv, SIGNAL(statusChanged(const SST::PeerId&)),
         this, SLOT(updateMenus()));
 
     // Retrieve the main window settings

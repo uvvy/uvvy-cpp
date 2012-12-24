@@ -75,7 +75,7 @@ private:
 	//StreamId attach(BaseStream *bs, StreamId sid = 0);
 	//void detach(BaseStream *bs);
 
-	StreamFlow(Host *h, StreamPeer *peer, const QByteArray &peerid);
+	StreamFlow(Host *h, StreamPeer *peer, const PeerId &peerid);
 	~StreamFlow();
 
 	inline StreamPeer *target() { return peer; }
