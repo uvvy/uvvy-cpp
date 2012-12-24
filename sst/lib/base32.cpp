@@ -58,23 +58,22 @@ QString toBase32(const QByteArray& src)
 
     for(i = 0, index = 0; i < len;)
     {
-        qDebug() << "before" << i << src.at(i) << index << word;
         /* Is the current word going to span a byte boundary? */
         if (index > 3) {
-            word = (uint8_t)(src.at(i) & (0xFF >> index));
+            word = ((uint8_t)src.at(i) & (0xFF >> index));
             index = (index + 5) % 8;
             word <<= index;
-            if ((i + 1) < len)
-                word |= (uint8_t)(src.at(i + 1) >> (8 - index));
-
+            if ((i + 1) < len) {
+                word |= ((uint8_t)src.at(i + 1) >> (8 - index));
+            }
             i++;
         } else {
-            word = (uint8_t)(src.at(i) >> (8 - (index + 5))) & 0x1F;
+            word = ((uint8_t)src.at(i) >> (8 - (index + 5))) & 0x1F;
             index = (index + 5) % 8;
-            if (index == 0)
+            if (index == 0) {
                 i++;
+            }
         }
-        qDebug() << "after" << i << src.at(i) << index << word;
         Q_ASSERT(word < 32);
         dst += base32Alphabet[word];
     }
@@ -83,13 +82,16 @@ QString toBase32(const QByteArray& src)
 
 QByteArray fromBase32(const QString& src)
 {
-    size_t i, index, offset;
+    size_t i, index;
+    uint offset;
+    size_t len = src.length();
     QByteArray dst;
-/*
-    for(i = 0, index = 0, offset = 0; src[i]; i++)
+    dst.fill(0, ((len * 5 + 7) / 8));
+
+    for(i = 0, index = 0, offset = 0; i < len; i++)
     {
         // Skip what we don't recognise
-        int8_t tmp = base32Table[(unsigned char)src[i]];
+        int8_t tmp = base32Table[(unsigned char)src.at(i).toAscii()];
 
         if(tmp == -1)
             continue;
@@ -97,22 +99,22 @@ QByteArray fromBase32(const QString& src)
         if (index <= 3) {
             index = (index + 5) % 8;
             if (index == 0) {
-                dst[offset] |= tmp;
+                dst[offset] = dst[offset] | tmp;
                 offset++;
                 if(offset == len)
                     break;
             } else {
-                dst[offset] |= tmp << (8 - index);
+                dst[offset] = dst[offset] | tmp << (8 - index);
             }
         } else {
             index = (index + 5) % 8;
-            dst[offset] |= (tmp >> index);
+            dst[offset] = dst[offset] | (tmp >> index);
             offset++;
             if(offset == len)
                 break;
-            dst[offset] |= tmp << (8 - index);
+            dst[offset] = dst[offset] | tmp << (8 - index);
         }
-    }*/
+    }
     return dst;
 }
 
