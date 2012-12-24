@@ -52,8 +52,7 @@ SockClient::SockClient(Host *host, const Endpoint &srvep, QObject *parent)
 		this, SLOT(gotReadyRead()));
 	connect(&strm, SIGNAL(error(const QString &)),
 		this, SLOT(gotError()));
-	strm.connectTo(Ident::fromIpAddress(srvep.addr, srvep.port).id(),
-			"regress", "basic");
+	strm.connectTo(Ident::fromIpAddress(srvep.addr, srvep.port), "regress", "basic");
 }
 
 #if 0

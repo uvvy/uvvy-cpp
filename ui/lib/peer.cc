@@ -3,7 +3,6 @@
 
 #include "peer.h"
 #include "env.h"
-#include "base32.h"
 
 using namespace SST;
 
@@ -27,15 +26,15 @@ PeerTable::PeerTable(int numColumns, QObject *parent)
 	hdrdata.insert(QPair<int,int>(1, Qt::DisplayRole), tr("Host ID"));
 }
 
-QList<QByteArray> PeerTable::ids() const
+QList<PeerId> PeerTable::ids() const
 {
-	QList<QByteArray> ids;
+    QList<PeerId> ids;
 	for (int i = 0; i < peers.size(); i++)
-		ids.append(peers[i].id);
+        ids.append(peers[i].id.getId());
 	return ids;
 }
 
-int PeerTable::idRow(const QByteArray &hostId) const
+int PeerTable::idRow(const PeerId &hostId) const
 {
 	for (int i = 0; i < peers.size(); i++)
 		if (peers[i].id == hostId)
@@ -67,7 +66,7 @@ void PeerTable::useSettings(QSettings *settings, const QString &prefix)
 	settings->endArray();
 }
 
-void PeerTable::insertAt(int row, const QByteArray &id, const QString &name)
+void PeerTable::insertAt(int row, const PeerId &id, const QString &name)
 {
 	Peer p;
 	p.name = name;
@@ -80,7 +79,7 @@ void PeerTable::insertAt(int row, const QByteArray &id, const QString &name)
 	peers.insert(row, p);
 }
 
-int PeerTable::insert(const QByteArray &id, QString name)
+int PeerTable::insert(const PeerId &id, QString name)
 {
 	int row = idRow(id);
 	if (row >= 0)
@@ -105,11 +104,11 @@ int PeerTable::insert(const QByteArray &id, QString name)
 	return row;
 }
 
-void PeerTable::remove(const QByteArray &id)
+void PeerTable::remove(const PeerId &id)
 {
 	int row = idRow(id);
 	if (row < 0) {
-		qDebug() << "PeerTable::remove nonexistent id" << id.toBase64();
+        qDebug() << "PeerTable::remove nonexistent id" << id.toString();
 		return;
 	}
 
@@ -135,13 +134,13 @@ void PeerTable::writePeers()
 	for (int i = 0; i < npeers; i++) {
 		settings->setArrayIndex(i);
 		settings->setValue("name", peers[i].name);
-		settings->setValue("key", peers[i].id);
+        settings->setValue("key", peers[i].id.getId());
 	}
 	settings->endArray();
 	settings->sync();
 }
 
-QString PeerTable::name(const QByteArray &id, const QString &dflName) const
+QString PeerTable::name(const PeerId &id, const QString &dflName) const
 {
 	int row = idRow(id);
 	if (row < 0)
@@ -169,7 +168,7 @@ QVariant PeerTable::data(const QModelIndex &index, int role) const
 	if (col == 0 && (role == Qt::DisplayRole || role == Qt::EditRole))
 		return peers[row].name;
 	if (col == 1 && role == Qt::DisplayRole)
-		return Encode::toBase32(peers[row].id); //.toBase64();
+        return peers[row].id.toString();
 	return peers[row].dyndata.value(QPair<int,int>(col,role));
 }
 
@@ -306,7 +305,7 @@ void PeerService::setPeerTable(PeerTable *peers)
 		this, SLOT(peerRemove(const QByteArray &)));
 
 	// Initiate connections to each of the currently listed peers
-	foreach (const QByteArray &id, peers->ids())
+    foreach (const PeerId &id, peers->ids())
 	{
 		reconnectToPeer(id);
 		updateStatus(id);
@@ -331,11 +330,11 @@ void PeerService::updateStatusAll()
 	if (!peers)
 		return;
 
-	foreach (const QByteArray &id, peers->ids())
+    foreach (const PeerId &id, peers->ids())
 		updateStatus(id);
 }
 
-void PeerService::updateStatus(const QByteArray &hostid)
+void PeerService::updateStatus(const PeerId &hostid)
 {
 	emit statusChanged(hostid);
 
@@ -350,7 +349,7 @@ void PeerService::updateStatus(const QByteArray &hostid)
 	qDebug() << "PeerService" << svname << prname << "update status" << peerNameOrId(hostid) << "row" << row;
 
 	// Update the status indicator
-	Stream *stream = out.value(hostid);
+    Stream *stream = out.value(hostid.getId());
 	bool online = stream && stream->isLinkUp(); // @todo isConnected() returns true erroneously?
 	QModelIndex idx = peers->index(row, statcol);
 	const QVariant &val = online
@@ -365,7 +364,7 @@ void PeerService::updateStatus(const QByteArray &hostid)
 	peers->setFlags(idx, Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 }
 
-void PeerService::peerInsert(const QByteArray &hostId)
+void PeerService::peerInsert(const PeerId &hostId)
 {
 	if (!peers || !peers->containsId(hostId))
 		return;
@@ -374,13 +373,12 @@ void PeerService::peerInsert(const QByteArray &hostId)
 	reconnectToPeer(hostId);
 }
 
-void PeerService::peerRemove(const QByteArray &hostId)
+void PeerService::peerRemove(const PeerId &hostId)
 {
 	disconnectFromPeer(hostId);
 }
 
-QString PeerService::peerName(const QByteArray &hostId,
-				const QString &dflName) const
+QString PeerService::peerName(const PeerId &hostId, const QString &dflName) const
 {
 	if (peers)
 		return peers->name(hostId, dflName);
@@ -388,7 +386,7 @@ QString PeerService::peerName(const QByteArray &hostId,
 		return dflName;
 }
 
-Stream *PeerService::connectToPeer(const QByteArray &hostId)
+Stream *PeerService::connectToPeer(const PeerId &hostId)
 {
 	Stream *&stream = out[hostId];
 	if (stream != NULL)
@@ -410,14 +408,14 @@ Stream *PeerService::connectToPeer(const QByteArray &hostId)
 	return stream;
 }
 
-Stream *PeerService::reconnectToPeer(const QByteArray &id)
+Stream *PeerService::reconnectToPeer(const PeerId &id)
 {
-	qDebug() << "PeerService" << svname << prname << "Attempt to reconnect peer" << id.toBase64();
+    qDebug() << "PeerService" << svname << prname << "Attempt to reconnect peer" << id.toString();
 	disconnectFromPeer(id);
 	return connectToPeer(id);
 }
 
-void PeerService::disconnectFromPeer(const QByteArray &id)
+void PeerService::disconnectFromPeer(const PeerId &id)
 {
 	Stream *stream = out.value(id);
 	if (stream == NULL)
@@ -427,7 +425,7 @@ void PeerService::disconnectFromPeer(const QByteArray &id)
 	stream->deleteLater();
 }
 
-void PeerService::disconnectPeer(const QByteArray &id)
+void PeerService::disconnectPeer(const PeerId &id)
 {
 	// First destroy any outgoing connection we may have
 	disconnectFromPeer(id);
@@ -446,7 +444,7 @@ void PeerService::reconTimeout()
 		return;		// No peer table to track
 
 	// Try to re-connect to each outgoing stream that isn't connected
-	foreach (const QByteArray &id, peers->ids())
+    foreach (const PeerId &id, peers->ids())
 	{
 		if (!outConnected(id))
 			reconnectToPeer(id);
@@ -524,7 +522,7 @@ void PeerService::inConnection()
 	}
 }
 
-bool PeerService::allowConnection(const QByteArray &hostId)
+bool PeerService::allowConnection(const PeerId &hostId)
 {
 	if (!exclusive)
 		return true;

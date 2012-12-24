@@ -57,9 +57,7 @@ DatagramTest::DatagramTest()
 		qFatal("Can't listen on service name");
 
 	//connect(&cli, SIGNAL(linkUp()), this, SLOT(gotLinkUp()));
-	cli.connectTo(Ident::fromIpAddress(
-				srvaddr, NETSTERIA_DEFAULT_PORT).id(),
-			"regress", "dgram");
+	cli.connectTo(Ident::fromIpAddress(srvaddr, NETSTERIA_DEFAULT_PORT), "regress", "dgram");
 
 	// Push the protocol by starting to stuff datagrams in
 	// before the stream has even connected...

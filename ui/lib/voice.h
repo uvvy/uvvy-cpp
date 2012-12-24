@@ -157,15 +157,15 @@ public:
     VoiceService(QObject *parent = NULL);
 
     // Control whether we're talking and/or listening to a given peer.
-    void setTalkEnabled(const QByteArray &hostid, bool enable);
-    void setListenEnabled(const QByteArray &hostid, bool enable);
-    inline bool talkEnabled(const QByteArray &hostid)
+    void setTalkEnabled(const SST::PeerId &hostid, bool enable);
+    void setListenEnabled(const SST::PeerId &hostid, bool enable);
+    inline bool talkEnabled(const SST::PeerId &hostid)
         { return sending.contains(outStream(hostid)); }
-    inline bool listenEnabled(const QByteArray &)
+    inline bool listenEnabled(const SST::PeerId &)
         { return true; /*XXX*/ }
-    inline void toggleTalkEnabled(const QByteArray &hostid)
+    inline void toggleTalkEnabled(const SST::PeerId &hostid)
         { setTalkEnabled(hostid, !talkEnabled(hostid)); }
-    inline void toggleListenEnabled(const QByteArray &hostid)
+    inline void toggleListenEnabled(const SST::PeerId &hostid)
         { setListenEnabled(hostid, !listenEnabled(hostid)); }
 
     // Set up to display our status in particular PeerTable columns.
@@ -184,7 +184,7 @@ protected:
      * Override PeerService::updateStatus()
      * to provide additional talk/listen status indicators.
      */
-    virtual void updateStatus(const QByteArray &id);
+    virtual void updateStatus(const SST::PeerId &id);
 
 private slots:
     void gotOutStreamDisconnected(Stream *strm);

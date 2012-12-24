@@ -5,9 +5,9 @@
 #include <QPointer>
 #include <QDialog>
 #include <QProgressDialog>
-
 #include "stream.h"
 #include "scan.h"
+#include "peerid.h"
 
 class QLabel;
 class QGridLayout;
@@ -33,11 +33,10 @@ class ChatDialog : public QDialog, public ChatProtocol
 	friend class ChatServer;
 	Q_OBJECT
 
-	ChatDialog(const QByteArray &id, const QString &name,
-			SST::Stream *strm = NULL);
+	ChatDialog(const SST::PeerId& id, const QString &name, SST::Stream *strm = NULL);
 	~ChatDialog();
 
-	const QByteArray otherid;	// Who we're chatting with
+	const SST::PeerId otherid;	// Who we're chatting with
 	const QString othername;
 
 	SST::Stream *stream;		// Connection we chat over
@@ -59,7 +58,7 @@ class ChatDialog : public QDialog, public ChatProtocol
 
 public:
 
-	static ChatDialog *open(const QByteArray &id, const QString &name);
+	static ChatDialog *open(const SST::PeerId &id, const QString &name);
 
 	void sendFiles(const QList<FileInfo> &files);
 

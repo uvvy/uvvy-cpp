@@ -8,6 +8,7 @@
 #include <QDateTime>
 // #include "store.h"
 #include "mk4.h"
+#include "peerid.h"
 
 // For now, store a file per chat ID.
 class ChatHistory : public QObject
@@ -22,7 +23,7 @@ public:
 	/**
 	 * @param id binary chat identifier.
 	 */
-	ChatHistory(const QByteArray& id, QObject* parent = 0);
+	ChatHistory(const SST::PeerId& id, QObject* parent = 0);
 	~ChatHistory();
 
 public slots:

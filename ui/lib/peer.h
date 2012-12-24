@@ -8,8 +8,8 @@
 #include <QPointer>
 #include <QByteArray>
 #include <QAbstractTableModel>
-
 #include "stream.h"
+#include "peerid.h"
 
 class QSettings;
 
@@ -35,7 +35,7 @@ private:
     struct Peer {
         // Basic peer info
         QString name;
-        QByteArray id;
+        SST::PeerId id;
 
         /**
          * Data defining the dynamic content, by <column, role>
@@ -77,27 +77,32 @@ public:
     inline int count() const { return peers.size(); }
 
     /**
-     * Return the name and host ID of a peer by row number.
+     * Return the name of a peer by row number.
      * @param  row [description]
      * @return     [description]
      */
     inline QString name(int row) const
         { return peers[row].name; }
-    inline QByteArray id(int row) const
+    /**
+     * Return the host ID of a peer by row number.
+     * @param  row [description]
+     * @return     [description]
+     */
+    inline SST::PeerId id(int row) const
         { return peers[row].id; }
 
     /**
      * Return a list of all peers' host IDs.
      */
-    QList<QByteArray> ids() const;
+    QList<SST::PeerId> ids() const;
 
     /**
      * Return the row number of a peer by its host ID, -1 if no such peer.
      * @param  hostId [description]
      * @return        [description]
      */
-    int idRow(const QByteArray &hostId) const;
-    inline bool containsId(const QByteArray &hostId) const
+    int idRow(const SST::PeerId &hostId) const;
+    inline bool containsId(const SST::PeerId &hostId) const
         { return idRow(hostId) >= 0; }
 
     /**
@@ -106,7 +111,7 @@ public:
      * @param  defaultName [description]
      * @return             [description]
      */
-    QString name(const QByteArray &hostId,
+    QString name(const SST::PeerId &hostId,
             const QString &defaultName = tr("unknown peer")) const;
 
     /**
@@ -115,12 +120,12 @@ public:
      * @param  name [description]
      * @return      [description]
      */
-    int insert(const QByteArray &id, QString name);
+    int insert(const SST::PeerId &id, QString name);
     /**
      * Remove a peer.
      * @param id [description]
      */
-    void remove(const QByteArray &id);
+    void remove(const SST::PeerId &id);
 
     // QAbstractItemModel virtual methods
     virtual int columnCount(const QModelIndex &parent = QModelIndex())
@@ -141,11 +146,11 @@ public:
 signals:
     // These signals provide slightly simpler alternatives to
     // beginInsertRow, endInsertRow, beginInsertColumn, endInsertColumn.
-    void peerInsert(const QByteArray &id);
-    void peerRemove(const QByteArray &id);
+    void peerInsert(const SST::PeerId &id);
+    void peerRemove(const SST::PeerId &id);
 
 private:
-    void insertAt(int row, const QByteArray &id, const QString &name);
+    void insertAt(int row, const SST::PeerId &id, const QString &name);
     void writePeers();
 };
 
@@ -173,8 +178,8 @@ private:
     StreamServer server;                    // To accept incoming streams
     const QString svname;                   // Name of service we provide
     const QString prname;                   // Name of protocol we support
-    QHash<QByteArray, Stream*> out;         // Outoing streams by host ID
-    QHash<QByteArray, QSet<Stream*> > in;   // Incoming streams by host ID
+    QHash<SST::PeerId, Stream*> out;         // Outoing streams by host ID
+    QHash<SST::PeerId, QSet<Stream*> > in;   // Incoming streams by host ID
     QPointer<PeerTable> peers;              // Peer table to track
     QTimer recontimer;                      // To reconnect failed streams
     bool exclusive;
@@ -217,45 +222,48 @@ public:
      * @param  hostId target host EID to connect to.
      * @return        [description]
      */
-    Stream *connectToPeer(const QByteArray &hostId);
+    Stream *connectToPeer(const SST::PeerId &hostId);
 
     /**
      * Create a new outgoing connection to a given peer, destroying the old primary connection if any.
      * @param  hostId [description]
      * @return        [description]
      */
-    Stream *reconnectToPeer(const QByteArray &hostId);
+    Stream *reconnectToPeer(const SST::PeerId &hostId);
 
     /**
      * Destroy any outgoing connection we may have to a given peer.
      * @param hostId [description]
      */
-    void disconnectFromPeer(const QByteArray &hostId);
+    void disconnectFromPeer(const SST::PeerId &hostId);
 
     /**
      * Destroy all connections, outgoing AND incoming, with a given peer.
      * @param hostId [description]
      */
-    void disconnectPeer(const QByteArray &hostId);
+    void disconnectPeer(const SST::PeerId &hostId);
 
     /**
      * Return the current outgoing stream to a given peer, NULL if none.
      * @param  hostId [description]
      * @return        [description]
      */
-    inline Stream *outStream(const QByteArray &hostId)
-        { return out.value(hostId); }
+    inline Stream *outStream(const SST::PeerId &hostId)
+        { return out.value(hostId.getId()); }
 
     /**
      * Returns true if an outgoing stream exists and is connected.
      * @param  id [description]
      * @return    [description]
      */
-    inline bool outConnected(const QByteArray &id)
-        { Stream *s = out.value(id); return s && s->isConnected(); }
+    inline bool outConnected(const SST::PeerId &id)
+        { Stream *s = out.value(id.getId()); return s && s->isConnected(); }
 
-    inline QSet<Stream*> inStreams(const QByteArray &hostId)
-        { return in.value(hostId); }
+    /**
+     * Return a set of incoming streams from given peer.
+     */
+    inline QSet<Stream*> inStreams(const SST::PeerId &hostId)
+        { return in.value(hostId.getId()); }
 
     /**
      * Return the name of a given peer, or 'defaultname' if unknown
@@ -263,7 +271,7 @@ public:
      * @param  defaultName [description]
      * @return             [description]
      */
-    virtual QString peerName(const QByteArray &hostId,
+    virtual QString peerName(const SST::PeerId &hostId,
             const QString &defaultName = tr("unknown peer")) const;
 
     /**
@@ -271,8 +279,8 @@ public:
      * @param  hostId [description]
      * @return        [description]
      */
-    inline QString peerNameOrId(const QByteArray &hostId)
-        { return peerName(hostId, hostId.toBase64()); }
+    inline QString peerNameOrId(const SST::PeerId &hostId)
+        { return peerName(hostId, hostId.toString()); }
 
 protected:
     /**
@@ -282,13 +290,13 @@ protected:
      * @param  hostId [description]
      * @return        [description]
      */
-    virtual bool allowConnection(const QByteArray &hostId);
+    virtual bool allowConnection(const SST::PeerId &hostId);
 
     /**
      * Update the status indicators in our PeerTable for a given peer.
      * @param id [description]
      */
-    virtual void updateStatus(const QByteArray &id);
+    virtual void updateStatus(const SST::PeerId &id);
 
     /**
      * Update the status indicators for all peers in our PeerTable.
@@ -300,14 +308,14 @@ signals:
     void outStreamDisconnected(Stream *strm);
     void inStreamConnected(Stream *strm);
     void inStreamDisconnected(Stream *strm);
-    void statusChanged(const QByteArray &id);
+    void statusChanged(const SST::PeerId &id);
 
 private:
     void deletePrimary();
 
 private slots:
-    void peerInsert(const QByteArray &id);
-    void peerRemove(const QByteArray &id);
+    void peerInsert(const SST::PeerId &id);
+    void peerRemove(const SST::PeerId &id);
     void outConnected();
     void outDisconnected();
     void inConnection();

@@ -253,7 +253,7 @@ void MainWindow::updateMenus()
 {
     int row = selectedFriend();
     bool sel = isActiveWindow() && row >= 0;
-    QByteArray id = sel ? friends->id(row) : QByteArray();
+    PeerId id = sel ? friends->id(row) : QByteArray();
 
     maMessage->setEnabled(sel);
     taMessage->setEnabled(sel);
@@ -284,7 +284,7 @@ void MainWindow::friendsClicked(const QModelIndex &index)
     int row = index.row();
     if (row < 0 || row >= friends->count())
         return;
-    QByteArray hostid = friends->id(row);
+    PeerId hostid = friends->id(row);
 
     int col = index.column();
     if (col == COL_TALK)
@@ -384,7 +384,7 @@ void MainWindow::deleteFriend()
     if (row < 0 || row >= friends->count())
         return;
     QString name = friends->name(row);
-    QByteArray id = friends->id(row);
+    PeerId id = friends->id(row);
 
     if (QMessageBox::question(this, tr("Confirm Delete"),
             tr("Delete '%0' from your contacts?").arg(name),
