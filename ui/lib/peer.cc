@@ -296,10 +296,10 @@ void PeerService::setPeerTable(PeerTable *peers)
     this->peers = peers;
 
     // Watch for future changes in the peer table
-    connect(peers, SIGNAL(peerInsert(const QByteArray &)),
-        this, SLOT(peerInsert(const QByteArray &)));
-    connect(peers, SIGNAL(peerRemove(const QByteArray &)),
-        this, SLOT(peerRemove(const QByteArray &)));
+    connect(peers, SIGNAL(peerInsert(const SST::PeerId&)),
+        this, SLOT(peerInsert(const SST::PeerId&)));
+    connect(peers, SIGNAL(peerRemove(const SST::PeerId&)),
+        this, SLOT(peerRemove(const SST::PeerId&)));
 
     // Initiate connections to each of the currently listed peers
     foreach (const PeerId &id, peers->ids())
@@ -469,7 +469,7 @@ void PeerService::outDisconnected()
     Stream *stream = (Stream*)sender();
     Q_ASSERT(stream);
     Q_ASSERT(!stream->isLinkUp());
-    QByteArray hostid = stream->remoteHostId();
+    PeerId hostid = stream->remoteHostId();
 
     // Update our peer table if appropriate
     updateStatus(hostid);
@@ -494,7 +494,7 @@ void PeerService::inConnection()
         Q_ASSERT(stream);
         Q_ASSERT(stream->isConnected());
 
-        QByteArray id = stream->remoteHostId();
+        PeerId id = stream->remoteHostId();
         if (!allowConnection(id)) {
             qDebug() << "PeerService" << svname << prname << "Rejected connection from" << peerNameOrId(id);
             stream->deleteLater();  // XX right way to reject?
@@ -536,7 +536,7 @@ void PeerService::inDisconnected()
     Q_ASSERT(stream);
     Q_ASSERT(!stream->isConnected());
 
-    QByteArray hostid = stream->remoteHostId();
+    PeerId hostid = stream->remoteHostId();
 
     QSet<Stream*> &inset = in[hostid];
     bool contained = inset.remove(stream);

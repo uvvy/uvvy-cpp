@@ -33,8 +33,9 @@
 
 using namespace SST;
 
-
-////////// RegClient //////////
+//=====================================================================================================================
+// RegClient
+//=====================================================================================================================
 
 const qint64 RegClient::maxRereg;
 
@@ -81,9 +82,9 @@ void RegClient::disconnect()
 
 	// Fail all outstanding lookup and search requests
 	// XX provide a better error indication?
-	foreach (const QByteArray &id, lookups)
+	foreach (const PeerId &id, lookups)
 		lookupDone(id, Endpoint(), RegInfo());
-	foreach (const QByteArray &id, punches)
+	foreach (const PeerId &id, punches)
 		lookupDone(id, Endpoint(), RegInfo());
 	foreach (const QString &text, searches)
 		searchDone(text, QList<QByteArray>(), true);
@@ -255,13 +256,12 @@ void RegClient::gotInsert2Reply(XdrStream &rs)
 	reregtimer.start(rereg);
 
 	// Notify anyone interested.
-	qDebug() << "RegClient: registered with" << srvname
-		<< "for" << lifeSecs << "seconds";
+	qDebug() << "RegClient: registered with" << srvname << "for" << lifeSecs << "seconds";
 	qDebug() << "  My public endpoint:" << pubEp.toString();
 	stateChanged();
 }
 
-void RegClient::lookup(const QByteArray &idtarget, bool notify)
+void RegClient::lookup(const PeerId& idtarget, bool notify)
 {
 	Q_ASSERT(registered());
 
@@ -273,15 +273,15 @@ void RegClient::lookup(const QByteArray &idtarget, bool notify)
 	retrytimer.start();
 }
 
-void RegClient::sendLookup(const QByteArray &idtarget, bool notify)
+void RegClient::sendLookup(const PeerId& idtarget, bool notify)
 {
-	qDebug() << "RegClient: send lookup for ID" << idtarget.toBase64();
+	qDebug() << "RegClient: send lookup for ID" << idtarget;
 
 	// Prepare the Lookup message
 	QByteArray msg;
 	XdrStream ws(&msg, QIODevice::WriteOnly);
 	ws << REG_MAGIC << (quint32)(REG_REQUEST | REG_LOOKUP)
-		<< idi << nhi << idtarget << notify;
+		<< idi << nhi << idtarget.getId() << notify;
 	send(msg);
 }
 
@@ -417,9 +417,9 @@ void RegClient::timeout(bool failed)
 				reregister();
 		} else {
 			// Re-send all outstanding requests
-			foreach (const QByteArray &id, lookups)
+			foreach (const PeerId &id, lookups)
 				sendLookup(id, false);
-			foreach (const QByteArray &id, punches)
+			foreach (const PeerId &id, punches)
 				sendLookup(id, true);
 			foreach (const QString &text, searches)
 				sendSearch(text);
@@ -435,8 +435,9 @@ void RegClient::reregTimeout()
 	reregister();
 }
 
-
-////////// RegReceiver //////////
+//=====================================================================================================================
+// RegReceiver
+//=====================================================================================================================
 
 RegReceiver::RegReceiver(Host *h)
 :	SocketReceiver(h, REG_MAGIC)

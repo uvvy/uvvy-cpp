@@ -17,12 +17,12 @@ AbstractStream::AbstractStream(Host *h)
 {
 }
 
-QByteArray AbstractStream::localHostId()
+PeerId AbstractStream::localHostId()
 {
 	return h->hostIdent().id();
 }
 
-QByteArray AbstractStream::remoteHostId()
+PeerId AbstractStream::remoteHostId()
 {
 	return peerid;
 }

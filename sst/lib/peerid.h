@@ -22,6 +22,7 @@ public:
 
     QByteArray getId() const { return id; }
     QString toString() const;
+    bool isEmpty() const { return id.isEmpty(); }
 };
 
 inline QDebug& operator << (QDebug& ts, const PeerId& id)
@@ -31,6 +32,7 @@ inline QDebug& operator << (QDebug& ts, const PeerId& id)
 
 inline uint qHash(const PeerId& key) { return qHash(key.getId()); }
 inline bool operator == (const PeerId& a, const PeerId& b) { return a.getId() == b.getId(); }
+inline bool operator != (const PeerId& a, const PeerId& b) { return a.getId() != b.getId(); }
 
 //=====================================================================================================================
 // PeerId

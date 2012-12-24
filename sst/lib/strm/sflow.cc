@@ -9,10 +9,11 @@
 
 using namespace SST;
 
-
+//=====================================================================================================================
 ////////// StreamFlow //////////
+//=====================================================================================================================
 
-StreamFlow::StreamFlow(Host *h, StreamPeer *peer, const QByteArray &peerid)
+StreamFlow::StreamFlow(Host *h, StreamPeer *peer, const PeerId &peerid)
 :	Flow(h, peer),
 	peer(peer),
 	root(h, peerid, NULL),
@@ -60,7 +61,7 @@ void StreamFlow::enqueueStream(BaseStream *strm)
 	// based on priority.
 	int i = 0;
 	while (i < tstreams.size()
-			&& tstreams[i]->priority() >= strm->priority())
+			and tstreams[i]->priority() >= strm->priority())
 		i++;
 
 	// Insert.
@@ -177,8 +178,7 @@ void StreamFlow::expire(quint64 txseq, int npackets)
 			continue;
 		}
 
-		//qDebug() << "Missed packet" << txseq
-		//	<< "of size" << p.buf.size();
+		qDebug() << "Missed packet" << txseq << "of size" << p.buf.size();
 		p.strm->expire(this, p);
 	}
 }
@@ -201,7 +201,7 @@ void StreamFlow::gotLinkStatusChanged(LinkStatus newstatus)
 
 	// If we were our target's primary flow, disconnect us.
 	if (peer->flow == this) {
-		qDebug() << "Primary flow to host ID" << peer->id.toBase64()
+		qDebug() << "Primary flow to host ID" << peer->id
 			<< "at endpoint" << remoteEndpoint().toString()
 			<< "failed";
 		peer->clearPrimary();

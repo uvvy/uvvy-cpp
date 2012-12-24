@@ -14,17 +14,18 @@ uint qHash(const SST::Endpoint &ep);
 
 using namespace SST;
 
+//=====================================================================================================================
+// StreamPeer
+//=====================================================================================================================
 
-////////// StreamPeer //////////
-
-StreamPeer::StreamPeer(Host *h, const QByteArray &id)
+StreamPeer::StreamPeer(Host *h, const SST::PeerId &id)
 :	h(h), id(id), flow(NULL), recontimer(h), stallcount(0)
 {
-	Q_ASSERT(!id.isEmpty());
+	Q_ASSERT(!id.getId().isEmpty());
 
 	// If the EID is just an encapsulated IP endpoint,
 	// then also use it as a destination address hint.
-	Ident ident(id);
+	Ident ident(id.getId());
 	if (ident.scheme() == ident.IP) {
 		Endpoint ep(ident.ipAddress(), ident.ipPort());
 		if (ep.port == 0)
@@ -53,7 +54,7 @@ void StreamPeer::connectFlow()
 	//if (receivers(SIGNAL(flowConnected())) == 0)
 	//	return;	// No one is actually waiting for a flow.
 
-	qDebug() << this << "Lookup target" << id.toBase64();
+	qDebug() << this << "Lookup target" << id;
 
 	// Send a lookup request to each known registration server.
 	foreach (RegClient *rc, h->regClients()) {
@@ -89,9 +90,9 @@ void StreamPeer::conncli(RegClient *rc)
 	connrcs.insert(rc);
 
 	// Listen for the lookup response
-	connect(rc, SIGNAL(lookupDone(const QByteArray &,
+	connect(rc, SIGNAL(lookupDone(const SST::PeerId&,
 			const Endpoint &, const RegInfo &)),
-		this, SLOT(lookupDone(const QByteArray &,
+		this, SLOT(lookupDone(const SST::PeerId&,
 			const Endpoint &, const RegInfo &)));
 
 	// Also make sure we hear if this regclient disappears
@@ -99,13 +100,10 @@ void StreamPeer::conncli(RegClient *rc)
 		this, SLOT(regClientDestroyed(QObject*)));
 }
 
-void StreamPeer::lookupDone(const QByteArray &id, const Endpoint &loc,
-				const RegInfo &info)
+void StreamPeer::lookupDone(const SST::PeerId &id, const Endpoint &loc, const RegInfo &info)
 {
 	if (id != this->id) {
-		qDebug() << this << "got lookupDone for wrong id"
-			<< id.toBase64()
-			<< "expecting" << this->id.toBase64();
+		qDebug() << this << "got lookupDone for wrong id" << id << "expecting" << this->id << "(harmless, ignored)";
 		return;	// ignore responses for other lookup requests
 	}
 
@@ -119,14 +117,13 @@ void StreamPeer::lookupDone(const QByteArray &id, const Endpoint &loc,
 
 	// If the lookup failed, notify waiting streams as appropriate.
 	if (loc.isNull()) {
-		qDebug() << this << "Lookup on" << id.toBase64() << "failed";
+		qDebug() << this << "Lookup on" << id << "failed";
 		if (!lookups.isEmpty() || !initors.isEmpty())
 			return;		// There's still hope
 		return flowFailed();
 	}
 
-	qDebug() << "StreamResponder::lookupDone: primary" << loc
-		<< ", num secondaries" << info.endpoints().size();
+	qDebug() << "StreamResponder::lookupDone: primary" << loc << "num secondaries" << info.endpoints().size();
 
 	// Add the endpoint information we've received to our address list,
 	// and initiate flow setup attempts to those endpoints.
@@ -158,7 +155,7 @@ void StreamPeer::foundEndpoint(const Endpoint &ep)
 	if (addrs.contains(ep))
 		return;	// We know; sit down...
 
-	qDebug() << "Found endpoint" << ep.toString() << "for target" << id.toBase64();
+	qDebug() << "Found endpoint" << ep.toString() << "for target" << id;
 
 	// Add this endpoint to our set
 	addrs.insert(ep);
@@ -179,7 +176,7 @@ void StreamPeer::initiate(Socket *sock, const Endpoint &ep)
 	// Don't simultaneously initiate multiple flows to the same endpoint.
 	SocketEndpoint sep(ep, sock);
 	if (initors.contains(sep)) {
-		qDebug() << this << "already attempting connection to"<< ep.toString();
+		qDebug() << this << "already attempting connection to" << ep.toString();
 		return;
 	}
 
@@ -192,7 +189,7 @@ void StreamPeer::initiate(Socket *sock, const Endpoint &ep)
 	// Create and bind a new flow
 	Flow *fl = new StreamFlow(h, this, id);
 	if (!fl->bind(sock, ep)) {
-		qDebug() << "StreamProtocol: could not bind new flow to target"<< ep;
+		qDebug() << "StreamProtocol: could not bind new flow to target" << ep;
 		delete fl;
 		return flowFailed();
 	}
@@ -234,7 +231,7 @@ void StreamPeer::completed(bool success)
 
 	// If unsuccessful, notify waiting streams.
 	if (!success) {
-		qDebug() << "Connection attempt for ID" << id.toBase64() << "to" << sep << "failed";
+		qDebug() << "Connection attempt for ID" << id << "to" << sep << "failed";
 		if (lookups.isEmpty() && initors.isEmpty())
 			return flowFailed();
 		return;	// There's still hope
@@ -320,8 +317,7 @@ void StreamPeer::primaryStatusChanged(LinkStatus newstatus)
 		foreach (KeyInitiator *ki, initors.values()) {
 			if (!ki->isEarly())
 				continue;	// too late - let it finish
-			qDebug() << "deleting" << ki << "for" << id.toBase64()
-				<< "to" << ki->remoteEndpoint();
+			qDebug() << "deleting" << ki << "for" << id << "to" << ki->remoteEndpoint();
 			Q_ASSERT(initors.value(ki->remoteEndpoint()) == ki);
 			initors.remove(ki->remoteEndpoint());
 			ki->cancel();
@@ -332,8 +328,7 @@ void StreamPeer::primaryStatusChanged(LinkStatus newstatus)
 
 	if (newstatus == LinkStalled) {
 		if (++stallcount < stallMax) {
-			qDebug() << this << "primary stall" << stallcount
-				<< "of" << stallMax;
+			qDebug() << this << "primary stall" << stallcount << "of" << stallMax;
 			return;
 		}
 	}

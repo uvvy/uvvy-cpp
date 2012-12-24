@@ -24,6 +24,7 @@
 #include "reginfo.h"
 #include "sock.h"
 #include "timer.h"
+#include "peerid.h"
 
 class QHostInfo;
 
@@ -69,8 +70,8 @@ private:
 	QByteArray sig;		// Our signature to send in Insert2
 
 	// Outstanding lookups and searches for which we're awaiting replies.
-	QSet<QByteArray> lookups;	// IDs we're doing lookups on
-	QSet<QByteArray> punches;	// Lookups with notify requests
+	QSet<SST::PeerId> lookups;	// IDs we're doing lookups on
+	QSet<SST::PeerId> punches;	// Lookups with notify requests
 	QSet<QString> searches;		// Strings we're searching for
 
 	// Retry state
@@ -96,8 +97,7 @@ public:
 
 	// Attempt to register with the specified registration server.
 	// We'll send a stateChanged() signal when it succeeds or fails.
-	void registerAt(const QString &srvhost,
-			quint16 port = REGSERVER_DEFAULT_PORT);
+	void registerAt(const QString &srvhost, quint16 port = REGSERVER_DEFAULT_PORT);
 
 	// Attempt to re-register with the same server previously indicated.
 	void reregister();
@@ -121,7 +121,7 @@ public:
 	// Will send a lookupDone() signal when the request completes.
 	// If 'notify', ask regserver to notify the target as well.
 	// Must be in the registered() state to initiate a lookup.
-	void lookup(const QByteArray &id, bool notify = false);
+	void lookup(const SST::PeerId &id, bool notify = false);
 
 	// Search for IDs of clients with metadata matching a search string.
 	// Will send a searchDone() signal when the request completes.
@@ -135,14 +135,12 @@ public:
 
 signals:
 	void stateChanged();
-	void lookupDone(const QByteArray &id, const Endpoint &loc,
-			const RegInfo &info);
-	void lookupNotify(const QByteArray &id, const Endpoint &loc,
-			const RegInfo &info);
-	void searchDone(const QString &text, const QList<QByteArray> ids,
-			bool complete);
+	void lookupDone(const SST::PeerId& id, const Endpoint &loc, const RegInfo &info);
+	void lookupNotify(const SST::PeerId& id, const Endpoint &loc, const RegInfo &info);
+	void searchDone(const QString &text, const QList<QByteArray> ids, bool complete);
 
 private:
+	// Registration state machine
 	void goInsert1();
 	void sendInsert1();
 	void gotInsert1Reply(XdrStream &rs);
@@ -151,7 +149,7 @@ private:
 	void sendInsert2();
 	void gotInsert2Reply(XdrStream &rs);
 
-	void sendLookup(const QByteArray &id, bool notify);
+	void sendLookup(const SST::PeerId& id, bool notify);
 	void gotLookupReply(XdrStream &rs, bool isnotify);
 
 	void sendSearch(const QString &text);

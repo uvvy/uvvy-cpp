@@ -311,7 +311,7 @@ public:
 	 *		as defined by the Ident class.
 	 * @param parent the parent stream, or NULL if none (yet).
 	 */
-	BaseStream(Host *host, QByteArray peerid, BaseStream *parent);
+	BaseStream(Host *host, PeerId peerid, BaseStream *parent);
 	virtual ~BaseStream();
 
 	/** Connect to a given service on a remote host.

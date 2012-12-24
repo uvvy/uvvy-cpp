@@ -5,6 +5,8 @@ SST unfinished business:
    ☐ basic - passed or sigsegv
    ☐ seg - rtxTimeout - FAILED period 20000000
    ☐ all - gets stuck in seg test
+ ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
+ ☐ all services are attempting to connect to a single host multiple times - would be better if this was orchestrated separately
 
 Most immediate usability necessities:
  ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document

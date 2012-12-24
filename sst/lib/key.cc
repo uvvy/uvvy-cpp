@@ -46,15 +46,15 @@ using namespace SST;
 
 #define NONCELEN	SHA256_DIGEST_LENGTH
 
-
-
+//=====================================================================================================================
 ////////// Checksum security setup //////////
+//=====================================================================================================================
 
-// Calculate a checksum key for TCP-grade "security".
-// Uses an analog of Bellovin's RFC 1948 for keying TCP sequence numbers.
-// We use our own host identity, including private key,
-// as the host-specific secret data to drive the key generation.
-// XX would probably be better to use some unrelated persistent random bits.
+/// Calculate a checksum key for TCP-grade "security".
+/// Uses an analog of Bellovin's RFC 1948 for keying TCP sequence numbers.
+/// We use our own host identity, including private key,
+/// as the host-specific secret data to drive the key generation.
+/// XX would probably be better to use some unrelated persistent random bits.
 static quint32 calcChkKey(Host *h, quint8 chanid, QByteArray peerid)
 {
 	Ident hostid = h->hostIdent();
@@ -79,9 +79,9 @@ static quint32 calcChkKey(Host *h, quint8 chanid, QByteArray peerid)
 	return ck + h->currentTime().usecs / 4;
 }
 
-// Calculate a channel ID from the local and remote checksum keys.
-// The two checksum keys must be different!
-// (Otherwise we'd get the same channel ID in both directions.)
+/// Calculate a channel ID from the local and remote checksum keys.
+/// The two checksum keys must be different!
+/// (Otherwise we'd get the same channel ID in both directions.)
 static QByteArray calcChkChanId(quint32 localck, quint32 remoteck)
 {
 	Q_ASSERT(localck != remoteck);
@@ -89,8 +89,9 @@ static QByteArray calcChkChanId(quint32 localck, quint32 remoteck)
 	return QByteArray((char*)&buf, sizeof(buf));
 }
 
-
+//=====================================================================================================================
 ////////// Cryptographic security setup //////////
+//=====================================================================================================================
 
 static QByteArray calcSigHash(DhGroup group, int keylen,
 		const QByteArray &nhi, const QByteArray &nr,
@@ -192,10 +193,9 @@ XdrStream &operator>>(XdrStream &xs, XdrOption<KeyChunkUnion> &o)
 	return xs;
 }
 
-
-
-
+//=====================================================================================================================
 ////////// KeyResponder //////////
+//=====================================================================================================================
 
 KeyResponder::KeyResponder(Host *host, quint32 magic, QObject *parent)
 :	SocketReceiver(host, magic, parent),
@@ -203,8 +203,7 @@ KeyResponder::KeyResponder(Host *host, quint32 magic, QObject *parent)
 {
 }
 
-void KeyResponder::receive(QByteArray &pkt, XdrStream &,
-				const SocketEndpoint &src)
+void KeyResponder::receive(QByteArray &pkt, XdrStream &, const SocketEndpoint &src)
 {
 	// Decode the received message
 	XdrStream rs(&pkt, QIODevice::ReadOnly);
@@ -565,11 +564,11 @@ bool KeyResponder::checkInitiator(const SocketEndpoint &,
 	return true;
 }
 
-
+//=====================================================================================================================
 ////////// KeyInitiator //////////
+//=====================================================================================================================
 
-KeyInitiator::KeyInitiator(Flow *fl, quint32 magic,
-			const QByteArray &idr, quint8 dhgroup)
+KeyInitiator::KeyInitiator(Flow *fl, quint32 magic, const PeerId &idr, quint8 dhgroup)
 :	h(fl->host()),
 	fl(fl),
 	sepr(fl->remoteEndpoint()),
