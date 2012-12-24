@@ -97,8 +97,7 @@ public:
 
 	// Attempt to register with the specified registration server.
 	// We'll send a stateChanged() signal when it succeeds or fails.
-	void registerAt(const QString &srvhost,
-			quint16 port = REGSERVER_DEFAULT_PORT);
+	void registerAt(const QString &srvhost, quint16 port = REGSERVER_DEFAULT_PORT);
 
 	// Attempt to re-register with the same server previously indicated.
 	void reregister();

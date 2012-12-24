@@ -33,8 +33,9 @@
 
 using namespace SST;
 
-
-////////// RegClient //////////
+//=====================================================================================================================
+// RegClient
+//=====================================================================================================================
 
 const qint64 RegClient::maxRereg;
 
@@ -255,8 +256,7 @@ void RegClient::gotInsert2Reply(XdrStream &rs)
 	reregtimer.start(rereg);
 
 	// Notify anyone interested.
-	qDebug() << "RegClient: registered with" << srvname
-		<< "for" << lifeSecs << "seconds";
+	qDebug() << "RegClient: registered with" << srvname << "for" << lifeSecs << "seconds";
 	qDebug() << "  My public endpoint:" << pubEp.toString();
 	stateChanged();
 }
@@ -435,8 +435,9 @@ void RegClient::reregTimeout()
 	reregister();
 }
 
-
-////////// RegReceiver //////////
+//=====================================================================================================================
+// RegReceiver
+//=====================================================================================================================
 
 RegReceiver::RegReceiver(Host *h)
 :	SocketReceiver(h, REG_MAGIC)

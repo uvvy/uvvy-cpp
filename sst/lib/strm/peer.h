@@ -21,10 +21,11 @@ class StreamFlow;
 class StreamResponder;
 class StreamHostState;
 
-
-// Private helper class:
-// contains information about target host ID we're trying to reach,
-// potentially at a number of alternative network addresses.
+/**
+ * Private helper class:
+ * contains information about target host ID we're trying to reach,
+ * potentially at a number of alternative network addresses.
+ */
 class StreamPeer : public QObject, public StreamProtocol
 {
     friend class BaseStream;
@@ -52,13 +53,13 @@ class StreamPeer : public QObject, public StreamProtocol
 
     // Flows under construction, by target endpoint
     QSet<Endpoint> addrs;       // Potential locations known
-    QHash<SocketEndpoint,KeyInitiator*> initors;
+    QHash<SocketEndpoint, KeyInitiator*> initors;
 
     // All existing streams involving this peer.
     QSet<BaseStream*> allstreams;
 
     // All streams that have USIDs, registered by their USIDs
-    QHash<UniqueStreamId,BaseStream*> usids;
+    QHash<UniqueStreamId, BaseStream*> usids;
 
 
     StreamPeer(Host *h, const PeerId &id);

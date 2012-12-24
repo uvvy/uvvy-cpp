@@ -14,6 +14,9 @@ uint qHash(const SST::Endpoint &ep);
 
 using namespace SST;
 
+//=====================================================================================================================
+// StreamPeer
+//=====================================================================================================================
 
 StreamPeer::StreamPeer(Host *h, const SST::PeerId &id)
 :	h(h), id(id), flow(NULL), recontimer(h), stallcount(0)
@@ -120,8 +123,7 @@ void StreamPeer::lookupDone(const SST::PeerId &id, const Endpoint &loc, const Re
 		return flowFailed();
 	}
 
-	qDebug() << "StreamResponder::lookupDone: primary" << loc
-		<< ", num secondaries" << info.endpoints().size();
+	qDebug() << "StreamResponder::lookupDone: primary" << loc << "num secondaries" << info.endpoints().size();
 
 	// Add the endpoint information we've received to our address list,
 	// and initiate flow setup attempts to those endpoints.
@@ -174,7 +176,7 @@ void StreamPeer::initiate(Socket *sock, const Endpoint &ep)
 	// Don't simultaneously initiate multiple flows to the same endpoint.
 	SocketEndpoint sep(ep, sock);
 	if (initors.contains(sep)) {
-		qDebug() << this << "already attempting connection to"<< ep.toString();
+		qDebug() << this << "already attempting connection to" << ep.toString();
 		return;
 	}
 
@@ -187,7 +189,7 @@ void StreamPeer::initiate(Socket *sock, const Endpoint &ep)
 	// Create and bind a new flow
 	Flow *fl = new StreamFlow(h, this, id);
 	if (!fl->bind(sock, ep)) {
-		qDebug() << "StreamProtocol: could not bind new flow to target"<< ep;
+		qDebug() << "StreamProtocol: could not bind new flow to target" << ep;
 		delete fl;
 		return flowFailed();
 	}
@@ -326,8 +328,7 @@ void StreamPeer::primaryStatusChanged(LinkStatus newstatus)
 
 	if (newstatus == LinkStalled) {
 		if (++stallcount < stallMax) {
-			qDebug() << this << "primary stall" << stallcount
-				<< "of" << stallMax;
+			qDebug() << this << "primary stall" << stallcount << "of" << stallMax;
 			return;
 		}
 	}
