@@ -4,7 +4,7 @@
 #include <QList>
 #include <QQueue>
 
-#include "../flow.h"	// XXX
+#include "flow.h"
 #include "strm/base.h"
 
 namespace SST {
