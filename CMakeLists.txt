@@ -29,6 +29,11 @@ if (APPLE)
 	set(GUI_TYPE MACOSX_BUNDLE)
 endif (APPLE)
 
+if (BUILD_TESTS)
+	enable_testing()
+	include(Dart)
+endif (BUILD_TESTS)
+
 add_subdirectory(sst)
 add_subdirectory(routing)
 #add_subdirectory(naming)

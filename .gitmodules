@@ -1,3 +1,0 @@
-[submodule "3rdparty/libs/libqxt"]
-	path = 3rdparty/libs/libqxt
-	url = git@bitbucket.org:libqxt/libqxt.git
