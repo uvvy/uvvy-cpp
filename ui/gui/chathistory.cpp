@@ -11,7 +11,7 @@ ChatHistory::ChatHistory(const SST::PeerId& id, QObject* parent)
 	QString filename = id.toString();
 	QString name = appdir.path() + "/ChatHistory/history." + filename;
 	storage = new c4_Storage(name.toLocal8Bit().constData(), /*read-write-flag:*/ 1);
-	view = new c4_View(storage->GetAs("chathistory[unread:B,originator:S,timestamp:T,target:S,msg_hash:S,msg:S]"));
+	view = new c4_View(storage->GetAs("chathistory[unread:B,originator:S,originator_eid:S,timestamp:T,target:S,msg_hash:S,msg:S]"));
 }
 
 ChatHistory::~ChatHistory()
