@@ -13,7 +13,6 @@
 #include <QLocale>
 #include <QSettings>
 #include <QtDebug>
-
 #include "chat.h"
 #include "chathistory.h"
 #include "main.h"
@@ -380,7 +379,9 @@ void ChatDialog::loadHistory()
 {
 }
 
-////////// ChatServer //////////
+//=====================================================================================================================
+// ChatServer
+//=====================================================================================================================
 
 ChatServer::ChatServer(QObject *parent)
 :   StreamServer(ssthost, parent)
@@ -413,8 +414,9 @@ void ChatServer::incoming()
     }
 }
 
-
-////////// ChatScanner //////////
+//=====================================================================================================================
+// ChatScanner
+//=====================================================================================================================
 
 ChatScanner::ChatScanner(ChatDialog *parent, const QStringList &files)
     : QProgressDialog(parent)

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "stream.h"
-
 #include "../proto.h"
 #include "../asyncfile.h"
 
