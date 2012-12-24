@@ -677,7 +677,7 @@ KeyInitiator::gotR0(Host *h, const Endpoint &src)
 void
 KeyInitiator::sendI1()
 {
-	qDebug() << this << "send I1 to " << sepr.toString();
+	qDebug() << this << "send I1 to" << sepr.toString();
 	state = I1;
 
 	// Build a message containing an I1 chunk

@@ -58,7 +58,7 @@ void PeerTable::useSettings(QSettings *settings, const QString &prefix)
 		QString name = settings->value("name").toString();
 		QByteArray id = settings->value("key").toByteArray();
 		if (id.isEmpty() || containsId(id)) {
-			qDebug("Empty or duplicate peer ID");
+			qDebug() << "Empty or duplicate peer ID";
 			continue;
 		}
 		insertAt(i, id, name);
@@ -282,8 +282,7 @@ PeerService::PeerService(const QString &svname, const QString &svdesc,
 	connect(&server, SIGNAL(newConnection()),
 		this, SLOT(inConnection()));
 	if (!server.listen(svname, svdesc, prname, prdesc))
-		qCritical("PeerService: can't register service '%s' "
-			"protocol '%s'",
+		qCritical("PeerService: can't register service '%s' protocol '%s'",
 			svname.toLocal8Bit().data(),
 			prname.toLocal8Bit().data());
 
@@ -410,7 +409,7 @@ Stream *PeerService::connectToPeer(const QByteArray &hostId)
 
 Stream *PeerService::reconnectToPeer(const QByteArray &id)
 {
-	qDebug() << "Attempt to reconnect peer" << id.toBase64();
+	qDebug() << "PeerService" << svname << prname << "Attempt to reconnect peer" << id.toBase64();
 	disconnectFromPeer(id);
 	return connectToPeer(id);
 }
@@ -438,7 +437,7 @@ void PeerService::disconnectPeer(const QByteArray &id)
 
 void PeerService::reconTimeout()
 {
-	qDebug() << "PeerService: reconnect timeout";
+	qDebug() << "PeerService" << svname << prname << "reconnect timeout";
 
 	if (!peers)
 		return;		// No peer table to track
@@ -498,7 +497,7 @@ void PeerService::inConnection()
 
 		QByteArray id = stream->remoteHostId();
 		if (!allowConnection(id)) {
-			qDebug() << "Rejected connection from" << peerNameOrId(id);
+			qDebug() << "PeerService" << svname << prname << "Rejected connection from" << peerNameOrId(id);
 			stream->deleteLater();	// XX right way to reject?
 			continue;
 		}
@@ -508,8 +507,7 @@ void PeerService::inConnection()
 			this, SLOT(inDisconnected()));
 		in[id].insert(stream);
 
-		qDebug("PeerService: new incoming stream, %d total",
-			in[id].size());
+		qDebug() << "PeerService" << svname << prname << "new incoming stream," << in[id].size() << "total";
 
 		// Use this event to prod our outgoing connection attempt
 		// if appropriate
@@ -533,7 +531,7 @@ bool PeerService::allowConnection(const QByteArray &hostId)
 
 void PeerService::inDisconnected()
 {
-	qDebug() << "PeerService: Incoming stream disconnected";
+	qDebug() << "PeerService" << svname << prname << "Incoming stream disconnected";
 
 	Stream *stream = (Stream*)sender();
 	Q_ASSERT(stream);

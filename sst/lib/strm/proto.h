@@ -38,9 +38,8 @@ inline XdrStream &operator>>(XdrStream &xs, UniqueStreamId &usid)
 	{ xs >> usid.streamCtr >> usid.chanId; return xs; }
 
 inline QDebug &operator<<(QDebug &debug, const UniqueStreamId &usid) {
-	debug.nospace() << "USID[" << usid.chanId.toBase64()
-		<< ":" << usid.streamCtr << "]";
-	return debug.space();
+    debug.nospace() << "USID[" << usid.chanId.toBase64() << ":" << usid.streamCtr << "]";
+    return debug.space();
 }
 
 
