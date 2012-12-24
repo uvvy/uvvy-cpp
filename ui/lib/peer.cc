@@ -1,4 +1,3 @@
-
 #include <QSettings>
 #include <QtDebug>
 
@@ -7,8 +6,9 @@
 
 using namespace SST;
 
-
-////////// PeerTable //////////
+//=====================================================================================================================
+// PeerTable
+//=====================================================================================================================
 
 uint qHash(const QPair<int,int> &p)
 {
@@ -265,8 +265,9 @@ bool PeerTable::setFlags(const QModelIndex &index, Qt::ItemFlags flags)
 	return true;
 }
 
-
-////////// PeerService //////////
+//=====================================================================================================================
+// PeerService
+//=====================================================================================================================
 
 PeerService::PeerService(const QString &svname, const QString &svdesc,
 			const QString &prname, const QString &prdesc,
@@ -304,7 +305,8 @@ void PeerService::setPeerTable(PeerTable *peers)
 		this, SLOT(peerRemove(const QByteArray &)));
 
 	// Initiate connections to each of the currently listed peers
-	foreach (const QByteArray &id, peers->ids()) {
+	foreach (const QByteArray &id, peers->ids())
+	{
 		reconnectToPeer(id);
 		updateStatus(id);
 	}
@@ -443,7 +445,8 @@ void PeerService::reconTimeout()
 		return;		// No peer table to track
 
 	// Try to re-connect to each outgoing stream that isn't connected
-	foreach (const QByteArray &id, peers->ids()) {
+	foreach (const QByteArray &id, peers->ids())
+	{
 		if (!outConnected(id))
 			reconnectToPeer(id);
 	}
