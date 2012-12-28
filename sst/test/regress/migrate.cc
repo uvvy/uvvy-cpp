@@ -52,7 +52,7 @@ MigrateTest::MigrateTest()
 	srvhost(&sim),
 	cli(&clihost),
 	srv(&srvhost),
-	srvs(NULL),
+	serverStream(NULL),
 	migrater(&clihost),
 	narrived(0), nmigrates(0),
 	lastmigrtime(0),
@@ -98,15 +98,15 @@ MigrateTest::MigrateTest()
 void MigrateTest::gotConnection()
 {
 	qDebug() << this << "gotConnection";
-	Q_ASSERT(srvs == NULL);
+	Q_ASSERT(serverStream == NULL);
 
-	srvs = srv.accept();
-	if (!srvs) return;
+	serverStream = srv.accept();
+	if (!serverStream) return;
 
-	srvs->listen(Stream::Unlimited);
+	serverStream->listen(Stream::Unlimited);
 
-	connect(srvs, SIGNAL(readyRead()), this, SLOT(gotData()));
-	connect(srvs, SIGNAL(readyReadMessage()), this, SLOT(gotMessage()));
+	connect(serverStream, SIGNAL(readyRead()), this, SLOT(gotData()));
+	connect(serverStream, SIGNAL(readyReadMessage()), this, SLOT(gotMessage()));
 }
 
 void MigrateTest::ping(Stream *strm)
@@ -188,7 +188,7 @@ void MigrateTest::gotTimeout()
 	link.disconnect();
 	link.connect(&clihost, newaddr, &srvhost, srvaddr);
 	curaddr = newaddr;
-	srvs->connectAt(Endpoint(newaddr, NETSTERIA_DEFAULT_PORT));
+	serverStream->connectAt(Endpoint(newaddr, NETSTERIA_DEFAULT_PORT));
 
 	// Start the next cycle...
 	starttime = clihost.currentTime();
