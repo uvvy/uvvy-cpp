@@ -59,9 +59,6 @@ MigrateTest::MigrateTest()
 	totarrived(0), lasttotarrived(0), smoothrate(0),
 	ticker(&clihost)
 {
-	// Gather simulation statistics
-	//connect(&sim, SIGNAL(eventStep()), this, SLOT(gotEventStep()));
-
 	curaddr = cliaddr;
 	link.connect(&clihost, curaddr, &srvhost, srvaddr);
 	link.setPreset(Eth10);
