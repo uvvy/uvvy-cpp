@@ -104,6 +104,8 @@ RegServer::udpDispatch(QByteArray &msg, const Endpoint &srcep)
 		return doLookup(rxs, srcep);
 	case REG_REQUEST | REG_SEARCH:
 		return doSearch(rxs, srcep);
+	case REG_REQUEST | REG_DELETE:
+		return doDelete(rxs, srcep);
 	default:
 		qDebug() << "Received message from" << srcep << "with bad request code";
 	}
@@ -374,6 +376,35 @@ RegServer::doSearch(XdrStream &rxs, const Endpoint &srcep)
 			break;
 	}
 	Q_ASSERT(nresults == 0);
+	sock.writeDatagram(resp, srcep.addr, srcep.port);
+}
+
+void
+RegServer::doDelete(XdrStream& rxs, const Endpoint& srcep)
+{
+	qDebug() << "Received delete request";
+
+	// Decode the rest of the delete request.
+	QByteArray idi, hashedNonce;
+	rxs >> idi >> hashedNonce;
+	if (rxs.status() != rxs.Ok || idi.isEmpty()) {
+		qDebug("Received invalid Delete message");
+		return;
+	}
+
+	// Lookup the initiator (caller) ID.
+	// To protect us and our clients from DoS attacks,
+	// the caller must be registered with the correct source endpoint.
+	RegRecord *reci = findCaller(srcep, idi, hashedNonce);
+	if (reci == NULL)
+		return;
+
+	bool deleteStatus = idhash.remove(idi) > 0;
+
+	// Response back notifying that the record was deleted
+	QByteArray resp;
+	XdrStream wxs(&resp, QIODevice::WriteOnly);
+	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_DELETE) << hashedNonce << deleteStatus;
 	sock.writeDatagram(resp, srcep.addr, srcep.port);
 }
 

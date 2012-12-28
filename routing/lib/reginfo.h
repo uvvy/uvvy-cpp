@@ -46,6 +46,7 @@ class Endpoint;
 #define REG_INSERT2     0x01    // Insert entry - authenticated request
 #define REG_LOOKUP      0x02    // Lookup host by ID, optionally notify
 #define REG_SEARCH      0x03    // Search entry by keyword
+#define REG_DELETE      0x04    // Remove registration record, sent by client upon exit
 
 
 // A RegInfo object represents a client-specified block of information

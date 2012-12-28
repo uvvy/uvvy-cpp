@@ -78,6 +78,7 @@ private:
 	void doInsert2(XdrStream &rxs, const Endpoint &ep);
 	void doLookup(XdrStream &rxs, const Endpoint &ep);
 	void doSearch(XdrStream &rxs, const Endpoint &ep);
+	void doDelete(XdrStream& rxs, const Endpoint& ep);
 
 	void replyInsert1(const Endpoint &ep, const QByteArray &idi,
 				const QByteArray &nhi);

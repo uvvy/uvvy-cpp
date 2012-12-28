@@ -628,5 +628,12 @@ int main(int argc, char **argv)
     int r = app.exec();
 
     // delete syncwatch;
+
+    // Disconnect from regservers
+    foreach(RegClient* cli, regclients)
+    {
+        delete cli;
+    }
+
     return r;
 }
