@@ -450,7 +450,9 @@ RegRecord::RegRecord(RegServer *srv,
 	srv->idhash[id] = this;
 	srv->allrecords += this;
 
-	qDebug() << "Registering record for" << id << "at" << ep;
+	PeerId peerid(id);
+
+	qDebug() << "Registering record for" << peerid << "at" << ep;
 
 	// Register all our keywords in the RegServer's keyword table.
 	regKeywords(true);
@@ -461,7 +463,7 @@ RegRecord::RegRecord(RegServer *srv,
 
 RegRecord::~RegRecord()
 {
-	qDebug() << "~RegRecord: deleting record for" << id;
+	qDebug() << "~RegRecord: deleting record for" << PeerId(id);
 
 	Q_ASSERT(srv->idhash.value(id) == this);
 	srv->idhash.remove(id);
@@ -488,7 +490,7 @@ RegRecord::regKeywords(bool insert)
 void
 RegRecord::timerEvent(QTimerEvent *)
 {
-	qDebug() << "Timed out record for" << id << "at" << ep;
+	qDebug() << "Timed out record for" << PeerId(id) << "at" << ep;
 
 	// Our timeout expired - just silently delete this record.
 	deleteLater();
