@@ -28,19 +28,19 @@
 using namespace SST;
 
 
-#define MIGRBYTES	(10*1024*1024)	// transfer min 1MB between migrs
+#define MIGRBYTES	(512*1024)	// transfer min 512Kib between migrs
 //#define MIGRTIME	(10*1000000)	// time between migrations
 
 //#define MAXMSGS		1000
 
-#define MAXMIGRS	10
+#define MAXMIGRS	5
 
 
-#define MINP2	0	// Minimum message size power-of-two
-#define MAXP2	16	// Minimum message size power-of-two
+#define MINP2	11	// Minimum message size power-of-two
+#define MAXP2	16	// Maximum message size power-of-two
 
 //#define MINP2	28	// Minimum message size power-of-two
-//#define MAXP2	28	// Minimum message size power-of-two
+//#define MAXP2	28	// Maximum message size power-of-two
 
 
 // Time period for bandwidth sampling
@@ -52,16 +52,13 @@ MigrateTest::MigrateTest()
 	srvhost(&sim),
 	cli(&clihost),
 	srv(&srvhost),
-	srvs(NULL),
+	serverStream(NULL),
 	migrater(&clihost),
 	narrived(0), nmigrates(0),
 	lastmigrtime(0),
 	totarrived(0), lasttotarrived(0), smoothrate(0),
 	ticker(&clihost)
 {
-	// Gather simulation statistics
-	//connect(&sim, SIGNAL(eventStep()), this, SLOT(gotEventStep()));
-
 	curaddr = cliaddr;
 	link.connect(&clihost, curaddr, &srvhost, srvaddr);
 	link.setPreset(Eth10);
@@ -98,15 +95,15 @@ MigrateTest::MigrateTest()
 void MigrateTest::gotConnection()
 {
 	qDebug() << this << "gotConnection";
-	Q_ASSERT(srvs == NULL);
+	Q_ASSERT(serverStream == NULL);
 
-	srvs = srv.accept();
-	if (!srvs) return;
+	serverStream = srv.accept();
+	if (!serverStream) return;
 
-	srvs->listen(Stream::Unlimited);
+	serverStream->listen(Stream::Unlimited);
 
-	connect(srvs, SIGNAL(readyRead()), this, SLOT(gotData()));
-	connect(srvs, SIGNAL(readyReadMessage()), this, SLOT(gotMessage()));
+	connect(serverStream, SIGNAL(readyRead()), this, SLOT(gotData()));
+	connect(serverStream, SIGNAL(readyReadMessage()), this, SLOT(gotMessage()));
 }
 
 void MigrateTest::ping(Stream *strm)
@@ -117,7 +114,7 @@ void MigrateTest::ping(Stream *strm)
 			: MAXP2;
 	QByteArray buf;
 	buf.resize(1 << p2);
-	//qDebug() << strm << "send msg size" << buf.size();
+	qDebug() << strm << "send msg size" << buf.size();
 	strm->writeMessage(buf);
 }
 
@@ -130,8 +127,11 @@ void MigrateTest::gotData()
 			return;
 
 		arrived(buf.size());
-		qDebug() << strm << "recv size" << buf.size()
-			<< "count" << narrived << "/" << MIGRBYTES;
+		qDebug() << strm << "recv size" << buf.size() << "count" << narrived << "/" << MIGRBYTES;
+
+		// Keep ping-ponging until we're done.
+		if (nmigrates < MAXMIGRS)
+			ping(strm);
 	}
 }
 
@@ -144,8 +144,7 @@ void MigrateTest::gotMessage()
 			return;
 
 		arrived(buf.size());
-		qDebug() << strm << "recv msg size" << buf.size()
-			<< "count" << narrived << "/" << MIGRBYTES;
+		qDebug() << strm << "recv msg size" << buf.size() << "count" << narrived << "/" << MIGRBYTES;
 
 		// Keep ping-ponging until we're done.
 		if (nmigrates < MAXMIGRS)
@@ -158,16 +157,15 @@ void MigrateTest::arrived(int amount)
 	// Count arrived data and use it to time the next migration.
 	int newarrived = narrived + amount;
 	if (narrived < MIGRBYTES && newarrived >= MIGRBYTES) {
-		timeperiod = clihost.currentTime().usecs
-			- starttime.usecs;
-		qDebug() << "migr" << nmigrates << "timeperiod:"
-			<< (double)timeperiod / 1000000.0;
+		timeperiod = clihost.currentTime().usecs - starttime.usecs;
+		qDebug() << "migr" << nmigrates << "migrate in" << (double)timeperiod / 1000000.0 << "secs";
 
 #ifndef MIGRTIME
 		// Wait some random addional time before migrating,
 		// to ensure that migration can happen at
 		// "unexpected moments"...
-		migrater.start(timeperiod * drand48());
+		if (nmigrates < MAXMIGRS)
+			migrater.start(timeperiod * drand48());
 #endif
 	}
 	narrived = newarrived;
@@ -188,7 +186,7 @@ void MigrateTest::gotTimeout()
 	link.disconnect();
 	link.connect(&clihost, newaddr, &srvhost, srvaddr);
 	curaddr = newaddr;
-	srvs->connectAt(Endpoint(newaddr, NETSTERIA_DEFAULT_PORT));
+	serverStream->connectAt(Endpoint(newaddr, NETSTERIA_DEFAULT_PORT));
 
 	// Start the next cycle...
 	starttime = clihost.currentTime();

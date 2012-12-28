@@ -41,7 +41,7 @@ private:
 	SimHost srvhost;
 	Stream cli;
 	StreamServer srv;
-	Stream *srvs;
+	Stream *serverStream;
 	QHostAddress curaddr;
 
 	Time starttime;
