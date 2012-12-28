@@ -85,15 +85,13 @@ RegServer::udpReadyRead()
 void
 RegServer::udpDispatch(QByteArray &msg, const Endpoint &srcep)
 {
-	qDebug("Received %d-byte message from %s:%d",
-		msg.size(), srcep.addr.toString().toAscii().data(), srcep.port);
+	qDebug() << "Received" << msg.size() << "byte message from" << srcep;
 
 	XdrStream rxs(msg);
 	quint32 magic, code;
 	rxs >> magic >> code;
 	if (rxs.status() != rxs.Ok || magic != REG_MAGIC) {
-		qDebug("Received message from %s:%d with bad magic",
-			srcep.addr.toString().toAscii().data(), srcep.port);
+		qDebug() << "Received message from" << srcep << "with bad magic";
 		return;
 	}
 
@@ -107,8 +105,7 @@ RegServer::udpDispatch(QByteArray &msg, const Endpoint &srcep)
 	case REG_REQUEST | REG_SEARCH:
 		return doSearch(rxs, srcep);
 	default:
-		qDebug("Received message from %s:%d with bad request code",
-			srcep.addr.toString().toAscii().data(), srcep.port);
+		qDebug() << "Received message from" << srcep << "with bad request code";
 	}
 }
 
@@ -147,7 +144,7 @@ RegServer::replyInsert1(const Endpoint &srcep, const QByteArray &idi, const QByt
 	XdrStream wxs(&resp, QIODevice::WriteOnly);
 	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_INSERT1) << nhi << challenge;
 	sock.writeDatagram(resp, srcep.addr, srcep.port);
-	qDebug() << this << "replyInsert1 sent to" << srcep.addr << srcep.port;
+	qDebug() << this << "replyInsert1 sent to" << srcep;
 }
 
 QByteArray
@@ -178,6 +175,8 @@ RegServer::doInsert2(XdrStream &rxs, const Endpoint &srcep)
 		qDebug("Received invalid Insert2 message");
 		return;
 	}
+
+	PeerId peerid(idi);
 
 	// The client's INSERT1 contains the hash of its nonce;
 	// the INSERT2 contains the actual nonce,
@@ -221,7 +220,7 @@ RegServer::doInsert2(XdrStream &rxs, const Endpoint &srcep)
 	// Parse the client's public key and make sure it matches its EID.
 	if (!identi.setKey(key))
 	{
-		qDebug() << "Received bad identity from client" << srcep.addr << ":" << srcep.port << "on insert"; //@todo 'srcep' only
+		qDebug() << "Received bad identity from client" << srcep << "on insert";
 		chalhash.insert(chal, QByteArray());
 		return;
 	}
@@ -234,7 +233,7 @@ RegServer::doInsert2(XdrStream &rxs, const Endpoint &srcep)
 	// Verify the client's signature using his public key.
 	if (!identi.verify(sigsha.final(), sig))
 	{
-		qDebug() << "Signature check for client" << srcep.addr << ":" << srcep.port << "failed on Insert2"; //@todo 'srcep' only
+		qDebug() << "Signature check for client" << srcep << "failed on Insert2";
 		chalhash.insert(chal, QByteArray());
 		return;
 	}
@@ -251,7 +250,7 @@ RegServer::doInsert2(XdrStream &rxs, const Endpoint &srcep)
 	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_INSERT2) << nhi << (quint32)TIMEOUT_SEC << srcep;
 	sock.writeDatagram(resp, srcep.addr, srcep.port);
 
-	qDebug() << "Inserted record for" << idi.toBase64() << "at" << srcep.addr.toString() << srcep.port;
+	qDebug() << "Inserted record for" << peerid << "at" << srcep;
 }
 
 void
@@ -370,7 +369,7 @@ RegServer::doSearch(XdrStream &rxs, const Endpoint &srcep)
 	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_SEARCH)
 		<< nhi << search << complete << nresults;
 	foreach (RegRecord *rec, results) {
-		qDebug() << "search result" << rec->id.toBase64();
+		qDebug() << "search result" << rec->id;
 		wxs << rec->id;
 		if (--nresults == 0)
 			break;
@@ -415,14 +414,13 @@ RegRecord::RegRecord(RegServer *srv,
 	// replacing any existing entry with this ID.
 	RegRecord *old = srv->idhash.value(id);
 	if (old != NULL) {
-		qDebug() << "Replacing existing record for"
-			<< id.toBase64();
+		qDebug() << "Replacing existing record for"<< id;
 		delete old;
 	}
 	srv->idhash[id] = this;
 	srv->allrecords += this;
 
-	qDebug() << "Registering record for" << id.toBase64() << "at" << ep.addr.toString() << ep.port;
+	qDebug() << "Registering record for" << id << "at" << ep;
 
 	// Register all our keywords in the RegServer's keyword table.
 	regKeywords(true);
@@ -433,7 +431,7 @@ RegRecord::RegRecord(RegServer *srv,
 
 RegRecord::~RegRecord()
 {
-	qDebug() << "~RegRecord: deleting record for" << id.toBase64();
+	qDebug() << "~RegRecord: deleting record for" << id;
 
 	Q_ASSERT(srv->idhash.value(id) == this);
 	srv->idhash.remove(id);
@@ -460,7 +458,7 @@ RegRecord::regKeywords(bool insert)
 void
 RegRecord::timerEvent(QTimerEvent *)
 {
-	qDebug() << "Timed out record for" << id.toBase64() << "at" << ep.addr.toString() << ep.port;
+	qDebug() << "Timed out record for" << id << "at" << ep;
 
 	// Our timeout expired - just silently delete this record.
 	deleteLater();
