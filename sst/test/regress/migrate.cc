@@ -117,7 +117,7 @@ void MigrateTest::ping(Stream *strm)
 			: MAXP2;
 	QByteArray buf;
 	buf.resize(1 << p2);
-	//qDebug() << strm << "send msg size" << buf.size();
+	qDebug() << strm << "send msg size" << buf.size();
 	strm->writeMessage(buf);
 }
 
@@ -130,8 +130,7 @@ void MigrateTest::gotData()
 			return;
 
 		arrived(buf.size());
-		qDebug() << strm << "recv size" << buf.size()
-			<< "count" << narrived << "/" << MIGRBYTES;
+		qDebug() << strm << "recv size" << buf.size() << "count" << narrived << "/" << MIGRBYTES;
 	}
 }
 
@@ -144,8 +143,7 @@ void MigrateTest::gotMessage()
 			return;
 
 		arrived(buf.size());
-		qDebug() << strm << "recv msg size" << buf.size()
-			<< "count" << narrived << "/" << MIGRBYTES;
+		qDebug() << strm << "recv msg size" << buf.size() << "count" << narrived << "/" << MIGRBYTES;
 
 		// Keep ping-ponging until we're done.
 		if (nmigrates < MAXMIGRS)
@@ -158,10 +156,8 @@ void MigrateTest::arrived(int amount)
 	// Count arrived data and use it to time the next migration.
 	int newarrived = narrived + amount;
 	if (narrived < MIGRBYTES && newarrived >= MIGRBYTES) {
-		timeperiod = clihost.currentTime().usecs
-			- starttime.usecs;
-		qDebug() << "migr" << nmigrates << "timeperiod:"
-			<< (double)timeperiod / 1000000.0;
+		timeperiod = clihost.currentTime().usecs - starttime.usecs;
+		qDebug() << "migr" << nmigrates << "migrate in" << (double)timeperiod / 1000000.0 << "secs";
 
 #ifndef MIGRTIME
 		// Wait some random addional time before migrating,
