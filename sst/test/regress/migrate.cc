@@ -164,7 +164,8 @@ void MigrateTest::arrived(int amount)
 		// Wait some random addional time before migrating,
 		// to ensure that migration can happen at
 		// "unexpected moments"...
-		migrater.start(timeperiod * drand48());
+		if (nmigrates < MAXMIGRS)
+			migrater.start(timeperiod * drand48());
 #endif
 	}
 	narrived = newarrived;
