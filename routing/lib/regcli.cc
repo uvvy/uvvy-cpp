@@ -310,7 +310,7 @@ void RegClient::gotLookupReply(XdrStream &rs, bool isnotify)
 
 	// Otherwise, it should be a response to a lookup request.
 	if (!(lookups.contains(targetid) || punches.contains(targetid))) {
-		//qDebug("RegClient: useless Lookup result");
+		qDebug() << this << "useless Lookup result";
 		return;
 	}
 	qDebug() << this << "processed Lookup for" << PeerId(targetid);
