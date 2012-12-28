@@ -401,11 +401,13 @@ RegServer::doDelete(XdrStream& rxs, const Endpoint& srcep)
 
 	bool deleteStatus = idhash.remove(idi) > 0;
 
-	// Response back notifying that the record was deleted
+	// Response back notifying that the record was deleted.
 	QByteArray resp;
 	XdrStream wxs(&resp, QIODevice::WriteOnly);
 	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_DELETE) << hashedNonce << deleteStatus;
 	sock.writeDatagram(resp, srcep.addr, srcep.port);
+
+	// XX Need to notify active listeners of the search results that one of the results is gone.
 }
 
 RegRecord*
