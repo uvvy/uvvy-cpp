@@ -10,3 +10,4 @@ target_link_libraries(sstregress sst_test sst routing ${QT_LIBRARIES} ${OPENSSL_
 install(TARGETS sstregress
 	RUNTIME DESTINATION tests)
 
+add_test(test_sstregress_basic sstregress basic)
