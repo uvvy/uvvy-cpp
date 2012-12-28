@@ -235,8 +235,7 @@ void RegClient::sendInsert2()
 	// Send our Insert2 message
 	QByteArray msg;
 	XdrStream ws(&msg, QIODevice::WriteOnly);
-	ws << REG_MAGIC << (quint32)(REG_REQUEST | REG_INSERT2)
-		<< idi << ni << chal << inf.encode() << key << sig;
+	ws << REG_MAGIC << (quint32)(REG_REQUEST | REG_INSERT2) << idi << ni << chal << inf.encode() << key << sig;
 	send(msg);
 }
 
@@ -283,8 +282,7 @@ void RegClient::sendLookup(const PeerId& idtarget, bool notify)
 	// Prepare the Lookup message
 	QByteArray msg;
 	XdrStream ws(&msg, QIODevice::WriteOnly);
-	ws << REG_MAGIC << (quint32)(REG_REQUEST | REG_LOOKUP)
-		<< idi << nhi << idtarget.getId() << notify;
+	ws << REG_MAGIC << (quint32)(REG_REQUEST | REG_LOOKUP) << idi << nhi << idtarget.getId() << notify;
 	send(msg);
 }
 
@@ -335,8 +333,7 @@ void RegClient::sendSearch(const QString &text)
 	// Prepare the Lookup message
 	QByteArray msg;
 	XdrStream ws(&msg, QIODevice::WriteOnly);
-	ws << REG_MAGIC << (quint32)(REG_REQUEST | REG_SEARCH)
-		<< idi << nhi << text;
+	ws << REG_MAGIC << (quint32)(REG_REQUEST | REG_SEARCH) << idi << nhi << text;
 	send(msg);
 }
 
