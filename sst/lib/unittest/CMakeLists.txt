@@ -9,4 +9,4 @@ target_link_libraries(test_base32 sst ${Boost_LIBRARIES} ${QT_LIBRARIES})
 install(TARGETS test_base32
     RUNTIME DESTINATION tests/unittests)
 
-add_test(test_base32 test_base32)
+add_test(base32 test_base32)
