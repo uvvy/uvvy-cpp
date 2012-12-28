@@ -131,6 +131,10 @@ void MigrateTest::gotData()
 
 		arrived(buf.size());
 		qDebug() << strm << "recv size" << buf.size() << "count" << narrived << "/" << MIGRBYTES;
+
+		// Keep ping-ponging until we're done.
+		if (nmigrates < MAXMIGRS)
+			ping(strm);
 	}
 }
 
