@@ -339,7 +339,7 @@ RegServer::doSearch(XdrStream &rxs, const Endpoint &srcep)
 			minkw = kw;
 		}
 	}
-	//qDebug() << "Min keyword" << minkw << "set size" << mincount;
+	qDebug() << "Min keyword" << minkw << "set size" << mincount;
 
 	// From there, narrow the minset further for each keyword.
 	foreach (QString kw, kwords) {
