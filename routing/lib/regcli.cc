@@ -80,6 +80,9 @@ void RegClient::disconnect()
 	if (state == Idle)
 		return;
 
+	qDebug() << this << "disconnect called in non-Idle state *+*+*+*+*+*+*";
+	sendDelete();
+
 	// Fail all outstanding lookup and search requests
 	// XX provide a better error indication?
 	foreach (const PeerId &id, lookups)
@@ -371,6 +374,22 @@ void RegClient::gotSearchReply(XdrStream &rs)
 	searchDone(text, ids, complete);
 }
 
+void RegClient::sendDelete()
+{
+	qDebug() << "RegClient: send delete notice";
+
+	// Prepare the Delete message
+	QByteArray msg;
+	XdrStream ws(&msg, QIODevice::WriteOnly);
+	ws << REG_MAGIC << (quint32)(REG_REQUEST | REG_DELETE) << idi << nhi;
+	send(msg);
+}
+
+void RegClient::gotDeleteReply(XdrStream &rs)
+{
+	// Ignore.
+}
+
 void RegClient::send(const QByteArray &msg)
 {
 	// Send the message to all addresses we know for the server,
@@ -405,8 +424,7 @@ void RegClient::timeout(bool failed)
 		break;
 	case Registered:
 		// Timeout on a Lookup or Search.
-		if (lookups.isEmpty() && punches.isEmpty()
-				&& searches.isEmpty()) {
+		if (lookups.isEmpty() && punches.isEmpty() && searches.isEmpty()) {
 			// Nothing to do - don't bother with the timer.
 			retrytimer.stop();
 		} else if (failed) {
@@ -479,6 +497,8 @@ void RegReceiver::receive(QByteArray &, XdrStream &rs,
 		return cli->gotLookupReply(rs, false);
 	case REG_RESPONSE | REG_SEARCH:
 		return cli->gotSearchReply(rs);
+	case REG_RESPONSE | REG_DELETE:
+		return cli->gotDeleteReply(rs);
 	case REG_NOTIFY | REG_LOOKUP:
 		return cli->gotLookupReply(rs, true);
 	default:

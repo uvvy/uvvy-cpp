@@ -155,6 +155,9 @@ private:
 	void sendSearch(const QString &text);
 	void gotSearchReply(XdrStream &rs);
 
+	void sendDelete();
+	void gotDeleteReply(XdrStream &rs);
+
 	void send(const QByteArray &msg);
 
 
