@@ -417,7 +417,7 @@ RegServer::findCaller(const Endpoint &ep, const QByteArray &idi, const QByteArra
 		return NULL;
 	}
 	if (ep != reci->ep) {
-		qDebug("Received request from wrong source endpoint");
+		qDebug() << "Received request from wrong source endpoint" << ep << "expecting" << reci->ep;
 		return NULL;
 	}
 	if (nhi != reci->nhi) {
