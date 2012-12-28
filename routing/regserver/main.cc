@@ -352,8 +352,7 @@ RegServer::doSearch(XdrStream &rxs, const Endpoint &srcep)
 	qDebug() << "Minset size" << minset.size();
 
 	// If client supplied no keywords, (try to) return all records.
-	const QSet<RegRecord*> &results
-		= kwords.isEmpty() ? allrecords : minset;
+	const QSet<RegRecord*>& results = kwords.isEmpty() ? allrecords : minset;
 
 	// Limit the set of results to at most MAX_RESULTS.
 	qint32 nresults = results.size();
@@ -397,9 +396,9 @@ RegServer::findCaller(const Endpoint &ep, const QByteArray &idi, const QByteArra
 	return reci;
 }
 
-
-
+//=====================================================================================================================
 // RegRecord implementation
+//=====================================================================================================================
 
 RegRecord::RegRecord(RegServer *srv,
 		const QByteArray &id, const QByteArray &nhi,
