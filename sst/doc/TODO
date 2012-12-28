@@ -36,7 +36,8 @@ Renaming and restructuring to do at some point (tentative list):
      Might help avoid confusion between "Message" and "Datagram".
 
 Qt wishlist for SST:
- ☐ Base64 conversion flags for URL-safe and/or '='-padding free variants.
+ ✔ Base64 conversion flags for URL-safe and/or '='-padding free variants. @done (12-12-24 23:19)
+     Used base32 instead.
  ☐ QTimer hooks allowing time virtualization for simulation purposes.
  ☐ Make *Datagram calls in QUdpSocket virtual, or else support custom NetworkProxy extensions for virtualizing the network.
  ☐ Make QAbstractSocket a "real" abstract base class that can be subclassed for reasons other than to wrap a different kind of native socket.
