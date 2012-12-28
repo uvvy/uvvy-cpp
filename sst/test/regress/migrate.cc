@@ -28,19 +28,19 @@
 using namespace SST;
 
 
-#define MIGRBYTES	(10*1024*1024)	// transfer min 1MB between migrs
+#define MIGRBYTES	(512*1024)	// transfer min 512Kib between migrs
 //#define MIGRTIME	(10*1000000)	// time between migrations
 
 //#define MAXMSGS		1000
 
-#define MAXMIGRS	10
+#define MAXMIGRS	5
 
 
-#define MINP2	0	// Minimum message size power-of-two
-#define MAXP2	16	// Minimum message size power-of-two
+#define MINP2	11	// Minimum message size power-of-two
+#define MAXP2	16	// Maximum message size power-of-two
 
 //#define MINP2	28	// Minimum message size power-of-two
-//#define MAXP2	28	// Minimum message size power-of-two
+//#define MAXP2	28	// Maximum message size power-of-two
 
 
 // Time period for bandwidth sampling
