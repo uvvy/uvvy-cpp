@@ -80,7 +80,7 @@ void RegClient::disconnect()
 	if (state == Idle)
 		return;
 
-	qDebug() << this << "disconnect called in non-Idle state *+*+*+*+*+*+*";
+	qDebug() << this << "disconnect";
 	sendDelete();
 
 	// Fail all outstanding lookup and search requests
@@ -156,7 +156,7 @@ void RegClient::resolveDone(const QHostInfo &hi)
 	addrs = hi.addresses();
 	if (addrs.isEmpty())
 		return fail(hi.errorString());
-	qDebug() << "RegClient: primary server address:" << addrs[0].toString();
+	qDebug() << this << "primary server address" << addrs[0].toString();
 
 	goInsert1();
 }
@@ -197,7 +197,7 @@ void RegClient::gotInsert1Reply(XdrStream &rs)
 	// Decode the rest of the reply
 	rs >> chal;
 	if (rs.status() != rs.Ok) {
-		qDebug("RegClient: got invalid Insert1 reply");
+		qDebug() << this << "got invalid Insert1 reply";
 		return;
 	}
 
@@ -208,7 +208,7 @@ void RegClient::gotInsert1Reply(XdrStream &rs)
 
 void RegClient::goInsert2()
 {
-	qDebug("Insert2");
+	qDebug() << this << "Insert2";
 
 	// Find our serialized public key to send to the server.
 	Ident identi = h->hostIdent();
@@ -230,7 +230,7 @@ void RegClient::goInsert2()
 
 void RegClient::sendInsert2()
 {
-	qDebug("Insert2 reply");
+	qDebug() << this << "Insert2 reply";
 
 	// Send our Insert2 message
 	QByteArray msg;
@@ -246,7 +246,7 @@ void RegClient::gotInsert2Reply(XdrStream &rs)
 	Endpoint pubEp;
 	rs >> lifeSecs >> pubEp;
 	if (rs.status() != rs.Ok) {
-		qDebug("RegClient: got invalid Insert2 reply");
+		qDebug() << this << "got invalid Insert2 reply";
 		return;
 	}
 
@@ -258,8 +258,8 @@ void RegClient::gotInsert2Reply(XdrStream &rs)
 	reregtimer.start(rereg);
 
 	// Notify anyone interested.
-	qDebug() << "RegClient: registered with" << srvname << "for" << lifeSecs << "seconds";
-	qDebug() << "  My public endpoint:" << pubEp.toString();
+	qDebug() << this << "registered with" << srvname << "for" << lifeSecs << "seconds";
+	qDebug() << this << "my public endpoint" << pubEp.toString();
 	stateChanged();
 }
 
@@ -277,7 +277,7 @@ void RegClient::lookup(const PeerId& idtarget, bool notify)
 
 void RegClient::sendLookup(const PeerId& idtarget, bool notify)
 {
-	qDebug() << "RegClient: send lookup for ID" << idtarget;
+	qDebug() << this << "send lookup for ID" << idtarget;
 
 	// Prepare the Lookup message
 	QByteArray msg;
@@ -298,7 +298,7 @@ void RegClient::gotLookupReply(XdrStream &rs, bool isnotify)
 	if (success)
 		rs >> targetloc >> targetinfo;
 	if (rs.status() != rs.Ok) {
-		qDebug("RegClient: got invalid Lookup reply");
+		qDebug() << this << "got invalid Lookup reply";
 		return;
 	}
 	RegInfo reginfo(targetinfo);
@@ -313,7 +313,7 @@ void RegClient::gotLookupReply(XdrStream &rs, bool isnotify)
 		//qDebug("RegClient: useless Lookup result");
 		return;
 	}
-	qDebug() << this << "processed Lookup for" << targetid.toBase64();
+	qDebug() << this << "processed Lookup for" << PeerId(targetid);
 	lookups.remove(targetid);
 	punches.remove(targetid);
 	lookupDone(targetid, targetloc, reginfo);
@@ -345,7 +345,7 @@ void RegClient::gotSearchReply(XdrStream &rs)
 	qint32 nresults;
 	rs >> text >> complete >> nresults;
 	if (rs.status() != rs.Ok || nresults < 0) {
-		qDebug("RegClient: got invalid Search reply");
+		qDebug() << this << "got invalid Search reply";
 		return;
 	}
 
@@ -361,7 +361,7 @@ void RegClient::gotSearchReply(XdrStream &rs)
 		QByteArray id;
 		rs >> id;
 		if (rs.status() != rs.Ok) {
-			qDebug("RegClient: got invalid Search result ID");
+			qDebug() << this << "got invalid Search result ID";
 			return;
 		}
 		ids.append(id);
@@ -373,7 +373,7 @@ void RegClient::gotSearchReply(XdrStream &rs)
 
 void RegClient::sendDelete()
 {
-	qDebug() << "RegClient: send delete notice";
+	qDebug() << this << "send delete notice";
 
 	// Prepare the Delete message
 	QByteArray msg;
@@ -385,6 +385,7 @@ void RegClient::sendDelete()
 void RegClient::gotDeleteReply(XdrStream &rs)
 {
 	// Ignore.
+	qDebug() << this << "got delete reply, ignored";
 }
 
 void RegClient::send(const QByteArray &msg)
@@ -394,7 +395,7 @@ void RegClient::send(const QByteArray &msg)
 	// XXX should only do this during initial discovery!!
 	QList<Socket*> socks = h->activeSockets();
 	if (socks.isEmpty())
-		qWarning("RegClient: no active network sockets available");
+		qWarning() << this << "no active network sockets available";
 	foreach (Socket *sock, socks)
 		foreach (QHostAddress addr, addrs)
 			sock->send(Endpoint(addr, srvport), msg);
@@ -467,20 +468,20 @@ void RegReceiver::receive(QByteArray &, XdrStream &rs,
 	QByteArray nhi;
 	rs >> code >> nhi;
 	if (rs.status() != rs.Ok) {
-		qDebug("RegReceiver: received invalid message");
+		qDebug() << this << "received invalid message";
 		return;
 	}
 
 	// Find the appropriate client
 	RegClient *cli = nhihash.value(nhi);
 	if (!cli) {
-		qDebug("RegReceiver: received message for nonexistent client");
+		qDebug() << this << "received message for nonexistent client";
 		return;
 	}
 
 	// Make sure this message comes from one of the server's addresses
 	if (cli->addrs.indexOf(src.addr) < 0 || src.port != cli->srvport) {
-		qDebug("RegReceiver: received message from wrong endpoint");
+		qDebug() << this << "received message from wrong endpoint" << src;
 		return;
 	}
 
@@ -499,7 +500,7 @@ void RegReceiver::receive(QByteArray &, XdrStream &rs,
 	case REG_NOTIFY | REG_LOOKUP:
 		return cli->gotLookupReply(rs, true);
 	default:
-		qDebug("RegReceiver: bad message code %d", code);
+		qDebug() << this << "bad message code" << code;
 	}
 }
 
