@@ -424,8 +424,7 @@ void RegClient::timeout(bool failed)
 		break;
 	case Registered:
 		// Timeout on a Lookup or Search.
-		if (lookups.isEmpty() && punches.isEmpty()
-				&& searches.isEmpty()) {
+		if (lookups.isEmpty() && punches.isEmpty() && searches.isEmpty()) {
 			// Nothing to do - don't bother with the timer.
 			retrytimer.stop();
 		} else if (failed) {
