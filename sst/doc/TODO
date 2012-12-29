@@ -1,8 +1,8 @@
 SST unfinished business:
  ☐ make regression tests pass and not crash
-   ☐ dgram - passed
-   ☐ migrate - sigsegv
-   ☐ basic - passed or sigsegv
+   ✔ dgram - passed @done (12-12-29 00:54)
+   ✔ migrate - passed @done (12-12-29 00:54)
+   ✔ basic - passed @done (12-12-29 00:54)
    ☐ seg - rtxTimeout - FAILED period 20000000
    ☐ all - gets stuck in seg test
  ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
