@@ -1337,7 +1337,7 @@ bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 
 /**
  * Received a reset packet, forcefully reset stream.
- * @todo
+ * @todo Implement!
  * @param  pktseq [description]
  * @param  pkt    [description]
  * @param  flow   [description]

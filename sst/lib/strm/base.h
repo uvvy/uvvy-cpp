@@ -318,17 +318,7 @@ public:
 	 * @param service the service name to connect to on the remote host.
 	 *		This parameter replaces the port number
 	 *		that TCP traditionally uses to differentiate services.
-	 * @param dstep	an optional location hint
-	 *		for SST to use in attempting to contact the host.
-	 *		If the dstid parameter is a cryptographic EID,
-	 *		which is inherently location-independent,
-	 *		SST may need a location hint to find the remote host
-	 *		if this host and the remote host are not currently
-	 *		registered at a common registration server,
-	 *		for example.
-	 *		This parameter is not needed
-	 *		if the dstid is a non-cryptographic legacy address.
-	 * @see Ident
+	 * @param protocol the protocol name implemented by this service.
 	 */
 	void connectTo(const QString &service, const QString &protocol);
 

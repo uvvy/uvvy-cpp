@@ -209,7 +209,7 @@ public:
 
 signals:
 	/** Signaled when the timer expires.
-	 * @param failure true if the hard failure deadline has been reached.
+	 * @param failed true if the hard failure deadline has been reached.
 	 */
 	void timeout(bool failed);
 };
@@ -255,7 +255,7 @@ public:
 
 	/** Create a TimerEngine.
 	 * May be overridden to virtualize the behavior of timers.
-	 * @param the Timer for which this TimerEngine is needed.
+	 * @param timer Timer for which this TimerEngine is needed.
 	 * @return the new TimerEngine. */
 	virtual TimerEngine *newTimerEngine(Timer *timer);
 };

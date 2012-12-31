@@ -131,9 +131,14 @@ public:
 
 	/** Send a packet on this socket.
 	 * @param ep the destination address to send the packet to
-	 * @param msg the packet data
+	 * @param data the packet data
 	 * @return true if send was successful */
 	virtual bool send(const Endpoint &ep, const char *data, int size) = 0;
+
+	/** Send a packet on this socket.
+	 * @param ep the destination address to send the packet to
+	 * @param msg the packet data
+	 * @return true if send was successful */
 	inline bool send(const Endpoint &ep, const QByteArray &msg)
 		{ return send(ep, msg.constData(), msg.size()); }
 
@@ -387,7 +392,6 @@ public:
 	 * This function only creates one socket
 	 * no matter how many times it is called.
 	 * It exits the application via qFatal() if socket creation fails.
-	 * @param host the Host instance the socket should be attached to.
 	 * @param settings if non-NULL, init() looks for a 'port' tag
 	 *	and uses it in place of the specified default port if found.
 	 *	In any case, sets the 'port' tag to the port actually used.

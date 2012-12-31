@@ -457,7 +457,7 @@ public:
      * Specify a mode of @a Reset to shutdown the stream immediately;
      * written data that is still queued or in transit may be lost.
      *
-     * @param dir which part of the stream to close:
+     * @param mode which part of the stream to close:
      *      either Read, Write, Close (same as Read|Write),
      *      or Reset.
      */
@@ -653,7 +653,7 @@ public:
      * @param serviceName the service name on which to listen.
      *      Clients must specify the same service name
      *      via connectTo() to connect to this server.
-     * @param serviceDescr a short human-readable service description
+     * @param serviceDesc a short human-readable service description
      *      for use for example by utilities that
      *      browse or control the set of services running
      *      on a particular host.

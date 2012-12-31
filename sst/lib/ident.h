@@ -237,7 +237,7 @@ public:
 	static Ident fromIpAddress(const QHostAddress &addr, quint16 port = 0);
 
 	/** Extract the host address part of an identifier in the IP scheme.
-	 * @param port if non-NULL, location to receive optional port number.
+	 * @param out_port if non-NULL, location to receive optional port number.
 	 * @return an IPv4 or an IPv6 address. */
 	QHostAddress ipAddress(quint16 *out_port = NULL);
 

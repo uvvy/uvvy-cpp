@@ -58,7 +58,6 @@ signals:
     /**
      * An OK reply was sent.
      * @param r The sender of the request
-     * @param data The data of the reply
      */
     void result(HTTPRequest* r);
 
