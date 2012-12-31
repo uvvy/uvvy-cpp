@@ -7,6 +7,11 @@ find_package(Qt4 REQUIRED)
 find_package(OpenSSL REQUIRED)
 
 option(BUILD_TESTS "Build various tests and test programs." OFF)
+option(CLANG "Build using clang." OFF)
+
+if (CLANG)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation -std=c++11 -fsanitize=address")
+endif (CLANG)
 
 # How to run rpcgen to build XDR stubs
 macro(WRAP_RPC_SOURCES name sources)
