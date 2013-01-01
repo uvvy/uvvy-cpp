@@ -18,7 +18,7 @@ Most immediate usability necessities:
    ☐ proper stream ID allocation & assignment
    ☐ implement and use sequencing barriers properly (spec 3.4.1)
  ☐ specify and fix negotiation protocol format
- ☐ registration protocol: specify, add explicit deregistration on shutdown
+ ✔ registration protocol: specify, add explicit deregistration on shutdown @done (12-12-31 17:31)
     ☐ would be nice to move registration protocol details to the routing lib if possible?
         move started, but there are still deps on SST::Host
 
