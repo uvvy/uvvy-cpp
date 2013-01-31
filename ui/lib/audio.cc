@@ -176,7 +176,7 @@ void Audio::setInputDevice(const QString &name)
 			return;
 		}
 	}
-	qWarning("Audio: unknown input device %s", name.toLocal8Bit().data());
+	qWarning() << "Audio: unknown input device" << name;
 }
 
 void Audio::setOutputDevice(const QString &name)
@@ -187,7 +187,7 @@ void Audio::setOutputDevice(const QString &name)
 			return;
 		}
 	}
-	qWarning("Audio: unknown output device %s", name.toLocal8Bit().data());
+	qWarning() << "Audio: unknown output device" << name;
 }
 
 int Audio::inChannels(int dev)
@@ -264,6 +264,8 @@ void Audio::open()
 	if (!inena && !outena)
 		return;
 
+	qDebug() << "In streams:" << instreams.size() << " Out streams:" << outstreams.size();
+
 	// Use the maximum rate requested by any of our streams,
 	// and the minimum framesize requested by any of our streams,
 	// to maximize quality and minimize buffering latency.
@@ -282,7 +284,7 @@ void Audio::open()
 	// XXX check against rates supported by devices,
 	// resample if necessary...
 
-	qWarning() << "Open audio:"
+	qDebug() << "Open audio:"
 		<< "input:" << indev << deviceName(indev) << (inena ? "enable" : "disable")
 		<< "*;* output:" << outdev << deviceName(outdev) << (outena ? "enable" : "disable");
 
@@ -294,6 +296,8 @@ void Audio::open()
 	outparam.nChannels = AudioOutput::nChannels;
 	unsigned int bufferFrames = minframesize;
 
+	qDebug() << "Open input params: dev " << indev << " nChans " << inparam.nChannels << " rate " << maxrate << " minframesize " << minframesize;
+
 	try {
 		audio_inst->openStream(outena ? &outparam : NULL, inena ? &inparam : NULL, RTAUDIO_FLOAT32, maxrate, &bufferFrames, rtcallback);
 	}
@@ -304,6 +308,8 @@ void Audio::open()
 
 	hwrate = maxrate;
 	hwframesize = bufferFrames;
+
+	qDebug() << "Open resulting hwrate" << hwrate << "framesize" << hwframesize;
 
 	audio_inst->startStream();
 }
@@ -525,6 +531,7 @@ AbstractAudioInput::AbstractAudioInput(int framesize, double samplerate,
 
 void AbstractAudioInput::setEnabled(bool enabling)
 {
+	qWarning() << __PRETTY_FUNCTION__ << enabling;
 	if (enabling && !enabled()) {
 		if (frameSize() <= 0 || sampleRate() <= 0) {
 			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
@@ -565,6 +572,7 @@ AbstractAudioOutput::AbstractAudioOutput(int framesize, double samplerate,
 
 void AbstractAudioOutput::setEnabled(bool enabling)
 {
+	qWarning() << __PRETTY_FUNCTION__ << enabling;
 	if (enabling && !enabled()) {
 		if (frameSize() <= 0 || sampleRate() <= 0) {
 			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
@@ -766,8 +774,8 @@ void AudioOutput::reset()
 ////////// AudioLoop //////////
 
 AudioLoop::AudioLoop(QObject *parent)
-:	AudioStream(parent),
-	delay(2.0)
+	: AudioStream(parent)
+	, delay(2.0)
 {
 	connect(&in, SIGNAL(readyRead()), this, SLOT(inReadyRead()));
 }
