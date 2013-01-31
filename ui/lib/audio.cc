@@ -28,8 +28,8 @@ QList<AbstractAudioOutput*> Audio::outstreams;	// Enabled output streams
 QString Audio::errmsg;
 
 static RtAudio *audio_inst;
-static double parate;
-static int paframesize;
+static double hwrate;
+static int hwframesize;
 
 static int inlev, outlev;
 
@@ -302,8 +302,8 @@ void Audio::open()
     	return;
     }
 
-	parate = maxrate;
-	paframesize = bufferFrames;
+	hwrate = maxrate;
+	hwframesize = bufferFrames;
 
 	audio_inst->startStream();
 }
@@ -351,7 +351,7 @@ int Audio::rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
 {
 	// A PortAudio "frame" is one sample per channel,
 	// whereas our "frame" is one buffer worth of data (as in Speex).
-	Q_ASSERT(nFrames == paframesize);
+	Q_ASSERT(nFrames == hwframesize);
 
 	qWarning() << "rtcallback, inputBuffer" << inputBuffer << ", outputBuffer" << outputBuffer << ", nframes" << nFrames;
 
@@ -376,8 +376,9 @@ void Audio::sendin(const float *inbuf)
 	// Broadcast the audio input to all listening input streams
 	for (int i = 0; i < instreams.size(); i++) {
 		AbstractAudioInput *ins = instreams[i];
-		if (ins->rate == parate && ins->framesize == paframesize) {
+		if (ins->rate == hwrate && ins->framesize == hwframesize) {
 			// The easy case - no buffering or resampling needed.
+			qDebug() << "sendin captured signal";
 			ins->acceptInput(inbuf);
 			continue;
 		}
@@ -394,20 +395,22 @@ void Audio::mixout(float *outbuf)
 		qDebug() << "Audio:" << (oldnout = nout) << "output streams";
 
 	if (nout == 0) {	// Nothing playing
-		for (int i = 0; i < paframesize; i++)
+		for (int i = 0; i < hwframesize; i++)
 			outbuf[i] = 0.0;
 		setOutputLevel(0);
 		return;
 	}
 
+	qDebug() << "mixout playback signal";
+
 	// Produce the first output stream's data directly into outbuf.
 	outstreams[0]->getOutput(outbuf);
 
 	// Mix any other streams into it.
-	float encbuf[paframesize];
+	float encbuf[hwframesize];
 	for (int i = 1; i < nout; i++) {
 		outstreams[i]->getOutput(encbuf);
-		for (int j = 0; j < paframesize; j++)
+		for (int j = 0; j < hwframesize; j++)
 			outbuf[j] += encbuf[j];
 	}
 
@@ -420,7 +423,7 @@ void Audio::mixout(float *outbuf)
 int Audio::computeLevel(const float *buf)
 {
 	float lev = 0.0;
-	for (int i = 0; i < paframesize; i++) {
+	for (int i = 0; i < hwframesize; i++) {
 		float l = buf[i];
 		//lev = qMax(lev, l >= 0 ? l : -l);
 		lev = qMax(lev, qAbs(l));
@@ -532,7 +535,7 @@ void AbstractAudioInput::setEnabled(bool enabling)
 		bool wasempty = Audio::instreams.isEmpty();
 		Audio::instreams.append(this);
 		AudioStream::setEnabled(true);
-		if (wasempty || parate < sampleRate())
+		if (wasempty || hwrate < sampleRate())
 			Audio::reopen(); // (re-)open at suitable rate
 
 	} else if (!enabling && enabled()) {
@@ -572,7 +575,7 @@ void AbstractAudioOutput::setEnabled(bool enabling)
 		bool wasempty = Audio::outstreams.isEmpty();
 		Audio::outstreams.append(this);
 		AudioStream::setEnabled(true);
-		if (wasempty || parate < sampleRate())
+		if (wasempty || hwrate < sampleRate())
 			Audio::reopen(); // (re-)open at suitable rate
 
 	} else if (!enabling && enabled()) {
@@ -586,8 +589,8 @@ void AbstractAudioOutput::setEnabled(bool enabling)
 
 void AbstractAudioOutput::getOutput(float *buf)
 {
-	Q_ASSERT(sampleRate() == parate);	// XXX
-	Q_ASSERT(frameSize() == paframesize);
+	Q_ASSERT(sampleRate() == hwrate);	// XXX
+	Q_ASSERT(frameSize() == hwframesize);
 	produceOutput(buf);
 }
 
