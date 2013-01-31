@@ -36,7 +36,7 @@ static int inlev, outlev;
 static AudioInputMonitor *inmon;
 
 
-static const int monSampleRate = 8000;
+static const int monSampleRate = 48000;
 static const int monFrameSize = 160;
 
 
