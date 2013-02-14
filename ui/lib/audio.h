@@ -127,19 +127,19 @@ public:
     AudioStream(QObject *parent);
     virtual ~AudioStream();
 
-    // Enable or disable this stream.
+    /// Enable or disable this stream.
     inline bool enabled() { return enab; }
     virtual void setEnabled(bool enable);
     inline void enable() { setEnabled(true); }
     inline void disable() { setEnabled(false); }
 
-    // Get or set the frame size of this stream.
-    // Frame size may only be changed while stream is disabled.
+    /// Get or set the frame size of this stream.
+    /// Frame size may only be changed while stream is disabled.
     inline int frameSize() { return framesize; }
     void setFrameSize(int framesize); 
 
-    // Get or set the sample rate for this stream.
-    // Sampling rate may only be changed while stream is disabled.
+    /// Get or set the sample rate for this stream.
+    /// Sampling rate may only be changed while stream is disabled.
     inline double sampleRate() { return rate; }
     void setSampleRate(double samplerate);
 };
@@ -163,9 +163,11 @@ public:
     static const int nChannels = 1;
 
 protected:
-    // Accept audio input data received from the sound hardware.
-    // This method is typically called from a dedicated audio thread,
-    // so the subclass must handle multithread synchronization!
+    /**
+     * Accept audio input data received from the sound hardware.
+     * This method is typically called from a dedicated audio thread,
+     * so the subclass must handle multithread synchronization!
+     */
     virtual void acceptInput(const float *buf) = 0;
 };
 
@@ -188,14 +190,18 @@ public:
     static const int nChannels = 1;
 
 protected:
-    // Produce a frame of audio data to be sent to the sound hardware.
-    // This method is typically called from a dedicated audio thread,
-    // so the subclass must handle multithread synchronization!
+    /**
+     * Produce a frame of audio data to be sent to the sound hardware.
+     * This method is typically called from a dedicated audio thread,
+     * so the subclass must handle multithread synchronization!
+     */
     virtual void produceOutput(float *buf) = 0;
 
 private:
-    // Get output from client, resampling and/or buffering it as necessary
-    // to match Audio::parate and Audio::paframesize.
+    /**
+     * Get output from client, resampling and/or buffering it as necessary
+     * to match hwrate and hwframesize (in audio.cc).
+     */
     void getOutput(float *buf);
 };
 
