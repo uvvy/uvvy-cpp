@@ -14,6 +14,7 @@ Second:
 
 Third:
  ☐ since there is no naming/routing we should limit work to LAN only.
+ ☐ LAN/Bonjour node discovery.
 
 Fourth:
  ☐ synchronize arbitrary file chunks and their metadata between devices in the cluster (hardcoded for start).
