@@ -29,8 +29,8 @@ private:
 	QTableWidget *results;
 
 	QString searchtext;
-	QHash<QByteArray, int> reqids;
-	QList<QByteArray> resultids;
+	QHash<SST::PeerId, int> reqids;
+	QList<SST::PeerId> resultids;
 
 public:
 	SearchDialog(QWidget *parent);
@@ -44,9 +44,7 @@ private:
 
 private slots:
 	void startSearch();
-	void searchDone(const QString &text, const QList<QByteArray> ids,
-			bool complete);
-	void lookupDone(const QByteArray &id, const Endpoint &loc,
-			const RegInfo &info);
+	void searchDone(const QString &text, const QList<SST::PeerId> ids, bool complete);
+	void lookupDone(const SST::PeerId &id, const Endpoint &loc, const RegInfo &info);
 	void addPeer();
 };
