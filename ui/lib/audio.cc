@@ -272,12 +272,12 @@ void Audio::open()
 	double maxrate = 0;
 	int minframesize = 65536;
 	for (int i = 0; i < instreams.size(); i++) {
-		maxrate = qMax(maxrate, instreams[i]->rate);
-		minframesize = qMin(minframesize, instreams[i]->framesize);
+		maxrate = qMax(maxrate, instreams[i]->sampleRate());
+		minframesize = qMin(minframesize, instreams[i]->frameSize());
 	}
 	for (int i = 0; i < outstreams.size(); i++) {
-		maxrate = qMax(maxrate, outstreams[i]->rate);
-		minframesize = qMin(minframesize, outstreams[i]->framesize);
+		maxrate = qMax(maxrate, outstreams[i]->sampleRate());
+		minframesize = qMin(minframesize, outstreams[i]->frameSize());
 	}
 	Q_ASSERT(maxrate > 0);
 
@@ -382,7 +382,7 @@ void Audio::sendin(const float *inbuf)
 	// Broadcast the audio input to all listening input streams
 	for (int i = 0; i < instreams.size(); i++) {
 		AbstractAudioInput *ins = instreams[i];
-		if (ins->rate == hwrate && ins->framesize == hwframesize) {
+		if (ins->sampleRate() == hwrate && ins->frameSize() == hwframesize) {
 			// The easy case - no buffering or resampling needed.
 			qDebug() << "sendin captured signal";
 			ins->acceptInput(inbuf);

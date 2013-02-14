@@ -116,7 +116,6 @@ private:
  */
 class AudioStream : public QObject
 {
-    friend class Audio;
     Q_OBJECT
 
 private:
