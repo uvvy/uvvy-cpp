@@ -3,6 +3,7 @@
 #include <QByteArray>
 #include <QDebug>
 #include "base32.h"
+#include "xdr.h"
 
 namespace SST
 {
@@ -14,6 +15,7 @@ namespace SST
 class PeerId
 {
     QByteArray id;
+    inline friend XdrStream &operator>>(XdrStream &xs, PeerId& id);
 
 public:
     PeerId() : id() {} 
@@ -28,6 +30,11 @@ public:
 inline QDebug& operator << (QDebug& ts, const PeerId& id)
 {
     return ts << id.toString();
+}
+
+inline XdrStream &operator>>(XdrStream &xs, PeerId& id)
+{
+    return xs >> id.id;
 }
 
 inline uint qHash(const PeerId& key) { return qHash(key.getId()); }
