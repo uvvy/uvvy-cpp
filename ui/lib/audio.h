@@ -160,7 +160,7 @@ public:
             QObject *parent = NULL);
 
     void setEnabled(bool enabled);
-    static const int nChannels = 2;
+    static const int nChannels = 1;
 
 protected:
     // Accept audio input data received from the sound hardware.
@@ -185,7 +185,7 @@ public:
             QObject *parent = NULL);
 
     void setEnabled(bool enabled);
-    static const int nChannels = 2;
+    static const int nChannels = 1;
 
 protected:
     // Produce a frame of audio data to be sent to the sound hardware.
