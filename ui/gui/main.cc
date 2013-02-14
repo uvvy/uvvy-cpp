@@ -573,10 +573,10 @@ int main(int argc, char **argv)
     myreginfo.setEndpoints(ssthost->activeLocalEndpoints());
     qDebug() << "local endpoints" << myreginfo.endpoints().size();
 
-    if (!settings->contains("regservers"))
+    // if (!settings->contains("regservers"))
     {
         QStringList rs;
-        rs << "section4.madfire.net";
+        rs << "motoko.madfire.net";//section4
         settings->setValue("regservers", rs);
     }
 
