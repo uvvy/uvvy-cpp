@@ -99,6 +99,17 @@ private:
 };
 
 /**
+ * @todo
+ * Replace with a normal audio session setup here. Need to provide out of band signaling,
+ * setting up a call session, session running status and session termination.
+ *
+ * VoiceService streams consist of a signaling substream and media substreams. Signaling substream has 
+ * highest priority and reliable delivery. It allows negotiation and session control.
+ * Media substreams are datagram-oriented and geared towards real-time audio (or video) traffic.
+ * Establishing a session between two nodes consists of negotiating codec and bandwidth parameters
+ * over signaling substream. After that the session is considered live and media substreams start.
+ */
+/**
  * Subclass of PeerService for providing voice communication.
  */
 class VoiceService : public PeerService
