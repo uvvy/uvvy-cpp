@@ -426,8 +426,8 @@ int Audio::computeLevel(const float *buf)
 		float l = buf[i];
 		lev = qMax(lev, qAbs(l));
 	}
-	return (int)(lev * 100.0);
 	return (int)((1.0 - log2f(lev)) * 100.0);
+	return (int)(lev * 100.0);
 }
 
 void Audio::setInputLevel(int lev)
