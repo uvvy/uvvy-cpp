@@ -361,18 +361,10 @@ int Audio::rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
 
 	qWarning() << "rtcallback, inputBuffer" << inputBuffer << ", outputBuffer" << outputBuffer << ", nframes" << nFrames;
 
-#if 0
-	// Loopback test...
-	if (inputBuffer and outputBuffer)
-	{
-		memcpy(outputBuffer, inputBuffer, nFrames*sizeof(float));
-	}
-#else
 	if (inputBuffer != NULL)
 		sendin((float*)inputBuffer);
 	if (outputBuffer != NULL)
 		mixout((float*)outputBuffer);
-#endif
 
 	return 0;
 }

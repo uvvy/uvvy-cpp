@@ -47,7 +47,6 @@ void OpusInput::setEnabled(bool enabling)
 
 void OpusInput::acceptInput(const float *samplebuf)
 {
-#if 1
 	// Encode the frame and write it into a QByteArray buffer
 	QByteArray bytebuf;
 	int maxbytes = 1024;//meh, any opus option to get this?
@@ -56,13 +55,6 @@ void OpusInput::acceptInput(const float *samplebuf)
 	Q_ASSERT(nbytes <= maxbytes);
 	bytebuf.resize(nbytes);
 	qWarning() << "Encoded frame size:" << nbytes;
-#else
-	// Trivial XDR-based encoding, for debugging
-	QByteArray bytebuf;
-	XdrStream xws(&bytebuf, QIODevice::WriteOnly);
-	for (int i = 0; i < frameSize(); i++)
-		xws << samplebuf[i];
-#endif
 
 	// Queue it to the main thread
 	mutex.lock();
