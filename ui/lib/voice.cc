@@ -78,6 +78,34 @@ QByteArray OpusInput::readFrame()
 }
 
 //=====================================================================================================================
+// RawInput
+//=====================================================================================================================
+
+RawInput::RawInput(QObject *parent)
+	: AbstractAudioInput(parent)
+{
+}
+
+void RawInput::acceptInput(const float *samplebuf)
+{
+	// Trivial XDR-based encoding, for debugging.
+	QByteArray bytebuf;
+	SST::XdrStream xws(&bytebuf, QIODevice::WriteOnly);
+	for (int i = 0; i < frameSize(); i++)
+		xws << samplebuf[i];
+
+	// Queue it to the main thread
+	mutex.lock();
+	bool wasempty = inqueue.isEmpty();
+	inqueue.enqueue(bytebuf);
+	mutex.unlock();
+
+	// Signal the main thread if appropriate
+	if (wasempty)
+		readyRead();
+}
+
+//=====================================================================================================================
 // OpusOutput
 //=====================================================================================================================
 

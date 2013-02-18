@@ -46,6 +46,37 @@ private:
 };
 
 /**
+ * This class represents a raw unencoded source of audio input,
+ * providing automatic queueing and interthread synchronization.
+ * This data is usually received from network, but could also be supplied from a file.
+ * It uses an XDR-based encoding to simplify interoperation.
+ */
+class RawInput : public AbstractAudioInput
+{
+    Q_OBJECT
+
+private:
+    // Inter-thread synchronization and queueing state
+    QMutex mutex;
+    QQueue<QByteArray> inqueue;
+
+signals:
+    void readyRead();
+
+public:
+    RawInput(QObject *parent = NULL);
+
+    QByteArray readFrame();
+
+private:
+    /**
+     * Our implementation of AbstractAudioInput::acceptInput().
+     * @param buf [description]
+     */
+    virtual void acceptInput(const float *buf);
+};
+
+/**
  * This class represents a high-level sink for audio output
  * to the currently selected output device, at a controllable bitrate,
  * providing automatic queueing and interthread synchronization.
