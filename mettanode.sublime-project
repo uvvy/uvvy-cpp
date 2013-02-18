@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"path": "/Users/berkus/Hobby/mettanode"
+		}
+	],
+	"settings":
+	{
+		"sublimeclang_options_script": "python ${home}/Hobby/cmake_options_script.py ${project_path:_build_}/compile_commands.json",
+		"sublimeclang_inhibit_sublime_completions": true,
+		"sublimeclang_debug_options": false,
+		"sublimeclang_show_output_panel": false,
+		"sublimeclang_parse_status_messages": false,
+		"sublimeclang_reparse_on_activated": true
+	}
+}

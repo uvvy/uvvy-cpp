@@ -6,6 +6,9 @@ find_package(Qt4 REQUIRED)
 #find_package(Boost REQUIRED)
 find_package(OpenSSL REQUIRED)
 
+# Export compile commands for ST2 clang plugin.
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 option(BUILD_TESTS "Build various tests and test programs." OFF)
 option(CLANG "Build using clang." OFF)
 
