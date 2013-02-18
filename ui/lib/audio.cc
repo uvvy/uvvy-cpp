@@ -287,7 +287,7 @@ void Audio::open()
 
 	qDebug() << "Open audio:"
 		<< "input:" << indev << deviceName(indev) << (inena ? "enable" : "disable")
-		<< "*;* output:" << outdev << deviceName(outdev) << (outena ? "enable" : "disable");
+		<< "; output:" << outdev << deviceName(outdev) << (outena ? "enable" : "disable");
 
 	// Open the audio device
 	RtAudio::StreamParameters inparam, outparam;
