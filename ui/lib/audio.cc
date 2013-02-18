@@ -280,6 +280,7 @@ void Audio::open()
 		minframesize = qMin(minframesize, outstreams[i]->frameSize());
 	}
 	Q_ASSERT(maxrate > 0);
+	Q_ASSERT(minframesize < 65536);
 
 	// XXX check against rates supported by devices,
 	// resample if necessary...
