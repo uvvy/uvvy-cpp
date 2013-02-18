@@ -10,7 +10,7 @@ find_package(OpenSSL REQUIRED)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_TESTS "Build various tests and test programs." OFF)
-option(CLANG "Build using clang." OFF)
+option(CLANG "Build using clang." ON)
 
 if (CLANG)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation -std=c++11 -fsanitize=address")
