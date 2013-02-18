@@ -8,6 +8,10 @@
 #include "audio.h"
 #include "peer.h"
 
+/**
+ * This class represents an Opus-encoded source of audio input,
+ * providing automatic queueing and interthread synchronization.
+ */
 class OpusInput : public AbstractAudioInput
 {
     Q_OBJECT
@@ -41,6 +45,11 @@ private:
     virtual void acceptInput(const float *buf);
 };
 
+/**
+ * This class represents a high-level sink for audio output
+ * to the currently selected output device, at a controllable bitrate,
+ * providing automatic queueing and interthread synchronization.
+ */
 class OpusOutput : public AbstractAudioOutput
 {
     Q_OBJECT
