@@ -424,7 +424,6 @@ int Audio::computeLevel(const float *buf)
 	float lev = 0.0;
 	for (int i = 0; i < hwframesize; i++) {
 		float l = buf[i];
-		//lev = qMax(lev, l >= 0 ? l : -l);
 		lev = qMax(lev, qAbs(l));
 	}
 	return (int)(lev * 100.0);
