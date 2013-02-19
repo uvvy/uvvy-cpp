@@ -24,9 +24,12 @@ Metta Grabber prototype
 Dependencies
 ============
 
-* Qt4 at http://qt-project.org/
+* Qt4 at http://qt-project.org/ (QtCore, QtNetwork; QtXml for UPnP; QtGui for demo apps)
 * cmake at http://cmake.org/
 * boost at http://boost.org/
+
+aptly
+ $ apt-get install git cmake clang libboost-test1.50-dev libqt4-dev libssl-dev
 
 Included in this repository:
 
