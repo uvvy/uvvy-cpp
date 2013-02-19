@@ -11,12 +11,19 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(BUILD_TESTS "Build various tests and test programs." OFF)
 option(CLANG "Build using clang." ON)
+option(LTO "Enable link-time optimization with LLVM." OFF)
 
 if (CLANG)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation -fsanitize=address")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wdocumentation -fsanitize=address")
 endif (CLANG)
+
+if (LTO)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O4 -emit-llvm")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O4 -emit-llvm")
+	set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -O4 -emit-llvm")
+endif (LTO)
 
 # How to run rpcgen to build XDR stubs
 macro(WRAP_RPC_SOURCES name sources)
