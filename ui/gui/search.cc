@@ -1,4 +1,3 @@
-
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTableWidget>
@@ -23,15 +22,15 @@ SearchDialog::SearchDialog(QWidget *parent)
 
 	foreach (RegClient *cli, regclients) {
 		connect(cli, SIGNAL(searchDone(const QString &,
-						const QList<QByteArray>,
+						const QList<SST::PeerId>,
 						bool)),
 			this, SLOT(searchDone(const QString &,
-						const QList<QByteArray>,
+						const QList<SST::PeerId>,
 						bool)));
-		connect(cli, SIGNAL(lookupDone(const QByteArray &,
+		connect(cli, SIGNAL(lookupDone(const SST::PeerId &,
 						const Endpoint &,
 						const RegInfo &)),
-			this, SLOT(lookupDone(const QByteArray &,
+			this, SLOT(lookupDone(const SST::PeerId &,
 						const Endpoint &,
 						const RegInfo &)));
 	}
@@ -126,24 +125,22 @@ void SearchDialog::startSearch()
 	}
 	if (!found)
 		QMessageBox::warning(this, tr("Cannot Search"),
-				tr("You are not currently connected to any "
-					"registration servers to search."),
+				tr("You are not currently connected to any registration servers to search."),
 				QMessageBox::Ok, QMessageBox::NoButton);
 }
 
-void SearchDialog::searchDone(const QString &text, const QList<QByteArray> ids,
-				bool)
+void SearchDialog::searchDone(const QString &text, const QList<SST::PeerId> ids, bool)
 {
 	if (text != searchtext) {
 		qDebug("Got results for wrong search text (from old search?)");
 		return;
 	}
-	foreach (const QByteArray &id, ids) {
+	foreach (const SST::PeerId &id, ids) {
 		if (reqids.contains(id))
 			continue;
 
 		// Found a new result ID - request info about it.
-		qDebug() << "Looking up ID" << id.toBase64();
+		qDebug() << "Looking up ID" << id;
 		reqids.insert(id, -1);
 		foreach (RegClient *cli, regclients) {
 			if (!cli->registered())
@@ -153,14 +150,14 @@ void SearchDialog::searchDone(const QString &text, const QList<QByteArray> ids,
 	}
 }
 
-void SearchDialog::lookupDone(const QByteArray &id, const Endpoint &loc,
+void SearchDialog::lookupDone(const SST::PeerId &id, const Endpoint &loc,
 				const RegInfo &info)
 {
 	if (!reqids.contains(id)) {
 		qDebug("Got lookup info for wrong ID (from old search?)");
 		return;
 	}
-	qDebug() << "Got RegInfo for ID" << id.toBase64();
+	qDebug() << "Got RegInfo for ID" << id;
 
 	// Find or create the table row for this ID.
 	int &idrow = reqids[id];
@@ -210,6 +207,6 @@ void SearchDialog::addPeer()
 		name = results->item(row, 1)->text();	// Host name
 
 	// Add, if it isn't there already
-	mainwin->addPeer(resultids[row], name, true);
+	mainwin->addPeer(resultids[row].getId(), name, true);
 }
 

@@ -90,7 +90,7 @@ void RegClient::disconnect()
 	foreach (const PeerId &id, punches)
 		lookupDone(id, Endpoint(), RegInfo());
 	foreach (const QString &text, searches)
-		searchDone(text, QList<QByteArray>(), true);
+		searchDone(text, QList<SST::PeerId>(), true);
 
 	state = Idle;
 	addrs.clear();
@@ -356,7 +356,7 @@ void RegClient::gotSearchReply(XdrStream &rs)
 	}
 
 	// Decode the list of result IDs
-	QList<QByteArray> ids;
+	QList<SST::PeerId> ids;
 	for (int i = 0; i < nresults; i++) {
 		QByteArray id;
 		rs >> id;

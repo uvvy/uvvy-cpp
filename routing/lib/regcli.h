@@ -137,7 +137,7 @@ signals:
 	void stateChanged();
 	void lookupDone(const SST::PeerId& id, const Endpoint &loc, const RegInfo &info);
 	void lookupNotify(const SST::PeerId& id, const Endpoint &loc, const RegInfo &info);
-	void searchDone(const QString &text, const QList<QByteArray> ids, bool complete);
+	void searchDone(const QString &text, const QList<SST::PeerId> ids, bool complete);
 
 private:
 	// Registration state machine
