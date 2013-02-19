@@ -13,7 +13,9 @@ option(BUILD_TESTS "Build various tests and test programs." OFF)
 option(CLANG "Build using clang." ON)
 
 if (CLANG)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation -std=c++11 -fsanitize=address")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation -fsanitize=address")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wdocumentation -fsanitize=address")
 endif (CLANG)
 
 # How to run rpcgen to build XDR stubs
