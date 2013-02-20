@@ -112,9 +112,9 @@ void RawInput::acceptInput(const float *samplebuf)
 const int OpusOutput::maxSkip;
 
 OpusOutput::OpusOutput(QObject *parent)
-:	AbstractAudioOutput(parent),
-	decstate(NULL),
-	outseq(0)
+	: AbstractAudioOutput(parent)
+	, decstate(NULL)
+	, outseq(0)
 {
 }
 
@@ -224,10 +224,10 @@ void OpusOutput::reset()
 //=====================================================================================================================
 
 VoiceService::VoiceService(QObject *parent)
-:	PeerService("Voice", tr("Voice communication"),
-		"NstVoice", tr("Netsteria voice communication protocol"),
-		parent),
-	talkcol(-1), lisncol(-1)
+	: PeerService("Voice", tr("Voice communication"),
+		"NstVoice", tr("Netsteria voice communication protocol"), parent)
+	, talkcol(-1)
+	, lisncol(-1)
 {
 	connect(&vin, SIGNAL(readyRead()),
 		this, SLOT(vinReadyRead()));
