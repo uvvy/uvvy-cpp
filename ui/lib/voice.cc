@@ -406,6 +406,13 @@ void VoiceService::gotOutStreamDisconnected(Stream *strm)
 	send.remove(strm);
 }
 
+// void LiveMediaService::gotInStreamConnected(Stream *strm)
+// {
+	// We get a signaling stream incoming.
+	// Media substreams may be demuxed into VoiceService, VideoService, ScreenShareService etc.
+	// qDebug() << "LiveMediaService: incoming connection from" << peerName(strm->remoteHostId());
+// }
+
 void VoiceService::gotInStreamConnected(Stream *strm)
 {
 	if (!strm->isConnected())
