@@ -156,7 +156,6 @@ void OpusOutput::produceOutput(float *samplebuf)
 	bool nowempty = outqueue.isEmpty();
 	mutex.unlock();
 
-#if 1
 	// Decode the frame
 	if (!bytebuf.isEmpty()) {
 		qWarning() << "Decode frame size:" << bytebuf.size();
@@ -172,20 +171,6 @@ void OpusOutput::produceOutput(float *samplebuf)
 		int len = opus_decode_float(decstate, NULL, 0, samplebuf, frameSize(), /*decodeFEC:*/1);
 		Q_ASSERT(len > 0);
 	}
-#else
-	// Trivial XDR-based encoding, for debugging
-	if (!bytebuf.isEmpty()) {
-		XdrStream xrs(&bytebuf, QIODevice::ReadOnly);
-		for (int i = 0; i < frameSize(); i++)
-			xrs >> samplebuf[i];
-
-		// Signal the main thread if the queue empties
-		if (nowempty)
-			queueEmpty();
-	} else {
-		memset(samplebuf, 0, frameSize() * sizeof(float));
-	}
-#endif
 }
 
 void OpusOutput::writeFrame(const QByteArray &buf, qint32 seqno, int queuemax)
