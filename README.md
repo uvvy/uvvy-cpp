@@ -31,6 +31,8 @@ Dependencies
 aptly
  $ apt-get install git cmake clang libboost-test1.50-dev libqt4-dev libssl-dev libasound2-dev
 
+ With these MettaNode also compiles and runs in Raspberry Pi's raspbian.
+
 Included in this repository:
 
 * sst from http://pdos.csail.mit.edu/uia/sst/
