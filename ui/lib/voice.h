@@ -38,7 +38,7 @@ signals:
 public:
     OpusInput(QObject *parent = NULL);
 
-    void setEnabled(bool enabled);
+    void setEnabled(bool enabling);
 
     QByteArray readFrame();
 
@@ -118,7 +118,7 @@ private:
 public:
     OpusOutput(QObject *parent = NULL);
 
-    void setEnabled(bool enabled);
+    void setEnabled(bool enabling);
 
     /**
      * Write a frame with the given seqno to the tail of the queue,
