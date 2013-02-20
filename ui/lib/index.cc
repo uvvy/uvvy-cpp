@@ -1,4 +1,3 @@
-
 #include <QSet>
 #include <QHash>
 #include <QString>

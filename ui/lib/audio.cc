@@ -1,12 +1,8 @@
-
 #include <math.h>
-
 #include <QStringList>
 #include <QMutexLocker>
 #include <QtDebug>
-
 #include "audio.h"
-
 
 ////////// Audio //////////
 
@@ -565,7 +561,8 @@ AbstractAudioOutput::AbstractAudioOutput(int framesize, double samplerate,
 void AbstractAudioOutput::setEnabled(bool enabling)
 {
 	qWarning() << __PRETTY_FUNCTION__ << enabling;
-	if (enabling && !enabled()) {
+	if (enabling && !enabled())
+	{
 		if (frameSize() <= 0 || sampleRate() <= 0) {
 			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
 			return;
@@ -577,8 +574,9 @@ void AbstractAudioOutput::setEnabled(bool enabling)
 		AudioStream::setEnabled(true);
 		if (wasempty || hwrate < sampleRate())
 			Audio::reopen(); // (re-)open at suitable rate
-
-	} else if (!enabling && enabled()) {
+	} 
+	else if (!enabling && enabled())
+	{
 		Q_ASSERT(Audio::outstreams.contains(this));
 		Audio::outstreams.removeAll(this);
 		AudioStream::setEnabled(false);
