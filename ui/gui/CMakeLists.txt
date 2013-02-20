@@ -35,6 +35,7 @@ if (APPLE)
     find_library(AUDIOTOOLBOX_LIB AudioToolbox)
     find_library(COCOA_LIB Cocoa)
     target_link_libraries(MettaNode ${COREFOUNDATION_LIB} ${COREAUDIO_LIB} ${AUDIOTOOLBOX_LIB} ${COCOA_LIB})
+    set_target_properties(MettaNode PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MettaNode-Info.plist)
 endif (APPLE)
 
 if (UNIX AND NOT APPLE)
