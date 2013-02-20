@@ -618,7 +618,7 @@ int main(int argc, char **argv)
     talksrv = new VoiceService();
     talksrv->setPeerTable(friends);
     talksrv->setTalkColumn(COL_TALK, QObject::tr("Talking"), QObject::tr("Silent"), QObject::tr("Offline"));
-    talksrv->setListenColumn(COL_LISTEN);
+    talksrv->setListenColumn(COL_LISTEN, QObject::tr("Listening"), QObject::tr("Not Listening"));
 
     mainwin = new MainWindow;
 
