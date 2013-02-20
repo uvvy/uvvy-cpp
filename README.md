@@ -29,7 +29,7 @@ Dependencies
 * boost at http://boost.org/
 
 aptly
- $ apt-get install git cmake clang libboost-test1.50-dev libqt4-dev libssl-dev
+ $ apt-get install git cmake clang libboost-test1.50-dev libqt4-dev libssl-dev libasound2-dev
 
 Included in this repository:
 
