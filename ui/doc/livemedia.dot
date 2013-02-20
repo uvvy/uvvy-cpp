@@ -1,0 +1,7 @@
+digraph G {
+	CALL -> RINGING -> <accept> -> EARLY_MEDIA -> LIVE;
+	VIDEO_CALL -> RINGING -> EARLY_MEDIA -> LIVE;
+	LIVE -> HANGUP -> FINISHED;
+
+	SHARE_SCREEN -> <accept> -> LIVE -> STOP_SHARE;
+}
