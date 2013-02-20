@@ -447,15 +447,13 @@ RegRecord::RegRecord(RegServer *srv,
 	// replacing any existing entry with this ID.
 	RegRecord *old = srv->idhash.value(id);
 	if (old != NULL) {
-		qDebug() << "Replacing existing record for"<< id;
+		qDebug() << "Replacing existing record for" << id;
 		delete old;
 	}
 	srv->idhash[id] = this;
 	srv->allrecords += this;
 
-	PeerId peerid(id);
-
-	qDebug() << "Registering record for" << peerid << "at" << ep;
+	qDebug() << "Registering record for" << PeerId(id) << "at" << ep;
 
 	// Register all our keywords in the RegServer's keyword table.
 	regKeywords(true);
@@ -478,7 +476,8 @@ RegRecord::~RegRecord()
 void
 RegRecord::regKeywords(bool insert)
 {
-	foreach (QString kw, RegInfo(info).keywords()) {
+	foreach (QString kw, RegInfo(info).keywords())
+	{
 		QSet<RegRecord*> &set = srv->kwhash[kw];
 		if (insert) {
 			set.insert(this);
