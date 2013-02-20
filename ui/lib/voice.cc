@@ -220,6 +220,106 @@ void OpusOutput::reset()
 }
 
 //=====================================================================================================================
+// RawOutput
+//=====================================================================================================================
+
+RawOutput::RawOutput(QObject *parent)
+	: AbstractAudioOutput(parent)
+{
+}
+
+void RawOutput::produceOutput(float *samplebuf)
+{
+	// Grab the next buffer from the queue
+	QByteArray bytebuf;
+	mutex.lock();
+	if (!outqueue.isEmpty())
+		bytebuf = outqueue.dequeue();
+	bool nowempty = outqueue.isEmpty();
+	mutex.unlock();
+
+	// Trivial XDR-based encoding, for debugging
+	if (!bytebuf.isEmpty()) {
+		SST::XdrStream xrs(&bytebuf, QIODevice::ReadOnly);
+		for (int i = 0; i < frameSize(); i++)
+			xrs >> samplebuf[i];
+
+		// Signal the main thread if the queue empties
+		if (nowempty)
+			queueEmpty();
+	} else {
+		memset(samplebuf, 0, frameSize() * sizeof(float));
+	}
+}
+
+//=====================================================================================================================
+// FileLoopedOutput
+//=====================================================================================================================
+
+FileLoopedOutput::FileLoopedOutput(const QString& fileName, QObject *parent)
+	: AbstractAudioOutput(parent)
+	, file(fileName, this)
+{
+}
+
+void FileLoopedOutput::setEnabled(bool enabling)
+{
+	qDebug() << __PRETTY_FUNCTION__ << enabling << enabled();
+	if (enabling && !enabled())
+	{
+		// Q_ASSERT(!file.isOpen());
+		bool success = file.open(QIODevice::ReadOnly);
+		if (!success)
+			return;
+		Q_ASSERT(success);
+		setFrameSize(480);
+		setSampleRate(48000);
+
+		offset = 0;
+
+		AbstractAudioOutput::setEnabled(true);
+	}
+	else if (!enabling && enabled())
+	{
+		AbstractAudioOutput::setEnabled(false);
+
+		// file.close();
+	}
+}
+
+void FileLoopedOutput::produceOutput(float *samplebuf)
+{
+	qDebug() << __PRETTY_FUNCTION__;
+	if (!file.isOpen())
+		return;
+
+	short samples[frameSize()];
+	qint64 off = 0;
+	qint64 nbytesToRead = frameSize() * sizeof(short);
+
+	file.seek(offset);
+
+	while (nbytesToRead > 0 && !file.atEnd())
+	{
+		qint64 nread = file.read((char*)&samples[off], nbytesToRead);
+		Q_ASSERT(!(nread % 2));
+		offset += nread;
+		off += nread/2;
+		nbytesToRead -= nread;
+		Q_ASSERT(nbytesToRead >= 0);
+
+		if (nread < nbytesToRead)
+		{
+			// Loop the file
+			offset = 0;
+			file.seek(offset);// clear atEnd() condition
+		}
+	}
+	for (int i = 0; i < frameSize(); ++i)
+		samplebuf[i] = (float)samples[i];
+}
+
+//=====================================================================================================================
 // VoiceService
 //=====================================================================================================================
 

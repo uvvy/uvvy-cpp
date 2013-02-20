@@ -2,11 +2,16 @@
 
 #include <QMutex>
 #include <QQueue>
+#include <QFile>
 
 #include <opus.h>
 
 #include "audio.h"
 #include "peer.h"
+
+//=====================================================================================================================
+// OpusInput
+//=====================================================================================================================
 
 /**
  * This class represents an Opus-encoded source of audio input,
@@ -45,6 +50,10 @@ private:
     virtual void acceptInput(const float *buf);
 };
 
+//=====================================================================================================================
+// RawInput
+//=====================================================================================================================
+
 /**
  * This class represents a raw unencoded source of audio input,
  * providing automatic queueing and interthread synchronization.
@@ -75,6 +84,10 @@ private:
      */
     virtual void acceptInput(const float *buf);
 };
+
+//=====================================================================================================================
+// OpusOutput
+//=====================================================================================================================
 
 /**
  * This class represents a high-level sink for audio output
@@ -137,6 +150,77 @@ private:
      */
     virtual void produceOutput(float *buf);
 };
+
+//=====================================================================================================================
+// RawOutput
+//=====================================================================================================================
+
+class RawOutput : public AbstractAudioOutput
+{
+    Q_OBJECT
+
+    // Inter-thread synchronization and queueing state
+    QMutex mutex;
+    QQueue<QByteArray> outqueue;
+    qint32 outseq;
+
+public:
+    RawOutput(QObject *parent = NULL);
+
+signals:
+    void queueEmpty();
+
+private:
+    /**
+     * Our implementation of AbstractAudioOutput::produceOutput().
+     * @param buf [description]
+     */
+    virtual void produceOutput(float *buf);
+};
+
+//=====================================================================================================================
+// FileLoopedOutput
+//=====================================================================================================================
+
+/**
+ * This class provides data to hardware output by reading a specified file in a loop.
+ * It provides a local-only playback of a given file.
+ * It can be used by signaling on both sides to play a call signal, for example.
+ * If you want to send the file contents over the wire, use FileLoopedInput.
+ *
+ * Current implementation plays mono 16 bit raw audio file in an endless loop.
+ */
+class FileLoopedOutput : public AbstractAudioOutput
+{
+    Q_OBJECT
+
+    QFile file;
+    qint64 offset;
+
+public:
+    FileLoopedOutput(const QString& fileName, QObject *parent = NULL);
+
+    void setEnabled(bool enabling);
+
+    /**
+     * Disable the stream and clear the output queue.
+     */
+    void reset();
+
+signals:
+    void queueEmpty(); ///< Never fired.
+
+private:
+    /**
+     * Our implementation of AbstractAudioOutput::produceOutput().
+     * @param buf Output hardware buffer to write data to. The size is hwframesize.
+     */
+    virtual void produceOutput(float *buf);
+};
+
+//=====================================================================================================================
+// VoiceService
+//=====================================================================================================================
 
 /**
  * @todo
