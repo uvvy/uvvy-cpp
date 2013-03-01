@@ -110,8 +110,9 @@ Socket::receive(QByteArray &msg, const SocketEndpoint &src)
 	// to try to find an endpoint-specific flow.
 	Channel chan = msg.at(0);
 	SocketFlow *fl = flow(src, chan);
-	if (fl != NULL)
+	if (fl) {
 		return fl->receive(msg, src);
+	}
 
 	// If that doesn't work, it may be a global control packet:
 	// if so, pass it to the appropriate SocketReceiver.
@@ -119,8 +120,9 @@ Socket::receive(QByteArray &msg, const SocketEndpoint &src)
 	quint32 magic;
 	rs >> magic;
 	SocketReceiver *rcv = h->receivers.value(magic);
-	if (rcv)
+	if (rcv) {
 		return rcv->receive(msg, rs, src);
+	}
 
 	qDebug("Received control message for unknown flow/receiver %08x", magic);
 }
