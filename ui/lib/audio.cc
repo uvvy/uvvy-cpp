@@ -80,7 +80,7 @@ int Audio::scan()
 	int n = 0;
 	foreach(QString s, deviceNames())
 	{
-		qWarning() << "Device" << n << ":" << s;
+		qDebug() << "Device" << n << ":" << s;
 		++n;
 	}
 
@@ -356,7 +356,7 @@ int Audio::rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
 	// whereas our "frame" is one buffer worth of data (as in Speex).
 	Q_ASSERT(nFrames == hwframesize);
 
-	qWarning() << "rtcallback, inputBuffer" << inputBuffer << ", outputBuffer" << outputBuffer << ", nframes" << nFrames;
+	qDebug() << "rtcallback, inputBuffer" << inputBuffer << ", outputBuffer" << outputBuffer << ", nframes" << nFrames;
 
 	if (inputBuffer != NULL)
 		sendin((float*)inputBuffer);
@@ -439,7 +439,7 @@ void Audio::setInputLevel(int lev)
 	if (inlev == lev)
 		return;
 
-	qWarning() << "setInputLevel" << lev;
+	qDebug() << "setInputLevel" << lev;
 	inlev = lev;
 	instance()->inputLevelChanged(lev);
 }
@@ -449,7 +449,7 @@ void Audio::setOutputLevel(int lev)
 	if (outlev == lev)
 		return;
 
-	qWarning() << "setOutputLevel" << lev;
+	qDebug() << "setOutputLevel" << lev;
 	outlev = lev;
 	instance()->outputLevelChanged(lev);
 }
@@ -527,7 +527,7 @@ AbstractAudioInput::AbstractAudioInput(int framesize, double samplerate,
 
 void AbstractAudioInput::setEnabled(bool enabling)
 {
-	qWarning() << __PRETTY_FUNCTION__ << enabling;
+	qDebug() << __PRETTY_FUNCTION__ << enabling;
 	if (enabling && !enabled()) {
 		if (frameSize() <= 0 || sampleRate() <= 0) {
 			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
@@ -568,7 +568,7 @@ AbstractAudioOutput::AbstractAudioOutput(int framesize, double samplerate,
 
 void AbstractAudioOutput::setEnabled(bool enabling)
 {
-	qWarning() << __PRETTY_FUNCTION__ << enabling;
+	qDebug() << __PRETTY_FUNCTION__ << enabling;
 	if (enabling && !enabled())
 	{
 		if (frameSize() <= 0 || sampleRate() <= 0) {

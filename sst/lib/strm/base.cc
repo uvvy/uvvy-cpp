@@ -209,7 +209,7 @@ void BaseStream::tattach()
 	if (!peer->flow) {
 		// Get the flow setup process for this host ID underway.
 		// XX provide an initial packet to avoid an extra RTT!
-		//qDebug() << this << "tattach: wait for flow";
+		qDebug() << this << "tattach: wait for flow";
 		connect(peer, SIGNAL(flowConnected()),
 			this, SLOT(gotFlowConnected()));
 		return peer->connectFlow();

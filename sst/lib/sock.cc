@@ -124,7 +124,7 @@ Socket::receive(QByteArray &msg, const SocketEndpoint &src)
 		return rcv->receive(msg, rs, src);
 	}
 
-	qDebug("Received control message for unknown flow/receiver %08x", magic);
+	qDebug("Received control message for unknown flow/receiver %08x, ignoring.", magic);
 	// @TODO: dump entire current stream tree here
 }
 
