@@ -196,13 +196,12 @@ private:
 
 	// Global registry of every RegClient for this host, so we can
 	// produce signals when RegClients are created or destroyed.
-	QSet<RegClient*> cliset;
+	QSet<RegClient*> regClientSet;
 
 public:
 	inline RegHostState(Host *h) : rcvr(h) { }
 
-	inline QList<RegClient*> regClients()
-		{ return cliset.toList(); }
+	inline QList<RegClient*> regClients() { return regClientSet.toList(); }
 
 signals:
 	void regClientCreate(RegClient *rc);

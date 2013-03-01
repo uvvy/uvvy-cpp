@@ -52,7 +52,7 @@ RegClient::RegClient(Host *h, QObject *parent)
 	connect(&reregtimer, SIGNAL(timeout(bool)),
 		this, SLOT(reregTimeout()));
 
-	h->cliset.insert(this);
+	h->regClientSet.insert(this);
 	h->regClientCreate(this);
 }
 
@@ -63,7 +63,7 @@ RegClient::~RegClient()
 
 	// Notify anyone interested of our upcoming destruction.
 	h->regClientDestroy(this);
-	h->cliset.remove(this);
+	h->regClientSet.remove(this);
 
 	// Remove any nonce we may have registered in the nhihash.
 	h->rcvr.nhihash.remove(nhi);
