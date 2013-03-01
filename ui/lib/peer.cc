@@ -287,12 +287,12 @@ PeerService::PeerService(const QString &svname, const QString &svdesc,
     connect(&recontimer, SIGNAL(timeout()), this, SLOT(reconTimeout()));
 }
 
-void PeerService::setPeerTable(PeerTable *peers)
+void PeerService::setPeerTable(PeerTable *newPeers)
 {
-    Q_ASSERT(peers);
-    Q_ASSERT(!this->peers);
+    Q_ASSERT(newPeers);
+    Q_ASSERT(!peers);
 
-    this->peers = peers;
+    peers = newPeers;
 
     // Watch for future changes in the peer table
     connect(peers, SIGNAL(peerInsert(const SST::PeerId&)),
