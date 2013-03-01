@@ -188,9 +188,24 @@ bool StreamFlow::flowReceive(qint64 pktseq, QByteArray &pkt)
 	return BaseStream::receive(pktseq, pkt, this);
 }
 
+static QString linkStatusString(LinkStatus status)
+{
+	switch (status)
+	{
+		case LinkDown:
+			return "Link down";
+		case LinkStalled:
+			return "Link stalled";
+		case LinkUp:
+			return "Link up";
+		default:
+			return "Unknown link status";
+	}
+}
+
 void StreamFlow::gotLinkStatusChanged(LinkStatus newstatus)
 {
-	qDebug() << this << "gotLinkStatusChanged:" << newstatus;
+	qDebug() << this << "gotLinkStatusChanged:" << newstatus << linkStatusString(newstatus);
 
 	if (newstatus != LinkDown)
 		return;
