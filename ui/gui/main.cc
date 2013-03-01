@@ -598,8 +598,8 @@ int main(int argc, char **argv)
                 QObject::tr("Listen"), Qt::DisplayRole);
     friends->useSettings(settings, "Friends");
 
-    PeerService* s = new PeerService("Presence", QObject::tr("Presence updates"),
-                                     "NstPresence", QObject::tr("Netsteria presence protocol"));
+    PeerService* s = new PeerService("metta:Presence", QObject::tr("Presence updates"),
+                                     "NodePresence", QObject::tr("MettaNode presence protocol"));
     s->setPeerTable(friends);
     s->setStatusColumn(COL_ONLINE, QIcon(":/img/status-online.png"), QIcon(":/img/status-offline.png"));
 

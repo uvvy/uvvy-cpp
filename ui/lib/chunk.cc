@@ -40,8 +40,8 @@ QHash<PeerId, ChunkShare::Request*> ChunkShare::requests;
 QHash<PeerId, ChunkPeer*> ChunkShare::peers;
 
 ChunkShare::ChunkShare()
-:	PeerService("Data", tr("Data sharing"),
-			"NstData", tr("Netsteria data sharing protocol"))
+	: PeerService("metta:Share", tr("Data sharing"),
+		"NodeData", tr("MettaNode data sharing protocol"))
 {
 	connect(this, SIGNAL(outStreamConnected(Stream *)),
 		this, SLOT(gotOutStreamConnected(Stream *)));

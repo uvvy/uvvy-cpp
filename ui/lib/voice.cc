@@ -353,7 +353,7 @@ static PacketOutput* makeOutputInstance(QObject* parent)
 }
 
 VoiceService::VoiceService(QObject *parent)
-	: PeerService("Voice", tr("Voice communication"),
+	: PeerService("metta:Voice", tr("Voice communication"),
 		"NodeVoice", tr("MettaNode voice communication protocol"), parent)
 	, talkcol(-1)
 	, lisncol(-1)
