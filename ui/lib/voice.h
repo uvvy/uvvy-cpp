@@ -10,6 +10,33 @@
 #include "peer.h"
 
 //=====================================================================================================================
+// PacketInput
+//=====================================================================================================================
+
+/**
+ * This class represents a source of audio input,
+ * providing automatic queueing and interthread synchronization.
+ * It assumes the signal will be packetized before transporting.
+ */
+class PacketInput : public AbstractAudioInput
+{
+    Q_OBJECT
+
+protected:
+    // Inter-thread synchronization and queueing state
+    QMutex mutex;
+    QQueue<QByteArray> inqueue;
+
+signals:
+    void readyRead();
+
+public:
+    PacketInput(QObject *parent = NULL);
+
+    QByteArray readFrame();
+};
+
+//=====================================================================================================================
 // OpusInput
 //=====================================================================================================================
 
@@ -17,7 +44,7 @@
  * This class represents an Opus-encoded source of audio input,
  * providing automatic queueing and interthread synchronization.
  */
-class OpusInput : public AbstractAudioInput
+class OpusInput : public PacketInput
 {
     Q_OBJECT
 
@@ -27,10 +54,6 @@ private:
      * Owned exclusively by the audio thread while enabled.
      */
     OpusEncoder *encstate;
-
-    // Inter-thread synchronization and queueing state
-    QMutex mutex;
-    QQueue<QByteArray> inqueue;
 
 signals:
     void readyRead();
@@ -60,17 +83,9 @@ private:
  * This data is usually received from network, but could also be supplied from a file.
  * It uses an XDR-based encoding to simplify interoperation.
  */
-class RawInput : public AbstractAudioInput
+class RawInput : public PacketInput
 {
     Q_OBJECT
-
-private:
-    // Inter-thread synchronization and queueing state
-    QMutex mutex;
-    QQueue<QByteArray> inqueue;
-
-signals:
-    void readyRead();
 
 public:
     RawInput(QObject *parent = NULL);
@@ -86,29 +101,25 @@ private:
 };
 
 //=====================================================================================================================
-// OpusOutput
+// PacketOutput
 //=====================================================================================================================
 
 /**
  * This class represents a high-level sink for audio output
  * to the currently selected output device, at a controllable bitrate,
  * providing automatic queueing and interthread synchronization.
+ * It assumes data arrives in packets with undetermined delay.
+ * This leads to use of jitterbuffer (in the future) and other tricks.
  */
-class OpusOutput : public AbstractAudioOutput
+class PacketOutput : public AbstractAudioOutput
 {
     Q_OBJECT
 
-private:
+protected:
     /**
      * Maximum number of consecutive frames to skip
      */
     static const int maxSkip = 3;
-
-    /**
-     * Decoder state.
-     * Owned exclusively by the audio thread while enabled.
-     */
-    OpusDecoder *decstate;
 
     // Inter-thread synchronization and queueing state
     QMutex mutex;
@@ -116,9 +127,7 @@ private:
     qint32 outseq;
 
 public:
-    OpusOutput(QObject *parent = NULL);
-
-    void setEnabled(bool enabling);
+    PacketOutput(QObject *parent = NULL);
 
     /**
      * Write a frame with the given seqno to the tail of the queue,
@@ -142,6 +151,33 @@ public:
 
 signals:
     void queueEmpty();
+};
+
+//=====================================================================================================================
+// OpusOutput
+//=====================================================================================================================
+
+/**
+ * This class represents a high-level sink for audio output by decoding OPUS stream.
+ */
+class OpusOutput : public PacketOutput
+{
+    Q_OBJECT
+
+private:
+    /**
+     * Decoder state.
+     * Owned exclusively by the audio thread while enabled.
+     */
+    OpusDecoder *decstate;
+
+public:
+    OpusOutput(QObject *parent = NULL);
+
+    void setEnabled(bool enabling);
+
+signals:
+    void queueEmpty();
 
 private:
     /**
@@ -155,7 +191,7 @@ private:
 // RawOutput
 //=====================================================================================================================
 
-class RawOutput : public AbstractAudioOutput
+class RawOutput : public PacketOutput
 {
     Q_OBJECT
 
@@ -190,10 +226,8 @@ private:
  *
  * Current implementation plays mono 16 bit raw audio file in an endless loop.
  */
-class FileLoopedOutput : public AbstractAudioOutput
+class FileLoopedOutput : public PacketOutput
 {
-    Q_OBJECT
-
     QFile file;
     qint64 offset;
 
@@ -206,9 +240,6 @@ public:
      * Disable the stream and clear the output queue.
      */
     void reset();
-
-signals:
-    void queueEmpty(); ///< Never fired.
 
 private:
     /**
@@ -266,19 +297,19 @@ private:
 
     struct ReceiveStream {
         Stream *stream;
-        OpusOutput *vout;
+        PacketOutput *vout;
         qint32 seqno;
 
         inline ReceiveStream()
             : stream(NULL), vout(NULL), seqno(0) { }
         inline ReceiveStream(const ReceiveStream &o)
             : stream(o.stream), vout(o.vout), seqno(o.seqno) { }
-        inline ReceiveStream(Stream *stream, OpusOutput *vout)
+        inline ReceiveStream(Stream *stream, PacketOutput *vout)
             : stream(stream), vout(vout), seqno(0) { }
     };
 
     // Voice communication state
-    OpusInput vin;
+    PacketInput* vin;
     QSet<Stream*> sending;
     QHash<Stream*, SendStream> send;
     QHash<Stream*, ReceiveStream> recv;

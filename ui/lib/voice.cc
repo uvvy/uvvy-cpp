@@ -4,11 +4,31 @@
 #include "xdr.h"
 
 //=====================================================================================================================
+// PacketInput
+//=====================================================================================================================
+
+PacketInput::PacketInput(QObject *parent)
+	: AbstractAudioInput(parent)
+{
+}
+
+QByteArray PacketInput::readFrame()
+{
+	QMutexLocker lock(&mutex);
+
+	if (inqueue.isEmpty())
+		return QByteArray();
+
+	return inqueue.dequeue();
+}
+
+
+//=====================================================================================================================
 // OpusInput
 //=====================================================================================================================
 
 OpusInput::OpusInput(QObject *parent)
-:	AbstractAudioInput(parent),
+:	PacketInput(parent),
 	encstate(NULL)
 {
 }
@@ -67,22 +87,12 @@ void OpusInput::acceptInput(const float *samplebuf)
 		readyRead();
 }
 
-QByteArray OpusInput::readFrame()
-{
-	QMutexLocker lock(&mutex);
-
-	if (inqueue.isEmpty())
-		return QByteArray();
-
-	return inqueue.dequeue();
-}
-
 //=====================================================================================================================
 // RawInput
 //=====================================================================================================================
 
 RawInput::RawInput(QObject *parent)
-	: AbstractAudioInput(parent)
+	: PacketInput(parent)
 {
 }
 
@@ -106,15 +116,70 @@ void RawInput::acceptInput(const float *samplebuf)
 }
 
 //=====================================================================================================================
+// PacketOutput
+//=====================================================================================================================
+
+const int PacketOutput::maxSkip;
+
+PacketOutput::PacketOutput(QObject *parent)
+	: AbstractAudioOutput(parent)
+	, outseq(0)
+{
+}
+
+void PacketOutput::writeFrame(const QByteArray &buf, qint32 seqno, int queuemax)
+{
+	// Determine how many frames we missed.
+	qint32 seqdiff = seqno - outseq;
+	if (seqdiff < 0) {
+		// Out-of-order frame - just drop it for now.
+		// XXX insert into queue out-of-order if it's still useful
+		qDebug() << "PacketOutput: frame received out of order";
+		return;
+	}
+	seqdiff = qMin(seqdiff, maxSkip);
+
+	QMutexLocker lock(&mutex);
+
+	// Queue up the missed frames, if any.
+	for (int i = 0; i < seqdiff; i++) {
+		outqueue.enqueue(QByteArray());
+		qDebug() << "  MISSED audio frame" << outseq + i;
+	}
+
+	// Queue up the frame we actually got.
+	outqueue.enqueue(buf);
+	qDebug() << "Received audio frame" << seqno;
+
+	// Discard frames from the head if we exceed queueMax
+	while (outqueue.size() > queuemax)
+		outqueue.removeFirst();
+
+	// Remember which sequence we expect next
+	outseq = seqno+1;
+}
+
+int PacketOutput::numFramesQueued()
+{
+	QMutexLocker lock(&mutex);
+	return outqueue.size();
+}
+
+void PacketOutput::reset()
+{
+	disable();
+
+	QMutexLocker lock(&mutex);
+	outqueue.clear();
+}
+
+//=====================================================================================================================
 // OpusOutput
 //=====================================================================================================================
 
-const int OpusOutput::maxSkip;
-
 OpusOutput::OpusOutput(QObject *parent)
-	: AbstractAudioOutput(parent)
+	: PacketOutput(parent)
 	, decstate(NULL)
-	, outseq(0)
 {
 }
 
@@ -173,58 +238,12 @@ void OpusOutput::produceOutput(float *samplebuf)
 	}
 }
 
-void OpusOutput::writeFrame(const QByteArray &buf, qint32 seqno, int queuemax)
-{
-	// Determine how many frames we missed.
-	qint32 seqdiff = seqno - outseq;
-	if (seqdiff < 0) {
-		// Out-of-order frame - just drop it for now.
-		// XXX insert into queue out-of-order if it's still useful
-		qDebug() << "OpusOutput: frame received out of order";
-		return;
-	}
-	seqdiff = qMin(seqdiff, maxSkip);
-
-	QMutexLocker lock(&mutex);
-
-	// Queue up the missed frames, if any.
-	for (int i = 0; i < seqdiff; i++) {
-		outqueue.enqueue(QByteArray());
-		qDebug() << "  MISSED audio frame" << outseq + i;
-	}
-
-	// Queue up the frame we actually got.
-	outqueue.enqueue(buf);
-	qDebug() << "Received audio frame" << seqno;
-
-	// Discard frames from the head if we exceed queueMax
-	while (outqueue.size() > queuemax)
-		outqueue.removeFirst();
-
-	// Remember which sequence we expect next
-	outseq = seqno+1;
-}
-
-int OpusOutput::numFramesQueued()
-{
-	QMutexLocker lock(&mutex);
-	return outqueue.size();
-}
-
-void OpusOutput::reset()
-{
-	disable();
-
-	QMutexLocker lock(&mutex);
-	outqueue.clear();
-}
-
 //=====================================================================================================================
 // RawOutput
 //=====================================================================================================================
 
 RawOutput::RawOutput(QObject *parent)
-	: AbstractAudioOutput(parent)
+	: PacketOutput(parent)
 {
 }
 
@@ -257,7 +276,7 @@ void RawOutput::produceOutput(float *samplebuf)
 //=====================================================================================================================
 
 FileLoopedOutput::FileLoopedOutput(const QString& fileName, QObject *parent)
-	: AbstractAudioOutput(parent)
+	: PacketOutput(parent)
 	, file(fileName, this)
 {
 }
@@ -323,13 +342,24 @@ void FileLoopedOutput::produceOutput(float *samplebuf)
 // VoiceService
 //=====================================================================================================================
 
+static PacketInput* makeInputInstance(QObject* parent)
+{
+	return new RawInput(parent);
+}
+
+static PacketOutput* makeOutputInstance(QObject* parent)
+{
+	return new RawOutput(parent);
+}
+
 VoiceService::VoiceService(QObject *parent)
 	: PeerService("Voice", tr("Voice communication"),
-		"NstVoice", tr("Netsteria voice communication protocol"), parent)
+		"NodeVoice", tr("MettaNode voice communication protocol"), parent)
 	, talkcol(-1)
 	, lisncol(-1)
 {
-	connect(&vin, SIGNAL(readyRead()),
+	vin = makeInputInstance(this);
+	connect(vin, SIGNAL(readyRead()),
 		this, SLOT(vinReadyRead()));
 	connect(this, SIGNAL(outStreamDisconnected(Stream*)),
 		this, SLOT(gotOutStreamDisconnected(Stream*)));
@@ -354,7 +384,7 @@ void VoiceService::setTalkEnabled(const SST::PeerId& hostid, bool enable)
 		sending.insert(stream);
 
 		// Make sure audio input is enabled
-		vin.enable();
+		vin->enable();
 
 	} else {
 		Stream *stream = outStream(hostid);
@@ -364,7 +394,7 @@ void VoiceService::setTalkEnabled(const SST::PeerId& hostid, bool enable)
 
 		// Turn off audio input if we're no longer sending to anyone
 		if (sending.isEmpty())
-			vin.disable();
+			vin->disable();
 	}
 
 	updateStatus(hostid);
@@ -425,7 +455,7 @@ void VoiceService::gotInStreamConnected(Stream *strm)
 		return;
 
 	rs.stream = strm;
-	rs.vout = new OpusOutput(this);
+	rs.vout = makeOutputInstance(this); // @todo depend on negotiated payload type?
 	connect(strm, SIGNAL(readyReadDatagram()),
 		this, SLOT(readyReadDatagram()));
 	connect(rs.vout, SIGNAL(queueEmpty()),
@@ -446,7 +476,7 @@ void VoiceService::vinReadyRead()
 {
 	forever {
 		// Read a frame from the audio system
-		QByteArray frame = vin.readFrame();
+		QByteArray frame = vin->readFrame();
 		if (frame.isEmpty())
 			break;
 
@@ -508,7 +538,7 @@ void VoiceService::readyReadDatagram()
 
 void VoiceService::voutQueueEmpty()
 {
-	OpusOutput *vout = (OpusOutput*)sender();
+	PacketOutput *vout = static_cast<PacketOutput*>(sender());
 
 	foreach (Stream *strm, recv.keys()) {
 		ReceiveStream &rs = recv[strm];
