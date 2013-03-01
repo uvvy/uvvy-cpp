@@ -398,6 +398,14 @@ void Audio::mixout(float *outbuf)
 
 	qDebug() << "mixout playback signal";
 
+	// @TODO provide synchronization, the output stream might've ceased to exist here.
+	// virtual void AbstractAudioInput::setEnabled(bool) false 
+	// setInputLevel 52 
+	// virtual void AbstractAudioOutput::setEnabled(bool) false 
+	// mixout playback signal 
+	// Fatal: ASSERT failure in QList<T>::operator[]: "index out of range", file /usr/local/Cellar/qt/4.8.3/include/QtCore/qlist.h, line 477
+	// Audio::reopen 
+
 	// Produce the first output stream's data directly into outbuf.
 	outstreams[0]->getOutput(outbuf);
 

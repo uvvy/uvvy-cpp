@@ -414,6 +414,8 @@ RegServer::doDelete(XdrStream& rxs, const Endpoint& srcep)
 RegRecord*
 RegServer::findCaller(const Endpoint &ep, const QByteArray &idi, const QByteArray &nhi)
 {
+	// @TODO: list the existing records here before lookup?
+
 	RegRecord *reci = idhash.value(idi);
 	if (reci == NULL) {
 		qDebug("Received request from non-registered caller");

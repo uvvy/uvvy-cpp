@@ -23,7 +23,7 @@ Most immediate usability necessities:
         move started, but there are still deps on SST::Host
 
  ☐ give priority to local-network Endpoint addresses first (need to match network against available interfaces' IPs)
- ☐ possible DOS if localhost is specified in Endpoints? try.
+ ☐ possible DOS if localhost is specified in Endpoints? yep, tested.
 
   Possibly PID (Proportional-Integral-Differential) flow control.
 
