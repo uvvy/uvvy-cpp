@@ -747,7 +747,7 @@ class StreamResponder : public KeyResponder, public StreamProtocol
 
 private slots:
     void clientCreate(RegClient *rc);
-    void clientStateChanged();
+    void clientStateChanged(int);
     void lookupNotify(const SST::PeerId &id, const Endpoint &loc, const RegInfo &info);
 };
 

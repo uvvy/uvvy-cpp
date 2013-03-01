@@ -39,21 +39,22 @@ class RegClient : public QObject
 	friend class RegReceiver;
 	Q_OBJECT
 
-private:
-	// Max time before rereg - 1 hr
-	static const qint64 maxRereg = (qint64)60*60*1000000;
-
-
-	Host *const h;		// Pointer to our per-host state
-
+public:
 	enum State {
 		Idle = 0,	// Unregistered and not doing anything
 		Resolve,	// Resolving rendezvous server's host name
 		Insert1,	// Sent Insert1 request, waiting response
 		Insert2,	// Sent Insert2 request, waiting response
 		Registered,	// Successfully registered
-	} state;
+	};
 
+private:
+	// Max time before rereg - 1 hr
+	static const qint64 maxRereg = (qint64)60*60*1000000;
+
+	Host *const h;		// Pointer to our per-host state
+
+	State state;
 	// DNS resolution info
 	QString srvname;	// DNS hostname or IP address of server
 	quint16 srvport;	// Port number of registration server
@@ -132,9 +133,14 @@ public:
 	// and return immediately to the idle state.
 	void disconnect();
 
+	static QString stateString(int state);
 
 signals:
-	void stateChanged();
+	/**
+	 * Indicate registration state change to the client.
+	 * @param state State of the regserver connection (from enum State).
+	 */
+	void stateChanged(int state);
 	void lookupDone(const SST::PeerId& id, const Endpoint &loc, const RegInfo &info);
 	void lookupNotify(const SST::PeerId& id, const Endpoint &loc, const RegInfo &info);
 	void searchDone(const QString &text, const QList<SST::PeerId> ids, bool complete);

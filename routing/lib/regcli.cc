@@ -39,6 +39,19 @@ using namespace SST;
 
 const qint64 RegClient::maxRereg;
 
+QString RegClient::stateString(int state)
+{
+	switch (state)
+	{
+		case Idle: return "Unregistered and not doing anything";
+		case Resolve: return "Resolving rendezvous server's host name";
+		case Insert1: return "Sent Insert1 request, waiting response";
+		case Insert2: return "Sent Insert2 request, waiting response";
+		case Registered: return "Successfully registered";
+		default: return "Unknown registration client state";
+	}
+}
+
 RegClient::RegClient(Host *h, QObject *parent)
 :	QObject(parent),
 	h(h),
@@ -106,7 +119,7 @@ void RegClient::disconnect()
 	reregtimer.stop();
 
 	// Notify the user that we're not (or no longer) registered
-	stateChanged();
+	stateChanged(state);
 }
 
 void RegClient::registerAt(const QString &srvname, quint16 srvport)
@@ -260,7 +273,7 @@ void RegClient::gotInsert2Reply(XdrStream &rs)
 	// Notify anyone interested.
 	qDebug() << this << "registered with" << srvname << "for" << lifeSecs << "seconds";
 	qDebug() << this << "my public endpoint" << pubEp.toString();
-	stateChanged();
+	stateChanged(state);
 }
 
 void RegClient::lookup(const PeerId& idtarget, bool notify)
