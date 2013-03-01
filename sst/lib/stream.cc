@@ -361,7 +361,7 @@ void Stream::dump()
 //=====================================================================================================================
 
 StreamResponder::StreamResponder(Host *h)
-:	KeyResponder(h, StreamProtocol::magic)
+	: KeyResponder(h, StreamProtocol::magic)
 {
 	// Get us connected to all currently extant RegClients
 	foreach (RegClient *rc, h->regClients())

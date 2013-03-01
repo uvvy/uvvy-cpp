@@ -16,8 +16,8 @@ uint qHash(const QPair<int,int> &p)
 }
 
 PeerTable::PeerTable(int numColumns, QObject *parent)
-:   QAbstractTableModel(parent),
-    cols(numColumns)
+    : QAbstractTableModel(parent)
+    , cols(numColumns)
 {
     Q_ASSERT(numColumns >= 2);
 
@@ -72,8 +72,7 @@ void PeerTable::insertAt(int row, const PeerId &id, const QString &name)
     p.name = name;
     p.id = id;
     p.flags.resize(cols);
-    p.flags[0] = Qt::ItemIsEnabled | Qt::ItemIsSelectable
-            | Qt::ItemIsEditable;
+    p.flags[0] = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
     p.flags[1] = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
     peers.insert(row, p);
@@ -267,14 +266,14 @@ bool PeerTable::setFlags(const QModelIndex &index, Qt::ItemFlags flags)
 //=====================================================================================================================
 
 PeerService::PeerService(const QString &svname, const QString &svdesc,
-            const QString &prname, const QString &prdesc,
-            QObject *parent)
-:   QObject(parent),
-    server(ssthost),
-    svname(svname),
-    prname(prname),
-    exclusive(true),
-    statcol(-1)
+                        const QString &prname, const QString &prdesc,
+                        QObject *parent)
+    : QObject(parent)
+    , server(ssthost)
+    , svname(svname)
+    , prname(prname)
+    , exclusive(true)
+    , statcol(-1)
 {
     // Handle incoming connections to our StreamServer.
     connect(&server, SIGNAL(newConnection()),

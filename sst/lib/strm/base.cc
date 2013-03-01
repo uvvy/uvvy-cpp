@@ -226,8 +226,7 @@ void BaseStream::tattach()
 			if (toplev)
 				parent = &flow->root;
 			else
-				return fail(tr("Parent stream closed before "
-						"child could be initiated"));
+				return fail(tr("Parent stream closed before child could be initiated"));
 		}
 		pusid = parent->usid;
 		if (pusid.isNull()) {

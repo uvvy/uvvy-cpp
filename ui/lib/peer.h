@@ -81,15 +81,14 @@ public:
      * @param  row [description]
      * @return     [description]
      */
-    inline QString name(int row) const
-        { return peers[row].name; }
+    inline QString name(int row) const { return peers[row].name; }
+
     /**
      * Return the host ID of a peer by row number.
      * @param  row [description]
      * @return     [description]
      */
-    inline SST::PeerId id(int row) const
-        { return peers[row].id; }
+    inline SST::PeerId id(int row) const { return peers[row].id; }
 
     /**
      * Return a list of all peers' host IDs.
