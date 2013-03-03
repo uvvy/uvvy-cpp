@@ -14,13 +14,11 @@ while readLeft or readRight
 	rightTimestamp = Time.iso8601(rightLine.split(" ")[0]).to_f if rightLine
 
 	if leftLine and leftTimestamp <= rightTimestamp
-		puts "LEFT LOG FIRST", leftTimestamp, rightTimestamp
-		puts "L>> #{leftLine}" if leftLine
+		puts "L<< #{leftLine}" if leftLine
 		readLeft = true
 		readRight = false
 	elsif rightLine
-		puts "RIGHT LOG FIRST", leftTimestamp, rightTimestamp
-		puts "<<R #{rightLine}" if rightLine
+		puts ">>R #{rightLine}" if rightLine
 		readLeft = false
 		readRight = true
 	else
