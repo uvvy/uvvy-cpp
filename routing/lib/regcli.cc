@@ -301,7 +301,7 @@ void RegClient::sendLookup(const PeerId& idtarget, bool notify)
 
 void RegClient::gotLookupReply(XdrStream &rs, bool isnotify)
 {
-	qDebug() << this << "gotLookupReply" << isnotify;
+	qDebug() << this << "gotLookupReply" << (isnotify ? "NOTIFY" : "RESPONSE");
 
 	// Decode the rest of the reply
 	QByteArray targetid, targetinfo;
