@@ -1,48 +1,42 @@
-2013-03-02T00:56:00 D: RegServer bound on port 8662 
-2013-03-02T00:56:45 D: Received 68 byte message from "192.168.1.80:8661" 
-2013-03-02T00:56:45 D: SST::RegServer(0x7fff56915960) Insert1 
-2013-03-02T00:56:45 D: SST::RegServer(0x7fff56915960) replyInsert1 challenge "PWmrgQNrAxKB+g3t6tY9uYluElKn0oFojqoyXf87/Aw=" 
-2013-03-02T00:56:45 D: SST::RegServer(0x7fff56915960) replyInsert1 sent to "192.168.1.80:8661" 
-2013-03-02T00:56:45 D: Received 600 byte message from "192.168.1.80:8661" 
-2013-03-02T00:56:45 D: SST::RegServer(0x7fff56915960) Insert2 
-2013-03-02T00:56:45 D: Registering record for "FQERZYRYJOUAYTLVKH3PBRBGUBT4IJZN" at "192.168.1.80:8661" 
-2013-03-02T00:56:45 D: Inserted record for "FQERZYRYJOUAYTLVKH3PBRBGUBT4IJZN" at "192.168.1.80:8661" 
-2013-03-02T00:56:45 D: Received 96 byte message from "192.168.1.80:8661" 
-2013-03-02T00:56:45 D: Lookup with notify
-2013-03-02T00:56:45 D: SST::RegServer(0x7fff56915960) replyLookup 514 
-2013-03-02T00:56:46 D: Received 68 byte message from "192.168.1.64:8661" 
-2013-03-02T00:56:46 D: SST::RegServer(0x7fff56915960) Insert1 
-2013-03-02T00:56:46 D: SST::RegServer(0x7fff56915960) replyInsert1 challenge "+kULG7Puke8aAy82/vnDX0SMslaPbq4Wc2pYZhncIng=" 
-2013-03-02T00:56:46 D: SST::RegServer(0x7fff56915960) replyInsert1 sent to "192.168.1.64:8661" 
-2013-03-02T00:56:46 D: Received 584 byte message from "192.168.1.64:8661" 
-2013-03-02T00:56:46 D: SST::RegServer(0x7fff56915960) Insert2 
-2013-03-02T00:56:46 D: Registering record for "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" at "192.168.1.64:8661" 
-2013-03-02T00:56:46 D: Inserted record for "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" at "192.168.1.64:8661" 
-2013-03-02T00:56:46 D: Received 96 byte message from "192.168.1.64:8661" 
-2013-03-02T00:56:46 D: Lookup with notify
-2013-03-02T00:56:46 D: SST::RegServer(0x7fff56915960) replyLookup 514 
-2013-03-02T00:56:46 D: SST::RegServer(0x7fff56915960) replyLookup 770 
-2013-03-02T00:56:46 D: Received 96 byte message from "192.168.1.64:8661" 
-2013-03-02T00:56:46 D: Lookup with notify
-2013-03-02T00:56:46 D: SST::RegServer(0x7fff56915960) replyLookup 514 
-2013-03-02T00:56:51 D: Received 96 byte message from "192.168.1.80:8661" 
-2013-03-02T00:56:51 D: Lookup with notify
-2013-03-02T00:56:51 D: SST::RegServer(0x7fff56915960) replyLookup 514 
-2013-03-02T00:56:51 D: SST::RegServer(0x7fff56915960) replyLookup 770 
-2013-03-02T00:56:51 D: Received 96 byte message from "192.168.1.80:8661" 
-2013-03-02T00:56:51 D: Lookup with notify
-2013-03-02T00:56:51 D: SST::RegServer(0x7fff56915960) replyLookup 514 
-2013-03-02T00:56:51 D: SST::RegServer(0x7fff56915960) replyLookup 770 
-2013-03-02T00:56:55 D: Received 96 byte message from "192.168.1.80:8661" 
-2013-03-02T00:56:55 D: Lookup with notify
-2013-03-02T00:56:55 D: SST::RegServer(0x7fff56915960) replyLookup 514 
-2013-03-02T00:56:55 D: SST::RegServer(0x7fff56915960) replyLookup 770 
-2013-03-02T00:57:11 D: Received 96 byte message from "192.168.1.64:8661" 
-2013-03-02T00:57:11 D: Lookup with notify
-2013-03-02T00:57:11 D: SST::RegServer(0x7fff56915960) replyLookup 514 
-2013-03-02T00:58:00 D: Received 68 byte message from "192.168.1.80:8661" 
-2013-03-02T00:58:00 D: Received delete request 
-2013-03-02T00:58:00 D: ~RegRecord: deleting record for "FQERZYRYJOUAYTLVKH3PBRBGUBT4IJZN" 
-2013-03-02T00:58:06 D: Received 68 byte message from "192.168.1.64:8661" 
-2013-03-02T00:58:06 D: Received delete request 
-2013-03-02T00:58:06 D: ~RegRecord: deleting record for "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:52:47 D: RegServer bound on port 8662 
+2013-03-03T13:54:09 D: Received 68 byte message from "192.168.1.64:8661" 
+2013-03-03T13:54:09 D: SST::RegServer(0x7fff5c813980) Insert1 
+2013-03-03T13:54:09 D: SST::RegServer(0x7fff5c813980) replyInsert1 challenge "CfOOQXAdzXYtqQ4t/FKwyAgtVBMtJYCGqxosfnx/VTw=" 
+2013-03-03T13:54:09 D: SST::RegServer(0x7fff5c813980) replyInsert1 sent to "192.168.1.64:8661" 
+2013-03-03T13:54:09 D: Received 584 byte message from "192.168.1.64:8661" 
+2013-03-03T13:54:09 D: SST::RegServer(0x7fff5c813980) Insert2 
+2013-03-03T13:54:09 D: Registering record for "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" at "192.168.1.64:8661" 
+2013-03-03T13:54:09 D: Inserted record for "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" at "192.168.1.64:8661" 
+2013-03-03T13:54:09 D: Received 96 byte message from "192.168.1.64:8661" 
+2013-03-03T13:54:09 D: Lookup with notify
+2013-03-03T13:54:09 D: SST::RegServer(0x7fff5c813980) replyLookup 514 
+2013-03-03T13:54:10 D: Received 68 byte message from "192.168.1.80:8661" 
+2013-03-03T13:54:10 D: SST::RegServer(0x7fff5c813980) Insert1 
+2013-03-03T13:54:10 D: SST::RegServer(0x7fff5c813980) replyInsert1 challenge "Nk/Tn79oGpPZvxY2i85QlQYDZiuy50tJvm9q8/bsDcA=" 
+2013-03-03T13:54:10 D: SST::RegServer(0x7fff5c813980) replyInsert1 sent to "192.168.1.80:8661" 
+2013-03-03T13:54:10 D: Received 600 byte message from "192.168.1.80:8661" 
+2013-03-03T13:54:10 D: SST::RegServer(0x7fff5c813980) Insert2 
+2013-03-03T13:54:10 D: Registering record for "FQERZYRYJOUAYTLVKH3PBRBGUBT4IJZN" at "192.168.1.80:8661" 
+2013-03-03T13:54:10 D: Inserted record for "FQERZYRYJOUAYTLVKH3PBRBGUBT4IJZN" at "192.168.1.80:8661" 
+2013-03-03T13:54:10 D: Received 96 byte message from "192.168.1.80:8661" 
+2013-03-03T13:54:10 D: Lookup with notify
+2013-03-03T13:54:10 D: SST::RegServer(0x7fff5c813980) replyLookup 514 
+2013-03-03T13:54:10 D: SST::RegServer(0x7fff5c813980) replyLookup 770 
+2013-03-03T13:54:15 D: Received 96 byte message from "192.168.1.64:8661" 
+2013-03-03T13:54:15 D: Lookup with notify
+2013-03-03T13:54:15 D: SST::RegServer(0x7fff5c813980) replyLookup 514 
+2013-03-03T13:54:15 D: SST::RegServer(0x7fff5c813980) replyLookup 770 
+2013-03-03T13:54:15 D: Received 96 byte message from "192.168.1.64:8661" 
+2013-03-03T13:54:15 D: Lookup with notify
+2013-03-03T13:54:15 D: SST::RegServer(0x7fff5c813980) replyLookup 514 
+2013-03-03T13:54:15 D: SST::RegServer(0x7fff5c813980) replyLookup 770 
+2013-03-03T13:54:18 D: Received 96 byte message from "192.168.1.64:8661" 
+2013-03-03T13:54:18 D: Lookup with notify
+2013-03-03T13:54:18 D: SST::RegServer(0x7fff5c813980) replyLookup 514 
+2013-03-03T13:54:18 D: SST::RegServer(0x7fff5c813980) replyLookup 770 
+2013-03-03T13:56:14 D: Received 68 byte message from "192.168.1.80:8661" 
+2013-03-03T13:56:14 D: Received delete request 
+2013-03-03T13:56:14 D: ~RegRecord: deleting record for "FQERZYRYJOUAYTLVKH3PBRBGUBT4IJZN" 
+2013-03-03T13:56:20 D: Received 68 byte message from "192.168.1.64:8661" 
+2013-03-03T13:56:20 D: Received delete request 
+2013-03-03T13:56:20 D: ~RegRecord: deleting record for "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
