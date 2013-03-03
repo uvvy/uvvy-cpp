@@ -349,7 +349,7 @@ static PacketInput* makeInputInstance(QObject* parent)
 
 static PacketOutput* makeOutputInstance(QObject* parent)
 {
-	return new RawOutput(parent);
+	return new FileLoopedOutput("/Users/berkus/Hobby/mettanode/ui/gui/sounds/bnb.s16", parent);
 }
 
 VoiceService::VoiceService(QObject *parent)
