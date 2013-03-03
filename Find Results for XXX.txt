@@ -1,0 +1,1053 @@
+/Users/berkus/Hobby/mettanode/routing/lib/regcli.cc:
+  406  	// Send the message to all addresses we know for the server,
+  407  	// using all of the currently active network sockets.
+  408: 	// XXX should only do this during initial discovery!!
+  409  	QList<Socket*> socks = h->activeSockets();
+  410  	if (socks.isEmpty())
+
+/Users/berkus/Hobby/mettanode/sst/lib/bdr.cc:
+  188  	case ReadPastEnd:	return tr("truncated data stream");
+  189  	case ReadCorruptData:	return tr("corrupt data stream");
+  190: 	case IOError:		return tr("I/O error");	// XXX
+  191  	}
+  192  	return tr("Unknown Error");
+
+/Users/berkus/Hobby/mettanode/sst/lib/flow.cc:
+  168  	setLinkStatus(LinkDown);
+  169  
+  170: 	// XXX if client: go into TIME-WAIT
+  171: 	// XXX then auto-delete self?
+  172  }
+  173  
+  ...
+  187  	Q_ASSERT(isActive());
+  188  
+  189: 	// Don't allow txseq counter to wrap (XXX re-key before it does!)
+  190  	pktseq = txseq;
+  191  	Q_ASSERT(txseq < maxPacketSeq);
+  ...
+  582  
+  583  	case CC_CTCP:
+  584: 		Q_ASSERT(0);	// XXX
+  585  
+  586  	case CC_FIXED:
+  ...
+  872  
+  873  		// new loss event: cut ssthresh and cwnd
+  874: 		//ssthresh = (txseq - txackseq) / 2;	XXX
+  875  		ssthresh = cwnd / 2;
+  876  		ssthresh = qMax(ssthresh, CWND_MIN);
+  ...
+  904  
+  905  	case CC_CTCP:
+  906: 		Q_ASSERT(0);	// XXX
+  907  
+  908  	case CC_FIXED:
+
+/Users/berkus/Hobby/mettanode/sst/lib/flow.h:
+   22  #include <QTime>
+   23  #include <QTimer>
+   24: #include <QQueue>   // XXX FlowSegment
+   25  
+   26  #include "ident.h"
+   ..
+   28  #include "timer.h"
+   29  
+   30: // XXX for specific armor methods - break into separate module
+   31  #include "chk32.h"
+   32  #include "aes.h"
+   ..
+   41  class Socket;
+   42  class FlowCC;
+   43: class KeyInitiator; // XXX
+   44  
+   45  
+   ..
+   88  class Flow : public SocketFlow
+   89  {
+   90:     friend class KeyInitiator;  // XXX
+   91      Q_OBJECT
+   92  
+   ..
+   96      //FlowCC *cc;        ///< Congestion control method
+   97      CCMode ccmode;       ///< Congestion control method
+   98:     bool nocc;           ///< Disable congestion control.  XXX
+   99      unsigned missthresh; ///< Threshold at which to infer packets dropped
+  100  
+  ...
+  109      // before we consider it to be "missed", i.e., "probably dropped".
+  110      // This is represents the "standard" Internet convention,
+  111:     // although (XXX) it really needs to be dynamically measured
+  112      // to account for variable reordering rates on different paths.
+  113:     // XXX static const inst missdelay = 2;
+  114  
+  115      // Amount of space client must leave at the beginning of a packet
+  ...
+  329  
+  330      /// Repeat stall indications but not other link status changes.
+  331:     /// XXX hack - maybe "stall severity" or "stall time"
+  332      /// should be part of status?
+  333      /// Or perhaps status should be (up, stalltime)?
+
+/Users/berkus/Hobby/mettanode/sst/lib/key.cc:
+   20  
+   21  
+   22: // XXX bug in g++ 4.1.2?  This must be declared before including QHash!?
+   23  #include <QtGlobal>
+   24  namespace SST { class Endpoint; }
+   ..
+  167  
+  168  
+  169: // XXX workaround for G++ template instantiation bug???
+  170  XdrStream &operator<<(XdrStream &xs, const XdrOption<KeyChunkUnion> &o)
+  171  {
+  ...
+  261  		return;		// Invalid initiator channel number
+  262  
+  263: 	// XXX implement DoS protection via cookies
+  264  
+  265  	// Create a legacy EID to represent the responder's (weak) identity
+  ...
+  280  	if (!checkInitiator(src, eidi, i1.ulpi)) {
+  281  		qDebug("Rejecting ChkI1 due to checkInitiator()");
+  282: 		return;	// XXX generate cached error response instead
+  283  	}
+  284  
+  ...
+  288  	if (!flow) {
+  289  		qDebug("Rejecting ChkI1 due to NULL return from newFlow()");
+  290: 		return;	// XXX generate cached error response instead
+  291  	}
+  292  	Q_ASSERT(flow->isBound());
+  ...
+  312  	flow->setChannelIds(txchanid, rxchanid);
+  313  
+  314: 	// Build, send, XXX and cache our R1 response.
+  315  	KeyChunk ch;
+  316  	KeyChunkUnion &chu = ch.alloc();
+  ...
+  321  	chu.chkr1.ulpr = ulpr;
+  322  	QByteArray r2pkt = send(magic(), ch, src);
+  323: 	// XXX hk->r2cache.insert(hhkr, r2pkt);
+  324  
+  325  	// Let the ball roll
+  ...
+  436  	if (!HMAC(mackey).calcVerify(i2.idi)) {
+  437  		qDebug("Received I2 with bad initiator identity MAC");
+  438: 		return;	// XXX generate cached error response instead
+  439  	}
+  440  
+  ...
+  449  	if (encrds.status() != encrds.Ok || kii.chani == 0) {
+  450  		qDebug("Received I2 with bad identity info");
+  451: 		return;	// XXX generate cached error response instead
+  452  	}
+  453  
+  ...
+  455  	if (!checkInitiator(src, kii.eidi, kii.ulpi)) {
+  456  		qDebug("Rejecting I2 due to checkInitiator()");
+  457: 		return;	// XXX generate cached error response instead
+  458  	}
+  459  
+  ...
+  466  	} else if (eidr != hid) {
+  467  		qDebug("Received I2 from initiator looking for someone else");
+  468: 		return;	// XXX generate cached error response instead
+  469  	}
+  470  
+  ...
+  477  	if (!identi.setKey(kii.idpki)) {
+  478  		qDebug("Received I2 with bad initiator public key");
+  479: 		return;	// XXX generate cached error response instead
+  480  	}
+  481  	QByteArray sighash = calcSigHash(i2.group, i2.keylen, nhi, i2.nr,
+  ...
+  487  	if (!identi.verify(sighash, kii.sigi)) {
+  488  		qDebug("Received I2 with bad initiator signature");
+  489: 		return;	// XXX generate cached error response instead
+  490  	}
+  491  
+  ...
+  498  	if (!flow) {
+  499  		qDebug("Rejecting I2 due to NULL return from newFlow()");
+  500: 		return;	// XXX generate cached error response instead
+  501  	}
+  502  	Q_ASSERT(flow->isBound());
+  ...
+  590  
+  591  	// Choose the security method based on the target EID
+  592: 	// XXX figure out how this really should work
+  593  	switch (Ident(idr).scheme()) {
+  594  	case Ident::DSA160:
+  ...
+  814  	// Always use the latest responder parameters received,
+  815  	// even if we've already received an R1 response.
+  816: 	// XXX to be really DoS-protected from active attackers,
+  817  	// we should cache some number of the last R1 responses we get
+  818  	// until we receive a valid R2 response with the correct identity.
+  ...
+  914  
+  915  	// Make sure our host key hasn't expired in the meantime
+  916: 	// XXX but reverting here leaves the responder with a hung channel!
+  917  	DHKey *hk = h->getDHKey(i->dhgroup);
+  918  	Q_ASSERT(hk != NULL);
+
+/Users/berkus/Hobby/mettanode/sst/lib/key.h:
+   69   * We create one instance for each outgoing connection we attempt.
+   70   *
+   71:  * XXX we should really have a separate Idle state, 
+   72   * so that clients can hookup signals before starting key exchange.
+   73:  * XXX make KeyInitiator an abstract base class like KeyResponder,
+   74   * calling a newFlow() method when it needs to set up a flow
+   75   * rather than requiring the flow to be passed in at the outset.
+
+/Users/berkus/Hobby/mettanode/sst/lib/keyproto.x:
+   16  // Checksum negotiation chunks
+   17  struct KeyChunkChkI1Data {
+   18: 	// XXX nonces should be 64-bit, to ensure USIDs unique over all time!
+   19  	unsigned int	cki;		// Initiator's checksum key
+   20  	unsigned char	chani;		// Initiator's channel number
+
+/Users/berkus/Hobby/mettanode/sst/lib/seg.cc:
+   74  		}
+   75  
+   76: 		// XXX safer to ack first?
+   77  		QByteArray data = pkt.mid(hdrlen);
+   78  		qDebug() << fsock << "recv size" << data.size();
+   ..
+  142  	peer(SocketEndpoint(Endpoint(peer, NETSTERIA_DEFAULT_PORT), this))
+  143  {
+  144: 	setActive(true);	// XXX should we already???
+  145  
+  146  	qDebug() << this << "active sockets" << host->activeSockets();
+  ...
+  161  	// Bind the segment to the host's main socket
+  162  	if (!fseg->initiateTo(host()->activeSockets().at(0), remoteep))
+  163: 		qFatal("FlowSocket::initiateTo failed");//XXX
+  164  
+  165  	return fseg;
+  166  }
+  167  
+  168: // XXX unused
+  169  void FlowSocket::keyCompleted(bool success)
+  170  {
+  171  	if (!success)
+  172: 		qFatal("FlowSocket key agreement failed!"); //XXX
+  173  
+  174  	qDebug() << "FlowSocket key agreement succeeded";
+  ...
+  230  bool FlowSocket::bind(const QHostAddress &, quint16, QUdpSocket::BindMode)
+  231  {
+  232: 	qFatal("FlowSocket::bind() shouldn't be called");//XXX???
+  233  	return false;
+  234  }
+  ...
+  236  QList<Endpoint> FlowSocket::localEndpoints()
+  237  {
+  238: 	qFatal("FlowSocket::localEndpoints() shouldn't be called");//XXX???
+  239  	return QList<Endpoint>();
+  240  }
+  ...
+  242  quint16 FlowSocket::localPort()
+  243  {
+  244: 	qFatal("FlowSocket::localPort() shouldn't be called");//XXX???
+  245  	return 0;
+  246  }
+  ...
+  248  QString FlowSocket::errorString()
+  249  {
+  250: 	qFatal("FlowSocket::errorString() shouldn't be called");//XXX???
+  251  	return QString();
+  252  }
+  ...
+  257  :	KeyResponder(h, flow_seg_magic),
+  258  	fsock(NULL),
+  259: 	lastiseg(NULL), lastoseg(NULL)	// XXX
+  260  {
+  261  }
+  ...
+  283  	}
+  284  
+  285: 	lastiseg = fseg;	// XXX hack
+  286  
+  287  	// Set up the onward or upward forwarding path
+  ...
+  290  		fseg->setParent(fsock);
+  291  
+  292: 		Q_ASSERT(fsock->fseg == NULL);	// XXX
+  293  		fsock->fseg = fseg;
+  294  
+  ...
+  305  		fseg->other = oseg;
+  306  
+  307: 		lastoseg = oseg;	// XXX hack
+  308  	}
+  309  
+
+/Users/berkus/Hobby/mettanode/sst/lib/seg.h:
+   20  #pragma once
+   21  
+   22: #include <QQueue>	// XXX FlowSegment
+   23  
+   24  #include "flow.h"
+   ..
+   32  
+   33  // Control chunk magic value for the flow protocol ('flw')
+   34: static const quint32 flow_seg_magic = 0x00464c57;	// XXX in FlowProtocol
+   35  
+   36  class FlowSegment : public Flow
+   ..
+   90  				SocketFlow *flow);
+   91  
+   92: 	// XXX these make no sense here; need to make flow stuff standalone
+   93  	// and independent of socket notion
+   94  	virtual bool bind(const QHostAddress &addr = QHostAddress::Any,
+   ..
+  129  	void forwardUp(FlowSocket *fsock);
+  130  
+  131: 	FlowSegment *lastiseg, *lastoseg; // XXX hack for monitoring purposes
+  132  
+  133  private:
+
+/Users/berkus/Hobby/mettanode/sst/lib/sock.cc:
+  171  UdpSocket::send(const Endpoint &ep, const char *data, int size)
+  172  {
+  173: 	// XXX Qt bug?  For some reason, at least under both Linux & Mac,
+  174  	// our UDP socket is getting mysteriously "unbound"
+  175  	// when we try to send a packet to an IPv6 address...
+
+/Users/berkus/Hobby/mettanode/sst/lib/stream.cc:
+   84  
+   85  	// Create a top-level application stream object for this connection.
+   86: 	typedef BaseStream ConnectStream;	// XXX
+   87  	ConnectStream *cs = new ConnectStream(host, eid, NULL);
+   88  	cs->strm = this;
+
+/Users/berkus/Hobby/mettanode/sst/lib/stream.h:
+  270      /// that have been received over the network but not yet read.
+  271      ///
+  272:     /// XXX This function may need to be removed from the API,
+  273      /// since the size of a large message will be unknown
+  274      /// until the entire message has already come in,
+  ...
+  500      void readyReadMessage();
+  501  
+  502: #if 0   // XXX not sure if this actually useful, maybe just readyReadMessage...
+  503      /** Emitted when an end-of-stream marker arrives from the peer,
+  504       * indicating that all remaining data is now queued for reading.
+  ...
+  522       * and the remote peer closes its end while the substream is queued,
+  523       * so that the entire content may be read at once via readDatagram().
+  524:      * (XXX or perhaps when an entire first message/record arrives?)
+  525       * Note that if the client wishes to read datagrams using this signal,
+  526       * the client must ensure that the parent's maximum receive window
+
+/Users/berkus/Hobby/mettanode/sst/lib/strm/abs.h:
+   30  	Q_OBJECT
+   31  
+   32: protected:	// XXX private w/ accessors?
+   33  	typedef Stream::ListenMode ListenMode;
+   34  
+
+/Users/berkus/Hobby/mettanode/sst/lib/strm/base.cc:
+    1  
+    2: // XXX work around apparent bug in g++ 4.1.2
+    3  #include <QtGlobal>
+    4  namespace SST { struct UniqueStreamId; };
+    .
+  250  			if (maxsearch-- <= 0) {
+  251  				qDebug() << this << "tattach: no free SID";
+  252: 				Q_ASSERT(0);	// XXX wait for a free one
+  253  			}
+  254  		} while (flow->txsids.contains(++ctr));
+  ...
+  263  			// but could if all slots are trying to detach...
+  264  			qDebug() << this << "tattach: all slots in use";
+  265: 			Q_ASSERT(0);	// XXX wait for a free one
+  266  		}
+  267  	}
+  ...
+  359  	StreamServer *svr = h->listeners.value(svpair);
+  360  	if (svr == NULL)
+  361: 		// XXX send reply with error code/message
+  362  		return fail(
+  363  			tr("Request for service %0 with unknown protocol %1")
+  ...
+  492  				<< "need" << (tflt + segsize)
+  493  				<< "have" << twin;
+  494: 			// XXX query status if latest update is out-of-date!
+  495: 			//XXXreturn;
+  496  		}
+  497  
+  ...
+  538  				&& usid.chanId == flow->txChannelId()
+  539  				&& (quint16)usid.streamCtr == tcuratt->sid
+  540: 			/* XXX	&& parent->tflt + segsize <= parent->twin*/) {
+  541  			qDebug() << "sending optimized Init packet";
+  542  
+  ...
+  604  	quint64 pktseq;
+  605  	flow->flowTransmit(p.buf, pktseq);
+  606: 	Q_ASSERT(pktseq);	// XXX
+  607  
+  608: 	// XXX strm is QObject(0x0) here, no stream means it has been deleted by upper layer?
+  609  	qDebug() << strm << "tx " << pktseq << "posn" << p.tsn << "size" << p.buf.size();
+  610  
+  ...
+  663  	qDebug() << this << "transmit Attach packet";
+  664  	StreamFlow *flow = tcuratt->flow;
+  665: 	Q_ASSERT(!usid.isNull());	// XXX am I sure this holds here?
+  666: 	Q_ASSERT(!pusid.isNull());	// XXX am I sure this holds here?
+  667  
+  668  	// What slot are we trying to attach with?
+  ...
+  700  void BaseStream::txReset(StreamFlow* flow, quint16 sid, quint8 flags)
+  701  {
+  702: 	qWarning("XXX txReset NOT IMPLEMENTED YET!!!");
+  703  // as per the PDF:
+  704  // As in TCP, either host may unilaterally terminate an SST stream in both directions and discard any buffered data. 
+  ...
+  737  		if (strm)
+  738  			strm->bytesWritten(pkt.payloadSize());
+  739: 			// XXX delay and coalesce signal
+  740  
+  741  		// fall through...
+  ...
+  769  		break;
+  770  
+  771: 	// XXX case DetachPacket:
+  772: 	// XXX case ResetPacket:
+  773  	default:
+  774  		qDebug() << this << "got ack for unknown packet" << pkt.type;
+  ...
+  841  		//	<< "bytes in flight" << tflt;
+  842  	}
+  843: 	// XXX Q_ASSERT(tflt >= 0);
+  844  }
+  845  
+  ...
+  885  			att->sidseq = pktseq;	// earlier Init; that's OK.
+  886  		flow->acksid = sid;
+  887: 		// XXX only calcTransmitWindow if rx'd in-order!?
+  888  		att->strm->calcTransmitWindow(hdr->win);
+  889  		att->strm->rxData(pkt, ntohs(hdr->tsn));
+  ...
+  920  	// Now process any data segment contained in this Init packet.
+  921  	flow->acksid = sid;
+  922: 	// XXX only calcTransmitWindow if rx'd in-order!?
+  923  	nbs->calcTransmitWindow(hdr->win);
+  924  	nbs->rxData(pkt, ntohs(hdr->tsn));
+  ...
+  995  			att->sidseq = pktseq;	// earlier Reply; that's OK.
+  996  		flow->acksid = sid;
+  997: 		// XXX only calcTransmitWindow if rx'd in-order!?
+  998  		att->strm->calcTransmitWindow(hdr->win);
+  999  		att->strm->rxData(pkt, ntohs(hdr->tsn));
+ ....
+ 1027  	// Now process any data segment contained in this Init packet.
+ 1028  	flow->acksid = sid;
+ 1029: 	// XXX only calcTransmitWindow if rx'd in-order!?
+ 1030  	bs->calcTransmitWindow(hdr->win);
+ 1031  	bs->rxData(pkt, ntohs(hdr->tsn));
+ ....
+ 1060  	// Process the data, using the full 32-bit TSN.
+ 1061  	flow->acksid = sid;
+ 1062: 	// XXX only calcTransmitWindow if rx'd in-order!?
+ 1063  	att->strm->calcTransmitWindow(hdr->win);
+ 1064  	att->strm->rxData(pkt, ntohl(hdr->tsn));
+ ....
+ 1271  	BaseStream *bs = att->strm;
+ 1272  
+ 1273: 	// XXX only calcTransmitWindow if rx'd in-order!?
+ 1274: 	//bs->calcTransmitWindow(hdr->win);	XXX ???
+ 1275  
+ 1276  	if (bs->state != Connected)
+ ....
+ 1282  	if (!(flags & dgramBeginFlag) || !(flags & dgramEndFlag)) {
+ 1283  		qWarning("OOPS, don't yet know how to reassemble datagrams");
+ 1284: 		return false;	// XXX
+ 1285  	}
+ 1286  
+ ....
+ 1318  		// Ack the pktseq first so peer won't ignore the reset!
+ 1319  		qDebug("rxAckPacket: unknown stream ID");
+ 1320: #if 0	// XXX do we want to do this, or not ???
+ 1321  		txReset(flow, sid, resetDirFlag);
+ 1322  #endif
+ ....
+ 1329  
+ 1330  	// Process the receive window update.
+ 1331: 	// XXX only calcTransmitWindow if rx'd in-order!?
+ 1332  	att->strm->calcTransmitWindow(hdr->win);
+ 1333  
+ ....
+ 1345  bool BaseStream::rxResetPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
+ 1346  {
+ 1347: 	Q_ASSERT(0);	// XXX
+ 1348  	(void)pktseq; (void)pkt; (void)flow;
+ 1349  	return false;
+ ....
+ 1423  {
+ 1424  	(void)pktseq; (void)pkt; (void)flow;
+ 1425: 	Q_ASSERT(0);	// XXX
+ 1426  	return false;
+ 1427  }
+ ....
+ 1480  		Q_ASSERT(size >= 0);
+ 1481  
+ 1482: 		// XXX BUG: this breaks if we try to read a partial segment!
+ 1483  		Q_ASSERT(maxSize >= size);
+ 1484  
+ ....
+ 1530  	if (!hasPendingMessages())
+ 1531  		return -1;	// No complete messages available
+ 1532: 	// XXX don't deadlock if a way-too-large message comes in...
+ 1533  
+ 1534  	// Read as much of the next queued message as we have room for
+ ....
+ 1620  qint32 BaseStream::writeDatagram(const char* data, qint32 totsize, bool reliable)
+ 1621  {
+ 1622: 	if (reliable || totsize > mtu /* XXX maxStatelessDatagram */ )
+ 1623  	{
+ 1624  		// Datagram too large to send using the stateless optimization:
+ ....
+ 1765  void BaseStream::shutdown(Stream::ShutdownMode mode)
+ 1766  {
+ 1767: 	// XXX self-destruct when done, if appropriate
+ 1768  
+ 1769  	if (mode & Stream::Reset)
+ ....
+ 1797  	qDebug() << "Stream" << this << "disconnected: state" << state;
+ 1798  
+ 1799: 	// XXX disconnect from stream
+ 1800  	//Q_ASSERT(0);
+ 1801  
+ ....
+ 1803  	if (strm) {
+ 1804  		strm->linkDown();
+ 1805: 		// XXX strm->reset?
+ 1806  	}
+ 1807  }
+
+/Users/berkus/Hobby/mettanode/sst/lib/strm/base.h:
+  335  	// Implementations of AbstractStream's data I/O methods
+  336  	virtual qint64 bytesAvailable() const { return ravail; }
+  337: 	virtual qint64 bytesToWrite() const { return twaitsize; } // XXX dgrams
+  338  	virtual int readData(char *data, int maxSize);
+  339  	virtual int writeData(const char *data, int maxSize,
+
+/Users/berkus/Hobby/mettanode/sst/lib/strm/peer.cc:
+    1  
+    2: // XXX bug in g++ 4.1.2?  This must be declared before including QHash!?
+    3  #include <QtGlobal>
+    4  namespace SST { class Endpoint; }
+    .
+   51  		return;	// Already have a flow working; don't need another yet.
+   52  
+   53: 	// XXX need a working way to determine if streams need to send...
+   54  	//if (receivers(SIGNAL(flowConnected())) == 0)
+   55  	//	return;	// No one is actually waiting for a flow.
+
+/Users/berkus/Hobby/mettanode/sst/lib/strm/sflow.cc:
+   22  	rxctr(0)
+   23  {
+   24: 	root.setParent(NULL);	// XXX
+   25  	root.state = BaseStream::Connected;
+   26  
+   ..
+   35  	root.listen(Stream::Unlimited);
+   36  
+   37: 	//XXX channel IDs
+   38  
+   39  	connect(this, SIGNAL(readyTransmit()),
+   ..
+  249  	Flow::stop();
+  250  
+  251: 	// XXX clean up tstreams, ackwait
+  252  
+  253  	// Detach and notify all affected streams.
+
+/Users/berkus/Hobby/mettanode/sst/lib/xdr.cc:
+  146  	case ReadPastEnd:	return tr("truncated data stream");
+  147  	case ReadCorruptData:	return tr("corrupt data stream");
+  148: 	case IOError:		return tr("I/O error");	// XXX
+  149  	}
+  150  	return tr("Unknown Error");
+
+/Users/berkus/Hobby/mettanode/sst/shell/cli/main.cc:
+  112  
+  113  	// Set up data forwarding
+  114: 	QString cmd;	// XXX just a plain shell for now
+  115  	sc.runShell(cmd, STDIN_FILENO, STDOUT_FILENO);
+  116  
+
+/Users/berkus/Hobby/mettanode/sst/shell/srv/srv.cc:
+  203  }
+  204  
+  205: void ShellSession::run(const QString &/*cmd XXX*/)
+  206  {
+  207  	if (ttyfd >= 0)
+  ...
+  232  		// We're the child process.
+  233  
+  234: 		// XXX authenticate user, setuid appropriately
+  235  
+  236  		if (ptyfd >= 0) {
+  ...
+  271  		// Run the shell/command
+  272  		qDebug() << "child: exec";
+  273: 		execlp("login", "login", NULL);	// XXX
+  274  		perror("Remote shell: exec");
+  275  		exit(1);
+  ...
+  294  	qDebug() << this << "error:" << str;
+  295  
+  296: 	// XXX send error control message
+  297  
+  298  	this->deleteLater();
+  ...
+  354  			flags |= 1;
+  355  		QString errmsg;
+  356: 		QString langtag;		// XXX RFC3066 lang tag?
+  357  		wxs << (qint32)ExitSignal << flags << signame
+  358  			<< errmsg << langtag;
+
+/Users/berkus/Hobby/mettanode/sst/test/lib/sim.cc:
+  123  #define ETH1000_RATE	(1000*1024*1024/8)
+  124  
+  125: #define ETH10_DELAY	(2000/2)	// XXX wild guess
+  126: #define ETH100_DELAY	(1000/2)	// XXX one data-point, YMMV
+  127: #define ETH1000_DELAY	(650/2)		// XXX one data-point, YMMV
+  128  
+  129  #define ETH_MTU		1500	// Standard Ethernet MTU
+  ...
+  131  #define ETH_QBYTES	(ETH_MTU * ETH_QPKTS)
+  132  
+  133: // Ethernet link parameters (XXX are queue length realistic?)
+  134  const LinkParams eth10 =
+  135  	{ ETH10_RATE, ETH10_DELAY/2, txtime(ETH_QBYTES,ETH10_RATE) };
+  ...
+  140  
+  141  
+  142: // Satellite link parameters (XXX need to check)
+  143  const LinkParams sat10 =
+  144  	{ ETH10_RATE, 500000, 1024*1024 };
+  ...
+  252  
+  253  	quint32 seqno = ntohl(*(quint32*)buf.data()) & 0xffffff;
+  254: 	isclient = !w;	// XXX hacke
+  255  	if (tracepkts)
+  256  	{
+  ...
+  422  QString SimSocket::errorString()
+  423  {
+  424: 	return QString();	// XXX
+  425  }
+  426  
+
+/Users/berkus/Hobby/mettanode/sst/test/lib/tcp.cc:
+   88  	QByteArray r = randBytes(4);
+   89  	memcpy(&txseq.v, r.data(), 4);
+   90: 	txseq.v = 1;	// XXX
+   91  	txlim = txseq+1;	// Make sure receive window allows sending SYN
+   92  	txasn = ackseq = markseq = TcpSeq(-1);	// "uninitialized"
+   ..
+  341  	h->flags = htons(seg.flags | (hdrlen/4 << DataShf));
+  342  	h->window = htons(rxwin);
+  343: 	h->checksum = 0;	// XXX
+  344  	h->urgent = 0;
+  345  
+  ...
+  597  		quint32 *p = (quint32*)(h+1);
+  598  		quint32 w = ntohl(*p++);
+  599: 		Q_ASSERT((w & 0xffffff00) == 0x01010500);	// XXX
+  600  		int len = (w & 0xff) - 2;
+  601: 		Q_ASSERT(len == hdrlen - minHdr - 4);		// XXX
+  602  		for (int i = 0; i < len/8; i++) {
+  603  			TcpSeq sackmin(ntohl(*p++));
+  ...
+  613  
+  614  			// Just remove all SACKed segments from rtxq.
+  615: 			// XXX This is not RFC compliant behavior,
+  616  			// since SACKs are suppost to be advisory only -
+  617  			// but we can assume they're definitive here
+  ...
+  704  
+  705  		//qDebug() << "Entering fast recovery";
+  706: 		// XXX ssthresh = qMax(flightsize / 2, smss*2);
+  707  		ssthresh = qMax(cwnd / 2, smss*2);
+  708  		cwnd = ssthresh;
+  ...
+  962  	//qDebug() << "Entering TimeWait state";
+  963  	state = TimeWait;
+  964: 	// XXX rtxtimer.start(2*2*60*1000000); // 2xMSL, where MSL = 2 minutes
+  965  	rtxtimer.start(5*1000000);	// abbreviated for testing...
+  966  }
+  ...
+ 1058  	if (!(flags & SYN) || !lisn) {
+ 1059  		qDebug("Unrecognized non-SYN TCP packet");
+ 1060: 		return; // XXX respond with RST
+ 1061  	}
+ 1062  	//qDebug() << "Accepting connection from" << src.toString();
+
+/Users/berkus/Hobby/mettanode/sst/test/lib/tcp.h:
+   80  
+   81  private:
+   82: 	// Sender's maximum segment size.  XXX should be dynamic.
+   83  	static const int smss = 1200;
+   84  
+   ..
+   92  
+   93  	// Threshold at which to start fast retransmit and fast recovery.
+   94: 	// XXX should be 3 according to RFCs (variable according to research),
+   95  	// but make it 1 for now for a fair comparision with SST,
+   96  	// which at the moment doesn't have a dupthresh at all...
+
+/Users/berkus/Hobby/mettanode/sst/test/regress/cli.cc:
+   72  void SockClient::request(int reqlen, int replylen, int pri, int flags)
+   73  {
+   74: 	Q_ASSERT(reqlen == REQLEN);	// XXX fix server
+   75  	Q_ASSERT(reqlen >= 8);
+   76  
+
+/Users/berkus/Hobby/mettanode/sst/test/regress/dgram.cc:
+   37  
+   38  
+   39: static const int maxDgramP2 = 15;	// XXX Max dgram size: 2^20 = 1MB
+   40  static const int maxDgramSize = 1 << maxDgramP2;
+   41  
+
+/Users/berkus/Hobby/mettanode/sst/test/regress/seg.cc:
+   99  		//	    &h1, QHostAddress("1.1.12.1"));
+  100  
+  101: 		// Set up the flow layer forwarding chain (XXX horrible hack)
+  102  		fr4.forwardUp(&fs4);
+  103  
+  ...
+  115  			    &h4, QHostAddress("1.1.34.4"));
+  116  
+  117: 		// Set up the flow layer forwarding chain (XXX horrible hack)
+  118  		fr2.forwardTo(Endpoint(QHostAddress("1.1.34.4"), FLOW_PORT));
+  119  		fr4.forwardUp(&fs4);
+  ...
+  134  			    &h4, QHostAddress("1.1.34.4"));
+  135  
+  136: 		// Set up the flow layer forwarding chain (XXX horrible hack)
+  137  		fr2.forwardTo(Endpoint(QHostAddress("1.1.23.3"), FLOW_PORT));
+  138  		fr2.forwardTo(Endpoint(QHostAddress("1.1.23.3"), FLOW_PORT));
+  ...
+  170  	// Send one MTU-size message at a time
+  171  	QByteArray buf((char*)&data, sizeof(data));
+  172: 	buf.resize(StreamProtocol::mtu);	// XXX
+  173  
+  174  	//qDebug() << &cli << "send msg size" << buf.size();
+  ...
+  208  
+  209  
+  210: 	// Now get the client going (XXX horrible hack)
+  211  	connect(&cli, SIGNAL(readyWrite()), this, SLOT(cliReadyWrite()));
+  212  	cliReadyWrite();
+  ...
+  224  		//qDebug() << srvs << "recv msg size" << buf.size();
+  225  
+  226: 		Q_ASSERT(buf.size() == StreamProtocol::mtu);	// XXX
+  227  		qint64 *data = (qint64*)buf.data();
+  228  		Q_ASSERT(data[0] == 0x12345678);
+
+/Users/berkus/Hobby/mettanode/sst/test/regress/seg.h:
+   22  #include "stream.h"
+   23  #include "sim.h"
+   24: #include "../lib/seg.h"	// XXX
+   25  
+   26  class QIODevice;
+   ..
+   41  	SimLink l12, l23, l34;		// links joining the hosts
+   42  
+   43: 	// Flow layer objects (XXX hack hack)
+   44  	FlowSocket fs1, fs4;
+   45  	FlowResponder fr1, fr2, fr3, fr4;
+
+/Users/berkus/Hobby/mettanode/sst/test/regress/srv.cc:
+   29  
+   30  #include "main.h"
+   31: #include "cli.h"	// XXX FLG_
+   32  #include "srv.h"
+   33  #include "tcp.h"
+
+/Users/berkus/Hobby/mettanode/sst/test/route/main.cc:
+   91  
+   92  	// Search for any newly-reachable neighbors.
+   93: 	// XXX this algorithm may get too slow as number of nodes grows.
+   94  	foreach (Node *n, nodes) {
+   95  		QByteArray nid = n->id();
+   ..
+  426  				continue;
+  427  			peers.insert(nbid,
+  428: 				Path(n->id(), 0/*XXX*/, nbid, nb.dist));
+  429  		}
+  430  		//Q_ASSERT(peers.size() == n->neighbors.size());
+  ...
+  476  	Path np(p.targetId());
+  477  	for (int i = p.numHops()-1; i >= 0; i--)
+  478: 		np.append(0/*XXX*/, p.beforeHopId(i), 0);
+  479  
+  480  	np.weight = p.weight;
+  ...
+  562  	while (n != na) {
+  563  		n = spi.value(n).prev;
+  564: 		p.append(0/*XXX*/, n->id(), 0);
+  565  	}
+  566  	p.weight = spi.value(nb).weight;
+
+/Users/berkus/Hobby/mettanode/sst/test/ucbweb/cli.cc:
+   21  #include <stdio.h>
+   22  #include <stdlib.h>
+   23: #include <unistd.h>	// XXX sleep
+   24  #include <netinet/in.h>
+   25  
+   ..
+   48  
+   49  
+   50: #define PRI_TEST	1	// XXX
+   51  
+   52  
+   ..
+  235  	sub->shutdown(Stream::Write);
+  236  
+  237: 	// XXX make it self-destruct when server disconnects
+  238  }
+  239  
+  ...
+  577  		batch.append(cp.primary);
+  578  #ifdef PRI_TEST
+  579: batch.append(cp.primary);	// XXX
+  580  #endif
+  581  	} else
+
+/Users/berkus/Hobby/mettanode/sst/test/ucbweb/cli.h:
+  116  	QTextStream		logstrm;
+  117  
+  118: 	Timer			pritimer;	// XXX for priority test
+  119  	int			prievent;
+  120  
+
+/Users/berkus/Hobby/mettanode/ui/gui/chat.cc:
+  129      qDebug() << "ChatDialog: connected";
+  130  
+  131:     // XXX only if not already enabled...
+  132      textentry->clear();
+  133      textentry->setReadOnly(false);
+
+/Users/berkus/Hobby/mettanode/ui/gui/main.cc:
+  540  //  openDefaultLog();
+  541  
+  542: //  assert(argc == 3);  // XXX
+  543  //  mydev.setUserName(QString::fromAscii(argv[1]));
+  544  //  mydev.setDevName(QString::fromAscii(argv[2]));
+  ...
+  565      SettingsDialog::init();
+  566  
+  567:     // XXX user info dialog
+  568      myreginfo.setHostName(profile->hostName());
+  569      myreginfo.setOwnerName(profile->ownerName());
+  ...
+  581      }
+  582  
+  583:     // XXX allow user-modifiable set of regservers
+  584      foreach (QString server, settings->value("regservers").toStringList())
+  585      {
+
+/Users/berkus/Hobby/mettanode/ui/gui/view.cc:
+   50  			: info.isDirectory()	? dirClosedPixmap
+   51  			: info.isSymLink()	? filelinkPixmap
+   52: 						: filePixmap;	// XXX
+   53  	typelabel = new QLabel(this);
+   54  	typelabel->setPixmap(*pixmap);
+
+/Users/berkus/Hobby/mettanode/ui/lib/arch.cc:
+   52          rs >> sig;
+   53          if (rs.status() != rs.Ok || sig != VXA_ARCHSIG) {
+   54:             Q_ASSERT(0);    // XXX
+   55          }
+   56      }
+   ..
+  130  QByteArray Archive::readStore(const QByteArray &ohash)
+  131  {
+  132:     return readChunk(ohash);    // XXX always full hash provided?
+  133  }
+  134  
+  ...
+  154      if (file.write(buf) < buf.size()) {
+  155          qWarning("Error writing to archive (disk full?)");
+  156:             // XXX
+  157          return QByteArray();
+  158      }
+  ...
+  163      // Optionally verify that the chunk really was written correctly.
+  164      if (verify && readChunk(ohash, data.size()).isEmpty()) {
+  165:         qWarning("Verify failed after writing to archive"); //XXX
+  166          return QByteArray();
+  167      }
+  ...
+  178          qint32 size;
+  179          if (!readHeader(readpos, check, size)) {
+  180:             qFatal("Corrupt archive");  // XXX
+  181          }
+  182          qDebug("Found chunk - size %d check %llx", size, check);
+
+/Users/berkus/Hobby/mettanode/ui/lib/arch.h:
+  110       * Test the integrity of the entire archive.
+  111       * 
+  112:      * XXX may take a long time - supply progress reports.
+  113       */
+  114      bool test();
+
+/Users/berkus/Hobby/mettanode/ui/lib/audio.cc:
+  123  QAbstractItemModel *Audio::inputDeviceListModel()
+  124  {
+  125: 	return NULL;	//XXX
+  126  }
+  127  
+  128  QAbstractItemModel *Audio::outputDeviceListModel()
+  129  {
+  130: 	return NULL;	//XXX
+  131  }
+  132  
+  ...
+  279  	Q_ASSERT(minframesize < 65536);
+  280  
+  281: 	// XXX check against rates supported by devices,
+  282  	// resample if necessary...
+  283  
+  ...
+  379  		}
+  380  
+  381: 		Q_ASSERT(0);	// XXX
+  382  	}
+  383  }
+  ...
+  598  void AbstractAudioOutput::getOutput(float *buf)
+  599  {
+  600: 	Q_ASSERT(sampleRate() == hwrate);	// XXX
+  601  	Q_ASSERT(frameSize() == hwframesize);
+  602  	produceOutput(buf);
+
+/Users/berkus/Hobby/mettanode/ui/lib/audio.h:
+   83      // Return the specific list of sample rates supported,
+   84      // or the empty list if a continuous range is allowed.
+   85:     // This is for information only - the Audio class will (XXX should)
+   86      // automatically re-sample to/from any desired rate.
+   87      static QList<double> sampleRates(int dev);
+
+/Users/berkus/Hobby/mettanode/ui/lib/file.cc:
+  265  void FileModel::Item::noEntries(int, qint64 recno, int nrecs)
+  266  {
+  267: 	// XXX display cleanly in the user interface
+  268  	qDebug("Couldn't find directory records %lld-%lld",
+  269  		recno, recno+nrecs-1);
+
+/Users/berkus/Hobby/mettanode/ui/lib/index.cc:
+  243  	XdrStream ws(&indexfile);
+  244  	ws << (qint32)FileInfoTag << path << info;
+  245: 	// XXX error handling
+  246  
+  247  	// Make sure the data gets flushed to disk
+  ...
+  281  	XdrStream ws(&indexfile);
+  282  	ws << (qint32)FileChunkTag << ohash << fc.path << fc.ofs << fc.len;
+  283: 	// XXX error handling
+  284  
+  285  	// Make sure the data gets flushed to disk
+  ...
+  382  	XdrStream ws(&indexfile);
+  383  	ws << (qint32)MetaChunkTag << ohash << name << (qint32)chunkdata.size();
+  384: 	// XXX error handling
+  385  
+  386  	// Make sure the data gets flushed to disk
+  ...
+  433  void Index::fileMoved(const QString &, const QString &)
+  434  {
+  435: 	qDebug() << "XXX Index::fileMoved";
+  436  }
+  437  
+
+/Users/berkus/Hobby/mettanode/ui/lib/opaque.cc:
+  494  
+  495  	// Sanity check for our adler32 composition mechanism...
+  496: 	// XXX bad for efficiency.
+  497  	adlerchk = adler32(buf.data(), splitsize, adlerchk);
+  498  	Q_ASSERT(adlerchk == adleracc);
+
+/Users/berkus/Hobby/mettanode/ui/lib/opaque.h:
+    2  // Classes for breaking opaque byte streams into encrypted chunks
+    3  // described by hierarchically structured metadata.
+    4: // XXX Just rename Opaque* to File*?
+    5  //
+    6  #pragma once
+    .
+  157      //static const int minChunkKeys = minChunkSize / OpaqueKey::xdrsize;
+  158      //static const int maxChunkKeys = maxChunkSize / OpaqueKey::xdrsize;
+  159:     static const int minChunkKeys = 4;  // XXX for testing only
+  160      static const int maxChunkKeys = 16;
+  161  
+
+/Users/berkus/Hobby/mettanode/ui/lib/scan.cc:
+  106  		break;
+  107  	default:
+  108: 		// XXX symlinks
+  109  		return setError(tr("Unknown file system object"));
+  110  	}
+  ...
+  370  	if (item) {
+  371  		if (!Index::addFileChunk(key.ohash, item->path, ofs, size))
+  372: 			return false;	// XXX handle errors properly
+  373  
+  374  		// Send a progress report back to the main thread
+
+/Users/berkus/Hobby/mettanode/ui/lib/share.h:
+   58  	// Called when a possible change has been detected to the file,
+   59  	// meaning it probably needs to be re-scanned.
+   60: 	//void markRescan() { }	// XXX
+   61  
+   62  	// Returns the FileInfo metadata describing this file.
+
+/Users/berkus/Hobby/mettanode/ui/lib/update.cc:
+   72  Update::FileReader::~FileReader()
+   73  {
+   74: 	// XXX remove the temporary download file from the Index's index
+   75  }
+   76  
+   ..
+  279  	}
+  280  
+  281: 	// XXX report fatal errors in subs
+  282  	if (dirdone && subsdone) {
+  283  		if (up->nerrors)
+
+/Users/berkus/Hobby/mettanode/ui/lib/voice.cc:
+  134  	if (seqdiff < 0) {
+  135  		// Out-of-order frame - just drop it for now.
+  136: 		// XXX insert into queue out-of-order if it's still useful
+  137  		qDebug() << "PacketOutput: frame received out of order";
+  138  		return;
+  ...
+  403  void VoiceService::setListenEnabled(const SST::PeerId& hostid, bool enable)
+  404  {
+  405: 	// XXX
+  406  }
+  407  
+  ...
+  577  
+  578  	if (lisncol >= 0) {
+  579: 		// XXX
+  580  		QVariant val = tr("Off");
+  581  		QModelIndex idx = ptab->index(row, lisncol);
+
+/Users/berkus/Hobby/mettanode/ui/lib/voice.h:
+  329          { return sending.contains(outStream(hostid)); }
+  330      inline bool listenEnabled(const SST::PeerId &)
+  331:         { return true; /*XXX*/ }
+  332      inline void toggleTalkEnabled(const SST::PeerId &hostid)
+  333          { setTalkEnabled(hostid, !talkEnabled(hostid)); }
+
+254 matches across 69 files
