@@ -472,6 +472,7 @@ void KeyResponder::gotDhI2(KeyChunkDhI2Data &i2, const SocketEndpoint &src)
 	qDebug() << "eidi" << kii.eidi.toBase64()
 		<< "idpki" << kii.idpki.toBase64()
 		<< "sigi" << kii.sigi.toBase64();
+
 	Ident identi(kii.eidi);
 	if (!identi.setKey(kii.idpki)) {
 		qDebug("Received I2 with bad initiator public key");
@@ -479,9 +480,10 @@ void KeyResponder::gotDhI2(KeyChunkDhI2Data &i2, const SocketEndpoint &src)
 	}
 	QByteArray sighash = calcSigHash(i2.group, i2.keylen, nhi, i2.nr,
 					i2.dhi, i2.dhr, kii.eidr);
-	qDebug("idi %s\nidpki %s\nsighash %s\nsigi %s\n",
-		i2.idi.toBase64().data(), kii.idpki.toBase64().data(),
-		sighash.toBase64().data(), kii.sigi.toBase64().data());
+
+	qDebug() << "i2.idi" << i2.idi.toBase64() << "idpki" << kii.idpki.toBase64() 
+		<< "sighash" << sighash.toBase64() << "sigi" << kii.sigi.toBase64();
+
 	if (!identi.verify(sighash, kii.sigi)) {
 		qDebug("Received I2 with bad initiator signature");
 		return;	// XXX generate cached error response instead
@@ -930,7 +932,7 @@ KeyInitiator::gotDhR2(Host *h, KeyChunkDhR2Data &r2)
 	r2.idr = AES().setDecryptKey(enckey).cbcDecrypt(r2.idr);
 
 	// Decode the identity information
-	//qDebug() << "encidr:" << r2.idr.toBase64() << "size" << r2.idr.size();
+	qDebug() << "encidr:" << r2.idr.toBase64() << "size" << r2.idr.size();
 	XdrStream encrds(r2.idr);
 	KeyIdentR kir;
 	encrds >> kir;
@@ -975,7 +977,7 @@ KeyInitiator::gotDhR2(Host *h, KeyChunkDhR2Data &r2)
 	i->fl->setRemoteChannel(kir.chanr);
 
 	// Our job is done
-	qDebug("Key exchange completed!");
+	qDebug() << "Key exchange completed!";
 	i->state = Done;
 	i->txtimer.stop();
 
@@ -988,7 +990,7 @@ void
 KeyInitiator::retransmit(bool fail)
 {
 	if (fail) {
-		qDebug("Key exchange failed");
+		qDebug() << "Key exchange failed!";
 		state = Done;
 		txtimer.stop();
 		return completed(false);
