@@ -590,8 +590,8 @@ int main(int argc, char **argv)
     friends = new PeerTable(NCOLS);
     friends->setHeaderData(COL_ONLINE, Qt::Horizontal,
                 QObject::tr("Presence"), Qt::DisplayRole);
-    // friends->setHeaderData(COL_FILES, Qt::Horizontal,
-    //             QObject::tr("Files"), Qt::DisplayRole);
+    friends->setHeaderData(COL_FILES, Qt::Horizontal,
+                QObject::tr("Files"), Qt::DisplayRole);
     friends->setHeaderData(COL_TALK, Qt::Horizontal,
                 QObject::tr("Talk"), Qt::DisplayRole);
     friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
