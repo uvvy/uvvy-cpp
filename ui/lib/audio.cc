@@ -783,7 +783,7 @@ AudioLoop::AudioLoop(QObject *parent)
 void AudioLoop::setLoopDelay(float secs)
 {
 	Q_ASSERT(!enabled());
-	Q_ASSERT(secs > 0);
+	Q_ASSERT(secs > 0.0);
 	delay = secs;
 }
 
