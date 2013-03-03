@@ -430,7 +430,9 @@ int Audio::computeLevel(const float *buf)
 		float l = buf[i];
 		lev = qMax(lev, qAbs(l));
 	}
-	return (int)((1.0 - log2f(lev)) * 100.0);
+	if (lev > 1.0)
+		qWarning() << "HEY, TOO HIGH SIGNAL LEVEL" << lev;
+
 	return (int)(lev * 100.0);
 }
 
