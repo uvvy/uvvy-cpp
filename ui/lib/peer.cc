@@ -267,8 +267,8 @@ bool PeerTable::setFlags(const QModelIndex &index, Qt::ItemFlags flags)
 //=================================================================================================
 
 PeerService::PeerService(const QString &svname, const QString &svdesc,
-            const QString &prname, const QString &prdesc,
-            QObject *parent)
+                         const QString &prname, const QString &prdesc,
+                         QObject *parent)
     : QObject(parent)
     , server(ssthost)
     , svname(svname)
