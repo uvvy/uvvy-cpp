@@ -108,7 +108,7 @@ public:
 	 * If not all the supplied data can be transmitted immediately,
 	 * it is queued locally until ready to transmit.
 	 * @param data the buffer containing the bytes to write.
-	 * @param maxSize the number of bytes to write.
+	 * @param size the number of bytes to write.
 	 * @param endflags flags to finish transmission.
 	 * @return the number of bytes written (same as the size parameter),
 	 * 		or -1 if an error occurred.
