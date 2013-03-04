@@ -39,7 +39,7 @@
 /** Compute the amplitude (sqrt energy) in each of the bands
  * @param m Mode data
  * @param X Spectrum
- * @param bands Square root of the energy for each band (returned)
+ * @param bandE Square root of the energy for each band (returned)
  */
 void compute_band_energies(const CELTMode *m, const celt_sig *X, celt_ener *bandE, int end, int C, int M);
 
@@ -49,14 +49,14 @@ void compute_band_energies(const CELTMode *m, const celt_sig *X, celt_ener *band
     equal to 1
  * @param m Mode data
  * @param X Spectrum (returned normalised)
- * @param bands Square root of the energy for each band
+ * @param bandE Square root of the energy for each band
  */
 void normalise_bands(const CELTMode *m, const celt_sig * OPUS_RESTRICT freq, celt_norm * OPUS_RESTRICT X, const celt_ener *bandE, int end, int C, int M);
 
 /** Denormalise each band of X to restore full amplitude
  * @param m Mode data
  * @param X Spectrum (returned de-normalised)
- * @param bands Square root of the energy for each band
+ * @param bandE Square root of the energy for each band
  */
 void denormalise_bands(const CELTMode *m, const celt_norm * OPUS_RESTRICT X, celt_sig * OPUS_RESTRICT freq, const celt_ener *bandE, int end, int C, int M);
 
@@ -79,7 +79,7 @@ void haar1(celt_norm *X, int N0, int stride);
  * @param m Mode data
  * @param X Residual (normalised)
  * @param total_bits Total number of bits that can be used for the frame (including the ones already spent)
- * @param enc Entropy encoder
+ * @param ec Entropy encoder
  */
 void quant_all_bands(int encode, const CELTMode *m, int start, int end,
       celt_norm * X, celt_norm * Y, unsigned char *collapse_masks, const celt_ener *bandE, int *pulses,
