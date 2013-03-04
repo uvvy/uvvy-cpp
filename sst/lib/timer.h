@@ -256,7 +256,7 @@ public:
 	/** Create a TimerEngine.
 	 * May be overridden to virtualize the behavior of timers.
 	 * @param timer Timer for which this TimerEngine is needed.
-	 * @return the new TimerEngine. */
+	 * @return new TimerEngine. */
 	virtual TimerEngine *newTimerEngine(Timer *timer);
 };
 

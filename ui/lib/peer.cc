@@ -6,9 +6,9 @@
 
 using namespace SST;
 
-//=====================================================================================================================
+//=================================================================================================
 // PeerTable
-//=====================================================================================================================
+//=================================================================================================
 
 uint qHash(const QPair<int,int> &p)
 {
@@ -262,19 +262,19 @@ bool PeerTable::setFlags(const QModelIndex &index, Qt::ItemFlags flags)
     return true;
 }
 
-//=====================================================================================================================
+//=================================================================================================
 // PeerService
-//=====================================================================================================================
+//=================================================================================================
 
 PeerService::PeerService(const QString &svname, const QString &svdesc,
             const QString &prname, const QString &prdesc,
             QObject *parent)
-:   QObject(parent),
-    server(ssthost),
-    svname(svname),
-    prname(prname),
-    exclusive(true),
-    statcol(-1)
+    : QObject(parent)
+    , server(ssthost)
+    , svname(svname)
+    , prname(prname)
+    , exclusive(true)
+    , statcol(-1)
 {
     // Handle incoming connections to our StreamServer.
     connect(&server, SIGNAL(newConnection()),

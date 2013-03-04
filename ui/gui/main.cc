@@ -576,7 +576,7 @@ int main(int argc, char **argv)
     // if (!settings->contains("regservers"))
     {
         QStringList rs;
-        rs << "motoko.madfire.net";//section4
+        rs << "ishikawa.local";
         settings->setValue("regservers", rs);
     }
 

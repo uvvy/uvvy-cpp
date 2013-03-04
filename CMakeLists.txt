@@ -8,10 +8,17 @@ find_package(OpenSSL REQUIRED)
 
 option(BUILD_TESTS "Build various tests and test programs." OFF)
 option(CLANG "Build using clang." OFF)
+option(CHECK_DOCS "Check documentation consistency using clang's -Wdocumentation" ON)
 
 if (CLANG)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation -std=c++11 -fsanitize=address")
 endif (CLANG)
+
+if (CHECK_DOCS)
+	set(_docflag "-Wdocumentation")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_docflag}")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_docflag}")
+endif (CHECK_DOCS)
 
 # How to run rpcgen to build XDR stubs
 macro(WRAP_RPC_SOURCES name sources)

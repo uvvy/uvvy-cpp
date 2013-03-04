@@ -103,7 +103,8 @@ public:
 	 */
 	virtual int readData(char *data, int maxSize) = 0;
 
-	/** Write data bytes to a stream.
+	/**
+	 * Write data bytes to a stream.
 	 * If not all the supplied data can be transmitted immediately,
 	 * it is queued locally until ready to transmit.
 	 * @param data the buffer containing the bytes to write.
@@ -112,17 +113,16 @@ public:
 	 * @return the number of bytes written (same as the size parameter),
 	 * 		or -1 if an error occurred.
 	 */
-	virtual int writeData(const char *data, int maxSize, quint8 endflags) = 0;
+	virtual int writeData(const char *data, int size, quint8 endflags) = 0;
 
-	/** Determine the number of bytes currently available to be read
-	 * via readData().
-	 * Note that calling readData() with a buffer this large
-	 * may not read all the available data
+	/**
+	 * Determine the number of bytes currently available to be read via readData().
+	 * Note that calling readData() with a buffer this large may not read all the available data
 	 * if there are message/record markers present in the read stream.
 	 */
 	virtual qint64 bytesAvailable() const = 0;
 
-	/// Returns true if at least one byte is available for reading.
+	///! Returns true if at least one byte is available for reading.
 	inline bool hasBytesAvailable() const { return bytesAvailable() > 0; }
 
 	/** Returns true if all data has been read from the stream
@@ -147,17 +147,20 @@ public:
 
 	virtual QByteArray readMessage(int maxSize) = 0;
 
-	inline int writeMessage(const char *data, int size)
-		{ return writeData(data, size, dataMessageFlag); }
+	inline int writeMessage(const char *data, int size) {
+		return writeData(data, size, dataMessageFlag);
+	}
 
-	inline int writeMessage(const QByteArray &msg)
-		{ return writeMessage(msg.data(), msg.size()); }
+	inline int writeMessage(const QByteArray &msg) {
+		return writeMessage(msg.data(), msg.size());
+	}
 
 	/// Returns true if at least one complete message
 	/// is currently available for reading.
 	virtual int pendingMessages() const = 0;
-	inline bool hasPendingMessages() const
-		{ return pendingMessages() > 0; }
+	inline bool hasPendingMessages() const {
+		return pendingMessages() > 0;
+	}
 
 	/// Determine the number of message/record markers
 	/// that have been received over the network but not yet read.
@@ -187,11 +190,17 @@ public:
 	virtual AbstractStream *openSubstream() = 0;
 
 	/// Listen for incoming substreams on this stream.
-	inline void listen(ListenMode mode) { lisn = mode; }
+	inline void listen(ListenMode mode) {
+		lisn = mode;
+	}
 
 	/// Returns true if this stream is set to accept incoming substreams.
-	inline ListenMode listenMode() { return lisn; }
-	inline bool isListening() { return lisn != 0; }
+	inline ListenMode listenMode() {
+		return lisn;
+	}
+	inline bool isListening() {
+		return lisn != 0;
+	}
 
 	/** Accept a waiting incoming substream.
 	 *
@@ -229,16 +238,14 @@ public:
 	 */
 	virtual void shutdown(Stream::ShutdownMode mode) = 0;
 
-
-#ifndef QT_NO_DEBUG
 	/// Dump the state of this stream, for debugging purposes.
 	virtual void dump() = 0;
-#endif
 
 protected:
 	/// Set an error condition including an error description string.
-	inline void setError(const QString &err)
-		{ if (strm) strm->setError(err); }
+	inline void setError(const QString &err) {
+		if (strm) strm->setError(err);
+	}
 };
 
 } // namespace SST

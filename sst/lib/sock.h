@@ -129,18 +129,24 @@ public:
 		quint16 port = 0,
 		QUdpSocket::BindMode mode = QUdpSocket::DefaultForPlatform) = 0;
 
-	/** Send a packet on this socket.
+	/**
+	 * Send a packet on this socket.
 	 * @param ep the destination address to send the packet to
 	 * @param data the packet data
-	 * @return true if send was successful */
+	 * @param size the packet size
+	 * @return true if send was successful
+	 */
 	virtual bool send(const Endpoint &ep, const char *data, int size) = 0;
-
-	/** Send a packet on this socket.
+	/**
+	 * Send a packet on this socket.
+	 * This is an overridden function provided for convenience.
 	 * @param ep the destination address to send the packet to
 	 * @param msg the packet data
-	 * @return true if send was successful */
-	inline bool send(const Endpoint &ep, const QByteArray &msg)
-		{ return send(ep, msg.constData(), msg.size()); }
+	 * @return true if send was successful
+	 */
+	inline bool send(const Endpoint &ep, const QByteArray &msg) {
+		return send(ep, msg.constData(), msg.size());
+	}
 
 	/** Find all known local endpoints referring to this socket.
 	 * @return a list of Endpoint objects. */
@@ -149,8 +155,9 @@ public:
 	virtual quint16 localPort() = 0;
 
 	/// Find flow associations attached to this socket.
-	inline SocketFlow *flow(const Endpoint &dst, Channel chan)
-		{ return flows.value(QPair<Endpoint,Channel>(dst, chan)); }
+	inline SocketFlow *flow(const Endpoint &dst, Channel chan) {
+		return flows.value(QPair<Endpoint,Channel>(dst, chan));
+	}
 
 	/// Return a description of any error detected on bind() or send().
 	virtual QString errorString() = 0;

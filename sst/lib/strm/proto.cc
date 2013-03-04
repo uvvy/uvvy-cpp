@@ -1,13 +1,12 @@
-
 #include <QtDebug>
-
 #include "os.h"
 #include "proto.h"
 
 using namespace SST;
 
-
-////////// StreamProtocol //////////
+//=================================================================================================
+// StreamProtocol
+//=================================================================================================
 
 const quint32 StreamProtocol::magic;
 const int StreamProtocol::mtu;

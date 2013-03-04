@@ -1,10 +1,8 @@
 #pragma once
 
 #include <QPair>
-
 #include "flow.h"
 #include "xdr.h"
-
 
 namespace SST {
 
@@ -14,37 +12,57 @@ typedef quint16 StreamId;       // Stream ID within channel
 typedef quint32 StreamSeq;      // Stream byte sequence number
 typedef quint64 StreamCtr;      // Counter for SID assignment
 
-
+//=================================================================================================
 // Unique stream identifier - identifiers streams across channels
-// XX should contain a "method identifier" of some kind?
-// XX also, perhaps a more compact encoding than plain XDR?
-struct UniqueStreamId {
-    StreamCtr streamCtr;        // Stream counter in channel
-    QByteArray chanId;      // Unique channel+direction ID
+// XXX should contain a "method identifier" of some kind?
+// XXX also, perhaps a more compact encoding than plain XDR?
+//=================================================================================================
+struct UniqueStreamId
+{
+    StreamCtr streamCtr; // Stream counter in channel
+    QByteArray chanId;   // Unique channel+direction ID ("half-channel id")
 
-    inline UniqueStreamId() { chanId.clear(); streamCtr = 0; }
+    inline UniqueStreamId()
+    {
+        chanId.clear();
+        streamCtr = 0;
+    }
+
     inline UniqueStreamId(StreamCtr streamCtr, QByteArray chanId)
-        : streamCtr(streamCtr), chanId(chanId) { }
+        : streamCtr(streamCtr)
+        , chanId(chanId)
+    {}
 
-    inline bool isNull() const { return chanId.isNull(); }
+    inline bool isNull() const {
+        return chanId.isNull();
+    }
 
-    inline bool operator==(const UniqueStreamId &o) const
-        { return streamCtr == o.streamCtr && chanId == o.chanId; }
+    inline bool operator== (const UniqueStreamId& o) const
+    {
+        return streamCtr == o.streamCtr && chanId == o.chanId;
+    }
 };
 
-inline XdrStream &operator<<(XdrStream &xs, const UniqueStreamId &usid)
-    { xs << usid.streamCtr << usid.chanId; return xs; }
-inline XdrStream &operator>>(XdrStream &xs, UniqueStreamId &usid)
-    { xs >> usid.streamCtr >> usid.chanId; return xs; }
+inline XdrStream& operator<< (XdrStream& xs, const UniqueStreamId& usid)
+{ 
+    xs << usid.streamCtr << usid.chanId;
+    return xs;
+}
 
-inline QDebug &operator<<(QDebug &debug, const UniqueStreamId &usid) {
-    debug.nospace() << "USID[" << usid.chanId.toBase64() << ":" << usid.streamCtr << "]";
+inline XdrStream& operator>> (XdrStream& xs, UniqueStreamId& usid)
+{ 
+    xs >> usid.streamCtr >> usid.chanId;
+    return xs;
+}
+
+inline QDebug& operator<< (QDebug& debug, const UniqueStreamId& usid)
+{
+    debug.nospace() << "USID[" << usid.streamCtr << ":" << usid.chanId.toBase64() << "]";
     return debug.space();
 }
 
-
-
-/** @internal SST stream protocol definitions.
+/** 
+ * @internal SST stream protocol definitions.
  * This class simply provides SST protcol definition constants
  * for use in the other Stream classes below.
  */
@@ -91,17 +109,18 @@ public:
     static const unsigned subtypeMask   = (1 << subtypeBits) - 1;
     static const unsigned subtypeShift  = 0;
 
-    // Major packet type codes (4 bits)
+    ///! Major packet type codes (4 bits)
     enum PacketType {
-        InvalidPacket   = 0x0,      // Always invalid
-        InitPacket      = 0x1,      // Initiate new stream
-        ReplyPacket     = 0x2,      // Reply to new stream
-        DataPacket      = 0x3,      // Regular data packet
-        DatagramPacket  = 0x4,      // Best-effort datagram
-        AckPacket       = 0x5,      // Explicit acknowledgment
-        ResetPacket     = 0x6,      // Reset stream
-        AttachPacket    = 0x7,      // Attach stream
-        DetachPacket    = 0x8,      // Detach stream
+        InvalidPacket    = 0x0, ///< Always invalid
+        InitPacket       = 0x1, ///< Initiate new stream
+        ReplyPacket      = 0x2, ///< Reply to new stream
+        DataPacket       = 0x3, ///< Regular data packet
+        DatagramPacket   = 0x4, ///< Best-effort datagram
+        AckPacket        = 0x5, ///< Explicit acknowledgment
+        ResetPacket      = 0x6, ///< Reset stream
+        AttachPacket     = 0x7, ///< Attach stream
+        DetachPacket     = 0x8, ///< Detach stream
+        // 0x9-0xf are reserved for future extension and should not be used.
     };
 
     // The Window field consists of some flags and a 5-bit exponent.
@@ -128,11 +147,10 @@ public:
     typedef StreamHeader AttachHeader;
     typedef StreamHeader DetachHeader;
 
-
     // Subtype/flag bits for Init, Reply, and Data packets
-    static const quint8 dataPushFlag    = 0x4;  // Push to application
-    static const quint8 dataMessageFlag = 0x2;  // End of message
     static const quint8 dataCloseFlag   = 0x1;  // End of stream
+    static const quint8 dataMessageFlag = 0x2;  // End of message
+    static const quint8 dataPushFlag    = 0x4;  // Push to application
     static const quint8 dataAllFlags    = 0x7;  // All signal flags
 
     // Flag bits for Datagram packets
@@ -146,10 +164,8 @@ public:
     // Flag bits for Reset packets
     static const quint8 resetDirFlag    = 0x1;  // SID orientation
 
-
     // StreamId 0 always refers to the root stream.
     static const StreamId sidRoot = 0x0000;
-
 
     // Index values for [dir] dimension in attach array
     enum AttachDir {
@@ -164,7 +180,6 @@ public:
     // before we just give up and detach an existing one in this range.
     static const int maxSidSkip = 16;
 
-
     // Service message codes
     enum ServiceCode {
         ConnectRequest  = 0x101,    // Connect to named service
@@ -177,7 +192,6 @@ public:
     // Service/protocol pairs used to index registered StreamServers.
     typedef QPair<QString,QString> ServicePair;
 
-
 private:
     friend class Stream;
     friend class StreamFlow;
@@ -186,8 +200,10 @@ private:
 
 } // namespace SST
 
-inline uint qHash(const SST::StreamProtocol::ServicePair &svpair)
-    { return qHash(svpair.first) + qHash(svpair.second); }
+inline uint qHash(const SST::StreamProtocol::ServicePair &svpair) {
+    return qHash(svpair.first) + qHash(svpair.second);
+}
 
-inline uint qHash(const SST::UniqueStreamId &usid)
-    { return qHash(usid.streamCtr) + qHash(usid.chanId); }
+inline uint qHash(const SST::UniqueStreamId &usid) {
+    return qHash(usid.streamCtr) + qHash(usid.chanId); 
+}
