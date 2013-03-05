@@ -119,10 +119,10 @@ void DatagramStream::setChildReceiveBuffer(int)
 	// do nothing
 }
 
-#ifndef QT_NO_DEBUG
 void DatagramStream::dump()
 {
+#ifndef QT_NO_DEBUG
 	qDebug() << this << "pos" << pos << "size" << size();
-}
 #endif
+}
 
