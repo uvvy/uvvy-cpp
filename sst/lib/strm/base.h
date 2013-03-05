@@ -317,13 +317,12 @@ private slots:
 
 
 public:
-    /** Create a BaseStream instance.
+    /**
+     * Create a BaseStream instance.
      * @param host parent host
-     * @param peerid the endpoint identifier (EID) of the remote host
-     *      with which this stream will be used to communicate.
-     *      The destination may be either a cryptographic EID
-     *      or a non-cryptographic legacy address
-     *      as defined by the Ident class.
+     * @param peerid the endpoint identifier (EID) of the remote host with which this stream
+     *        will be used to communicate. The destination may be either a cryptographic EID
+     *        or a non-cryptographic legacy address as defined by the Ident class.
      * @param parent the parent stream, or NULL if none (yet).
      * @see Ident
      */
