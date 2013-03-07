@@ -17,8 +17,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-
-
 #include <QDateTime>
 #include <QTimerEvent>
 #include <QtDebug>
@@ -28,8 +26,9 @@
 
 using namespace SST;
 
-
-////////// Time //////////
+//=================================================================================================
+// Time
+//=================================================================================================
 
 QString Time::toString() const
 {
@@ -53,17 +52,16 @@ Time Time::fromQDateTime(const QDateTime &qdt)
 {
 	// Qt's QDateTime only gives us millisecond accuracy; oh well...
 	Time t;
-	t.usecs = (qint64)qdt.toTime_t() * 1000000
-		+ qdt.time().msec() * 1000;
+	t.usecs = (qint64)qdt.toTime_t() * 1000000 + qdt.time().msec() * 1000;
 	return t;
 }
 
-XdrStream &SST::operator>>(XdrStream &rs, Time &t)
+XdrStream& SST::operator >> (XdrStream& rs, Time& t)
 {
 	return rs >> t.usecs;
 }
 
-XdrStream &SST::operator<<(XdrStream &ws, const Time &t)
+XdrStream& SST::operator << (XdrStream& ws, const Time& t)
 {
 	return ws << t.usecs;
 }
@@ -84,38 +82,41 @@ Time Time::decode(const QByteArray &data)
 	return t;
 }
 
+//=================================================================================================
+// TimerEngine
+//=================================================================================================
 
-////////// TimerEngine //////////
-
-TimerEngine::TimerEngine(Timer *t)
-:	QObject(t)
+TimerEngine::TimerEngine(Timer *parent)
+	: QObject(parent)
 {
 }
 
 void TimerEngine::timeout()
 {
 	Timer *t = timer();
-	t->timeout((t->fail -= t->iv) <= 0);
+	t->timeout((t->fail -= t->interval_) <= 0);
 }
 
-
-////////// Timer //////////
+//=================================================================================================
+// Timer
+//=================================================================================================
 
 const qint64 Timer::retryMin;
 const qint64 Timer::retryMax;
 const qint64 Timer::failMax;
 
 Timer::Timer(TimerHostState *host, QObject *parent)
-:	QObject(parent),
-	iv(retryMin),
-	fail(failMax),
-	act(false)
+	: QObject(parent)
+	, interval_(retryMin)
+	, fail(failMax)
+	, active(false)
 {
-	te = host->newTimerEngine(this);
+	te = host->newTimerEngineFor(this);
 }
 
-
-////////// DefaultTimerEngine //////////
+//=================================================================================================
+// DefaultTimerEngine
+//=================================================================================================
 
 DefaultTimerEngine::~DefaultTimerEngine()
 {
@@ -127,13 +128,12 @@ void DefaultTimerEngine::start(quint64 usecs)
 	if (timerid)
 		QObject::killTimer(timerid);
 	timerid = QObject::startTimer(usecs / 1000);
-	//qDebug() << "startTimer" << usecs << "id" << timerid
-	//	<< "at" << QTime::currentTime().msec();
+	qDebug() << "startTimer" << usecs << "id" << timerid << "at" << QTime::currentTime().msec();
 }
 
 void DefaultTimerEngine::stop()
 {
-	//qDebug() << "stop at" << QTime::currentTime().msec();
+	qDebug() << "stop at" << QTime::currentTime().msec();
 	if (timerid) {
 		QObject::killTimer(timerid);
 		timerid = 0;
@@ -142,8 +142,7 @@ void DefaultTimerEngine::stop()
 
 void DefaultTimerEngine::timerEvent(QTimerEvent *ev)
 {
-	//qDebug() << "timerEvent id" << ev->timerId()
-	//	<< "at" << QTime::currentTime().msec();
+	qDebug() << "timerEvent id" << ev->timerId() << "at" << QTime::currentTime().msec();
 	if (timerid != 0 && ev->timerId() == timerid) {
 		QObject::killTimer(timerid);
 		timerid = 0;
@@ -151,15 +150,16 @@ void DefaultTimerEngine::timerEvent(QTimerEvent *ev)
 	}
 }
 
-
-////////// TimerHostState //////////
+//=================================================================================================
+// TimerHostState
+//=================================================================================================
 
 Time TimerHostState::currentTime()
 {
 	return Time::fromQDateTime(QDateTime::currentDateTime());
 }
 
-TimerEngine *TimerHostState::newTimerEngine(Timer *timer)
+TimerEngine *TimerHostState::newTimerEngineFor(Timer *timer)
 {
 	return new DefaultTimerEngine(timer);
 }

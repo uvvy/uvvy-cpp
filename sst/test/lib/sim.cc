@@ -164,8 +164,8 @@ QString LinkParams::toString()
 
 ////////// SimTimerEngine //////////
 
-SimTimerEngine::SimTimerEngine(Simulator *sim, Timer *t)
-:	TimerEngine(t), sim(sim), wake(-1)
+SimTimerEngine::SimTimerEngine(Simulator *sim, Timer *parent)
+:	TimerEngine(parent), sim(sim), wake(-1)
 {
 }
 
@@ -179,7 +179,7 @@ void SimTimerEngine::start(quint64 usecs)
 	stop();
 
 	wake = sim->cur.usecs + usecs;
-	//qDebug() << "start timer for" << wake;
+	// qDebug() << this << "start timer until" << wake;
 
 	int pos = 0;
 	while (pos < sim->timers.size() && sim->timers[pos]->wake <= wake)
@@ -192,7 +192,7 @@ void SimTimerEngine::stop()
 	if (wake < 0)
 		return;
 
-	//qDebug() << "stop timer at" << wake;
+	// qDebug() << this << "stop timer at" << wake;
 	sim->timers.removeAll(this);
 	wake = -1;
 }
@@ -365,8 +365,7 @@ bool SimSocket::bind(const QHostAddress &addr, quint16 port,
 	host->socks.insert(port, this);
 	this->port = port;
 
-	//qDebug() << "Bound virtual socket on host" << host->addr.toString()
-	//	<< "port" << port;
+	// qDebug() << "Bound virtual socket on host" << host->addr.toString() << "port" << port;
 
 	setActive(true);
 	return true;
@@ -391,8 +390,7 @@ bool SimSocket::send(const Endpoint &dst, const char *data, int size)
 	src.port = port;
 	SimHost *dsth = host->neighborAt(dst.addr, src.addr);
 	if (!dsth) {
-		qDebug() << this << "unknown or un-adjacent target host"
-			<< dst.addr.toString();
+		// qDebug() << this << "unknown or un-adjacent target host" << dst.addr.toString();
 		return false;
 	}
 
@@ -461,10 +459,10 @@ Time SimHost::currentTime()
 	return sim->realtime ? Host::currentTime() : sim->cur;
 }
 
-TimerEngine *SimHost::newTimerEngine(Timer *timer)
+TimerEngine *SimHost::newTimerEngineFor(Timer *timer)
 {
 	return sim->realtime
-		? Host::newTimerEngine(timer)
+		? Host::newTimerEngineFor(timer)
 		: new SimTimerEngine(sim, timer);
 }
 
@@ -571,7 +569,7 @@ Simulator::Simulator(bool realtime)
 
 Simulator::~Simulator()
 {
-	//qDebug() << "~" << this;
+	// qDebug() << "dtor" << this;
 	// Note that there may still be packets in the simulated network,
 	// and simulated timers representing their delivery time -
 	// but they should all get garbage collected at this point.

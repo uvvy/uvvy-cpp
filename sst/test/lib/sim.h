@@ -138,7 +138,7 @@ public:
 	~SimHost();
 
 	virtual Time currentTime();
-	virtual TimerEngine *newTimerEngine(Timer *timer);
+	virtual TimerEngine *newTimerEngineFor(Timer *timer);
 
 	virtual Socket *newSocket(QObject *parent = NULL);
 

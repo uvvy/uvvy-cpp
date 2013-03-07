@@ -17,14 +17,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-// Timing and timers for SST protocol use.
+
+/// Timing and timers for SST protocol use.
 #pragma once
 
 #include <QObject>
 
 class QDateTime;
 class QTimerEvent;
-
 
 namespace SST {
 
@@ -33,12 +33,12 @@ class Timer;
 class TimerEngine;
 class TimerHostState;
 
-
-/** 64-bit time class convenient for protocol use.
- * Represents in a simple, easy-to-work-with 64-bit time format
- * by counting microseconds since the Unix epoch.
- * The current() method to check the system time
- * supports time virtualization for protocol simulation purposes. */
+/**
+ * 64-bit time class convenient for protocol use.
+ * Represents in a simple, easy-to-work-with 64-bit time format by counting microseconds
+ * since the Unix epoch. The current() method to check the system time supports time virtualization
+ * for protocol simulation purposes.
+ */
 class Time
 {
 	friend class Timer;
@@ -46,52 +46,49 @@ class Time
 public:
 	qint64 usecs;		///< Microseconds since the Unix Epoch
 
+	inline Time() /*XXX : usecs(0)*/ {}
+	inline Time(qint64 usecs) : usecs(usecs) {}
+	inline Time(const Time& other) : usecs(other.usecs) {}
 
-	inline Time() { }
-	inline Time(qint64 usecs) : usecs(usecs) { }
-	inline Time(const Time &other) : usecs(other.usecs) { }
+	inline bool operator == (const Time &other) const { return usecs == other.usecs; }
+	inline bool operator != (const Time &other) const { return usecs != other.usecs; }
+	inline bool operator <  (const Time &other) const { return usecs < other.usecs; }
+	inline bool operator >  (const Time &other) const { return usecs > other.usecs; }
+	inline bool operator <= (const Time &other) const { return usecs <= other.usecs; }
+	inline bool operator >= (const Time &other) const { return usecs >= other.usecs; }
 
-	inline bool operator==(const Time &other) const
-		{ return usecs == other.usecs; }
-	inline bool operator!=(const Time &other) const
-		{ return usecs != other.usecs; }
-	inline bool operator<(const Time &other) const
-		{ return usecs < other.usecs; }
-	inline bool operator>(const Time &other) const
-		{ return usecs > other.usecs; }
-	inline bool operator<=(const Time &other) const
-		{ return usecs <= other.usecs; }
-	inline bool operator>=(const Time &other) const
-		{ return usecs >= other.usecs; }
+	/**
+	 * Find the amount of time since some supposedly previous timestamp,
+	 * or 0 if the 'previous' timestamp is actually later.
+	 */
+	inline Time since(const Time& previous) const {
+		return Time(qMax(usecs - previous.usecs, (qint64)0));
+	}
 
-
-	/** Find the amount time since some supposedly previous timestamp,
-	 * or 0 if the 'previous' timestamp is actually later. */
-	inline Time since(const Time &other) const
-		{ return Time(qMax(usecs - other.usecs, (qint64)0)); }
-
-
-	/** Convert to standard ASCII date/time representation.
+	/**
+	 * Convert to standard ASCII date/time representation.
 	 * Uses Qt's QDateTime formatting mechanism.
-	 * @return the resulting date/time string. */
+	 * @return the resulting date/time string.
+	 */
 	QString toString() const;
 
-	/** Convert from standard ASCII date/time representations.
-	 * @param str a date/time string in any of the formats
-	 *	supported by Qt's QDateTime class.
-	 * @return the resulting Time. */
+	/**
+	 * Convert from standard ASCII date/time representations.
+	 * @param str a date/time string in any of the formats supported by Qt's QDateTime class.
+	 * @return the resulting Time.
+	 */
 	static Time fromString(const QString &str);
 
-
-	/** Convert to Qt's QDateTime class.
-	 * @return the resulting QDateTime. */
+	/**
+	 * Convert to Qt's QDateTime class.
+	 * @return the resulting QDateTime.
+	 */
 	QDateTime toQDateTime() const;
 
 	/** Convert from Qt's QDateTime class.
 	 * @param qdt the QDateTime to convert.
 	 * @return the resulting Time. */
 	static Time fromQDateTime(const QDateTime &qdt);
-
 
 	// XX actually need these?
 	static Time decode(const QByteArray &data);
@@ -101,8 +98,8 @@ public:
 XdrStream &operator>>(XdrStream &rs, Time &t);
 XdrStream &operator<<(XdrStream &ws, const Time &t);
 
-
-/** Abstract base class for timer implementations.
+/**
+ * Abstract base class for timer implementations.
  */
 class TimerEngine : public QObject
 {
@@ -112,7 +109,7 @@ class TimerEngine : public QObject
 
 protected:
 	/** Create a new TimerEngine */
-	TimerEngine(Timer *t);
+	TimerEngine(Timer* parent);
 
 	/** Find the Timer with which this TimerEngine is associated.
 	 * @return the Timer. */
@@ -139,9 +136,9 @@ protected:
 };
 
 
-/** Class implementing timers suitable for network protocols.
- * Supports exponential backoff computations
- * for retransmissions and retries,
+/**
+ * Class implementing timers suitable for network protocols.
+ * Supports exponential backoff computations for retransmissions and retries,
  * as well as an optional "hard" failure deadline.
  * Also can be hooked and virtualized for simulation purposes.
  */
@@ -152,12 +149,11 @@ class Timer : public QObject
 	Q_OBJECT
 
 	TimerEngine *te;
-	qint64 iv;
-	qint64 fail;
-	bool act;
+	qint64 interval_;
+	qint64 fail; ///< Failure deadline.
+	bool active;
 
 public:
-
 	/// Default initial retry time: 500 ms
 	static const qint64 retryMin = 500*1000;
 
@@ -167,11 +163,10 @@ public:
 	/// Default hard failure deadline: 20 seconds
 	static const qint64 failMax = 20*1000*1000;
 
-
 	/// Exponential backoff function for retry.
-	static qint64 backoff(qint64 period, qint64 maxperiod = failMax)
-		{ return qMin(period * 3 / 2, maxperiod); }
-
+	static qint64 backoff(qint64 period, qint64 maxperiod = failMax) {
+		return qMin(period * 3 / 2, maxperiod);
+	}
 
 	/** Create a timer.
 	 * @param parent the optional parent for the new Timer. */
@@ -179,44 +174,61 @@ public:
 
 	/** Determine if the timer is currently active.
 	 * @return true if the timer is ticking. */
-	inline bool isActive() const { return act; }
+	inline bool isActive() const {
+		return active;
+	}
 
 	/* Obtain the timer's current interval.
 	 * @return the current interval in microseconds */
-	inline qint64 interval() const { return iv; }
+	inline qint64 interval() const {
+		return interval_;
+	}
 
-
-	/** Start or restart the timer at a specified or default interval.
+	/**
+	 * Start or restart the timer at a specified or default interval.
 	 * @param initperiod the initial timer interval in microseconds.
-	 * @param failperiod the hard failure interval in microseconds. */
-	inline void start(qint64 initperiod = retryMin,
-			  qint64 failperiod = failMax)
-		{ fail = failperiod; act = true; te->start(iv = initperiod); }
+	 * @param failperiod the hard failure interval in microseconds.
+	 */
+	inline void start(qint64 initperiod = retryMin, qint64 failperiod = failMax) {
+		fail = failperiod;
+		active = true;
+		interval_ = initperiod;
+		te->start(interval_);
+	}
 
 	/** Stop the timer if it is currently running. */
-	inline void stop()
-		{ te->stop(); act = false; }
+	inline void stop() {
+		te->stop();
+		active = false;
+	}
 
 	/** Restart the timer with a longer interval after a retry. */
-	inline void restart()
-		{ act = true; te->start(iv = backoff(iv)); }
+	inline void restart() {
+		active = true;
+		interval_ = backoff(interval_);
+		te->start(interval_);
+	}
 
-	/** Determine if we've reached the hard failure deadline.
-	 * @return true if the failure deadline has passed. */
-	inline bool failed()
-		{ return fail <= 0; }
-
+	/**
+	 * Determine if we've reached the hard failure deadline.
+	 * @return true if the failure deadline has passed.
+	 */
+	inline bool failed() {
+		return fail <= 0;
+	}
 
 signals:
-	/** Signaled when the timer expires.
+	/**
+	 * Signaled when the timer expires.
 	 * @param failed true if the hard failure deadline has been reached.
 	 */
 	void timeout(bool failed);
 };
 
-
-/** @internal
- * @brief Default TimerEngine implementation based on QObject's timers.
+/**
+ * @internal
+ * Default TimerEngine implementation based on QObject's timers.
+ * All functions are private, accessible only to TimerHostState.
  */
 class DefaultTimerEngine : public TimerEngine
 {
@@ -225,7 +237,7 @@ class DefaultTimerEngine : public TimerEngine
 	Q_OBJECT
 	int timerid;
 
-	inline DefaultTimerEngine(Timer *t) : TimerEngine(t), timerid(0) { }
+	inline DefaultTimerEngine(Timer *parent) : TimerEngine(parent), timerid(0) { }
 	~DefaultTimerEngine();
 
 	virtual void start(quint64 usecs);
@@ -235,29 +247,31 @@ class DefaultTimerEngine : public TimerEngine
 	virtual void timerEvent(QTimerEvent *);
 };
 
-
-/** Abstract base class providing hooks for time virtualization.
- * The application may create a TimerHostState object
- * and activate it using Time::setTimerHostState().
- * The SST protocol will then call the time factory's methods
- * whenever it needs to obtain the current system time
- * or create timers. */
+/**
+ * Abstract base class providing hooks for time virtualization.
+ * The application may create a TimerHostState object and activate it using Time::setTimerHostState().
+ * The SST protocol will then call the time factory's methods whenever it needs to obtain
+ * the current system time or create timers.
+ */
 class TimerHostState : public QObject
 {
 	Q_OBJECT
 
 public:
-	/** Obtain the current system time.
+	/**
+	 * Obtain the current system time.
 	 * May be overridden to virtualize the system time.
-	 * @return the current Time. */
+	 * @return the current Time.
+	 */
 	virtual Time currentTime();
 
-
-	/** Create a TimerEngine.
+	/**
+	 * Create a TimerEngine.
 	 * May be overridden to virtualize the behavior of timers.
-	 * @param timer Timer for which this TimerEngine is needed.
-	 * @return new TimerEngine. */
-	virtual TimerEngine *newTimerEngine(Timer *timer);
+	 * @param timer Timer for which new TimerEngine is needed.
+	 * @return new TimerEngine.
+	 */
+	virtual TimerEngine *newTimerEngineFor(Timer *timer);
 };
 
 } // namespace SST
