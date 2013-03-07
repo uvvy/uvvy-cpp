@@ -173,6 +173,7 @@ SimTimerEngine::SimTimerEngine(Simulator *sim, Timer *parent)
 
 SimTimerEngine::~SimTimerEngine()
 {
+	qDebug() << "dtor" << this;
 	stop();
 }
 
@@ -181,7 +182,7 @@ void SimTimerEngine::start(quint64 usecs)
 	stop();
 
 	wake = sim->cur.usecs + usecs;
-	// qDebug() << this << "start timer until" << wake;
+	qDebug() << this << "start timer until" << wake;
 
 	int pos = 0;
 	while (pos < sim->timers.size() && sim->timers[pos]->wake <= wake)
@@ -194,7 +195,7 @@ void SimTimerEngine::stop()
 	if (wake < 0)
 		return;
 
-	// qDebug() << this << "stop timer at" << wake;
+	qDebug() << this << "stop timer at" << wake;
 	sim->timers.removeAll(this);
 	wake = -1;
 }
@@ -220,8 +221,7 @@ SimPacket::SimPacket(SimHost *srch, const Endpoint &src,
 	int w = lnk->which(srch);
 	dsth = lnk->hosts[!w];
 	if (!dsth || !(lnk->addrs[!w] == dst.addr)) {
-		qDebug() << this << "target host"
-			<< dst.addr.toString() << "not on specified link!";
+		qDebug() << this << "target host" << dst.addr.toString() << "not on specified link!";
 		deleteLater();
 		return;
 	}
@@ -370,7 +370,7 @@ bool SimSocket::bind(const QHostAddress &addr, quint16 port,
 	host->socks.insert(port, this);
 	this->port = port;
 
-	// qDebug() << "Bound virtual socket on host" << host->addr.toString() << "port" << port;
+	qDebug() << "Bound virtual socket on host" << addr << "port" << port;
 
 	setActive(true);
 	return true;
@@ -395,7 +395,7 @@ bool SimSocket::send(const Endpoint &dst, const char *data, int size)
 	src.port = port;
 	SimHost *dsth = host->neighborAt(dst.addr, src.addr);
 	if (!dsth) {
-		// qDebug() << this << "unknown or un-adjacent target host" << dst.addr.toString();
+		qDebug() << this << "unknown or un-adjacent target host" << dst.addr.toString();
 		return false;
 	}
 
@@ -573,7 +573,7 @@ Simulator::Simulator(bool realtime)
 
 Simulator::~Simulator()
 {
-	// qDebug() << "dtor" << this;
+	qDebug() << "dtor" << this << "timers still alive" << timers.size();
 	// Note that there may still be packets in the simulated network,
 	// and simulated timers representing their delivery time -
 	// but they should all get garbage collected at this point.
@@ -589,7 +589,7 @@ Time Simulator::currentTime()
 
 void Simulator::run()
 {
-	//qDebug() << "Simulator::run()";
+	qDebug() << "Simulator::run()";
 	if (realtime)
 		qFatal("Simulator::run() is only for use with virtual time:\n"
 			"for real time, use QCoreApplication::exec() instead.");
