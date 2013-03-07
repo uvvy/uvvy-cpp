@@ -165,7 +165,9 @@ QString LinkParams::toString()
 ////////// SimTimerEngine //////////
 
 SimTimerEngine::SimTimerEngine(Simulator *sim, Timer *parent)
-:	TimerEngine(parent), sim(sim), wake(-1)
+	: TimerEngine(parent)
+	, sim(sim)
+	, wake(-1)
 {
 }
 
@@ -203,10 +205,13 @@ void SimTimerEngine::stop()
 SimPacket::SimPacket(SimHost *srch, const Endpoint &src, 
 			SimLink *lnk, const Endpoint &dst,
 			const char *data, int size)
-:	QObject(srch->sim),
-	sim(srch->sim),
-	src(src), dst(dst), dsth(NULL),
-	buf(data, size), timer(srch, this)
+	: QObject(srch->sim)
+	, sim(srch->sim)
+	, src(src)
+	, dst(dst)
+	, dsth(NULL)
+	, buf(data, size)
+	, timer(srch, this)
 {
 	Q_ASSERT(srch->links.value(src.addr) == lnk);
 
