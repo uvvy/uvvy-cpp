@@ -94,6 +94,9 @@ void OpusInput::acceptInput(const float *samplebuf)
 RawInput::RawInput(QObject *parent)
 	: PacketInput(parent)
 {
+	// XXX
+	setFrameSize(960);
+	setSampleRate(48000);
 }
 
 void RawInput::acceptInput(const float *samplebuf)
@@ -245,6 +248,9 @@ void OpusOutput::produceOutput(float *samplebuf)
 RawOutput::RawOutput(QObject *parent)
 	: PacketOutput(parent)
 {
+	// XXX
+	setFrameSize(960);
+	setSampleRate(48000);
 }
 
 void RawOutput::produceOutput(float *samplebuf)
@@ -349,7 +355,7 @@ static PacketInput* makeInputInstance(QObject* parent)
 
 static PacketOutput* makeOutputInstance(QObject* parent)
 {
-	return new FileLoopedOutput("/Users/berkus/Hobby/mettanode/ui/gui/sounds/bnb.s16", parent);
+	return new RawOutput(parent); //FileLoopedOutput("/Users/berkus/Hobby/mettanode/ui/gui/sounds/bnb.s16", parent);
 }
 
 VoiceService::VoiceService(QObject *parent)
