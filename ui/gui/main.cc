@@ -79,7 +79,7 @@ void myMsgHandler(QtMsgType type, const char *msg)
     switch (type) {
         case QtDebugMsg:
             strm << now << " D: " << msg << '\n';
-            // LogWindow::get() << msg;
+            // LogWindow::get() << msg; // TODO: use logmessagelistmodel and put the logs there
             if (spewdebug)
                 std::cout << msg << '\n';
             break;
@@ -604,16 +604,16 @@ int main(int argc, char **argv)
     s->setStatusColumn(COL_ONLINE, QIcon(":/img/status-online.png"), QIcon(":/img/status-offline.png"));
 
     // Initialize our chunk sharing service
-    // ChunkShare::instance()->setPeerTable(friends);
-    // ChunkShare::instance()->setStatusColumn(COL_FILES);
+    ChunkShare::instance()->setPeerTable(friends);
+    ChunkShare::instance()->setStatusColumn(COL_FILES);
 
     // Share default directory
-    // appdir.mkdir("Files");
-    // shareDir = appdir.path() + "/Files";
-    // qDebug() << "Would share files from " << shareDir.path();
+    appdir.mkdir("Files");
+    shareDir = appdir.path() + "/Files";
+    qDebug() << "Would share files from " << shareDir.path();
     // or read from Settings...
-    // FileSync *syncwatch = new FileSync;
-    // Share* share = new Share(0, shareDir.path());
+    FileSync *syncwatch = new FileSync;
+    Share* share = new Share(0, shareDir.path());
 
     talksrv = new VoiceService();
     talksrv->setPeerTable(friends);
@@ -623,7 +623,7 @@ int main(int argc, char **argv)
     mainwin = new MainWindow;
 
     // Start our chat server to accept chat connections
-    // new ChatServer(mainwin);
+    new ChatServer(mainwin);
 
     // Re-start incomplete downloads
     SaveDialog::init();
@@ -631,7 +631,7 @@ int main(int argc, char **argv)
     mainwin->show();
     int r = app.exec();
 
-    // delete syncwatch;
+    delete syncwatch;
 
     // Disconnect from regservers
     foreach(RegClient* cli, regclients)
