@@ -46,7 +46,7 @@ class Time
 public:
 	qint64 usecs;		///< Microseconds since the Unix Epoch
 
-	inline Time() /*XXX : usecs(0)*/ {}
+	inline Time() : usecs(0) {}
 	inline Time(qint64 usecs) : usecs(usecs) {}
 	inline Time(const Time& other) : usecs(other.usecs) {}
 

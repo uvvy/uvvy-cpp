@@ -564,7 +564,6 @@ void SimLink::disconnect()
 Simulator::Simulator(bool realtime)
 :	realtime(realtime)
 {
-	cur.usecs = 0;
 }
 
 Simulator::~Simulator()
