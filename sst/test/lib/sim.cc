@@ -564,14 +564,15 @@ void SimLink::disconnect()
 ////////// Simulator //////////
 
 Simulator::Simulator(bool realtime)
-:	realtime(realtime)
+	: realtime(realtime)
 {
 	cur.usecs = 0;
 }
 
 Simulator::~Simulator()
 {
-	//qDebug() << "~" << this;
+	qDebug() << "~" << this << "timers still alive" << timers.size();
+	timers.clear(); // Prevent double destruction of timer engines.
 	// Note that there may still be packets in the simulated network,
 	// and simulated timers representing their delivery time -
 	// but they should all get garbage collected at this point.
