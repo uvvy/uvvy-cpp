@@ -17,13 +17,14 @@ Most immediate usability necessities:
    ☐ stream attachment and detachment
    ☐ proper stream ID allocation & assignment
    ☐ implement and use sequencing barriers properly (spec 3.4.1)
+   ☐ txReset
  ☐ specify and fix negotiation protocol format
  ✔ registration protocol: specify, add explicit deregistration on shutdown @done (12-12-31 17:31)
     ☐ would be nice to move registration protocol details to the routing lib if possible?
         move started, but there are still deps on SST::Host
 
  ☐ give priority to local-network Endpoint addresses first (need to match network against available interfaces' IPs)
- ☐ possible DOS if localhost is specified in Endpoints? yep, tested.
+ ☐ possible DOS if localhost is specified in Endpoints? yep, tested and true, fix.
 
   Possibly PID (Proportional-Integral-Differential) flow control.
 
