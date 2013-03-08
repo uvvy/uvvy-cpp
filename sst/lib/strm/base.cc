@@ -705,7 +705,34 @@ void BaseStream::txAttach()
 
 void BaseStream::txReset(StreamFlow* flow, quint16 sid, quint8 flags)
 {
-    qWarning("XXX txReset NOT IMPLEMENTED YET!!!");
+    qDebug() << flow << "transmit Reset packet";
+
+    // Build the Reset packet header
+    Packet p(NULL, ResetPacket);
+    p.buf.resize(hdrlenReset);
+    ResetHeader *hdr = (ResetHeader*)(p.buf.data() + Flow::hdrlen);
+    hdr->sid = htons(sid);
+    hdr->type = (ResetPacket << typeShift) | (flags & 0xf /*XXX: find proper constant in proto.h*/);
+    hdr->win = 0;
+
+    // Transmit it on the current flow.
+    quint64 pktseq;
+    flow->flowTransmit(p.buf, pktseq);
+
+    // Save the attach packet in the flow's ackwait hash,
+    // so that we'll be notified when the attach packet gets acked.
+    // XXX for the packets with O flag set, we don't need to ack??
+    if (!(flags & resetRemoteFlag))
+    {
+        p.late = false;
+        flow->ackwait.insert(pktseq, p);
+    }
+
+    qDebug() << flow << "Reset packet sent, XXX garbage collect the stream!";
+
+    // abort the stream
+    // send RESET packet to the peer
+
 // as per the PDF:
 // As in TCP, either host may unilaterally terminate an SST stream in both directions and discard 
 // any buffered data. A host resets a stream by sending a Reset packet (Figure 6) containing 
@@ -902,7 +929,7 @@ bool BaseStream::rxInitPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
         // Ack the pktseq first so peer won't ignore the reset!
         qDebug("rxInitPacket: unknown parent stream ID");
         flow->acknowledge(pktseq, false);
-        txReset(flow, psid, resetDirFlag);
+        txReset(flow, psid, resetRemoteFlag);
         return false;
     }
     if (pktseq < patt->sidseq) {
@@ -940,7 +967,7 @@ BaseStream *BaseStream::rxSubstream(
         // Ack the pktseq first so peer won't ignore the reset!
         qDebug("rxInitPacket: other side trying to create substream, but we're not listening.");
         flow->acknowledge(pktseq, false);
-        txReset(flow, sid, resetDirFlag);
+        txReset(flow, sid, resetRemoteFlag);
         return NULL;
     }
 
@@ -1053,7 +1080,7 @@ bool BaseStream::rxDataPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
         // Ack the pktseq first so peer won't ignore the reset!
         qDebug() << "rxDataPacket: unknown stream ID";
         flow->acknowledge(pktseq, false);
-        txReset(flow, sid, resetDirFlag);
+        txReset(flow, sid, resetRemoteFlag);
         return false;
     }
     if (pktseq < att->sidseq) {
@@ -1257,7 +1284,7 @@ bool BaseStream::rxDatagramPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *f
         resetsid:
         qDebug("rxDatagramPacket: unknown stream ID");
         flow->acknowledge(pktseq, false);
-        txReset(flow, sid, resetDirFlag);
+        txReset(flow, sid, resetRemoteFlag);
         return false;
     }
     flow->acksid = sid;
@@ -1313,7 +1340,7 @@ bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
         // Ack the pktseq first so peer won't ignore the reset!
         qDebug() << "rxAckPacket: unknown stream ID";
 #if 0   // XXX do we want to do this, or not ???
-        txReset(flow, sid, resetDirFlag);
+        txReset(flow, sid, resetRemoteFlag);
 #endif
         return false;
     }
@@ -1338,6 +1365,17 @@ bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
  */
 bool BaseStream::rxResetPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
+    qDebug() << "rxResetPacket size" << pkt.size();
+    if (pkt.size() < hdrlenReset) {
+        qDebug() << "BaseStream::rxResetPacket: got runt packet";
+        return false;   // XXX Protocol error: close flow?
+    }
+
+    // Decode the packet header
+    ResetHeader *hdr = (ResetHeader*)(pkt.data() + Flow::hdrlen);
+    quint16 sid = ntohs(hdr->sid);
+    bool localSid = hdr->type & resetRemoteFlag;
+
     Q_ASSERT(0);    // XXX
     (void)pktseq; (void)pkt; (void)flow;
     return false;
@@ -1409,7 +1447,7 @@ bool BaseStream::rxAttachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flo
     // No way to attach the stream - just reset it.
     qDebug() << "rxAttachPacket: unknown stream" << usid;
     flow->acknowledge(pktseq, false);
-    txReset(flow, sid, resetDirFlag);
+    txReset(flow, sid, resetRemoteFlag);
     return false;
 }
 
