@@ -832,8 +832,7 @@ KeyInitiator::gotDhR1(Host *h, KeyChunkDhR1Data &r1)
 		calcSigHash((DhGroup)i->dhgroup, i->keylen, i->nhi, i->nr,
 				i->dhi, i->dhr, QByteArray()/*XX*/);
 	QByteArray sigi = hi.sign(sighash);
-	//qDebug("sighash %s\nsigi %s\n",
-	//	sighash.toBase64().data(), sigi.toBase64().data());
+	qDebug() << "sighash" << sighash.toBase64() << "sigi" << sigi.toBase64();
 
 	// Build the part of the I2 message to be encrypted.
 	// (XX should we include anything for the 'sa' in the JFK spec?)
@@ -844,15 +843,15 @@ KeyInitiator::gotDhR1(Host *h, KeyChunkDhR1Data &r1)
 	kii.idpki = hi.key();
 	kii.sigi = sigi;
 	kii.ulpi = i->ulpi;
-	//qDebug() << "eidi" << kii.eidi.toBase64()
-	//	<< "idpki" << kii.idpki.toBase64()
-	//	<< "sigi" << kii.sigi.toBase64();
+	qDebug() << "eidi" << kii.eidi.toBase64()
+		<< "idpki" << kii.idpki.toBase64()
+		<< "sigi" << kii.sigi.toBase64();
 	QByteArray encidi;
 	XdrStream wds(&encidi, QIODevice::WriteOnly);
 	wds << kii;
 	Q_ASSERT(wds.status() == wds.Ok);
 
-	// XX There appears to be a bug in the "optimized" x86 version
+	// XXX There appears to be a bug in the "optimized" x86 version
 	// of AES-CBC at least in openssl-0.9.8b when given an input
 	// that is not an exact multiple of the block length.
 	// (The C implementation in e.g., OpenSSL 0.9.7 works fine.)

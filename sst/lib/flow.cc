@@ -874,8 +874,7 @@ void Flow::ccMissed(quint64 pktseq)
 		//ssthresh = (txseq - txackseq) / 2;	XXX
 		ssthresh = cwnd / 2;
 		ssthresh = qMax(ssthresh, CWND_MIN);
-		// qDebug("%d PACKETS LOST: cwnd %d -> %d",
-			// ackdiff - newpackets, cwnd, ssthresh);
+		// qDebug("%d PACKETS LOST: cwnd %d -> %d", ackdiff - newpackets, cwnd, ssthresh);
 		cwnd = ssthresh;
 
 		// fast recovery for the rest of this window
@@ -1041,14 +1040,14 @@ QByteArray AESArmor::txenc(qint64 pktseq, const QByteArray &pkt)
 	hmac.finalAppend(epkt);
 	Q_ASSERT(epkt.size() == size + HMACLEN);
 
-	//qDebug() << this << "txenc" << pktseq << epkt.size();
+	qDebug() << this << "txenc" << pktseq << epkt.size();
 
 	return epkt;
 }
 
 bool AESArmor::rxdec(qint64 pktseq, QByteArray &pkt)
 {
-	//qDebug() << this << "rxdec" << pktseq << pkt.size();
+	qDebug() << this << "rxdec" << pktseq << pkt.size();
 
 	int size = pkt.size() - HMACLEN;
 	if (size < Flow::hdrlen) {

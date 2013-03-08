@@ -136,7 +136,7 @@ BaseStream::BaseStream(Host *h, PeerId peerid, BaseStream *parent)
 
 BaseStream::~BaseStream()
 {
-    //qDebug() << "~" << this << (parent == NULL ? "(root)" : "");
+    qDebug() << "~" << this << (parent == NULL ? "(root)" : "");
     clear();
 }
 
@@ -209,8 +209,8 @@ void BaseStream::tattach()
     // If so, use it - otherwise, create one.
     if (!peer->flow) {
         // Get the flow setup process for this host ID underway.
-        // XX provide an initial packet to avoid an extra RTT!
-        //qDebug() << this << "tattach: wait for flow";
+        // XXX provide an initial packet to avoid an extra RTT!
+        qDebug() << this << "tattach: wait for flow";
         connect(peer, SIGNAL(flowConnected()),
             this, SLOT(gotFlowConnected()));
         return peer->connectFlow();
@@ -429,7 +429,7 @@ void BaseStream::txenqueue(const Packet &pkt)
 
 void BaseStream::txenqflow(bool immed)
 {
-    //qDebug() << this << "txenqflow" << immed;
+    qDebug() << this << "txenqflow" << immed;
 
     // Make sure we're attached to a flow - if not, attach.
     if (!tcuratt)
@@ -1272,7 +1272,7 @@ bool BaseStream::rxDatagramPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *f
         goto resetsid;  // Only accept datagrams while connected
 
     int flags = hdr->type;
-    //qDebug() << "rxDatagramSegment" << segsize << "type" << type;
+    qDebug() << "rxDatagramSegment" /* << segsize */ << "type" << (flags >> typeShift);
 
     if (!(flags & dgramBeginFlag) || !(flags & dgramEndFlag)) {
         qWarning("OOPS, don't yet know how to reassemble datagrams");
@@ -1294,7 +1294,7 @@ bool BaseStream::rxDatagramPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *f
 
 bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
-    //qDebug() << "rxAckPacket" << this;
+    qDebug() << flow << "rxAckPacket";
 
     // Count this explicit ack packet as received,
     // but do NOT send another ack just to ack this ack!
@@ -1311,7 +1311,7 @@ bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
     if (att == NULL) {
         // Respond with a reset for the unknown stream ID.
         // Ack the pktseq first so peer won't ignore the reset!
-        qDebug("rxAckPacket: unknown stream ID");
+        qDebug() << "rxAckPacket: unknown stream ID";
 #if 0   // XXX do we want to do this, or not ???
         txReset(flow, sid, resetDirFlag);
 #endif
@@ -1442,8 +1442,7 @@ void BaseStream::calcReceiveWindow()
         i++;
     rwinbyte = i;   // XX control bits?
 
-    //qDebug() << this << "buffered" << ravail << "+" << (rbufused - ravail)
-    //  << "rwin" << rwin << "exp" << i;
+    qDebug() << this << "buffered" << ravail << "+" << (rbufused - ravail) << "rwin" << rwin << "exp" << i;
 }
 
 void BaseStream::calcTransmitWindow(quint8 win)
@@ -1454,8 +1453,7 @@ void BaseStream::calcTransmitWindow(quint8 win)
     int i = win & 0x1f;
     twin = (1 << i) - 1;
 
-    //qDebug() << this << "transmit window" << oldtwin << "->" << twin
-    //  << "in use" << tflt;
+    qDebug() << this << "transmit window" << oldtwin << "->" << twin << "in use" << tflt;
 
     if (twin > oldtwin)
         txenqflow(true);
@@ -1592,9 +1590,7 @@ int BaseStream::writeData(const char *data, int totsize, quint8 endflags)
         // Hold onto the packet data until it gets ACKed
         twait.insert(p.tsn);
         twaitsize += size;
-        //qDebug() << "twait insert" << p.tsn << "size" << size
-        //  << "new cnt" << twait.size()
-        //  << "twaitsize" << twaitsize;
+        qDebug() << "twait insert" << p.tsn << "size" << size << "new cnt" << twait.size() << "twaitsize" << twaitsize;
 
         // Queue up the segment for transmission ASAP
         txenqueue(p);

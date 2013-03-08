@@ -137,8 +137,7 @@ QByteArray RSAKey::sign(const QByteArray &digest) const
 	Q_ASSERT((int)siglen <= sig.size());
 	sig.resize(siglen);
 
-	//qDebug("Signed %s\nSignature %s",
-	//	digest.toBase64().data(), sig.toBase64().data());
+	qDebug() << "Signed" << digest.toBase64() << "Signature" << sig.toBase64();
 
 	return sig;
 }
@@ -148,8 +147,7 @@ bool RSAKey::verify(const QByteArray &digest, const QByteArray &sig) const
 	Q_ASSERT(type() != Invalid);
 	Q_ASSERT(digest.size() == SHA256_DIGEST_LENGTH);
 
-	//qDebug("Verifying %s\nSignature %s",
-	//	digest.toBase64().data(), sig.toBase64().data());
+	qDebug() << "Verifying" << digest.toBase64() << "Signature" << sig.toBase64();
 	//dump();
 
 	int rc = RSA_verify(NID_sha256,

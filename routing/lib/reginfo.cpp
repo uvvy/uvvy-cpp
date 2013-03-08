@@ -76,7 +76,7 @@ QStringList RegInfo::keywords() const
 void RegInfo::encode(XdrStream &ws) const
 {
 	ws << (qint32)at.size();
-	//qDebug() << "encode nattrs" << at.size();
+	qDebug() << "encode nattrs" << at.size();
 	QHash<Attr, QByteArray>::const_iterator i = at.constBegin();
 	while (i != at.constEnd()) {
 		ws << (qint32)i.key() << i.value();
@@ -96,7 +96,7 @@ void RegInfo::decode(XdrStream &rs)
 		return;
 
 	// Read the attributes
-	//qDebug() << "decode nattrs" << nattrs;
+	qDebug() << "decode nattrs" << nattrs;
 	for (int i = 0; i < nattrs; i++) {
 		qint32 tag;
 		QByteArray attr;
@@ -106,7 +106,7 @@ void RegInfo::decode(XdrStream &rs)
 			return;
 		}
 		at.insert((Attr)tag, attr);
-		//qDebug() << "attr" << i << tag << attr;
+		qDebug() << "attr" << i << tag << attr;
 	}
 }
 

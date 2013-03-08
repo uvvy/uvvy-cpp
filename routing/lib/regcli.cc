@@ -364,7 +364,7 @@ void RegClient::gotSearchReply(XdrStream &rs)
 
 	// Make sure we actually did the indicated search
 	if (!searches.contains(text)) {
-		//qDebug("RegClient: useless Search result");
+		qDebug("RegClient: useless Search result");
 		return;
 	}
 

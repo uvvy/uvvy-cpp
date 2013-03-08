@@ -74,7 +74,7 @@ void StreamPeer::connectFlow()
 	// Initiate key exchange attempts to any already-known endpoints
 	// using each of the network sockets we have available.
 	foreach (Socket *sock, h->activeSockets()) {
-		//qDebug() << this << "connectFlow: using socket" << sock;
+		qDebug() << this << "connectFlow: using socket" << sock;
 		foreach (const Endpoint &ep, addrs)
 			initiate(sock, ep);
 	}

@@ -79,7 +79,7 @@ QList<QHostAddress> SST::localHostAddrs()
 		if (qa.isNull())
 			continue;
 		qaddrs.append(qa);
-		//qDebug() << "Local IP address:" << qa.toString();
+		qDebug() << "Local IP address:" << qa.toString();
 	}
 
 	return qaddrs;
