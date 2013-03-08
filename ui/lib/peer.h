@@ -213,7 +213,7 @@ public:
     /**
      * Create a primary outgoing connection if one doesn't already exist.
      * @param  hostId target host EID to connect to.
-     * @return        [description]
+     * @return a new Stream connection to the given peer.
      */
     Stream *connectToPeer(const SST::PeerId &hostId);
 
@@ -259,10 +259,10 @@ public:
         { return in.value(hostId.getId()); }
 
     /**
-     * Return the name of a given peer, or 'defaultname' if unknown
-     * @param  hostId      [description]
-     * @param  defaultName [description]
-     * @return             [description]
+     * Return the name of a given peer, or 'defaultName' if unknown
+     * @param  hostId      peer identifier.
+     * @param  defaultName default name to return in case no known name is found.
+     * @return             peer name.
      */
     virtual QString peerName(const SST::PeerId &hostId,
             const QString &defaultName = tr("unknown peer")) const;
