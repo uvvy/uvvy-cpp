@@ -22,15 +22,15 @@
 #pragma once
 
 #include <QIODevice>
-
-#include "os.h"
+#include "os.h" // for ntohl/htonl
 
 class QByteArray;
 
 
 namespace SST {
 
-/** XDR encoding/decoding stream.
+/** 
+ * XDR encoding/decoding stream.
  * This class provides an interface modeled on QDataStream,
  * but uses the XDR encoding as specified in RFC 1832.
  */
