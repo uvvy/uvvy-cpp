@@ -1386,7 +1386,7 @@ bool BaseStream::rxAttachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flo
     qDebug() << "rxAttachPacket size" << pkt.size();
     if (pkt.size() < hdrlenDatagram) {
         qDebug("BaseStream::rxAttachPacket: got runt packet");
-        return false;   // XX Protocol error: close flow?
+        return false;   // XXX Protocol error: close flow?
     }
 
     // Decode the packet header
@@ -1405,7 +1405,7 @@ bool BaseStream::rxAttachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flo
         xs >> pusid;
     if (xs.status() != xs.Ok || usid.isNull() || (init && pusid.isNull())) {
         qDebug("BaseStream::rxAttachPacket: invalid attach packet");
-        return false;   // XX protocol error - close flow?
+        return false;   // XXX protocol error - close flow?
     }
 
     // First try to look up the stream by its own USID.
@@ -1478,7 +1478,7 @@ void BaseStream::calcReceiveWindow()
     int i = 0;
     while (((2 << i) - 1) <= rwin)
         i++;
-    rwinbyte = i;   // XX control bits?
+    rwinbyte = i;   // XXX control bits?
 
     qDebug() << this << "buffered" << ravail << "+" << (rbufused - ravail) << "rwin" << rwin << "exp" << i;
 }
