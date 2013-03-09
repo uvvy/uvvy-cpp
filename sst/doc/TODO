@@ -1,3 +1,11 @@
+libSSU (Structured Streams Unleashed)
+ ☐ use boost::asio
+ ☐ check on boost's sockets support (need at least UDP plus MTU detect and local network plus local interfaces detect)
+ ☐ detach registration protocol from the transport
+ ☐ checkout older version (basic SST?) and try voice service with it...
+ ☐ build 32-bits only version of SST and try voice service with it?...
+ ☐ unused stuff from sst: bdr.h/cc
+ 
 SST unfinished business:
  ☐ make regression tests pass and not crash
    ✔ dgram - passed @done (12-12-29 00:54)
@@ -7,6 +15,8 @@ SST unfinished business:
    ☐ all - gets stuck in seg test
  ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
  ☐ all services are attempting to connect to a single host multiple times - would be better if this was orchestrated separately
+
+ ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
 
 Most immediate usability necessities:
  ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document
