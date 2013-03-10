@@ -191,11 +191,6 @@ public:
 
     // Service/protocol pairs used to index registered StreamServers.
     typedef QPair<QString,QString> ServicePair;
-
-private:
-    friend class Stream;
-    friend class StreamFlow;
-    friend class StreamResponder;
 };
 
 } // namespace SST

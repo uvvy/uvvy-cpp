@@ -4,7 +4,7 @@ libSSU (Structured Streams Unleashed)
  ☐ detach registration protocol from the transport
  ☐ checkout older version (basic SST?) and try voice service with it...
  ☐ build 32-bits only version of SST and try voice service with it?...
- ☐ unused stuff from sst: bdr.h/cc
+ ✔ unused stuff from sst: bdr.h/cc @done (13-03-09 23:19)
  
 SST unfinished business:
  ☐ make regression tests pass and not crash
