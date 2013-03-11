@@ -59,7 +59,10 @@ if (BUILD_TESTS)
 	include(Dart)
 endif (BUILD_TESTS)
 
+add_subdirectory(support)
+
 add_subdirectory(sst)
+add_subdirectory(ssu)
 add_subdirectory(routing)
 #add_subdirectory(naming)
 add_subdirectory(nat)
