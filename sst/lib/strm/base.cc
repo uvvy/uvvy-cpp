@@ -534,7 +534,7 @@ void BaseStream::transmit(StreamFlow *flow)
         // allowing us to indicate the parent with a short 16-bit LSID
         // and piggyback useful data onto the packet.
         // The parent must be attached to the same flow.
-        // XX probably should use some state invariant
+        // XXX probably should use some state invariant
         // in place of all these checks.
         if (toplev)
             parent = &flow->root;
