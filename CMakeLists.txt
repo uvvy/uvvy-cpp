@@ -16,7 +16,8 @@ option(CLANG_LTO "[time-consuming] Enable link-time optimization with LLVM." OFF
 option(CLANG_CHECK_DOCS "Check documentation consistency using clang's -Wdocumentation" ON)
 
 if (CLANG)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+	set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -stdlib=libc++")
 	set(_extraFlags)
 	if (CLANG_ASAN)
 		set(_extraFlags "${_extraFlags} -fsanitize=address")
