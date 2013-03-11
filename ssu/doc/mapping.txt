@@ -1,0 +1,20 @@
+SST term           | SSU term           | SST header     | SSU header
+-------------------+--------------------+----------------+----------------
+StreamProtocol     | stream_protocol    | proto.h        | protocol.h
+UniqueStreamId     | unique_stream_id_t | proto.h        | stream.h
+AbstractStream     | abstract_stream    | abs.h          | abstract_stream.h
+Stream             | stream             | stream.h       | stream.h
+Flow               | channel            | flow.h         | channel.h
+FlowArmor          | channel_armor      | flow.h         | channel.h
+Socket             | link               | sock.h         | link.h
+SocketEndpoint     | link_endpoint      | sock.h         | link.h
+UdpSocket          | udp_link           | sock.h         | link.h
+SocketFlow         | link_channel       | sock.h         | link.h
+SocketReceiver     | link_receiver      | sock.h         | link.h
+SocketHostState    | link_host_state    | sock.h         | link.h
+StreamAttachment   |                    | base.h         |
+StreamTxAttachment |                    | base.h         |
+StreamRxAttachment |                    | base.h         |
+StreamTxRec        |                    | base.h         |
+BaseStream         | base_stream        | base.h         | base_stream.h
+StreamFlow         |                    | sflow.h        |
