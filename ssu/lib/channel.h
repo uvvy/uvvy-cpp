@@ -18,6 +18,9 @@ protected:
  */
 class channel : public socket_channel
 {
+public:
+    static const int hdrlen = 8/*XXX*/;
+
 	virtual void start(bool initiate);
 	virtual void stop();
 };

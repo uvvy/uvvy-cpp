@@ -14,16 +14,16 @@ public:
     	uint8_t  window;
     };
 
-    enum packet_type {
-    	invalid_packet = 0x0,
-    	init_packet = 0x1,
-    	reply_packet = 0x2,
-    	data_packet = 0x3,
-    	datagram_packet = 0x4,
-    	ack_packet = 0x5,
-    	reset_packet = 0x6,
-    	attach_packet = 0x7,
-    	detach_packet = 0x8,
+    enum class packet_type : uint8_t {
+    	invalid  = 0x0,
+    	init     = 0x1,
+    	reply    = 0x2,
+    	data     = 0x3,
+    	datagram = 0x4,
+    	ack      = 0x5,
+    	reset    = 0x6,
+    	attach   = 0x7,
+    	detach   = 0x8,
     };
 
     struct init_header : public stream_header

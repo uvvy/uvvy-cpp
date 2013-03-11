@@ -1,5 +1,10 @@
 #pragma once
 
+namespace ssu {
+
+/**
+ * User-space interface to the stream.
+ */
 class stream
 {
 	abstract_stream* strm;//XXX rename
@@ -16,15 +21,4 @@ public:
 	};
 };
 
-
-class abstract_stream : public stream_protocol
-{
-	host* const host;
-	stream* owner;
-	peer_id peerid;
-
-public:
-	virtual bool is_link_up() = 0;
-	virtual abstract_stream* open_substream() = 0;
-	virtual abstract_stream* accept_substream() = 0;
-};
+} // namespace ssu
