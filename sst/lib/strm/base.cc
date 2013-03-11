@@ -429,7 +429,7 @@ void BaseStream::txenqueue(const Packet &pkt)
 
 void BaseStream::txenqflow(bool immed)
 {
-    qDebug() << this << "txenqflow" << immed;
+    qDebug() << this << "txenqflow" << (immed ? "IMMEDIATE" : "SCHEDULED");
 
     // Make sure we're attached to a flow - if not, attach.
     if (!tcuratt)
