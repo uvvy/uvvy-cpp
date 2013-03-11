@@ -2,6 +2,7 @@
 
 #include <map>
 #include <boost/asio.hpp>
+#include <boost/signals2/signal.hpp>
 #include "byte_array.h"
 
 namespace ssu {
@@ -35,6 +36,9 @@ class link_channel
     std::weak_ptr<link> link_; ///< Link we're currently bound to, if any.
     bool active;               ///< True if we're sending and accepting packets.
 
+    boost::signals2::signal<void (byte_array&, const link_endpoint&)> received;
+    // Signalled when flow/congestion control may allow new transmission
+    boost::signals2::signal<void ()> ready_transmit;
 };
 
 /**
