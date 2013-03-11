@@ -41,7 +41,17 @@ byte_array& byte_array::operator = (byte_array&& other)
 	return *this;
 }
 
+char* byte_array::data()
+{
+	return &value[0];
+}
+
 const char* byte_array::data() const
+{
+	return &value[0];
+}
+
+const char* byte_array::const_data() const
 {
 	return &value[0];
 }

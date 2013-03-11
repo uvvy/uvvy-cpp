@@ -9,7 +9,7 @@
 class byte_array
 {
 	friend bool operator ==(const byte_array& a, const byte_array& b);
-	std::vector<char> value; ///< @todo: make implicitly shared cow?
+	std::vector<char> value; // XXX make implicitly shared cow?
 public:
 	byte_array();
 	byte_array(const byte_array&);
@@ -17,13 +17,14 @@ public:
 	byte_array(const char* str);
 	byte_array(const char* data, size_t size);
 	~byte_array();
-	// byte_array(byte_array&& other)
-	// 	: value(std::move(other.value))
-	// {}
 	byte_array& operator = (const byte_array& other);
 	byte_array& operator = (byte_array&& other);
 
+	bool is_empty() const { return size() == 0; }
+
+	char* data();
 	const char* data() const;
+	const char* const_data() const;
 	/**
 	 * @sa length(), capacity()
 	 */
