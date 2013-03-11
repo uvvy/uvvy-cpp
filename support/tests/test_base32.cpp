@@ -7,7 +7,7 @@
 // Sources lengths must be in integer multiples of 5.
 BOOST_AUTO_TEST_CASE(tobase32_string)
 {
-    byte_array hello("hello");
+    byte_array hello("hello", 5);//semantics change from QByteArray...
     BOOST_CHECK(encode::to_base32(hello) == "NBSWY3DP");
     BOOST_CHECK(encode::from_base32("NBSWY3DP") == hello);
 }
