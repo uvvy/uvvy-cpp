@@ -1,11 +1,15 @@
-libSSU (Structured Streams Unleashed)
+libssu (Structured Streams Unleashed)
  ☐ use boost::asio
- ☐ check on boost's sockets support (need at least UDP plus MTU detect and local network plus local interfaces detect)
+ ☐ use boost::signals2
+ ☐ check on boost's sockets support - need at least 
+    ✔ UDP @done (13-03-11 21:28)
+    ☐ MTU detect
+    ☐ local network 
+    ✔ local interfaces detect @done (13-03-11 21:28)
  ☐ detach registration protocol from the transport
  ☐ checkout older version (basic SST?) and try voice service with it...
  ☐ build 32-bits only version of SST and try voice service with it?...
  ✔ unused stuff from sst: bdr.h/cc @done (13-03-09 23:19)
- ☐ use boost::signals2
 
 SST unfinished business:
  ☐ make regression tests pass and not crash
