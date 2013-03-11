@@ -1,9 +1,13 @@
-set(Boost_USE_MULTITHREAD ON)
-find_package(Boost REQUIRED COMPONENTS unit_test_framework)
+function(create_test NAME)
+	add_executable(test_${NAME} test_${NAME}.cpp)
+	target_link_libraries(test_${NAME} ssu ${Boost_LIBRARIES})
+	install(TARGETS test_${NAME}
+	    RUNTIME DESTINATION tests/unittests)
+	add_test(${NAME} test_${NAME})
+endfunction(create_test)
 
-add_executable(test_wwwww test_wwww.cpp)
-target_link_libraries(test_wwww ssu ${Boost_LIBRARIES})
-install(TARGETS test_wwww
-    RUNTIME DESTINATION tests/unittests)
-
-add_test(wwww test_wwww)
+create_test(link)
+create_test(host)
+create_test(channel)
+create_test(stream_user)
+create_test(stream_internal)

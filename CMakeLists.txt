@@ -54,10 +54,19 @@ if (APPLE)
 	set(GUI_TYPE MACOSX_BUNDLE)
 endif (APPLE)
 
+set(BOOST_COMPONENTS)
+
 if (BUILD_TESTS)
+	list(APPEND BOOST_COMPONENTS unit_test_framework)
 	enable_testing()
 	include(Dart)
 endif (BUILD_TESTS)
+
+# For ssu we need boost/asio which depends on libboost_system
+list(APPEND BOOST_COMPONENTS system)
+
+set(Boost_USE_MULTITHREAD ON)
+find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
 add_subdirectory(support)
 
