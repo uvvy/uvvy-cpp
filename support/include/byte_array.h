@@ -8,16 +8,18 @@
  */
 class byte_array
 {
-	std::vector<uint8_t> value; ///< @todo: make implicitly shared cow?
+	friend bool operator ==(const byte_array& a, const byte_array& b);
+	std::vector<char> value; ///< @todo: make implicitly shared cow?
 public:
 	byte_array();
 	byte_array(const byte_array&);
-	byte_array(const std::vector<uint8_t>&);
-	byte_array(const char*, size_t);
+	byte_array(const std::vector<char>&);
+	byte_array(const char* str);
+	byte_array(const char* data, size_t size);
 	~byte_array();
-	byte_array(byte_array&& other)
-		: value(std::move(other.value))
-	{}
+	// byte_array(byte_array&& other)
+	// 	: value(std::move(other.value))
+	// {}
 	byte_array& operator = (const byte_array& other);
 	byte_array& operator = (byte_array&& other);
 
@@ -29,7 +31,9 @@ public:
 	/**
 	 * @sa size(), capacity()
 	 */
-	const size_t length() const;
+	inline const size_t length() const {
+		return size();
+	}
 
 	char at(int i) const;
 	char operator[](int i) const;
@@ -40,7 +44,16 @@ public:
 	 * If the size is specified, resizes the array beforehand.
 	 */
 	byte_array& fill(char ch, int size = -1);
+
+	/**
+	 * Unlike Qt's fromRawData current implementation of
+	 * wrap does not actually wrap the data, it creates
+	 * its own copy. XXX fix it
+	 */
+	static byte_array wrap(const char* data, size_t size);
 };
+
+bool operator ==(const byte_array& a, const byte_array& b);
 
 /**
 struct BigArray{
