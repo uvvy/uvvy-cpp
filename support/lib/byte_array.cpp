@@ -34,6 +34,10 @@ byte_array& byte_array::operator = (const byte_array& other)
 
 byte_array& byte_array::operator = (byte_array&& other)
 {
+	if (&other != this)
+	{
+		value = std::move(other.value);
+	}
 	return *this;
 }
 

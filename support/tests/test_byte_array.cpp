@@ -105,7 +105,8 @@ BOOST_AUTO_TEST_CASE(self_assign)
 // byte_array& operator = (byte_array&& other);
 BOOST_AUTO_TEST_CASE(move)
 {
-    byte_array b = std::move(byte_array("hello"));
+    byte_array b;
+    b = std::move(byte_array("hello"));
     BOOST_CHECK(b[0] == 'h');
     BOOST_CHECK(b[1] == 'e');
     BOOST_CHECK(b[2] == 'l');
