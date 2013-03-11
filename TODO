@@ -31,3 +31,186 @@ Fourth:
 
 Fifth:
  ✔ add features for capturing the data into the system. Agreed to do it Dropbox-style, so need to add and watch a directory. @done (12-12-11 01:37)
+
+
+scripts/:
+ ☐ grab llvm from http://llvm.org/releases/3.2/clang+llvm-3.2-x86-linux-ubuntu-12.04.tar.gz directly to build machine
+ ☐ build ninja on linux statically and put in scripts/ folder
+
+libssu (Structured Streams Unleashed):
+ ✔ use boost::asio @done (13-03-11 23:44)
+ ✔ use boost::signals2 @done (13-03-11 23:44)
+ ☐ check on boost's sockets support - need at least 
+    ✔ UDP @done (13-03-11 21:28)
+    ☐ MTU detect
+    ☐ local network 
+    ✔ local interfaces detect @done (13-03-11 21:28)
+ ☐ detach registration protocol from the transport
+ ☐ checkout older version (basic SST?) and try voice service with it...
+ ☐ build 32-bits only version of SST and try voice service with it?...
+ ✔ unused stuff from sst: bdr.h/cc @done (13-03-09 23:19)
+
+SST unfinished business:
+ ☐ make regression tests pass and not crash
+   ✔ dgram - passed @done (12-12-29 00:54)
+   ✔ migrate - passed @done (12-12-29 00:54)
+   ✔ basic - passed @done (12-12-29 00:54)
+   ☐ seg - rtxTimeout - FAILED period 20000000
+   ☐ all - gets stuck in seg test
+ ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
+ ☐ all services are attempting to connect to a single host multiple times - would be better if this was orchestrated separately
+
+ ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
+
+Most immediate usability necessities:
+ ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document
+   ☐ assign IETF RFC number, see http://www.ietf.org/id-info/
+ ☐ finish implementing wire protocol to specs.  Specifically:
+   ☐ receiver-directed flow control
+   ☐ datagram reassembly
+   ☐ stream attachment and detachment
+   ☐ proper stream ID allocation & assignment
+   ☐ implement and use sequencing barriers properly (spec 3.4.1)
+   ☐ txReset
+ ☐ specify and fix negotiation protocol format
+ ✔ registration protocol: specify, add explicit deregistration on shutdown @done (12-12-31 17:31)
+    ☐ would be nice to move registration protocol details to the routing lib if possible?
+        move started, but there are still deps on SST::Host
+
+ ☐ give priority to local-network Endpoint addresses first (need to match network against available interfaces' IPs)
+ ☐ possible DOS if localhost is specified in Endpoints? yep, tested and true, fix.
+
+  Possibly PID (Proportional-Integral-Differential) flow control.
+
+Renaming and restructuring to do at some point (tentative list):
+ ☐ Socket -> Network (or -> Adapter?); Channel -> ChannelID (or -> FlowID?)
+ ☐ SocketReceiver -> ControlProtocol?
+ ✔ Flow -> Channel? @done (13-03-11 23:44)
+ ☐ StreamTarget -> Target, separate into its own module
+ ✔ Message -> Record (e.g., readMesage() -> readRecord)? @done (13-03-11 23:44)
+     Might help avoid confusion between "Message" and "Datagram".
+
+Qt wishlist for SST:
+ ✔ Base64 conversion flags for URL-safe and/or '='-padding free variants. @done (12-12-24 23:19)
+     Used base32 instead.
+ ☐ QTimer hooks allowing time virtualization for simulation purposes.
+ ☐ Make *Datagram calls in QUdpSocket virtual, or else support custom NetworkProxy extensions for virtualizing the network.
+ ☐ Make QAbstractSocket a "real" abstract base class that can be subclassed for reasons other than to wrap a different kind of native socket.
+ ☐ Make Qt's signal/slot mechanism handle namespaces in type names properly.
+ ☐ Access to OS's path MTU detection facilities under UDP
+
+sst/shell:
+ ☐ unlock console fds once the shell connection ceases
+ ✔ don't crash in nshd @done (12-12-21 00:40)
+ ☐ after some waiting time the streams disconnect and mix up
+
+sst/test/regress Regression tests needed:
+
+substreams:
+ ☐ create a lot of substreams rapidly, hold onto them, use them once in a while
+ ☐ create and destroy a lot of substreams in rapid succession
+ ☐ rapidly create a deep hierarchy of nested substreams
+
+datagrams:
+ ☐ send a stream of datagrams of widely varying size
+ ☐ send a mix of datagram substreams and real two-way substreams
+
+flow control:
+ ☐ flow control for byte streams
+ ☐ receive window borrowing
+ ☐ receive window borrowing for datagram substreams
+ ☐ inherited versus independent receive windows
+
+----------------------------
+
+UI tasks:
+  ☐ Ubuntu 32/64 bit binaries repo for Matti.
+    ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
+  ☐ Deploy nshd to motoko?
+
+Most immediate usability necessities:
+ ☐ Some documentation, both user and technical
+ ☐ Automatic launching on host OS login
+ ☐ Public/friends-only choices on profile items
+ ☐ Profile picture
+ ☐ Log window for log display in real-time.
+ ✔ Registration server logging to file. @done (12-11-18 16:30)
+ ✔ Registration server proper handling of registrations from the same LAN. @done (12-12-09 16:26)
+    (second client to register disconnects first). The problem appears to be more serious and is related to insufficient NAT handling.
+
+NAT and UPnP:
+  ✔ hmm, even with UPnP succeeding the pings never get back?? wtf @done (12-12-07 13:23)
+    ✔ can it be motoko traffic filtered? try with a different server, e.g. amazon t1.micro instance. @done (12-12-07 13:23)
+       and it was motoko firewalls indeed, 
+       ✔ call infonet about it @done (13-03-11 23:57)
+           infonet claim there is no UDP filtering whatsoever, can it be motoko's local portsentry or sth like that? check the services/ipfw settings.
+    ☐ http://tools.ietf.org/html/draft-cheshire-nat-pmp-05
+    ☐ http://miniupnp.free.fr/nat-pmp.html
+      ☐ needs default gateway knowledge, thus platform-dependent routing information access, e.g. http://qt-project.org/forums/viewthread/7497,
+         http://stackoverflow.com/questions/1738733/how-to-get-internal-ip-external-ip-and-default-gateway-for-upnp  
+         ☐ libnatpmp impl already has this!
+  ☐ Integrate UPnP into SST::Host.
+ ✔ Download router XML file using QNetworkAccessManager/QNetworkReply @done (12-11-18 16:24)
+ ✔ Punching TCP holes via UPnP works, but UDP doesn't (apparently, Skype can do it!) - figure out why, find a workaround. @done (12-11-24 10:45)
+   ✔ miniupnpc could punch a hole when specifying a lease duration @done (12-11-23 19:24)
+   ✔ try TCP before UDP (cplx @easy) - didn't help @done (12-11-24 10:45)
+   ✔ try with lease duration using upnp lib - this worked! @done (12-11-24 10:44)
+   ✔ wireshark requests from utorrent/skype - was not necessary @done (12-11-24 10:46)
+ ☐ Assign a new Endpoint with public IP and UPnP-assigned port number.
+   ☐ Use it to register on regserver as primary.
+ ☐ Integrate hole punching machinery with SST::Host.
+ ☐ UPnP event variables that need to be checked:
+     NATEnabled - if not, portmapping setting will fail.
+     ConnectionStatus - if not connected, setting forwarding is useless.
+     PortMappingNumberOfEntries - if changed, might need to re-read the actual mapping information.
+     PortMappingLeaseDuration - is decremented and needs to be checked regularly, some seconds before the lease time out the lease must be extended for our port forwardings.
+     Therefore, we need to maintain the status of UPnPRouter endpoint.
+
+Larger features planned:
+ ☐ Integration with UIA - personal device cluster management, etc.
+ ☐ Secure VNC-like remote desktop access
+
+Chat synchronization:
+ ☐ Save/load chat history, how to synchronize history between devices?
+   ✔ Save history locally @done (12-11-04 00:33)
+   ☐ Load history locally
+   ☐ Sync history between instances
+     Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull non-existant entries
+     once activated. How to track joins/leaves (+ history available to new joiners)?
+     (unread, originator, timestamp, target, msg_hash) - tuple for syncing messages.
+     Unread is not synced, it is implicitly 1 for synced messages. Actually, it can be synced, for example
+     if the chat was already read on a device, then unread=0 may be synced).
+     (originator_user, originator_eid, originator_timestamp) - to track source of the message.
+     (rx_timestamp) - to measure interdevice synchronization time.
+     (chat_id) - a hashed concatenation of originator and receiver ids plus, perhaps, some nonce.
+ ☐ Draw possible chat synchronization graph ideas between Alice's and Bob's personal cluser devices.
+ ✔ Add Metakit in distribution. @done (12-10-30 10:52)
+     metakit could be used as storage for message view (easier to experiment - we only need a hashed view).
+ ☐ Group chat.
+ ☐ Chat join urls like nstchat://authblob or nst://chat?authblob
+
+File synchronization:
+ ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
+ ☐ Show file transfer progress on both sending and receiving sides. Also inside chat.
+ ☐ Make ongoing downloads automatically persist across restarts
+ ✔ Watch Files directory for new files and file changes (QFileSystemWatcher) @done (12-11-05 23:49)
+ ☐ Initiate file resync operation when change is detected.
+     Should work pretty much like file transfer, just the file save locations are predefined.
+     Different changes cause different synchronization commands to be sent.
+     E.g. moving a file issues RENAME, while deleting it issues REMOVE and changing it issues UPDATE_SYNC.
+     What to do with conflicting changes? One node sends rename, one remove and one modify?
+     Something like full-fledged git might be needed. At the very least a key-value like store, that resolves modifications using full file path 
+     as just another attribute (change in FILE_PATH attribute might cause a rename, for example).
+
+     Try git model approach - files are in trees, trees are hashed and upon change a Change of tree is recorded with the link to previous (parent)
+     tree(s). Files are like git blobs but assembled of multiple chunks.
+
+Voice and video communication:
+ ☐ Missing libalsa check in cmake
+ ☐ Indicator showing when audio is being received, and from whom.
+ ✔ ALSA backend for Linux and/or upgrade to PortAudio V19 @done (12-10-26 01:19)
+ ✔ Make configure script detect absence of OSS, disable audio on Unix @done (12-10-26 01:19)
+ ☐ Event bells/notifications: friend online, chat/talk started, etc.
+
+Names:
+  ☐ a "mongus" - nice name
