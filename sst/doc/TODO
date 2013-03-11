@@ -5,7 +5,8 @@ libSSU (Structured Streams Unleashed)
  ☐ checkout older version (basic SST?) and try voice service with it...
  ☐ build 32-bits only version of SST and try voice service with it?...
  ✔ unused stuff from sst: bdr.h/cc @done (13-03-09 23:19)
- 
+ ☐ use boost::signals2
+
 SST unfinished business:
  ☐ make regression tests pass and not crash
    ✔ dgram - passed @done (12-12-29 00:54)
