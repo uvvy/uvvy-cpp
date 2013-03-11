@@ -33,7 +33,7 @@ class base_stream : public abstract_stream
 
         inline packet()
             : owner(nullptr)
-            , type(invalid_packet)
+            , type(packet_type::invalid)
         {}
         inline packet(base_stream* o, packet_type t)
             : owner(o)
@@ -47,7 +47,7 @@ class base_stream : public abstract_stream
         }
     };
 
-    weak_ptr<base_stream> parent; ///< Parent, if it still exists.
+    std::weak_ptr<base_stream> parent; ///< Parent, if it still exists.
 
 public:
 };
