@@ -9,6 +9,7 @@ BOOST_AUTO_TEST_CASE(default_allocation)
 {
     byte_array b;
     BOOST_CHECK(b.size() == 0);
+    BOOST_CHECK(b.is_empty());
     BOOST_CHECK_THROW(b.at(0), std::out_of_range);
 }
 
@@ -28,6 +29,7 @@ BOOST_AUTO_TEST_CASE(ctor_from_vector)
     static const char* init = "test";
     std::vector<char> vect(init, init+4);
     byte_array b(vect);
+    BOOST_CHECK(!b.is_empty());
     BOOST_CHECK(b[0] == 't');
     BOOST_CHECK(b[1] == 'e');
     BOOST_CHECK(b[2] == 's');
@@ -39,6 +41,7 @@ BOOST_AUTO_TEST_CASE(ctor_from_vector)
 BOOST_AUTO_TEST_CASE(ctor_from_cstring)
 {
     byte_array b("hello");
+    BOOST_CHECK(!b.is_empty());
     BOOST_CHECK(b[0] == 'h');
     BOOST_CHECK(b[1] == 'e');
     BOOST_CHECK(b[2] == 'l');
@@ -52,6 +55,7 @@ BOOST_AUTO_TEST_CASE(ctor_from_cstring)
 BOOST_AUTO_TEST_CASE(ctor_from_buffer)
 {
     byte_array b("hello", 5);
+    BOOST_CHECK(!b.is_empty());
     BOOST_CHECK(b[0] == 'h');
     BOOST_CHECK(b[1] == 'e');
     BOOST_CHECK(b[2] == 'l');
@@ -64,6 +68,7 @@ BOOST_AUTO_TEST_CASE(ctor_from_buffer)
 BOOST_AUTO_TEST_CASE(move_ctor)
 {
     byte_array b(std::move(byte_array("hello")));
+    BOOST_CHECK(!b.is_empty());
     BOOST_CHECK(b[0] == 'h');
     BOOST_CHECK(b[1] == 'e');
     BOOST_CHECK(b[2] == 'l');
@@ -79,6 +84,7 @@ BOOST_AUTO_TEST_CASE(assign)
     byte_array other("hello");
     byte_array b;
     b = other;
+    BOOST_CHECK(!b.is_empty());
     BOOST_CHECK(b.at(0) == 'h');
     BOOST_CHECK(b.at(1) == 'e');
     BOOST_CHECK(b.at(2) == 'l');
@@ -93,6 +99,7 @@ BOOST_AUTO_TEST_CASE(self_assign)
 {
     byte_array b("hello");
     b = b;
+    BOOST_CHECK(!b.is_empty());
     BOOST_CHECK(b[0] == 'h');
     BOOST_CHECK(b[1] == 'e');
     BOOST_CHECK(b[2] == 'l');
@@ -107,6 +114,7 @@ BOOST_AUTO_TEST_CASE(move)
 {
     byte_array b;
     b = std::move(byte_array("hello"));
+    BOOST_CHECK(!b.is_empty());
     BOOST_CHECK(b[0] == 'h');
     BOOST_CHECK(b[1] == 'e');
     BOOST_CHECK(b[2] == 'l');
@@ -121,6 +129,7 @@ BOOST_AUTO_TEST_CASE(self_move)
 {
     byte_array b("hello");
     b = std::move(b);
+    BOOST_CHECK(!b.is_empty());
     BOOST_CHECK(b[0] == 'h');
     BOOST_CHECK(b[1] == 'e');
     BOOST_CHECK(b[2] == 'l');
@@ -130,21 +139,29 @@ BOOST_AUTO_TEST_CASE(self_move)
     BOOST_CHECK(b.size() == 6);
 }
 
+// char* data();
 // const char* data() const;
+// const char* const_data() const;
 // const size_t size() const;
 // inline const size_t length() const;
 BOOST_AUTO_TEST_CASE(data_and_size)
 {
     byte_array b("hello");
+    // const
     BOOST_CHECK(b.data()[0] == 'h');
     BOOST_CHECK(b.data()[1] == 'e');
-    BOOST_CHECK(b.data()[2] == 'l');
-    BOOST_CHECK(b.data()[3] == 'l');
+    BOOST_CHECK(b.const_data()[2] == 'l');
+    BOOST_CHECK(b.const_data()[3] == 'l');
     BOOST_CHECK(b.data()[4] == 'o');
     BOOST_CHECK(b.data()[5] == 0);
     BOOST_CHECK(b.size() == 6);
     BOOST_CHECK(b.length() == 6);
     BOOST_CHECK(b.size() == b.length());
+    // non-const
+    b.data()[0] = 'm';
+    b.data()[2] = b.data()[3] = 'z';
+    byte_array other("mezzo");
+    BOOST_CHECK(b == other);
 }
 
 // char at(int i) const;
