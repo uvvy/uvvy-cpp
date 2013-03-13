@@ -35,13 +35,14 @@ void link::receive(byte_array& msg, const link_endpoint& src)
 		return chan->receive(msg, src);
 	}
 
-	ixdrstream in(&msg);
+	std::istream in(&byte_array_buf(msg));
+	boost::archive::binary_iarchive ia(in, boost::archive::no_header);
 	magic_t magic;
-	in >> magic;
+	ia >> magic;
 	link_receiver* recv = host->receiver(magic);
 	if (recv)
 	{
-		return recv->receive(msg, in, src);
+		return recv->receive(msg, ia, src);
 	}
 
 	debug() << "Received an invalid message, ignoring unknown channel/receiver" << std::hex << magic << msg;
