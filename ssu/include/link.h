@@ -120,7 +120,7 @@ class udp_link : public link
 {
     boost::asio::ip::udp::socket udp_socket;
     byte_array received_buffer;
-    endpoint received_from;
+    link_endpoint received_from;
 
 public:
     bool bind(const endpoint& ep);
