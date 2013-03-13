@@ -1,4 +1,5 @@
 #include "link.h"
+#include "logging.h"
 
 namespace ssu {
 
