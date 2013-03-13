@@ -57,20 +57,20 @@ public:
     enum class flags : uint8_t
     {
         // Subtype/flag bits for Init, Reply, and Data packets
-        data_close = 0x1,        ///< End of stream.
-        data_message = 0x2,      ///< End of message.
-        data_push = 0x4,         ///< Push to application.
-        data_all = 0x7,          ///< All signal flags.
+        data_close        = 0x1,  ///< End of stream.
+        data_message      = 0x2,  ///< End of message.
+        data_push         = 0x4,  ///< Push to application.
+        data_all          = 0x7,  ///< All signal flags.
 
         // Flag bits for Datagram packets
-        dgram_begin  = 0x2,      ///< First fragment.
-        dgram_end    = 0x1,      ///< Last fragment.
+        dgram_begin       = 0x2,  ///< First fragment.
+        dgram_end         = 0x1,  ///< Last fragment.
 
         // Flag bits for Attach packets
-        attach_init  = 0x8,      ///< Initiate stream.
-        attach_slot_mask  = 0x1, ///< Slot to use.
+        attach_init       = 0x8,  ///< Initiate stream.
+        attach_slot_mask  = 0x1,  ///< Slot to use.
 
         // Flag bits for Reset packets
-        reset_remote = 0x1,      ///< SID orientation (set: sent LSID is in remote space)
+        reset_remote      = 0x1,  ///< SID orientation (set: sent LSID is in remote space)
     };
 };
