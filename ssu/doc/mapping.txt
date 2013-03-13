@@ -18,3 +18,8 @@ StreamRxAttachment |                    | base.h         |
 StreamTxRec        |                    | base.h         |
 BaseStream         | base_stream        | base.h         | base_stream.h
 StreamFlow         |                    | sflow.h        |
+StreamPeer         |                    | peer.h         |
+StreamResponder    |                    | stream.h       |
+KeyResponder       |                    | key.h          |
+KeyInitiator       |                    | key.h          |
+KeyHostState       |                    | key.h          |
