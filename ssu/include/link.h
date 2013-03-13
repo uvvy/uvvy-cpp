@@ -134,6 +134,7 @@ public:
     std::vector<endpoint> local_endpoints();
 
 private:
+    void prepare_async_receive();
     void udp_ready_read(const boost::system::error_code& error, std::size_t bytes_transferred);
 };
 
