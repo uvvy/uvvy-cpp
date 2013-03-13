@@ -4,6 +4,7 @@
 #include <memory>
 #include <boost/asio.hpp>
 #include <boost/signals2/signal.hpp>
+#include <boost/archive/binary_iarchive.hpp>
 #include "byte_array.h"
 
 namespace ssu {
@@ -25,7 +26,11 @@ typedef boost::asio::ip::udp::endpoint endpoint;
  */
 class link_endpoint : public endpoint
 {
-    std::weak_ptr<link> link_;
+    std::weak_ptr<link> link_; ///< Associated link, if any.
+public:
+    link_endpoint() {}
+    link_endpoint(const link_endpoint& other) : endpoint(other), link_(other.link_) {}
+    link_endpoint(const endpoint& other, std::shared_ptr<link> l) : endpoint(other), link_(l) {}
 
     // Send a message to this endpoint on this socket
     bool send(const char *data, int size) const;
@@ -50,6 +55,8 @@ public: // Provide access to signal types for clients
     // Signalled when flow/congestion control may allow new transmission
     on_ready_transmit ready_transmit;
 
+    void receive(byte_array& msg, const link_endpoint& src);
+
 private:
     std::weak_ptr<link> link_; ///< Link we're currently bound to, if any.
     bool active;               ///< True if we're sending and accepting packets.
@@ -62,7 +69,8 @@ private:
  */
 class link_receiver
 {
-
+public:
+    void receive(byte_array& msg, boost::archive::binary_iarchive& ia, const link_endpoint& src);
 };
 
 /**
@@ -71,6 +79,7 @@ class link_receiver
 class link_host_state
 {
     virtual link* create_link();
+public:
     virtual link_receiver* receiver(magic_t magic);
 };
 
@@ -85,6 +94,8 @@ class link
     link_host_state* const host;
     std::map<std::pair<link_endpoint, channel_number>, link_channel*> channels;
     bool active_;
+
+    link_channel* channel(const endpoint& src, channel_number cn);
 
 public:
     // ssu expresses current link status as one of three states:
