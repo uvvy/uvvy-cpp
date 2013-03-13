@@ -101,6 +101,7 @@ public:
     ~link();
 
     bool send(const endpoint&ep, const char* data, size_t size) { return false; }
+
 protected:
     /**
      * Implementation subclass calls this method with received packets.
