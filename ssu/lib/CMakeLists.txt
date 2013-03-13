@@ -1,1 +1,1 @@
-add_library(ssu STATIC stream.cpp)
+add_library(ssu STATIC stream.cpp link.cpp)
