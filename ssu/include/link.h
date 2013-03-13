@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <boost/asio.hpp>
 #include <boost/signals2/signal.hpp>
 #include "byte_array.h"
@@ -97,7 +98,9 @@ public:
     };
 
     link(link_host_state* h) : host(h) {}
+    ~link();
 
+    bool send(const endpoint&ep, const char* data, size_t size) { return false; }
 protected:
     /**
      * Implementation subclass calls this method with received packets.
