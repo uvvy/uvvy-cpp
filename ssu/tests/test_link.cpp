@@ -7,3 +7,12 @@
 BOOST_AUTO_TEST_CASE(created_link)
 {
 }
+
+BOOST_AUTO_TEST_CASE(receive_too_small_packet)
+{
+	byte_array msg({'a', 'b', 'c'});
+	ssu::link l(0);
+	ssu::link_endpoint le;
+
+	l.receive(msg, le);
+}
