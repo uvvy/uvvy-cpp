@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <utility>
+#include <iostream>
 
 /**
  * Class mimicking Qt's QByteArray behavior using STL containers.
@@ -9,6 +10,7 @@
 class byte_array
 {
 	friend bool operator ==(const byte_array& a, const byte_array& b);
+	friend class byte_array_buf;
 	std::vector<char> value; // XXX make implicitly shared cow?
 public:
 	byte_array();
@@ -57,6 +59,14 @@ public:
 bool operator ==(const byte_array& a, const byte_array& b);
 
 std::ostream& operator << (std::ostream& os, const byte_array& a);
+
+class byte_array_buf : public std::streambuf
+{
+public:
+	byte_array_buf(byte_array& ba) {
+		this->setg(&ba.value[0], &ba.value[0], &ba.value[0] + ba.size());
+	}
+};
 
 /**
 struct BigArray{

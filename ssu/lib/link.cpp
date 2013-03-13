@@ -35,7 +35,8 @@ void link::receive(byte_array& msg, const link_endpoint& src)
 		return chan->receive(msg, src);
 	}
 
-	std::istream in(&byte_array_buf(msg));
+	byte_array_buf buf(msg);
+	std::istream in(&buf);
 	boost::archive::binary_iarchive ia(in, boost::archive::no_header);
 	magic_t magic;
 	ia >> magic;
