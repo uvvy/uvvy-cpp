@@ -7,6 +7,13 @@ namespace ssu {
 /**
  * @internal
  * Basic internal implementation of the abstract stream.
+ * The separation between the internal stream control object and the application-visible stream
+ * object is primarily needed so that ssu can hold onto a stream's state and gracefully shut it down
+ * after the application deletes its stream object representing it.
+ * This separation also keeps the internal stream control variables out of the public C++ API
+ * header files and thus able to change without breaking binary compatibility, and makes it easy
+ * to implement service/protocol negotiation for top-level application streams by 
+ * extending base_stream.
  */
 class base_stream : public abstract_stream
 {
@@ -48,6 +55,8 @@ class base_stream : public abstract_stream
     };
 
     std::weak_ptr<base_stream> parent; ///< Parent, if it still exists.
+
+    static const size_t default_rx_buffer_size = 65536;
 
 public:
 };
