@@ -4,7 +4,7 @@ namespace ssu {
 
 bool link_endpoint::send(const char *data, int size) const
 {
-	if ((auto l = link_.lock()))
+	if (auto l = link_.lock())
 	{
 		return l->send(*this, data, size);
 	}
@@ -43,7 +43,7 @@ void link::receive(byte_array& msg, const link_endpoint& src)
 		return recv->receive(msg, in, src);
 	}
 
-	debug() << "Received an invalid message, ignoring unknown channel/receiver" << hex << magic << msg;
+	debug() << "Received an invalid message, ignoring unknown channel/receiver" << std::hex << magic << msg;
 }
 
 bool udp_link::bind(const endpoint& ep)
