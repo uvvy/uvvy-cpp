@@ -56,6 +56,8 @@ public:
 
 bool operator ==(const byte_array& a, const byte_array& b);
 
+std::ostream& operator << (std::ostream& os, const byte_array& a);
+
 /**
 struct BigArray{
        BigArray():m_data(new int[10000000]){}

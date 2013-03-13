@@ -1,4 +1,6 @@
 #include "byte_array.h"
+#include <iostream>
+#include <iomanip>
 
 byte_array::byte_array()
 	: value()
@@ -92,4 +94,16 @@ byte_array byte_array::wrap(const char* data, size_t size)
 bool operator ==(const byte_array& a, const byte_array& b)
 {
 	return a.value == b.value;
+}
+
+using namespace std;
+
+ostream& operator << (ostream& os, const byte_array& a)
+{
+	os << setw(2) << setfill('0');
+	for (size_t s = 0; s < a.size(); ++s)
+	{
+		os << hex << a.at(s) << ' ';
+	}
+	return os;
 }
