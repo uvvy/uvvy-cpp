@@ -64,6 +64,8 @@ endif (BUILD_TESTS)
 
 # For ssu we need boost/asio which depends on libboost_system
 list(APPEND BOOST_COMPONENTS system)
+# For logging we need boost/posix_time
+list(APPEND BOOST_COMPONENTS date_time)
 
 set(Boost_USE_MULTITHREAD ON)
 find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
