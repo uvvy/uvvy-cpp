@@ -1,3 +1,0 @@
-[submodule "3rdparty/libs/log2"]
-	path = 3rdparty/libs/log2
-	url = git@github.com:berkus/log2.git
