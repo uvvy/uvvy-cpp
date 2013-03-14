@@ -1,6 +1,6 @@
 language: c++
 before_install:
-  - sudo apt-get install -qq libasound2-dev libboost-test-dev
+  - sudo apt-get install -qq libasound2-dev libboost-dev
 script: ./scripts/travis_build.sh
 notifications:
   email: false
