@@ -1,3 +1,3 @@
 #include "logging.h"
 
-std::mutex debug::m;
+std::mutex logging::m;

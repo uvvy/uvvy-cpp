@@ -13,16 +13,43 @@
 #include <thread>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-class debug
+class logging
 {
     static std::mutex m;
-public:
-    debug() {
+protected:
+    logging() {
         m.lock();
-        boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
-        std::clog << "[D] " << boost::posix_time::to_iso_extended_string(now) << " T#" << std::this_thread::get_id() << ' ';
-    }
-    ~debug() { std::clog << std::endl; m.unlock(); }
+	}
+    virtual ~logging() { std::clog << std::endl; m.unlock(); }
+
+public:
     template <typename T>
     std::ostream& operator << (const T& v) { std::clog << v; return std::clog; }
+};
+
+class debug : public logging
+{
+public:
+    debug() : logging() {
+        boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+        std::clog << "[DEBUG] " << boost::posix_time::to_iso_extended_string(now) << " T#" << std::this_thread::get_id() << ' ';
+    }
+};
+
+class info : public logging
+{
+public:
+    info() : logging() {
+        boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+        std::clog << "[INFO ] " << boost::posix_time::to_iso_extended_string(now) << " T#" << std::this_thread::get_id() << ' ';
+    }
+};
+
+class warning : public logging
+{
+public:
+    warning() : logging() {
+        boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+        std::clog << "[WARN ] " << boost::posix_time::to_iso_extended_string(now) << " T#" << std::this_thread::get_id() << ' ';
+    }
 };
