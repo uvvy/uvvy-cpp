@@ -15,8 +15,8 @@
 
 class debug
 {
-public:
     static std::mutex m;
+public:
     debug() {
         m.lock();
         boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
