@@ -53,3 +53,15 @@ cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DBUILD_TES
 CI status
 =========
 [![Build Status](https://secure.travis-ci.org/berkus/mettanode.png)](http://travis-ci.org/berkus/mettanode)
+
+Authors
+=======
+Design and development:
+Stanislav Karchebny <berkus@exquance.com>
+
+Code contributions:
+Bogdan Lytvynovsky <>
+
+Original SST and UIA development:
+Bryan Ford <>
+
