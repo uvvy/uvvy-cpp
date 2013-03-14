@@ -99,7 +99,7 @@ public:
  */
 class link
 {
-    link_host_state* const host;
+    link_host_state& host;
     std::map<std::pair<link_endpoint, channel_number>, link_channel*> channels;
     bool active_;
 
@@ -116,7 +116,7 @@ public:
         up
     };
 
-    link(link_host_state* h) : host(h) {}
+    link(link_host_state& h) : host(h) {}
     ~link();
 
     bool send(const endpoint&ep, const char* data, size_t size) { return false; }
@@ -142,7 +142,9 @@ class udp_link : public link
     link_endpoint received_from;
 
 public:
-    bool bind(const endpoint& ep);
+    udp_link(boost::asio::io_service& io_service, const endpoint& ep, link_host_state& h);
+
+    // bool bind(const endpoint& ep);
     /// Send a packet on this UDP socket.
     bool send(const endpoint& ep, const char *data, int size);
     inline bool send(const endpoint& ep, const byte_array& msg) {

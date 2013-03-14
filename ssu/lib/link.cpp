@@ -48,13 +48,20 @@ void link::receive(byte_array& msg, const link_endpoint& src)
 	boost::archive::binary_iarchive ia(in, boost::archive::no_header);
 	magic_t magic;
 	ia >> magic;
-	link_receiver* recv = host->receiver(magic);
+	link_receiver* recv = host.receiver(magic);
 	if (recv)
 	{
 		return recv->receive(msg, ia, src);
 	}
 
 	debug() << "Received an invalid message, ignoring unknown channel/receiver" << std::hex << magic << msg;
+
+udp_link::udp_link(boost::asio::io_service& io_service, const endpoint& ep, link_host_state& h)
+	: link(h)
+	, udp_socket(io_service, ep)
+{
+	// received_buffer.resize(256);
+	prepare_async_receive();
 }
 
 void udp_link::prepare_async_receive()
@@ -67,12 +74,12 @@ void udp_link::prepare_async_receive()
           boost::asio::placeholders::bytes_transferred));
 }
 
-bool udp_link::bind(const endpoint& ep)
-{
-	// once bound, can start receiving datagrams.
-	prepare_async_receive();
-	return true;
-}
+// bool udp_link::bind(const endpoint& ep)
+// {
+// 	// once bound, can start receiving datagrams.
+// 	prepare_async_receive();
+// 	return true;
+// }
 
 bool udp_link::send(const endpoint& ep, const char *data, int size)
 {
