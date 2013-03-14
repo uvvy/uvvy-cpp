@@ -54,7 +54,8 @@ void link::receive(byte_array& msg, const link_endpoint& src)
 		return recv->receive(msg, ia, src);
 	}
 
-	debug() << "Received an invalid message, ignoring unknown channel/receiver" << std::hex << magic << msg;
+	debug() << "Received an invalid message, ignoring unknown channel/receiver " << std::hex << std::showbase << magic << " buffer contents " << msg;
+}
 
 udp_link::udp_link(boost::asio::io_service& io_service, const endpoint& ep, link_host_state& h)
 	: link(h)

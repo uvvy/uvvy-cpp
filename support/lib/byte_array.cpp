@@ -99,19 +99,39 @@ byte_array byte_array::wrap(const char* data, size_t size)
 	return byte_array(data, size);
 }
 
-bool operator ==(const byte_array& a, const byte_array& b)
+bool operator == (const byte_array& a, const byte_array& b)
 {
 	return a.value == b.value;
 }
 
+////////////////////
 using namespace std;
+////////////////////
+
+struct hex_output
+{
+	uint8_t ch;
+	int width;
+	bool fill;
+
+	hex_output(uint8_t c, int w, bool f) : ch(c), width(w), fill(f) {}
+};
+
+inline std::ostream& operator<<(std::ostream& o, const hex_output& hs)
+{
+	return (o << setw(hs.width) << setfill(hs.fill ? '0' : ' ') << std::hex << (int)hs.ch);
+}
+
+inline hex_output hex(uint8_t c, int w = 2, bool f = true)
+{
+	return hex_output(c,w,f);
+}
 
 ostream& operator << (ostream& os, const byte_array& a)
 {
-	os << setw(2) << setfill('0');
 	for (size_t s = 0; s < a.size(); ++s)
 	{
-		os << hex << a.at(s) << ' ';
+		os << noshowbase << hex(a.at(s)) << ' ';
 	}
 	return os;
 }
