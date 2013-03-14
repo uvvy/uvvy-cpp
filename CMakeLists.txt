@@ -66,6 +66,8 @@ endif (BUILD_TESTS)
 list(APPEND BOOST_COMPONENTS system)
 # For logging we need boost/posix_time
 list(APPEND BOOST_COMPONENTS date_time)
+# Serialization is used for streaming data to and from udp packets
+list(APPEND BOOST_COMPONENTS serialization)
 
 set(Boost_USE_MULTITHREAD ON)
 find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
