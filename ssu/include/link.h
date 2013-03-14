@@ -63,7 +63,7 @@ public: // Provide access to signal types for clients
     // Signalled when flow/congestion control may allow new transmission
     on_ready_transmit ready_transmit;
 
-    void receive(byte_array& msg, const link_endpoint& src);
+    void receive(byte_array& msg, const link_endpoint& src) {}
 
 private:
     std::weak_ptr<link> link_; ///< Link we're currently bound to, if any.
@@ -78,7 +78,7 @@ private:
 class link_receiver
 {
 public:
-    void receive(byte_array& msg, boost::archive::binary_iarchive& ia, const link_endpoint& src);
+    void receive(byte_array& msg, boost::archive::binary_iarchive& ia, const link_endpoint& src) {}
 };
 
 /**
@@ -86,9 +86,9 @@ public:
  */
 class link_host_state
 {
-    virtual link* create_link();
+    virtual link* create_link() { return 0; }
 public:
-    virtual link_receiver* receiver(magic_t magic);
+    virtual link_receiver* receiver(magic_t magic) { return 0; }
 };
 
 /**
@@ -103,7 +103,7 @@ class link
     std::map<std::pair<link_endpoint, channel_number>, link_channel*> channels;
     bool active_;
 
-    link_channel* channel(const endpoint& src, channel_number cn);
+    link_channel* channel(const endpoint& src, channel_number cn) { return 0; }
 
 public:
     // ssu expresses current link status as one of three states:
