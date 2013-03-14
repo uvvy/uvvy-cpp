@@ -46,6 +46,10 @@ public:
 		return size();
 	}
 
+	void resize(size_t size) {
+		value.resize(size);
+	}
+
 	char at(int i) const;
 	char operator[](int i) const;
 	char& operator[](int i);
