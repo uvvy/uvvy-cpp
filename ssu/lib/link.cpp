@@ -47,7 +47,7 @@ void link::receive(byte_array& msg, const link_endpoint& src)
 	std::istream in(&buf);
 	boost::archive::binary_iarchive ia(in, boost::archive::no_header);
 	magic_t magic;
-	ia >> magic;
+	ia >> magic; //@todo read as big-endian (network) order?
 	link_receiver* recv = host.receiver(magic);
 	if (recv)
 	{
@@ -61,7 +61,6 @@ udp_link::udp_link(boost::asio::io_service& io_service, const endpoint& ep, link
 	: link(h)
 	, udp_socket(io_service, ep)
 {
-	// received_buffer.resize(256);
 	prepare_async_receive();
 }
 
@@ -96,7 +95,7 @@ void udp_link::udp_ready_read(const boost::system::error_code& error, std::size_
 		byte_array b(boost::asio::buffer_cast<const char*>(received_buffer.data()), bytes_transferred);
 		receive(b, received_from);
 		received_buffer.consume(bytes_transferred);
-		// processed received buffers, continue receiving datagrams.
+		// processed received buffers, continue receiving datagrams. @todo: reverse, allowing to receive datagrams before the previous was processed?
 		prepare_async_receive();
 	}
 }
