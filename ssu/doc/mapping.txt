@@ -23,3 +23,11 @@ StreamResponder    |                    | stream.h       |
 KeyResponder       |                    | key.h          |
 KeyInitiator       |                    | key.h          |
 KeyHostState       |                    | key.h          |
+
+
+SocketReceiver
++--KeyResponder
+|  +--StreamResponder
+|  +--FlowResponder
++--TcpServer
++--Router
