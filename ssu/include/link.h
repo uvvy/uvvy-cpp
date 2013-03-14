@@ -138,7 +138,7 @@ protected:
 class udp_link : public link
 {
     boost::asio::ip::udp::socket udp_socket;
-    byte_array received_buffer;
+    boost::asio::streambuf received_buffer;
     link_endpoint received_from;
 
 public:

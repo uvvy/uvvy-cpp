@@ -67,8 +67,9 @@ udp_link::udp_link(boost::asio::io_service& io_service, const endpoint& ep, link
 
 void udp_link::prepare_async_receive()
 {
+	boost::asio::streambuf::mutable_buffers_type buffer = received_buffer.prepare(2048);
 	udp_socket.async_receive_from(
-		boost::asio::buffer(received_buffer.data(), received_buffer.size()),
+		boost::asio::buffer(buffer),
 		received_from,
 		boost::bind(&udp_link::udp_ready_read, this,
           boost::asio::placeholders::error,
@@ -89,9 +90,15 @@ bool udp_link::send(const endpoint& ep, const char *data, int size)
 
 void udp_link::udp_ready_read(const boost::system::error_code& error, std::size_t bytes_transferred)
 {
-	receive(received_buffer, received_from);
-	// processed received buffers, continue receiving datagrams.
-	prepare_async_receive();
+	if (!error)
+	{
+		debug() << "Received " << bytes_transferred << " bytes via UDP link";
+		byte_array b(boost::asio::buffer_cast<const char*>(received_buffer.data()), bytes_transferred);
+		receive(b, received_from);
+		received_buffer.consume(bytes_transferred);
+		// processed received buffers, continue receiving datagrams.
+		prepare_async_receive();
+	}
 }
 
 }
