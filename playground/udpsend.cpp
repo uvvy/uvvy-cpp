@@ -16,6 +16,8 @@ UdpTestSender::UdpTestSender(bt::UPnPMCastSocket* up)
 
     if (!bind(LOCAL_PORT, QUdpSocket::ShareAddress))
         qWarning() << "Cannot bind to UDP port" << LOCAL_PORT;
+
+    ping(QHostAddress("127.0.0.1"), LOCAL_PORT);
 }
 
 UdpTestSender::~UdpTestSender()
