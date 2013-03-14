@@ -7,8 +7,8 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include "byte_array.h"
+#include "logging.h"
 #include <iostream>
-#include <iomanip>
 
 byte_array::byte_array()
 	: value()
@@ -104,34 +104,11 @@ bool operator == (const byte_array& a, const byte_array& b)
 	return a.value == b.value;
 }
 
-////////////////////
-using namespace std;
-////////////////////
-
-struct hex_output
-{
-	uint8_t ch;
-	int width;
-	bool fill;
-
-	hex_output(uint8_t c, int w, bool f) : ch(c), width(w), fill(f) {}
-};
-
-inline std::ostream& operator<<(std::ostream& o, const hex_output& hs)
-{
-	return (o << setw(hs.width) << setfill(hs.fill ? '0' : ' ') << std::hex << (int)hs.ch);
-}
-
-inline hex_output hex(uint8_t c, int w = 2, bool f = true)
-{
-	return hex_output(c,w,f);
-}
-
-ostream& operator << (ostream& os, const byte_array& a)
+std::ostream& operator << (std::ostream& os, const byte_array& a)
 {
 	for (size_t s = 0; s < a.size(); ++s)
 	{
-		os << noshowbase << hex(a.at(s)) << ' ';
+		os << hex(a.at(s)) << ' ';
 	}
 	return os;
 }
