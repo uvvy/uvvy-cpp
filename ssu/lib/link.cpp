@@ -6,6 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
+#include <boost/endian/conversion2.hpp>
 #include "link.h"
 #include "logging.h"
 
@@ -43,16 +44,17 @@ void link::receive(byte_array& msg, const link_endpoint& src)
 		return chan->receive(msg, src);
 	}
 
-	byte_array_buf buf(msg);
-	std::istream in(&buf);
-	boost::archive::binary_iarchive ia(in, boost::archive::no_header);
-	magic_t magic;
-	ia >> magic; //@todo read as big-endian (network) order?
-	link_receiver* recv = host.receiver(magic);
-	if (recv)
-	{
-		return recv->receive(msg, ia, src);
-	}
+    byte_array_buf buf(msg);
+    std::istream in(&buf);
+    boost::archive::binary_iarchive ia(in, boost::archive::no_header);
+    magic_t magic;
+    ia >> magic;
+    magic = boost::endian2::big(magic);
+    link_receiver* recv = host.receiver(magic);
+    if (recv)
+    {
+        return recv->receive(msg, ia, src);
+    }
 
 	debug() << "Received an invalid message, ignoring unknown channel/receiver " << hex(magic, 8, true) << " buffer contents " << msg;
 }
