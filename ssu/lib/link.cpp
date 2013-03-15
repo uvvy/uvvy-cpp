@@ -27,6 +27,34 @@ link::~link()
 
 }
 
+/**
+ * Two packet types we could receive are stream packet (multiple types), starting with channel header
+ * with non-zero channel number. It is handled by specific link_channel.
+ * Another type is negotiation packet which usually attempts to start a session negotiation, it should
+ * have zero channel number. It is handled by registered link_receiver (XXX rename to link_responder?).
+ *
+ *  Channel header (8 bytes)
+ *   31          24 23                                0
+ *  +--------------+-----------------------------------+
+ *  |   Channel    |     Transmit Seq Number (TSN)     |
+ *  +------+-------+-----------------------------------+
+ *  | Rsvd | AckCt | Acknowledgement Seq Number (ASN)  |
+ *  +------+-------+-----------------------------------+
+ *        ... more channel-specific data here ...
+ *
+ *  Negotiation header (8+ bytes)
+ *   31          24 23                                0
+ *  +--------------+-----------------------------------+
+ *  |  Channel=0   |     Negotiation Magic Bytes       |
+ *  +--------------+-----------------------------------+
+ *  |                  Chunk #1 size                   |
+ *  +--------------------------------------------------+
+ *  |                     .....                        |
+ *  |                    Chunk #1                      |
+ *  |                     .....                        |
+ *  +--------------------------------------------------+
+ *
+ */
 void link::receive(byte_array& msg, const link_endpoint& src)
 {
     if (msg.size() < 4)
