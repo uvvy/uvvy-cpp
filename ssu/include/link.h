@@ -78,7 +78,7 @@ private:
 class link_receiver
 {
 public:
-    void receive(byte_array& msg, boost::archive::binary_iarchive& ia, const link_endpoint& src) {}
+    virtual void receive(byte_array& msg, boost::archive::binary_iarchive& ia, const link_endpoint& src) = 0;
 };
 
 /**
