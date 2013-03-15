@@ -72,6 +72,10 @@ list(APPEND BOOST_COMPONENTS serialization)
 set(Boost_USE_MULTITHREAD ON)
 find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
+# Additional unofficial boost libraries
+include_directories(3rdparty/endian)
+
+
 add_subdirectory(support)
 
 add_subdirectory(sst)
