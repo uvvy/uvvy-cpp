@@ -1,0 +1,3 @@
+[submodule "3rdparty/endian"]
+	path = 3rdparty/endian
+	url = git://github.com/berkus/endian.git
