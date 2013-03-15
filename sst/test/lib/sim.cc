@@ -294,8 +294,7 @@ void SimPacket::arrive()
 {
 	// Make sure we're still on the destination host's queue
 	if (!dsth || !dsth->pqueue.contains(this)) {
-		qDebug() << this << "no longer queued to destination host"
-			<< dst.addr.toString();
+		qDebug() << this << "no longer queued to destination host" << dst.addr.toString();
 		return deleteLater();
 	}
 
