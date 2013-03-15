@@ -6,6 +6,7 @@ AbstractStream     | abstract_stream    | abs.h          | abstract_stream.h
 Stream             | stream             | stream.h       | stream.h
 Flow               | channel            | flow.h         | channel.h
 FlowArmor          | channel_armor      | flow.h         | channel.h
+FlowResponder      |                    | seg.h          | Unused
 Socket             | link               | sock.h         | link.h
 SocketEndpoint     | link_endpoint      | sock.h         | link.h
 UdpSocket          | udp_link           | sock.h         | link.h
@@ -25,9 +26,9 @@ KeyInitiator       |                    | key.h          |
 KeyHostState       |                    | key.h          |
 
 
-SocketReceiver
-+--KeyResponder
-|  +--StreamResponder
-|  +--FlowResponder
+SocketReceiver         link_receiver          | sock.h
++--KeyResponder        +--key_responder       | key.h
+|  +--StreamResponder     +--stream_responder | stream.h
+|  +--FlowResponder                           | seg.h          | Unused
 +--TcpServer
 +--Router
