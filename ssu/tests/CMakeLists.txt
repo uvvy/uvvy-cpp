@@ -13,3 +13,5 @@ create_test(stream_user)
 create_test(stream_internal)
 
 create_test(run_udp_receiver)
+
+create_test(optional)
