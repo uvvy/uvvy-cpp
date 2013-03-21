@@ -343,7 +343,7 @@ protected:
 		: QObject(parent), h(h), mag(0) { }
 	inline SocketReceiver(SocketHostState *h, quint32 magic,
 				QObject *parent = NULL)
-		: QObject(parent), h(h), mag(0) { bind(magic); }
+		: QObject(parent), h(h), mag(0) { bind(magic); } // <--- BIND
 	virtual ~SocketReceiver();
 };
 

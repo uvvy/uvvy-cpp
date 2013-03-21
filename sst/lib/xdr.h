@@ -406,6 +406,8 @@ inline void xdrDecodeArray(XdrStream &xs, QByteArray &v, quint32 maxlen)
  * In line with this usage, we map XDR pointers to an XdrPointer class
  * that represents a "captured", automatically-managed instance
  * of the appropriate target type.
+ *
+ * @fixme Can be represented by boost::optional<T>
  */
 template<class T> class XdrPointer
 {

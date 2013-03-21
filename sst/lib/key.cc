@@ -194,7 +194,7 @@ XdrStream &operator>>(XdrStream &xs, XdrOption<KeyChunkUnion> &o)
 }
 
 //=====================================================================================================================
-////////// KeyResponder //////////
+// KeyResponder
 //=====================================================================================================================
 
 KeyResponder::KeyResponder(Host *host, quint32 magic, QObject *parent)
