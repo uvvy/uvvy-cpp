@@ -11,6 +11,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <boost/serialization/level.hpp>
 #include <boost/serialization/split_free.hpp>
 
 /**
