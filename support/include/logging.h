@@ -55,6 +55,16 @@ public:
     }
 };
 
+class fatal : public logging
+{
+public:
+    fatal() : logging() {
+        boost::posix_time::ptime now = boost::posix_time::second_clock::local_time();
+        std::clog << "[FATAL] " << boost::posix_time::to_iso_extended_string(now) << " T#" << std::this_thread::get_id() << ' ';
+    }
+    ~fatal() { std::abort(); }
+};
+
 /**
  * Helper to output a hexadecimal value with formatting to an iostream.
  * Usage: io << hex(value, 8, true, false)
