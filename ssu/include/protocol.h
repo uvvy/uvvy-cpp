@@ -8,6 +8,9 @@
 //
 #pragma once
 
+#include <cstdint>
+
+#include <type_traits>
 // Slightly silly enum-class-to-underlying-type converter.
 template <typename E>
 typename std::underlying_type<E>::type to_underlying(E e) {
@@ -25,7 +28,7 @@ class stream_protocol
 public:
     // Control chunk magic value for the structured streams.
     // 0x535355 = 'SSU': 'Structured Streams Unleashed'
-    static const uint32_t magic = 0x00535355;
+    static const uint32_t magic;
 
     struct stream_header
     {
