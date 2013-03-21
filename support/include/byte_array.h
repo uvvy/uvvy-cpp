@@ -11,6 +11,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <boost/serialization/split_free.hpp>
 
 /**
  * Class mimicking Qt's QByteArray behavior using STL containers.
@@ -72,10 +73,36 @@ bool operator ==(const byte_array& a, const byte_array& b);
 
 std::ostream& operator << (std::ostream& os, const byte_array& a);
 
+BOOST_CLASS_IMPLEMENTATION(byte_array, boost::serialization::object_serializable)
+
+namespace boost {
+namespace serialization {
+
+template<class Archive>
+void save(Archive& oa, const byte_array& a, const unsigned int)
+{
+    oa.save_binary(a.const_data(), a.size());
+}
+
+template<class Archive>
+void load(Archive& ia, byte_array& a, const unsigned int)
+{
+    ia.load_binary(a.data(), a.size());
+}
+
+template<class Archive>
+void serialize(Archive & ar, byte_array& t, const unsigned int version)
+{
+    boost::serialization::split_free(ar, t, version);
+}
+
+} // namespace serialization
+} // namespace boost
+
 class byte_array_buf : public std::streambuf
 {
 public:
-	byte_array_buf(byte_array& ba) {
+	inline byte_array_buf(byte_array& ba) {
 		this->setg(&ba.value[0], &ba.value[0], &ba.value[0] + ba.size());
 	}
 };
