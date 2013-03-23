@@ -74,6 +74,8 @@ bool operator ==(const byte_array& a, const byte_array& b);
 
 std::ostream& operator << (std::ostream& os, const byte_array& a);
 
+// boost serialize a byte array
+
 BOOST_CLASS_IMPLEMENTATION(byte_array, boost::serialization::object_serializable)
 
 namespace boost {
