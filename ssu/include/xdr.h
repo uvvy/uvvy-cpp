@@ -52,6 +52,7 @@ inline void decode_vector(Archive& ia, byte_array& ba, uint32_t maxlen)
     skip_padding(ia, maxlen);
 }
 
+// Encode XDR array: variable-size byte array. (hmm?)
 template<class Archive>
 inline void encode_array(Archive& oa, const byte_array& ba, uint32_t maxlen)
 {
@@ -74,6 +75,31 @@ inline void decode_array(Archive& ia, byte_array& ba, uint32_t maxlen)
     ba.resize(size);
     ia >> ba;
     skip_padding(ia, size);
+}
+
+// Encode XDR list: variable-size array of arbitrary types.
+template<class Archive, typename T>
+inline void encode_list(Archive& oa, std::vector<T>& ba, uint32_t maxlen)
+{
+    assert(ba.length() <= maxlen);
+    uint32_t size = ba.length();
+    size = boost::endian2::big(size);
+    oa << size;
+    for (uint32_t index = 0; index < ba.length(); ++index)
+        oa << ba[index];
+}
+
+template<class Archive, typename T>
+inline void decode_list(Archive& ia, std::vector<T>& ba, uint32_t maxlen)
+{
+    uint32_t size; // this is not quite portable and is a limitation of XDR (sizes are 32 bit)
+    ia >> size;
+    size = boost::endian2::big(size);
+    if (size > maxlen)
+        throw decode_error();
+    ba.resize(size);
+    for (uint32_t index = 0; index < size; ++index)
+        ia >> ba[index];
 }
 
 }

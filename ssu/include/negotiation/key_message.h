@@ -160,7 +160,31 @@ struct key_message {
 }
 */
 
-enum class dh_group_type {
+class packet_chunk
+{
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int) {
+    }
+};
+
+class checksum_init_chunk
+{
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int) {
+    }
+};
+
+class checksum_response_chunk
+{
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int) {
+    }
+};
+
+enum class dh_group_type : uint32_t {
     dh_group_1024 = 0x01, // 1024-bit DH group
     dh_group_2048 = 0x02, // 2048-bit DH group
     dh_group_3072 = 0x03  // 3072-bit DH group
@@ -179,8 +203,10 @@ class dh_init1_chunk
     friend class boost::serialization::access;
     template<class Archive>
     void load(Archive &ar, const unsigned int) {
-        ar >> group;
-        boost::endian::big_to_native(group);
+        uint32_t grp;
+        ar >> grp;
+        boost::endian::big_to_native(grp);
+        group = dh_group_type(grp);
         ar >> key_min_length;
         boost::endian::big_to_native(key_min_length);
         xdr::decode_vector(ar, initiator_hashed_nonce, 32);
@@ -218,13 +244,25 @@ class dh_response1_chunk
     void load(Archive &ar, const unsigned int) {
         ar & group;
         ar & key_min_length;
-        xdr::decode_array(ar, initiator_hashed_nonce, 32);
-        xdr::decode_array(ar, responder_nonce, 32);
+        xdr::decode_vector(ar, initiator_hashed_nonce, 32);
+        xdr::decode_vector(ar, responder_nonce, 32);
         xdr::decode_array(ar, responder_dh_public_key, 384);
         xdr::decode_array(ar, responder_challenge_cookie, 256);
         xdr::decode_array(ar, responder_eid, 256);
         xdr::decode_array(ar, responder_public_key, ~0);
         xdr::decode_array(ar, responder_signature, ~0);
+    }
+    template<class Archive>
+    void save(Archive &ar, const unsigned int) {
+        ar & group;
+        ar & key_min_length;
+        xdr::encode_vector(ar, initiator_hashed_nonce, 32);
+        xdr::encode_vector(ar, responder_nonce, 32);
+        xdr::encode_array(ar, responder_dh_public_key, 384);
+        xdr::encode_array(ar, responder_challenge_cookie, 256);
+        xdr::encode_array(ar, responder_eid, 256);
+        xdr::encode_array(ar, responder_public_key, ~0);
+        xdr::encode_array(ar, responder_signature, ~0);
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
@@ -245,12 +283,23 @@ class dh_init2_chunk
     void load(Archive &ar, const unsigned int version) {
         ar & group;
         ar & key_min_length;
-        xdr::decode_array(ar, initiator_nonce, 32);
-        xdr::decode_array(ar, responder_nonce, 32);
+        xdr::decode_vector(ar, initiator_nonce, 32);
+        xdr::decode_vector(ar, responder_nonce, 32);
         xdr::decode_array(ar, initiator_dh_public_key, 384);
         xdr::decode_array(ar, responder_dh_public_key, 384);
         xdr::decode_array(ar, responder_challenge_cookie, 256);
         xdr::decode_array(ar, initiator_id, ~0);
+    }
+    template<class Archive>
+    void save(Archive &ar, const unsigned int version) {
+        ar & group;
+        ar & key_min_length;
+        xdr::encode_vector(ar, initiator_nonce, 32);
+        xdr::encode_vector(ar, responder_nonce, 32);
+        xdr::encode_array(ar, initiator_dh_public_key, 384);
+        xdr::encode_array(ar, responder_dh_public_key, 384);
+        xdr::encode_array(ar, responder_challenge_cookie, 256);
+        xdr::encode_array(ar, initiator_id, ~0);
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
@@ -263,8 +312,13 @@ class dh_response2_chunk
     friend class boost::serialization::access;
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-        xdr::decode_array(ar, initiator_hashed_nonce, 32);
+        xdr::decode_vector(ar, initiator_hashed_nonce, 32);
         xdr::decode_array(ar, responder_id, ~0);
+    }
+    template<class Archive>
+    void save(Archive &ar, const unsigned int version) {
+        xdr::encode_vector(ar, initiator_hashed_nonce, 32);
+        xdr::encode_array(ar, responder_id, ~0);
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
@@ -281,24 +335,44 @@ enum class key_chunk_type {
 
 class key_chunk
 {
-    key_chunk_type                      type;
-    optional<packet_chunk>              packet;
-    optional<checksum_init_chunk>       checksum_init;
-    optional<checksum_response_chunk>   checksum_response;
-    optional<dh_init1_chunk>            dh_init1;
-    optional<dh_response1_chunk>        dh_response1;
-    optional<dh_init2_chunk>            dh_init2;
-    optional<dh_response2_chunk>        dh_response2;
+    key_chunk_type                             type;
+    boost::optional<packet_chunk>              packet;
+    boost::optional<checksum_init_chunk>       checksum_init;
+    boost::optional<checksum_response_chunk>   checksum_response;
+    boost::optional<dh_init1_chunk>            dh_init1;
+    boost::optional<dh_response1_chunk>        dh_response1;
+    boost::optional<dh_init2_chunk>            dh_init2;
+    boost::optional<dh_response2_chunk>        dh_response2;
 
     friend class boost::serialization::access;
     template<class Archive>
-    void load(Archive &ar, const unsigned int) {
+    void serialize(Archive &ar, const unsigned int) {
         ar & type;
         switch (type) {
-
+            case key_chunk_type::packet:
+                ar & packet;
+                break;
+            case key_chunk_type::checksum_init:
+                ar & checksum_init;
+                break;
+            case key_chunk_type::checksum_response:
+                ar & checksum_response;
+                break;
+            case key_chunk_type::dh_init1:
+                ar & dh_init1;
+                break;
+            case key_chunk_type::dh_response1:
+                ar & dh_response1;
+                break;
+            case key_chunk_type::dh_init2:
+                ar & dh_init2;
+                break;
+            case key_chunk_type::dh_response2:
+                ar & dh_response2;
+                break;
         }
     }
-    BOOST_SERIALIZATION_SPLIT_MEMBER()
+    // BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
 class key_message
@@ -308,30 +382,34 @@ class key_message
 
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int) {
+    void save(Archive &ar, const unsigned int) {
         ar & magic;
-        ar & chunks;
+        xdr::encode_list(ar, chunks, ~0); // Hmm, potential DOS possibility - send an endless list?
     }
-    // BOOST_SERIALIZATION_SPLIT_MEMBER()
+    template<class Archive>
+    void load(Archive &ar, const unsigned int) {
+        ar & magic;
+        xdr::decode_list(ar, chunks, ~0); // Hmm, potential DOS possibility - send an endless list?
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
 public:
 };
 
-// Disable versioning for all these classes
-BOOST_CLASS_IMPLEMENTATION(packet_chunk, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(checksum_init_chunk, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(checksum_response_chunk, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(packet_chunk, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(dh_init1_chunk, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(dh_response1_chunk, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(dh_init2_chunk, boost::serialization::object_serializable)
-BOOST_CLASS_IMPLEMENTATION(dh_response2_chunk, boost::serialization::object_serializable)
-
-operator >> (boost::archive::iarchive& ia, key_message& m);
-{
-    ia & m;
-    return ia;
-}
+// operator >> (boost::archive::iarchive& ia, key_message& m);
+// {
+//     ia & m;
+//     return ia;
+// }
 
 } // namespace negotiation
 } // namespace ssu
+
+// Disable versioning for all these classes
+BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::packet_chunk, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::checksum_init_chunk, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::checksum_response_chunk, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::dh_init1_chunk, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::dh_response1_chunk, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::dh_init2_chunk, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::dh_response2_chunk, boost::serialization::object_serializable)
