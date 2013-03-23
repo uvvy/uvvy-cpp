@@ -216,9 +216,13 @@ class dh_init1_chunk
 
     friend class boost::serialization::access;
     template<class Archive>
-    void save(Archive &ar, const unsigned int) {
-        ar << uint32_t(boost::endian2::big(group));
-        ar << uint32_t(boost::endian2::big(key_min_length));
+    void save(Archive &ar, const unsigned int) const {
+        uint32_t grp = uint32_t(group);
+        boost::endian::native_to_big(grp);
+        ar << grp;
+        uint32_t kml = key_min_length;
+        boost::endian::native_to_big(kml);
+        ar << kml;
         xdr::encode_vector(ar, initiator_hashed_nonce, 32);
         xdr::encode_array(ar, initiator_dh_public_key, 384);
         xdr::encode_array(ar, responder_eid, 256);
@@ -253,7 +257,7 @@ class dh_response1_chunk
         xdr::decode_array(ar, responder_signature, ~0);
     }
     template<class Archive>
-    void save(Archive &ar, const unsigned int) {
+    void save(Archive &ar, const unsigned int) const {
         ar & group;
         ar & key_min_length;
         xdr::encode_vector(ar, initiator_hashed_nonce, 32);
@@ -291,7 +295,7 @@ class dh_init2_chunk
         xdr::decode_array(ar, initiator_id, ~0);
     }
     template<class Archive>
-    void save(Archive &ar, const unsigned int version) {
+    void save(Archive &ar, const unsigned int version) const {
         ar & group;
         ar & key_min_length;
         xdr::encode_vector(ar, initiator_nonce, 32);
@@ -316,7 +320,7 @@ class dh_response2_chunk
         xdr::decode_array(ar, responder_id, ~0);
     }
     template<class Archive>
-    void save(Archive &ar, const unsigned int version) {
+    void save(Archive &ar, const unsigned int version) const {
         xdr::encode_vector(ar, initiator_hashed_nonce, 32);
         xdr::encode_array(ar, responder_id, ~0);
     }
@@ -382,14 +386,14 @@ class key_message
 
     friend class boost::serialization::access;
     template<class Archive>
-    void save(Archive &ar, const unsigned int) {
-        ar & magic;
-        xdr::encode_list(ar, chunks, ~0); // Hmm, potential DOS possibility - send an endless list?
+    void load(Archive &ar, const unsigned int) {
+        ar >> magic;
+        xdr::decode_list(ar, chunks, ~0); // Hmm, potential DOS possibility - send an endless list?
     }
     template<class Archive>
-    void load(Archive &ar, const unsigned int) {
-        ar & magic;
-        xdr::decode_list(ar, chunks, ~0); // Hmm, potential DOS possibility - send an endless list?
+    void save(Archive &ar, const unsigned int) const {
+        ar << magic;
+        xdr::encode_list(ar, chunks, ~0);
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
