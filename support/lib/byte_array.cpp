@@ -66,7 +66,7 @@ const char* byte_array::const_data() const
 	return &value[0];
 }
 
-const size_t byte_array::size() const
+size_t byte_array::size() const
 {
 	return value.size();
 }

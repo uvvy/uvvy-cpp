@@ -104,7 +104,7 @@ void RawInput::acceptInput(const float *samplebuf)
 	// Trivial XDR-based encoding, for debugging.
 	QByteArray bytebuf;
 	SST::XdrStream xws(&bytebuf, QIODevice::WriteOnly);
-	for (int i = 0; i < frameSize(); i++)
+	for (unsigned int i = 0; i < frameSize(); i++)
 		xws << samplebuf[i];
 
 	// Queue it to the main thread
@@ -227,8 +227,8 @@ void OpusOutput::produceOutput(float *samplebuf)
 	// Decode the frame
 	if (!bytebuf.isEmpty()) {
 		qWarning() << "Decode frame size:" << bytebuf.size();
-		int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(), bytebuf.size(), samplebuf, frameSize(), /*decodeFEC:*/1);
-		Q_ASSERT(len > 0);
+		unsigned int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(), bytebuf.size(), samplebuf, frameSize(), /*decodeFEC:*/1);
+		// Q_ASSERT(len > 0);
 		Q_ASSERT(len == frameSize());
 
 		// Signal the main thread if the queue empties
@@ -266,7 +266,7 @@ void RawOutput::produceOutput(float *samplebuf)
 	// Trivial XDR-based encoding, for debugging
 	if (!bytebuf.isEmpty()) {
 		SST::XdrStream xrs(&bytebuf, QIODevice::ReadOnly);
-		for (int i = 0; i < frameSize(); i++)
+		for (unsigned int i = 0; i < frameSize(); i++)
 			xrs >> samplebuf[i];
 
 		// Signal the main thread if the queue empties
@@ -340,7 +340,7 @@ void FileLoopedOutput::produceOutput(float *samplebuf)
 			file.seek(offset);// clear atEnd() condition
 		}
 	}
-	for (int i = 0; i < frameSize(); ++i)
+	for (unsigned int i = 0; i < frameSize(); ++i)
 		samplebuf[i] = (float)samples[i];
 }
 

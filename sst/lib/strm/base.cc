@@ -1372,9 +1372,9 @@ bool BaseStream::rxResetPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow
     }
 
     // Decode the packet header
-    ResetHeader *hdr = (ResetHeader*)(pkt.data() + Flow::hdrlen);
-    quint16 sid = ntohs(hdr->sid);
-    bool localSid = hdr->type & resetRemoteFlag;
+    // ResetHeader *hdr = (ResetHeader*)(pkt.data() + Flow::hdrlen);
+    // quint16 sid = ntohs(hdr->sid);
+    // bool localSid = hdr->type & resetRemoteFlag;
 
     Q_ASSERT(0);    // XXX
     (void)pktseq; (void)pkt; (void)flow;

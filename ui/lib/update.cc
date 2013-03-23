@@ -109,7 +109,7 @@ void Update::FileReader::error(const QString &msg)
 	up->setError(msg);
 }
 
-void Update::FileReader::gotData(const QByteArray &ohash, qint64 ofs, qint64,
+void Update::FileReader::gotData2(const QByteArray &ohash, qint64 ofs, qint64,
 				const QByteArray &data, int)
 {
 	if (!up->isRunning())
@@ -149,7 +149,7 @@ void Update::FileReader::gotMetaData(const QByteArray &ohash,
 	Index::addMetaChunk(ohash, cyph);
 }
 
-void Update::FileReader::noData(const QByteArray &, qint64, qint64,
+void Update::FileReader::noData2(const QByteArray &, qint64, qint64,
 				qint64, int)
 {
 	error("Can't find file data - source may not be online");

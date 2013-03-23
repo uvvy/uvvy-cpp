@@ -412,7 +412,7 @@ static void
 def_typedef(defp)
 	definition *defp;
 {
-	declaration dec = { 0 };
+	declaration dec = { 0, 0, 0, 0, 0 };
 
 	defp->def_kind = DEF_TYPEDEF;
 	get_declaration(&dec, DEF_TYPEDEF);

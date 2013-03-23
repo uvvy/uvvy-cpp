@@ -25,7 +25,7 @@ QString Audio::errmsg;
 
 static RtAudio *audio_inst;
 static double hwrate;
-static int hwframesize;
+static unsigned int hwframesize;
 
 static int inlev, outlev;
 
@@ -266,7 +266,7 @@ void Audio::open()
 	// and the minimum framesize requested by any of our streams,
 	// to maximize quality and minimize buffering latency.
 	double maxrate = 0;
-	int minframesize = 65536;
+	unsigned int minframesize = 65536;
 	for (int i = 0; i < instreams.size(); i++) {
 		maxrate = qMax(maxrate, instreams[i]->sampleRate());
 		minframesize = qMin(minframesize, instreams[i]->frameSize());
@@ -390,7 +390,7 @@ void Audio::mixout(float *outbuf)
 		qDebug() << "Audio:" << (oldnout = nout) << "output streams";
 
 	if (nout == 0) {	// Nothing playing
-		for (int i = 0; i < hwframesize; i++)
+		for (unsigned int i = 0; i < hwframesize; i++)
 			outbuf[i] = 0.0;
 		setOutputLevel(0);
 		return;
@@ -413,7 +413,7 @@ void Audio::mixout(float *outbuf)
 	float encbuf[hwframesize];
 	for (int i = 1; i < nout; i++) {
 		outstreams[i]->getOutput(encbuf);
-		for (int j = 0; j < hwframesize; j++)
+		for (unsigned int j = 0; j < hwframesize; j++)
 			outbuf[j] += encbuf[j];
 	}
 
@@ -426,7 +426,7 @@ void Audio::mixout(float *outbuf)
 int Audio::computeLevel(const float *buf)
 {
 	float lev = 0.0;
-	for (int i = 0; i < hwframesize; i++) {
+	for (unsigned int i = 0; i < hwframesize; i++) {
 		float l = buf[i];
 		lev = qMax(lev, qAbs(l));
 	}

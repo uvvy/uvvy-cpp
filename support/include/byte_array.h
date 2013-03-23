@@ -40,11 +40,11 @@ public:
 	/**
 	 * @sa length(), capacity()
 	 */
-	const size_t size() const;
+	size_t size() const;
 	/**
 	 * @sa size(), capacity()
 	 */
-	inline const size_t length() const {
+	inline size_t length() const {
 		return size();
 	}
 

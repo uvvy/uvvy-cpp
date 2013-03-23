@@ -57,12 +57,12 @@ class KeyHostState;
 class DHKey;
 class ChecksumArmor;
 
-class KeyChunkChkI1Data;
-class KeyChunkChkR1Data;
-class KeyChunkDhI1Data;
-class KeyChunkDhR1Data;
-class KeyChunkDhI2Data;
-class KeyChunkDhR2Data;
+struct KeyChunkChkI1Data;
+struct KeyChunkChkR1Data;
+struct KeyChunkDhI1Data;
+struct KeyChunkDhR1Data;
+struct KeyChunkDhI2Data;
+struct KeyChunkDhR2Data;
 
 /**
  * This class manages the initiator side of the key exchange.

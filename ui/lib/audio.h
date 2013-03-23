@@ -135,7 +135,7 @@ public:
 
     /// Get or set the frame size of this stream.
     /// Frame size may only be changed while stream is disabled.
-    inline int frameSize() { return framesize; }
+    inline unsigned int frameSize() { return framesize; }
     void setFrameSize(int framesize); 
 
     /// Get or set the sample rate for this stream.

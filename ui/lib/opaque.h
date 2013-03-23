@@ -321,9 +321,9 @@ protected:
 
     // Events that we signal to our derived class.
     // If the file is inline, gotData() receives an empty ohash.
-    virtual void gotData(const QByteArray &ohash, qint64 ofs, qint64 recno,
+    virtual void gotData2(const QByteArray &ohash, qint64 ofs, qint64 recno,
                 const QByteArray &data, int nrecs) = 0;
-    virtual void noData(const QByteArray &ohash, qint64 ofs, qint64 recno,
+    virtual void noData2(const QByteArray &ohash, qint64 ofs, qint64 recno,
                 qint64 size, int nrecs) = 0;
     virtual void readDone();
 
@@ -357,11 +357,11 @@ public:
         : AbstractOpaqueReader(parent) { }
 
 signals:
-    void gotData(const OpaqueInfo &info, qint64 ofs, qint64 recno,
+    void sigGotData(const OpaqueInfo &info, qint64 ofs, qint64 recno,
                 const QByteArray &data, int nrecs);
-    void noData(const OpaqueInfo &info, qint64 ofs, qint64 recno,
+    void sigNoData(const OpaqueInfo &info, qint64 ofs, qint64 recno,
                 qint64 size, int nrecs);
-    void readDone();
+    void sigReadDone();
 };
 
 

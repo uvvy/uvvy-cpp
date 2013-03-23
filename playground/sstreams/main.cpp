@@ -116,7 +116,7 @@ int main(int argc, char **argv)
     regcli->setInfo(myreginfo);
     regcli->registerAt("ishikawa.local");
 
-    PeerService* s = new PeerService("test", QObject::tr("Testing"),
+    /*PeerService* s =*/ new PeerService("test", QObject::tr("Testing"),
                                      "test", QObject::tr("Shmesting"));
     // connect(s, SIGNAL(inStreamConnected(Stream*)),
         // this, SLOT(gotInStreamConnected(Stream*)));

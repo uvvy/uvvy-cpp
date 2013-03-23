@@ -395,7 +395,7 @@ void RegClient::sendDelete()
 	send(msg);
 }
 
-void RegClient::gotDeleteReply(XdrStream &rs)
+void RegClient::gotDeleteReply(XdrStream &)
 {
 	// Ignore.
 	qDebug() << this << "got delete reply, ignored";

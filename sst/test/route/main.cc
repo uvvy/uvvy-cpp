@@ -64,7 +64,7 @@ static inline Node *randomNode()
 
 ////////// Node //////////
 
-Node::Node(Simulator *sim, const QByteArray &id, const QHostAddress &addr)
+Node::Node(Simulator *sim, const QByteArray &id, const QHostAddress &/*addr*/)
 :	host(sim/*, addr*/),
 	rtr(&host, id)
 {

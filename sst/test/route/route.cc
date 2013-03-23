@@ -260,8 +260,7 @@ void Router::nearestNeighborPaths(const NodeId &id, QList<Path> &paths,
 	}
 }
 
-void Router::receive(QByteArray &msg, XdrStream &ds,
-			const SocketEndpoint &src)
+void Router::receive(QByteArray &/*msg*/, XdrStream &/*ds*/, const SocketEndpoint &/*src*/)
 {
 }
 

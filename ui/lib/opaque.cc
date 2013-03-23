@@ -734,8 +734,7 @@ void AbstractOpaqueReader::readRegion(const OpaqueInfo &info,
 				qint64 start, qint64 end, bool byrec)
 {
 	if (info.isInline()) {
-		gotData(QByteArray(), 0, 0, info.inlineData(),
-			info.internalRecords());
+		gotData2(QByteArray(), 0, 0, info.inlineData(), info.internalRecords());
 		return readDone();
 	}
 
@@ -832,7 +831,7 @@ void AbstractOpaqueReader::gotData(const QByteArray &ohash,
 		if (k.osize != size) {
 			qDebug("OpaqueKey outer chunk size mismatch");
 			bad:
-			noData(ohash, r.byteofs, r.recofs, k.isize, k.irecs);
+			noData2(ohash, r.byteofs, r.recofs, k.isize, k.irecs);
 			continue;
 		}
 
@@ -852,7 +851,7 @@ void AbstractOpaqueReader::gotData(const QByteArray &ohash,
 			}
 
 			// Pass the data up to the client, and we're done.
-			gotData(ohash, r.byteofs, r.recofs, buf, k.irecs);
+			gotData2(ohash, r.byteofs, r.recofs, buf, k.irecs);
 			continue;
 		}
 
@@ -907,7 +906,7 @@ void AbstractOpaqueReader::noData(const QByteArray &ohash)
 	QList<Region> rl = regions.values(ohash);
 	regions.remove(ohash);
 	foreach (const Region &r, rl) {
-		noData(ohash, r.byteofs, r.recofs, r.key.isize, r.key.irecs);
+		noData2(ohash, r.byteofs, r.recofs, r.key.isize, r.key.irecs);
 	}
 
 	// Notify the client if we run out of stuff to read.

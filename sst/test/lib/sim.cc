@@ -100,18 +100,17 @@ const int cable_up_qlen[] = {100,800,1800,2200,2500,3000,4000};
 #define CABLE_DN_QLEN	130	// Very common among many ISPs
 #define CABLE_UP_QLEN	2200
 
-
 // Typical residential broadband DSL link
 const LinkParams dsl15_dn =
-	{ DSL_DN_BW*1024/8, DSL_RTDELAY*1000/2, DSL_DN_QLEN*1000 };
+	{ DSL_DN_BW*1024/8, DSL_RTDELAY*1000/2, DSL_DN_QLEN*1000, 0.0 };
 const LinkParams dsl15_up =
-	{ DSL_UP_BW*1024/8, DSL_RTDELAY*1000/2, DSL_UP_QLEN*1000 };
+	{ DSL_UP_BW*1024/8, DSL_RTDELAY*1000/2, DSL_UP_QLEN*1000, 0.0 };
 
 // Typical residential cable modem link
 const LinkParams cable5_dn =
-	{ CABLE_DN_BW*1024/8, CABLE_RTDELAY*1000/2, CABLE_DN_QLEN*1000 };
+	{ CABLE_DN_BW*1024/8, CABLE_RTDELAY*1000/2, CABLE_DN_QLEN*1000, 0.0 };
 const LinkParams cable5_up =
-	{ CABLE_UP_BW*1024/8, CABLE_RTDELAY*1000/2, CABLE_UP_QLEN*1000 };
+	{ CABLE_UP_BW*1024/8, CABLE_RTDELAY*1000/2, CABLE_UP_QLEN*1000, 0.0 };
 
 
 // Calculate transmission time of one packet in microseconds,
@@ -132,16 +131,16 @@ const LinkParams cable5_up =
 
 // Ethernet link parameters (XXX are queue length realistic?)
 const LinkParams eth10 =
-	{ ETH10_RATE, ETH10_DELAY/2, txtime(ETH_QBYTES,ETH10_RATE) };
+	{ ETH10_RATE, ETH10_DELAY/2, txtime(ETH_QBYTES,ETH10_RATE), 0.0 };
 const LinkParams eth100 =
-	{ ETH100_RATE, ETH100_DELAY/2, txtime(ETH_QBYTES,ETH100_RATE) };
+	{ ETH100_RATE, ETH100_DELAY/2, txtime(ETH_QBYTES,ETH100_RATE), 0.0 };
 const LinkParams eth1000 =
-	{ ETH1000_RATE, ETH1000_DELAY/2, txtime(ETH_QBYTES,ETH1000_RATE) };
+	{ ETH1000_RATE, ETH1000_DELAY/2, txtime(ETH_QBYTES,ETH1000_RATE), 0.0 };
 
 
 // Satellite link parameters (XXX need to check)
 const LinkParams sat10 =
-	{ ETH10_RATE, 500000, 1024*1024 };
+	{ ETH10_RATE, 500000, 1024*1024, 0.0 };
 
 
 static bool tracepkts = false;

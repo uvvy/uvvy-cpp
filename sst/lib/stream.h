@@ -580,7 +580,7 @@ signals:
 
     /** Emitted when the stream is reset by either endpoint. */
     // @todo Error - 'SST::Stream::reset' hides overloaded virtual function bool QIODevice::reset()
-    void reset(const QString &errorString);
+    void sigReset(const QString &errorString);
 
     /** Emitted when an error condition is detected on the stream.
      *  Link stalls or failures are not considered error conditions. */
