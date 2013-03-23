@@ -1,10 +1,12 @@
 #include <fstream>
+#include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/optional/optional.hpp>
 #include "protocol.h"
 #include "byte_array.h"
 #include "custom_optional.h"
 #include "xdr.h"
+#include "negotiation/key_message.h"
 
 using namespace std;
 
@@ -53,5 +55,12 @@ int main()
         xdr::encode_vector(oa, nhi, 32);
         xdr::encode_array(oa, dhi, 384);
         xdr::encode_array(oa, eidi, 256);
+    }
+    {
+        std::ifstream is("testdata.bin", std::ios_base::binary|std::ios_base::in);
+        boost::archive::binary_iarchive ia(is, boost::archive::no_header);
+
+        ssu::negotiation::key_message m;
+        ia >> m;
     }
 }

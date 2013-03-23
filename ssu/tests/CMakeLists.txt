@@ -15,3 +15,5 @@ create_test(stream_internal)
 create_test(run_udp_receiver)
 
 create_test(optional)
+create_test(serialization)
+create_test(vectorstream)

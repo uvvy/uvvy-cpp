@@ -67,7 +67,7 @@ int main()
     std::vector<char> data = { 0x01, 0x7A, 0xbe, 0xba, 0xad, 0xde, 0xba, 0xab, 0xfe, 0xca, 0xfe, 0xca, 0xfe, 0xca, 0xfe, 0xca};
 	ivectorstream iv(data);
 	{
-        boost::archive::binary_iarchive ia(iv, boost::archive::no_header);
+        boost::archive::binary_iarchive ia((std::istream&)iv, boost::archive::no_header);
         bool t1;
         uint8_t c1;
         uint16_t s1;
