@@ -79,13 +79,13 @@ inline void decode_array(Archive& ia, byte_array& ba, uint32_t maxlen)
 
 // Encode XDR list: variable-size array of arbitrary types.
 template<class Archive, typename T>
-inline void encode_list(Archive& oa, std::vector<T>& ba, uint32_t maxlen)
+inline void encode_list(Archive& oa, const std::vector<T>& ba, uint32_t maxlen)
 {
-    assert(ba.length() <= maxlen);
-    uint32_t size = ba.length();
+    assert(ba.size() <= maxlen);
+    uint32_t size = ba.size();
     size = boost::endian2::big(size);
     oa << size;
-    for (uint32_t index = 0; index < ba.length(); ++index)
+    for (uint32_t index = 0; index < ba.size(); ++index)
         oa << ba[index];
 }
 
