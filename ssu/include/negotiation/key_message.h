@@ -108,21 +108,6 @@ struct KeyParams {
     opaque      eid<256>;   // Peer's endpoint identifier
 };
 
-
-enum KeyChunkType {
-    // Generic chunks used by multiple negotiation protocols
-    KeyChunkPacket  = 0x0001,   // Piggybacked packet for new channel
-
-    // Lightweight checksum negotiation
-    KeyChunkChkI1   = 0x0011,
-    KeyChunkChkR1   = 0x0012,
-
-    // Diffie-Hellman key agreement using JFK protocol
-    KeyChunkDhI1    = 0x0021,
-    KeyChunkDhR1    = 0x0022,
-    KeyChunkDhI2    = 0x0023,
-    KeyChunkDhR2    = 0x0024
-};
 union KeyChunkUnion switch (KeyChunkType type) {
     case KeyChunkPacket:    opaque packet<>;
 
@@ -376,7 +361,6 @@ class key_chunk
                 break;
         }
     }
-    // BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
 class key_message
@@ -399,12 +383,6 @@ class key_message
 
 public:
 };
-
-// operator >> (boost::archive::iarchive& ia, key_message& m);
-// {
-//     ia & m;
-//     return ia;
-// }
 
 } // namespace negotiation
 } // namespace ssu
