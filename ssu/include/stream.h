@@ -1,5 +1,7 @@
 #pragma once
 
+#include "byte_array.h"
+
 namespace ssu {
 
 class abstract_stream;
@@ -72,7 +74,7 @@ public:
     struct unique_stream_id_t
     {
         counter_t counter; ///< Stream counter in channel
-        std::vector<char> half_channel_id; ///< Unique channel+direction ID ("half-channel id")
+        byte_array half_channel_id; ///< Unique channel+direction ID ("half-channel id")
     };
 };
 
