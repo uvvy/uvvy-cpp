@@ -30,13 +30,6 @@ public:
     // 0x535355 = 'SSU': 'Structured Streams Unleashed'
     static const uint32_t magic;
 
-    struct stream_header
-    {
-    	uint16_t sid;
-    	uint8_t  type;
-    	uint8_t  window;
-    };
-
     enum class packet_type : uint8_t {
     	invalid  = 0x0,
     	init     = 0x1,
@@ -49,9 +42,16 @@ public:
     	detach   = 0x8,
     };
 
+    struct stream_header
+    {
+        uint16_t     stream_id;
+        packet_type  type;
+        uint8_t      window;
+    };
+
     struct init_header : public stream_header
     {
-    	uint16_t nsid;
+    	uint16_t new_stream_id;
     	uint16_t tx_seq_no;
     };
     typedef init_header reply_header;
