@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/endian/conversion.hpp>
+#include "logging.h"
 
 namespace ssu {
 namespace negotiation {
@@ -29,50 +30,7 @@ struct KeyChunkChkR1Data {
     opaque      cpkt<>;     // Piggybacked channel packet
 };
 
-
 ////////// Diffie-Helman Key Negotiation //////////
-
-// DH groups the initiator may select for DH/JFK negotiation
-enum DhGroup {
-    DhGroup1024 = 0x01, // 1024-bit DH group
-    DhGroup2048 = 0x02, // 2048-bit DH group
-    DhGroup3072 = 0x03  // 3072-bit DH group
-};
-
-// DH/JFK negotiation chunks
-struct KeyChunkDhI1Data {
-    DhGroup     group;      // DH group of initiator's public key
-    int     keymin;     // Minimum AES key length: 16, 24, 32
-    opaque      nhi[32];    // Initiator's SHA256-hashed nonce
-    opaque      dhi<384>;   // Initiator's DH public key
-    opaque      eidr<256>;  // Optional: desired EID of responder
-};
-struct KeyChunkDhR1Data {
-    DhGroup     group;      // DH group for public keys
-    int     keylen;     // Chosen AES key length: 16, 24, 32
-    opaque      nhi[32];    // Initiator's hashed nonce
-    opaque      nr[32];     // Responder's nonce
-    opaque      dhr<384>;   // Responder's DH public key
-    opaque      hhkr<256>;  // Responder's challenge cookie
-    opaque      eidr<256>;  // Optional: responder's EID
-    opaque      pkr<>;      // Optional: responder's public key
-    opaque      sr<>;       // Optional: responder's signature
-};
-struct KeyChunkDhI2Data {
-    DhGroup     group;      // DH group for public keys
-    int     keylen;     // AES key length: 16, 24, or 32
-    opaque      ni[32];     // Initiator's original nonce
-    opaque      nr[32];     // Responder's nonce
-    opaque      dhi<384>;   // Initiator's DH public key
-    opaque      dhr<384>;   // Responder's DH public key
-    opaque      hhkr<256>;  // Responder's challenge cookie
-    opaque      idi<>;      // Initiator's encrypted identity
-};
-struct KeyChunkDhR2Data {
-    opaque      nhi[32];    // Initiator's original nonce
-    opaque      idr<>;      // Responder's encrypted identity
-};
-
 
 // Encrypted and authenticated identity blocks for I2 and R2 messages
 struct KeyIdentI {
@@ -128,21 +86,6 @@ struct KeyMessage {
     KeyChunk    chunks<>;   // Message chunks
 };
 
-Now let's turn it into a proper boost::archive stuff!
-XXX we've already checked up magic, this is how we ended up in this handler so skip it.
-Now there may be zero or more key_chunks.
-boost::optional wrapper for serialization? check.
-
-opaque v<>;   <=>   std::vector<char> v;
-
-// boosted description of above XDR:
-
-typedef optional<key_chunk_union> key_chunk;
-
-struct key_message {
-    uint32_t magic;
-    vector<key_chunk> chunks;
-}
 */
 
 class packet_chunk
@@ -179,11 +122,24 @@ enum class dh_group_type : uint32_t {
 
 class dh_init1_chunk
 {
+    public://temp
     dh_group_type  group;                       // DH group of initiator's public key
     uint32_t       key_min_length;              // Minimum AES key length: 16, 24, 32
     byte_array     initiator_hashed_nonce;      // Initiator's SHA256-hashed nonce
     byte_array     initiator_dh_public_key;     // Initiator's DH public key
     byte_array     responder_eid;               // Optional: desired EID of responder
+
+    dh_init1_chunk()
+        : group(dh_group_type::dh_group_1024)
+        , key_min_length(0)
+    {}
+
+    void dump()
+    {
+        logger::debug() << int(group);
+        logger::debug() << key_min_length;
+        logger::debug() << initiator_dh_public_key;
+    }
 
     friend class boost::serialization::access;
     template<class Archive>
@@ -312,7 +268,7 @@ class dh_response2_chunk
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
-enum class key_chunk_type {
+enum class key_chunk_type : uint32_t {
     packet             = 0x0001,
     checksum_init      = 0x0011,
     checksum_response  = 0x0012,
@@ -324,6 +280,7 @@ enum class key_chunk_type {
 
 class key_chunk
 {
+    public://temp
     key_chunk_type                             type;
     boost::optional<packet_chunk>              packet;
     boost::optional<checksum_init_chunk>       checksum_init;
@@ -335,49 +292,118 @@ class key_chunk
 
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int) {
-        ar & type;
+    void load(Archive &ar, const unsigned int) {
+        uint32_t t;
+        ar >> t;
+        type = key_chunk_type(boost::endian2::big(t));
         switch (type) {
             case key_chunk_type::packet:
-                ar & packet;
+            {
+                packet = packet_chunk();
+                ar >> *packet;
+                break;
+            }
+            case key_chunk_type::checksum_init:
+            {
+                checksum_init = checksum_init_chunk();
+                ar >> *checksum_init;
+                break;
+            }
+            case key_chunk_type::checksum_response:
+            {
+                checksum_response = checksum_response_chunk();
+                ar >> *checksum_response;
+                break;
+            }
+            case key_chunk_type::dh_init1:
+            {
+                dh_init1 = dh_init1_chunk();
+                ar >> *dh_init1;
+                break;
+            }
+            case key_chunk_type::dh_response1:
+            {
+                dh_response1 = dh_response1_chunk();
+                ar >> *dh_response1;
+                break;
+            }
+            case key_chunk_type::dh_init2:
+            {
+                dh_init2 = dh_init2_chunk();
+                ar >> *dh_init2;
+                break;
+            }
+            case key_chunk_type::dh_response2:
+            {
+                dh_response2 = dh_response2_chunk();
+                ar >> *dh_response2;
+                break;
+            }
+        }
+    }
+    template<class Archive>
+    void save(Archive &ar, const unsigned int) const {
+        uint32_t t = boost::endian2::big(to_underlying(type));
+        ar << t;
+        switch (type) {
+            case key_chunk_type::packet:
+                ar << *packet;
                 break;
             case key_chunk_type::checksum_init:
-                ar & checksum_init;
+                ar << *checksum_init;
                 break;
             case key_chunk_type::checksum_response:
-                ar & checksum_response;
+                ar << *checksum_response;
                 break;
             case key_chunk_type::dh_init1:
-                ar & dh_init1;
+                ar << *dh_init1;
                 break;
             case key_chunk_type::dh_response1:
-                ar & dh_response1;
+                ar << *dh_response1;
                 break;
             case key_chunk_type::dh_init2:
-                ar & dh_init2;
+                ar << *dh_init2;
                 break;
             case key_chunk_type::dh_response2:
-                ar & dh_response2;
+                ar << *dh_response2;
                 break;
         }
     }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
 class key_message
 {
+    public://temp
     uint32_t magic;
     std::vector<key_chunk> chunks;
 
     friend class boost::serialization::access;
     template<class Archive>
     void load(Archive &ar, const unsigned int) {
-        ar >> magic;
-        xdr::decode_list(ar, chunks, ~0); // Hmm, potential DOS possibility - send an endless list?
+        uint32_t m;
+        ar >> m;
+        magic = boost::endian2::big(m);
+        uint32_t count;
+        ar >> count;
+        count = boost::endian2::big(count);
+        for (uint32_t i = 0; i < count; ++i) // Hmm, potential DOS possibility - send a very big list?
+        {
+            key_chunk c;
+            xdr::decode_option(ar, c, ~0);
+            chunks.push_back(c);
+        }
     }
     template<class Archive>
     void save(Archive &ar, const unsigned int) const {
-        ar << magic;
-        xdr::encode_list(ar, chunks, ~0);
+        uint32_t m = boost::endian2::big(magic);
+        uint32_t count = chunks.size();
+        boost::endian::native_to_big(count);
+        ar << m;
+        ar << count;
+        for (auto t : chunks) {
+            xdr::encode_option(ar, t, ~0);
+        }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
@@ -395,3 +421,5 @@ BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::dh_init1_chunk, boost::serializatio
 BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::dh_response1_chunk, boost::serialization::object_serializable)
 BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::dh_init2_chunk, boost::serialization::object_serializable)
 BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::dh_response2_chunk, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::key_chunk, boost::serialization::object_serializable)
+BOOST_CLASS_IMPLEMENTATION(ssu::negotiation::key_message, boost::serialization::object_serializable)
