@@ -7,6 +7,8 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <boost/endian/conversion2.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
 #include "link.h"
 #include "logging.h"
 
@@ -72,8 +74,7 @@ void link::receive(byte_array& msg, const link_endpoint& src)
         return chan->receive(msg, src);
     }
 
-    byte_array_buf buf(msg);
-    std::istream in(&buf);
+    boost::iostreams::filtering_istream in(boost::make_iterator_range(msg.as_vector()));
     boost::archive::binary_iarchive ia(in, boost::archive::no_header);
     magic_t magic;
     ia >> magic;
