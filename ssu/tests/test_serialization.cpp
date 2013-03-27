@@ -7,6 +7,11 @@
 #include "custom_optional.h"
 #include "xdr.h"
 #include "negotiation/key_message.h"
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE Test_key_message_serialization
+#include <boost/test/unit_test.hpp>
+
+#include "link.h"
 
 using namespace std;
 
@@ -23,44 +28,50 @@ using namespace std;
  *                                   +---------+--------+-----+--------+-----+--------+
  *                                       0x1      0x10    32b
  */
-int main()
+BOOST_AUTO_TEST_CASE(serialize_and_deserialize)
 {
-    uint32_t magic = boost::endian2::big(stream_protocol::magic);
-    uint32_t count = boost::endian2::big(1);
-    uint32_t opaque_size = boost::endian2::big(0xb4);
-    uint32_t disciminant = boost::endian2::big(0x21); // dh_init1
-    uint32_t dh_group = boost::endian2::big(0x1);
-    uint32_t keymin = boost::endian2::big(0x10);
-    byte_array nhi;
-    byte_array dhi;
-    byte_array eidi;
-
-    nhi.resize(32);
-    for (int i = 0; i < 32; ++i)
-        nhi[i] = rand();
-    dhi.resize(128);
-    for (int i = 0; i < 128; ++i)
-        dhi[i] = rand();
-
     {
         std::ofstream os("testdata.bin", std::ios_base::binary|std::ios_base::out|std::ios::trunc);
         boost::archive::binary_oarchive oa(os, boost::archive::no_header);
 
-        oa << magic;
-        oa << count;
-        oa << opaque_size;
-        oa << disciminant;
-        oa << dh_group;
-        oa << keymin;
-        xdr::encode_vector(oa, nhi, 32);
-        xdr::encode_array(oa, dhi, 384);
-        xdr::encode_array(oa, eidi, 256);
+        ssu::negotiation::key_message m;
+        ssu::negotiation::key_chunk chu;
+        ssu::negotiation::dh_init1_chunk dh;
+
+        m.magic = stream_protocol::magic;
+        chu.type = ssu::negotiation::key_chunk_type::dh_init1;
+        dh.group = ssu::negotiation::dh_group_type::dh_group_1024;
+        dh.key_min_length = 0x10;
+
+        dh.initiator_hashed_nonce.resize(32);
+        for (int i = 0; i < 32; ++i)
+            dh.initiator_hashed_nonce[i] = rand();
+        dh.initiator_dh_public_key.resize(128);
+        for (int i = 0; i < 128; ++i)
+            dh.initiator_dh_public_key[i] = 255 - i;
+
+        chu.dh_init1 = dh;
+
+        m.chunks.push_back(chu);
+        oa << m;
     }
     {
         std::ifstream is("testdata.bin", std::ios_base::binary|std::ios_base::in);
         boost::archive::binary_iarchive ia(is, boost::archive::no_header);
-
         ssu::negotiation::key_message m;
+
         ia >> m;
+
+        BOOST_CHECK(m.magic == stream_protocol::magic);
+        BOOST_CHECK(m.chunks.size() == 1);
+        BOOST_CHECK(m.chunks[0].type == ssu::negotiation::key_chunk_type::dh_init1);
+        BOOST_CHECK(m.chunks[0].dh_init1.is_initialized());
+        BOOST_CHECK(m.chunks[0].dh_init1->group == ssu::negotiation::dh_group_type::dh_group_1024);
+        BOOST_CHECK(m.chunks[0].dh_init1->key_min_length = 0x10);
+        BOOST_CHECK(m.chunks[0].dh_init1->initiator_hashed_nonce.size() == 32);
+        for (int i = 0; i < 128; ++i) {
+            assert(m.chunks[0].dh_init1->initiator_dh_public_key[i] == 255 - i);
+        }
+        m.chunks[0].dh_init1->dump();
     }
 }
