@@ -6,6 +6,9 @@
 // XDR is a well-defined standard though, might be useful to follow it.
 //
 #include <boost/endian/conversion2.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
+#include <boost/range/iterator_range.hpp>
 #include "byte_array.h"
 
 namespace xdr {
@@ -100,6 +103,46 @@ inline void decode_list(Archive& ia, std::vector<T>& ba, uint32_t maxlen)
     ba.resize(size);
     for (uint32_t index = 0; index < size; ++index)
         ia >> ba[index];
+}
+
+
+// Store an optional chunk into a substream, then feed it and its size into the archive.
+// It only works with XDR-based binary archives, otherwise this operation makes little sense.
+template<class Archive, typename T>
+inline void encode_option(Archive& oa, const T& t, uint32_t maxlen)
+{
+    byte_array arr;
+    boost::iostreams::filtering_ostream ov(boost::iostreams::back_inserter(arr.as_vector()));
+    boost::archive::binary_oarchive oa_buf(ov, boost::archive::no_header);
+    oa_buf << t;
+    ov.flush();
+
+    uint32_t size = arr.size();
+    size = boost::endian2::big(size);
+
+    oa << size << arr;
+}
+
+template<class Archive, typename T>
+inline void decode_option(Archive& ia, T& t, uint32_t maxlen)
+{
+    uint32_t size;
+    ia >> size;
+    size = boost::endian2::big(size);
+
+    if (size > maxlen)
+        return;
+
+    byte_array arr;
+    arr.resize(size);
+
+    ia >> arr;
+
+    {
+        boost::iostreams::filtering_istream iv(boost::make_iterator_range(arr.as_vector()));
+        boost::archive::binary_iarchive ia_buf(iv, boost::archive::no_header);
+        ia_buf >> t;
+    }
 }
 
 }
