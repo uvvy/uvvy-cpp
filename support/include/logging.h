@@ -14,6 +14,8 @@
 #include <thread>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+namespace logger { // logger::debug()
+
 class logging
 {
     static std::mutex m;
@@ -64,6 +66,8 @@ public:
     }
     ~fatal() { std::abort(); }
 };
+
+} // namespace logger
 
 /**
  * Helper to output a hexadecimal value with formatting to an iostream.

@@ -13,9 +13,9 @@ void logger_threadfun()
 {
 	for (int i = 0; i < 10000; ++i)
 	{
-		debug() << "Testing string on a nonexistent socket" << 15 << 44.1 << 'z' << true; 
-		info() << "Testing string on a nonexistent socket" << 15 << 44.1 << 'z' << true; 
-		warning() << "Testing string on a nonexistent socket" << 15 << 44.1 << 'z' << true; 
+		logger::debug() << "Testing string on a nonexistent socket" << 15 << 44.1 << 'z' << true; 
+		logger::info() << "Testing string on a nonexistent socket" << 15 << 44.1 << 'z' << true; 
+		logger::warning() << "Testing string on a nonexistent socket" << 15 << 44.1 << 'z' << true; 
 	}
 }
 

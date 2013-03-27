@@ -18,7 +18,7 @@ bool link_endpoint::send(const char *data, int size) const
     {
         return l->send(*this, data, size);
     }
-    debug() << "Trying to send on a nonexistent socket";
+    logger::debug() << "Trying to send on a nonexistent socket";
     return false;
 }
 
@@ -59,7 +59,7 @@ void link::receive(byte_array& msg, const link_endpoint& src)
 {
     if (msg.size() < 4)
     {
-        debug() << "Ignoring too small UDP datagram";
+        logger::debug() << "Ignoring too small UDP datagram";
         return;
     }
 
@@ -84,8 +84,8 @@ void link::receive(byte_array& msg, const link_endpoint& src)
         return recv->receive(msg, ia, src);
     }
 
-    debug() << "Received an invalid message, ignoring unknown channel/receiver " << hex(magic, 8, true) 
-            << " buffer contents " << msg;
+    logger::debug() << "Received an invalid message, ignoring unknown channel/receiver " << hex(magic, 8, true) 
+                    << " buffer contents " << msg;
 }
 
 udp_link::udp_link(boost::asio::io_service& io_service, const endpoint& ep, link_host_state& h)
@@ -122,7 +122,7 @@ void udp_link::udp_ready_read(const boost::system::error_code& error, std::size_
 {
     if (!error)
     {
-        debug() << "Received " << bytes_transferred << " bytes via UDP link";
+        logger::debug() << "Received " << bytes_transferred << " bytes via UDP link";
         byte_array b(boost::asio::buffer_cast<const char*>(received_buffer.data()), bytes_transferred);
         receive(b, received_from);
         received_buffer.consume(bytes_transferred);
