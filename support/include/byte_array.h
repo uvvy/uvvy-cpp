@@ -54,6 +54,10 @@ public:
 	char operator[](int i) const;
 	char& operator[](int i);
 
+    inline void append(char c) {
+        value.push_back(c);
+    }
+
 	/**
 	 * Fill entire array to char @a ch.
 	 * If the size is specified, resizes the array beforehand.
