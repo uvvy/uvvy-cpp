@@ -70,6 +70,8 @@ public:
 	 * its own copy. XXX fix it
 	 */
 	static byte_array wrap(const char* data, size_t size);
+
+    std::vector<char>& as_vector() { return value; }
 };
 
 bool operator ==(const byte_array& a, const byte_array& b);
