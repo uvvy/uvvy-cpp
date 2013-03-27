@@ -30,7 +30,7 @@ public:
 	byte_array& operator = (const byte_array& other);
 	byte_array& operator = (byte_array&& other);
 
-	bool is_empty() const { return size() == 0; }
+	inline bool is_empty() const { return size() == 0; }
 
 	char* data();
 	const char* data() const;
@@ -46,7 +46,7 @@ public:
 		return size();
 	}
 
-	void resize(size_t size) {
+	inline void resize(size_t size) {
 		value.resize(size);
 	}
 
