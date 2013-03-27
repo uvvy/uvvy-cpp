@@ -10,7 +10,6 @@
 
 #include <vector>
 #include <utility>
-#include <iostream>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/split_free.hpp>
 
@@ -20,7 +19,6 @@
 class byte_array
 {
 	friend bool operator ==(const byte_array& a, const byte_array& b);
-	friend class byte_array_buf;
 	std::vector<char> value; // XXX make implicitly shared cow?
 public:
 	byte_array();
@@ -101,14 +99,6 @@ void serialize(Archive & ar, byte_array& t, const unsigned int version)
 
 } // namespace serialization
 } // namespace boost
-
-class byte_array_buf : public std::streambuf
-{
-public:
-	inline byte_array_buf(byte_array& ba) {
-		this->setg(&ba.value[0], &ba.value[0], &ba.value[0] + ba.size());
-	}
-};
 
 /**
 struct BigArray{
