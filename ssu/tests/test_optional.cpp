@@ -6,77 +6,47 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include <fstream>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/optional/optional.hpp>
-#include "custom_optional.h"
+#include "custom_optional.h" // optional value serialization instead of boost version
+#include "byte_array.h"
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE Test_optional_serialization
+#include <boost/test/unit_test.hpp>
 
 using namespace std;
+namespace ba = boost::archive;
+namespace bios = boost::iostreams;
 
-// @todo: add variant<> serialization
-// @todo: add ?types serialization
-
-//uint32_t chunk_size;
-//uint32_t discriminator;
-//opaque[chunk_size-4] struct type; - based on discriminator
-// template <typename T>
-// class sized_optional : public optional<T>
-// {};
-
-// ixstream& operator >> (ixstream& ixs, sized_optional<T>& so)
-// {
-//     byte_array ba;
-//     ixs >> ba;
-//     if (ba.is_empty())
-//     {
-//         return false;
-//     }
-//     binary_iarchive ia2(ba);
-//     ia2 >> so; // discriminated enum
-//     return ixs;
-// }
-
-// operator << (sized_optional<T>& so)
-// {
-//     if (!so.is_initialized())
-//     {
-//         uint32_t size = 0;
-//         os << size;
-//         return os;
-//     }
-//     omemorystream om;
-//     om << *so;
-//     uint32_t size = om.size();
-//     os << size << om;
-// }
-
-//struct opaque_vararr {
-//    std::vector<char> data;
-//};
-
-int main()
+BOOST_AUTO_TEST_CASE(serialize_and_deserialize)
 {
+    byte_array data;
     uint32_t i = 0xabbadead;
     boost::optional<uint32_t> maybe_value;
 
     {
-        std::ofstream os("testarchive.bin", std::ios_base::binary|std::ios_base::out|std::ios::trunc);
-        boost::archive::binary_oarchive oa(os, boost::archive::no_header);
-        assert(maybe_value.is_initialized() == false);
-        oa & maybe_value;
+        bios::filtering_ostream out(bios::back_inserter(data.as_vector()));
+        ba::binary_oarchive oa(out, ba::no_header);
+
+        BOOST_CHECK(maybe_value.is_initialized() == false);
+        oa << maybe_value;
         maybe_value = i;
-        assert(maybe_value.is_initialized() == true);
-        assert(*maybe_value == 0xabbadead);
-        oa & maybe_value;
+        BOOST_CHECK(maybe_value.is_initialized() == true);
+        BOOST_CHECK(*maybe_value == 0xabbadead);
+        oa << maybe_value;
     }
     {
-        std::ifstream is("testarchive.bin", std::ios_base::binary|std::ios_base::in);
-        boost::archive::binary_iarchive ia(is, boost::archive::no_header);
-        ia & maybe_value;
-        assert(maybe_value.is_initialized() == false);
-        ia & maybe_value;
-        assert(maybe_value.is_initialized() == true);
-        assert(*maybe_value == 0xabbadead);
+        bios::filtering_istream in(boost::make_iterator_range(data.as_vector()));
+        ba::binary_iarchive ia(in, ba::no_header);
+
+        BOOST_CHECK(data.size() == 6);
+        ia >> maybe_value;
+        BOOST_CHECK(maybe_value.is_initialized() == false);
+        ia >> maybe_value;
+        BOOST_CHECK(maybe_value.is_initialized() == true);
+        BOOST_CHECK(*maybe_value == 0xabbadead);
     }
 }
