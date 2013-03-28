@@ -72,6 +72,7 @@ public:
 	static byte_array wrap(const char* data, size_t size);
 
     std::vector<char>& as_vector() { return value; }
+    const std::vector<char>& as_vector() const { return value; }
 };
 
 bool operator ==(const byte_array& a, const byte_array& b);
