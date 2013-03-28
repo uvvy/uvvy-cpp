@@ -18,8 +18,6 @@
 #include <boost/test/unit_test.hpp>
 
 using namespace std;
-namespace ba = boost::archive;
-namespace bios = boost::iostreams;
 
 BOOST_AUTO_TEST_CASE(serialize_and_deserialize)
 {
@@ -28,8 +26,8 @@ BOOST_AUTO_TEST_CASE(serialize_and_deserialize)
     boost::optional<uint32_t> maybe_value;
 
     {
-        bios::filtering_ostream out(bios::back_inserter(data.as_vector()));
-        ba::binary_oarchive oa(out, ba::no_header);
+        boost::iostreams::filtering_ostream out(boost::iostreams::back_inserter(data.as_vector()));
+        boost::archive::binary_oarchive oa(out, boost::archive::no_header);
 
         BOOST_CHECK(maybe_value.is_initialized() == false);
         oa << maybe_value;
@@ -39,8 +37,8 @@ BOOST_AUTO_TEST_CASE(serialize_and_deserialize)
         oa << maybe_value;
     }
     {
-        bios::filtering_istream in(boost::make_iterator_range(data.as_vector()));
-        ba::binary_iarchive ia(in, ba::no_header);
+        boost::iostreams::filtering_istream in(boost::make_iterator_range(data.as_vector()));
+        boost::archive::binary_iarchive ia(in, boost::archive::no_header);
 
         BOOST_CHECK(data.size() == 6);
         ia >> maybe_value;
