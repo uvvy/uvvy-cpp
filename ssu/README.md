@@ -1,5 +1,5 @@
 Structured Streams Unleashed
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+============================
 
 ssu::host holds information about this host's connection sessions.
 
