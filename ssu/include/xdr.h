@@ -1,9 +1,18 @@
 //
+// Part of Metta OS. Check http://metta.exquance.com for latest version.
+//
+// Copyright 2007 - 2013, Stanislav Karchebnyy <berkus@exquance.com>
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
+//
+//===========================================================================================================
+//
 // XDR eXternal Data Representation format as defined by http://tools.ietf.org/html/rfc4506
 // I probably don't want to use this, since a byte-oriented format such as BDR might be
 // more useful, and even then, some standard features as provided
 // for example by boost.serialization might be even more useful.
-// XDR is a well-defined standard though, might be useful to follow it.
+// XDR is a well-defined standard though, might be wise to follow it.
 //
 #pragma once
 
