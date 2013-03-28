@@ -11,7 +11,7 @@ namespace negotiation {
 class key_responder : public link_receiver
 {
 public:
-    virtual void receive(byte_array& msg, boost::archive::binary_iarchive& ia, const link_endpoint& src);
+    virtual void receive(const byte_array& msg, const link_endpoint& src);
 };
 
 } // namespace negotiation

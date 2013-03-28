@@ -72,13 +72,12 @@ private:
 
 /**
  * Control protocol receiver.
- * Provides support for receiving control messages for
- * registered protocol types.
+ * Provides support for receiving control messages for registered protocol types.
  */
 class link_receiver
 {
 public:
-    virtual void receive(byte_array& msg, boost::archive::binary_iarchive& ia, const link_endpoint& src) = 0;
+    virtual void receive(const byte_array& msg, const link_endpoint& src) = 0;
 };
 
 /**

@@ -82,7 +82,7 @@ void link::receive(byte_array& msg, const link_endpoint& src)
     link_receiver* recv = host.receiver(magic);
     if (recv)
     {
-        return recv->receive(msg, ia, src);
+        return recv->receive(msg, src);
     }
 
     logger::debug() << "Received an invalid message, ignoring unknown channel/receiver " << hex(magic, 8, true) 

@@ -4,10 +4,12 @@
 namespace ssu {
 namespace negotiation {
 
-void key_responder::receive(byte_array& msg, boost::archive::binary_iarchive& ia, const link_endpoint& src)
+void key_responder::receive(const byte_array& msg, const link_endpoint& src)
 {
-	key_message msg;
-	ia >> msg;
+    boost::iostreams::filtering_istream in(boost::make_iterator_range(msg.as_vector()));
+    boost::archive::binary_iarchive ia(in, boost::archive::no_header);
+	key_message m;
+	ia >> m;
 };
 
 } // namespace negotiation
