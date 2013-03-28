@@ -38,9 +38,10 @@ using namespace std;
  */
 BOOST_AUTO_TEST_CASE(serialize_and_deserialize)
 {
+    byte_array data;
     {
-        std::ofstream os("testdata.bin", std::ios_base::binary|std::ios_base::out|std::ios::trunc);
-        boost::archive::binary_oarchive oa(os, boost::archive::no_header);
+        boost::iostreams::filtering_ostream out(boost::iostreams::back_inserter(data.as_vector()));
+        boost::archive::binary_oarchive oa(out, boost::archive::no_header);
 
         ssu::negotiation::key_message m;
         ssu::negotiation::key_chunk chu;
@@ -64,9 +65,11 @@ BOOST_AUTO_TEST_CASE(serialize_and_deserialize)
         oa << m;
     }
     {
-        std::ifstream is("testdata.bin", std::ios_base::binary|std::ios_base::in);
-        boost::archive::binary_iarchive ia(is, boost::archive::no_header);
+        boost::iostreams::filtering_istream in(boost::make_iterator_range(data.as_vector()));
+        boost::archive::binary_iarchive ia(in, boost::archive::no_header);
         ssu::negotiation::key_message m;
+
+        BOOST_CHECK(data.size() == 192);
 
         ia >> m;
 
