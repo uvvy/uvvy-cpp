@@ -70,8 +70,7 @@ BOOST_AUTO_TEST_CASE(serialize_and_deserialize)
         BOOST_CHECK(m.chunks[0].dh_init1->key_min_length = 0x10);
         BOOST_CHECK(m.chunks[0].dh_init1->initiator_hashed_nonce.size() == 32);
         for (int i = 0; i < 128; ++i) {
-            assert(m.chunks[0].dh_init1->initiator_dh_public_key[i] == 255 - i);
+            BOOST_CHECK(uint8_t(m.chunks[0].dh_init1->initiator_dh_public_key[i]) == 255 - i);
         }
-        m.chunks[0].dh_init1->dump();
     }
 }
