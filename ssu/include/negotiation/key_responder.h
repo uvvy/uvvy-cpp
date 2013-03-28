@@ -1,5 +1,7 @@
 #pragma once
 
+#include "link.h"
+
 namespace ssu {
 namespace negotiation {
 

@@ -5,7 +5,11 @@
 // for example by boost.serialization might be even more useful.
 // XDR is a well-defined standard though, might be useful to follow it.
 //
+#pragma once
+
 #include <boost/endian/conversion2.hpp>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/range/iterator_range.hpp>

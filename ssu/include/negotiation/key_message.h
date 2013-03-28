@@ -1,7 +1,10 @@
 #pragma once
 
 #include <boost/endian/conversion.hpp>
+#include <boost/optional/optional.hpp>
 #include "logging.h"
+#include "xdr.h"
+#include "protocol.h" // for to_underlying XXX
 
 namespace ssu {
 namespace negotiation {
