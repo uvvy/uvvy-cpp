@@ -76,6 +76,15 @@ find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 # Additional unofficial boost libraries
 include_directories(3rdparty/endian)
 
+# Create and link a test application.
+function(create_test NAME EXTRALIBS)
+	add_executable(test_${NAME} test_${NAME}.cpp)
+	target_link_libraries(test_${NAME} ${EXTRALIBS} ${Boost_LIBRARIES})
+	install(TARGETS test_${NAME}
+	    RUNTIME DESTINATION tests/unittests)
+	add_test(${NAME} test_${NAME})
+endfunction(create_test)
+
 
 add_subdirectory(support)
 
