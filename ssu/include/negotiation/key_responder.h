@@ -9,6 +9,8 @@
 #pragma once
 
 #include "link.h"
+#include "host.h"
+#include "negotiation/key_message.h"
 
 namespace ssu {
 namespace negotiation {
@@ -20,8 +22,14 @@ namespace negotiation {
  */
 class key_responder : public link_receiver
 {
+    std::weak_ptr<host> host_;
+
+    void got_dh_init1(const dh_init1_chunk& data, const link_endpoint& src);
+
 public:
     virtual void receive(const byte_array& msg, const link_endpoint& src);
+
+
 };
 
 } // namespace negotiation

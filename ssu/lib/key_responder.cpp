@@ -18,7 +18,18 @@ void key_responder::receive(const byte_array& msg, const link_endpoint& src)
     boost::archive::binary_iarchive ia(in, boost::archive::no_header);
 	key_message m;
 	ia >> m;
+    // XXX here may be some decoding error...
+
+    // for now only expect one type of handshake chunk - DH init1
+    assert(m.magic == stream_protocol::magic);
+    assert(m.chunks[0].type == ssu::negotiation::key_chunk_type::dh_init1);
+    got_dh_init1(*m.chunks[0].dh_init1, src);
 };
+
+void key_responder::got_dh_init1(const dh_init1_chunk& data, const link_endpoint& src)
+{
+
+}
 
 } // namespace negotiation
 } // namespace ssu
