@@ -63,7 +63,7 @@ public: // Provide access to signal types for clients
     // Signalled when flow/congestion control may allow new transmission
     on_ready_transmit ready_transmit;
 
-    void receive(byte_array& /*msg*/, const link_endpoint& /*src*/) {}
+    void receive(const byte_array& /*msg*/, const link_endpoint& /*src*/) {}
 
 private:
     // std::weak_ptr<link> link_; ///< Link we're currently bound to, if any.
@@ -126,7 +126,7 @@ protected:
      * @param msg the packet received.
      * @param src the source from which the packet arrived.
      */
-    void receive(byte_array& msg, const link_endpoint& src);
+    void receive(const byte_array& msg, const link_endpoint& src);
 };
 
 /**

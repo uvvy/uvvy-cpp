@@ -57,7 +57,7 @@ link::~link()
  *  +--------------------------------------------------+
  *
  */
-void link::receive(byte_array& msg, const link_endpoint& src)
+void link::receive(const byte_array& msg, const link_endpoint& src)
 {
     if (msg.size() < 4)
     {
