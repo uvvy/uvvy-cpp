@@ -39,8 +39,8 @@ class Host;
 class DHKey : public QObject
 {
 	friend class DHHostState;
-	friend class KeyInitiator;	// XX
-	friend class KeyResponder;	// XX
+	friend class KeyInitiator;	// XXX
+	friend class KeyResponder;	// XXX
 
 	Q_OBJECT
 
