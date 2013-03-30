@@ -14,6 +14,8 @@
 
 BOOST_AUTO_TEST_CASE(created_link)
 {
+    ssu::link_host_state host;
+    ssu::link l(host);
 }
 
 BOOST_AUTO_TEST_CASE(receive_too_small_packet)
