@@ -145,13 +145,6 @@ class dh_init1_chunk
         , key_min_length(0)
     {}
 
-    void dump()
-    {
-        logger::debug() << int(group);
-        logger::debug() << key_min_length;
-        logger::debug() << initiator_dh_public_key;
-    }
-
     friend class boost::serialization::access;
     template<class Archive>
     void load(Archive &ar, const unsigned int) {
