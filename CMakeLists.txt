@@ -85,6 +85,11 @@ function(create_test NAME EXTRALIBS)
 	add_test(${NAME} test_${NAME})
 endfunction(create_test)
 
+# We require a recent version of openssl, 1.0.0 or later, which OSX lacks.
+# Use one from brew.
+if (APPLE)
+	include_directories("/usr/local/Cellar/openssl/1.0.1c/include")
+endif (APPLE)
 
 add_subdirectory(support)
 
