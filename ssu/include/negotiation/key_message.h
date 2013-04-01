@@ -66,17 +66,6 @@ struct KeyParamR {
     opaque      dhr<384>;   // Responder's DH public key
 };
 
-// Key parameter signing block for I2 and R2 messages
-struct KeyParams {
-    DhGroup     group;      // DH group for public keys
-    int     keylen;     // AES key length: 16, 24, or 32
-    opaque      nhi[32];    // Initiator's hashed nonce
-    opaque      nr[32];     // Responder's nonce
-    opaque      dhi<384>;   // Initiator's DH public key
-    opaque      dhr<384>;   // Responder's DH public key
-    opaque      eid<256>;   // Peer's endpoint identifier
-};
-
 union KeyChunkUnion switch (KeyChunkType type) {
     case KeyChunkPacket:    opaque packet<>;
 
