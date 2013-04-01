@@ -159,7 +159,7 @@
       template<typename C>
       void finalize(C &sha)
       {
-        internal::raw<unsigned char *>d(boost::asio::buffer(sha));
+        internal::raw<unsigned char *> d(boost::asio::buffer(sha));
         internal::api("finalization of hash",
                       (keyed_ ?
                        HMAC_Final(&hmac_context_, d.ptr, 0)
