@@ -76,6 +76,13 @@ private:
  */
 class link_receiver
 {
+    uint32_t magic_;
+
+protected:
+    link_receiver() : magic_(0) {}
+
+    inline uint32_t magic() { return magic_; }
+
 public:
     virtual void receive(const byte_array& msg, const link_endpoint& src) = 0;
 };
@@ -87,6 +94,9 @@ class link_host_state
 {
     virtual link* create_link() { return 0; }
 public:
+    /**
+     * Create a receiver and bind it to control channel magic.
+     */
     virtual link_receiver* receiver(magic_t magic) { return 0; }
 };
 
