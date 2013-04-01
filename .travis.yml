@@ -1,7 +1,9 @@
 language: cpp
 compiler: clang
 before_install:
-  - sudo apt-get install -qq libasound2-dev libboost-test-dev libboost-serialization-dev libboost-system-dev libboost-date-time-dev libc++-dev
+  - echo 'yes' | sudo add-apt-repository ppa:georgekola/clang
+  - sudo apt-get update
+  - sudo apt-get install -qq libasound2-dev libboost-test-dev libboost-serialization-dev libboost-system-dev libboost-date-time-dev libc++
 script: ./scripts/travis_build.sh
 notifications:
   email: false
