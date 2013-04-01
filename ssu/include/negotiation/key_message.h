@@ -167,6 +167,7 @@ class dh_init1_chunk
 
 class dh_response1_chunk
 {
+    public://temp
     dh_group_type  group;                       // DH group for public keys
     int            key_min_length;              // Chosen AES key length: 16, 24, 32
     byte_array     initiator_hashed_nonce;      // Initiator's hashed nonce
