@@ -16,7 +16,7 @@ int main()
 		ssu::endpoint local_ep(boost::asio::ip::udp::v4(), 9660);
 		boost::asio::io_service io_service;
 		ssu::udp_link l(io_service, local_ep, state);
-		l.send(local_ep, "\0SSTohai!", 10);
+		l.send(local_ep, "\0SSUohai!", 10);
 		io_service.run();
 	}
 	catch (std::exception& e)
