@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <utility>
+#include <boost/array.hpp>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/split_free.hpp>
 
@@ -18,58 +19,62 @@
  */
 class byte_array
 {
-	friend bool operator ==(const byte_array& a, const byte_array& b);
-	std::vector<char> value; // XXX make implicitly shared cow?
+    friend bool operator ==(const byte_array& a, const byte_array& b);
+    std::vector<char> value; // XXX make implicitly shared cow?
 public:
-	byte_array();
-	byte_array(const byte_array&);
-	byte_array(const std::vector<char>&);
-	byte_array(const char* str);
-	byte_array(const char* data, size_t size);
-	~byte_array();
-	byte_array& operator = (const byte_array& other);
-	byte_array& operator = (byte_array&& other);
+    byte_array();
+    byte_array(const byte_array&);
+    byte_array(const std::vector<char>&);
+    byte_array(const char* str);
+    byte_array(const char* data, size_t size);
 
-	inline bool is_empty() const { return size() == 0; }
+    template <typename T, size_t N>
+    byte_array(const boost::array<T, N>& in) : value(in.begin(), in.begin() + N) {}
 
-	char* data();
-	const char* data() const;
-	const char* const_data() const;
-	/**
-	 * @sa length(), capacity()
-	 */
-	size_t size() const;
-	/**
-	 * @sa size(), capacity()
-	 */
-	inline size_t length() const {
-		return size();
-	}
+    ~byte_array();
+    byte_array& operator = (const byte_array& other);
+    byte_array& operator = (byte_array&& other);
 
-	inline void resize(size_t size) {
-		value.resize(size);
-	}
+    inline bool is_empty() const { return size() == 0; }
 
-	char at(int i) const;
-	char operator[](int i) const;
-	char& operator[](int i);
+    char* data();
+    const char* data() const;
+    const char* const_data() const;
+    /**
+     * @sa length(), capacity()
+     */
+    size_t size() const;
+    /**
+     * @sa size(), capacity()
+     */
+    inline size_t length() const {
+        return size();
+    }
+
+    inline void resize(size_t size) {
+        value.resize(size);
+    }
+
+    char at(int i) const;
+    char operator[](int i) const;
+    char& operator[](int i);
 
     inline void append(char c) {
         value.push_back(c);
     }
 
-	/**
-	 * Fill entire array to char @a ch.
-	 * If the size is specified, resizes the array beforehand.
-	 */
-	byte_array& fill(char ch, int size = -1);
+    /**
+     * Fill entire array to char @a ch.
+     * If the size is specified, resizes the array beforehand.
+     */
+    byte_array& fill(char ch, int size = -1);
 
-	/**
-	 * Unlike Qt's fromRawData current implementation of
-	 * wrap does not actually wrap the data, it creates
-	 * its own copy. XXX fix it
-	 */
-	static byte_array wrap(const char* data, size_t size);
+    /**
+     * Unlike Qt's fromRawData current implementation of
+     * wrap does not actually wrap the data, it creates
+     * its own copy. XXX fix it
+     */
+    static byte_array wrap(const char* data, size_t size);
 
     std::vector<char>& as_vector() { return value; }
     const std::vector<char>& as_vector() const { return value; }
