@@ -25,6 +25,7 @@ class key_responder : public link_receiver
     std::weak_ptr<host> host_;
 
     void got_dh_init1(const dh_init1_chunk& data, const link_endpoint& src);
+    void got_dh_init2(const dh_init2_chunk& data, const link_endpoint& src);
 
 public:
     virtual void receive(const byte_array& msg, const link_endpoint& src);
