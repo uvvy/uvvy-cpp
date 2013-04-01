@@ -1,7 +1,7 @@
 language: cpp
 compiler: clang
 before_install:
-  - echo | g++ -Wp,-v -x c++ - -fsyntax-only
+  - ./scripts/travis_build_libcxx.sh
   - sudo apt-get install -qq libasound2-dev libboost-test-dev libboost-serialization-dev libboost-system-dev libboost-date-time-dev
 script: ./scripts/travis_build.sh
 notifications:
