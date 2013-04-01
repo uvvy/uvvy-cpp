@@ -48,7 +48,7 @@ Not yet required
 Typical config command
 ======================
 
-cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DCLANG=ON
+cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
 
 CI status
 =========

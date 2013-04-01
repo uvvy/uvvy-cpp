@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(mettanode)
+include(CTest)
 
 find_package(Qt4 REQUIRED)
 #find_package(Boost REQUIRED)
@@ -9,7 +10,6 @@ find_package(OpenSSL REQUIRED)
 # Export compile commands for ST2 clang plugin.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(BUILD_TESTS "Build various tests and test programs." OFF)
 option(CLANG "Build using clang." ON)
 option(CLANG_ASAN "Use clang's address-sanitizer." ON)
 option(CLANG_LTO "[time-consuming] Enable link-time optimization with LLVM." OFF)
@@ -57,11 +57,11 @@ endif (APPLE)
 
 set(BOOST_COMPONENTS)
 
-if (BUILD_TESTS)
+if (BUILD_TESTING)
 	list(APPEND BOOST_COMPONENTS unit_test_framework)
 	enable_testing()
 	include(Dart)
-endif (BUILD_TESTS)
+endif (BUILD_TESTING)
 
 # For ssu we need boost/asio which depends on libboost_system
 list(APPEND BOOST_COMPONENTS system)

@@ -26,7 +26,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src)
 
-if (BUILD_TESTS)
+if (BUILD_TESTING)
 	add_subdirectory(demos)
 	add_subdirectory(tests)
-endif (BUILD_TESTS)
+endif (BUILD_TESTING)
