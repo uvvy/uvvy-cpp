@@ -10,11 +10,22 @@
 #include "negotiation/key_message.h"
 #include "crypto.h"
 
+// some temporary stuff to get things compile
+// Length of symmetric key material for HMAC-SHA-256-128
+#define HMACKEYLEN  (256/8)
+// We use SHA-256 hashes truncated to 128 bits for HMAC generation
+#define HMACLEN     (128/8)
+//end temp junk
+
 // Supplemental functions.
 namespace {
 
-// Calculate SHA256 hash of the key response message.
-byte_array calc_signature_hash(ssu::negotiation::dh_group_type group, int keylen,
+/**
+ * Calculate SHA-256 hash of the key response message.
+ */
+byte_array
+calc_signature_hash(ssu::negotiation::dh_group_type group,
+    int keylen,
     const byte_array& initiator_hashed_nonce,
     const byte_array& responder_nonce,
     const byte_array& initiator_dh_public_key,
@@ -29,19 +40,59 @@ byte_array calc_signature_hash(ssu::negotiation::dh_group_type group, int keylen
         oa << group;// DH group for public keys
         oa << keylen;// AES key length: 16, 24, or 32
         oa << initiator_hashed_nonce;
+        xdr::pad_size(oa, initiator_hashed_nonce.size());
         oa << responder_nonce;
+        xdr::pad_size(oa, responder_nonce.size());
         oa << initiator_dh_public_key;
+        xdr::pad_size(oa, initiator_dh_public_key.size());
         oa << responder_dh_public_key;
+        xdr::pad_size(oa, responder_dh_public_key.size());
         oa << peer_eid;
-        // @todo the byte arrays should be 4-byte boundary zero-padded
+        xdr::pad_size(oa, peer_eid.size());
     }
+    assert(data.size() % 4 == 0);
 
     crypto::hash md;
-    crypto::hash::value hash;
+    crypto::hash::value sha256hash;
     md.update(data.as_vector());
-    md.finalize(hash);
+    md.finalize(sha256hash);
 
-    return hash;
+    return sha256hash;
+}
+
+/**
+ * Compute HMAC challenge cookie for DH.
+ */
+byte_array
+calc_dh_cookie(dh_hostkey_t* hostkey,
+    const byte_array& responder_nonce,
+    const byte_array& initiator_hashed_nonce,
+    const ssu::link_endpoint& src)
+{
+    byte_array data;
+    {
+        boost::iostreams::filtering_ostream out(boost::iostreams::back_inserter(data.as_vector()));
+        boost::archive::binary_oarchive oa(out, boost::archive::no_header); // Put together the data to hash
+
+        // @todo XDR zero-padding...
+        oa << hostkey->public_key;
+        oa << responder_nonce;
+        oa << initiator_hashed_nonce;
+        oa << src.address().to_v4().to_bytes();
+        uint16_t port = src.port();
+        oa << port;
+    }
+
+    // Compute the keyed hash
+    assert(hostkey->hkr.size() == HMACKEYLEN);
+
+    crypto::hash kmd(hostkey->hkr.as_vector());
+    crypto::hash::value mac;
+    assert(mac.size() == HMACLEN);
+    kmd.update(data.as_vector());
+    kmd.finalize(mac);
+
+    return mac;
 }
 
 }
@@ -74,13 +125,49 @@ void key_responder::receive(const byte_array& msg, const link_endpoint& src)
     }
 };
 
+static void warning(std::string message)
+{
+    logger::warning() << "key_responder: " << message;
+}
+
 void key_responder::got_dh_init1(const dh_init1_chunk& data, const link_endpoint& src)
 {
+    logger::debug() << "Got DH init1";
 
+    if (data.key_min_length != 128/8 and data.key_min_length != 192/8 and data.key_min_length != 256/8)
+        return warning("invalid minimum AES key length");
+
+    dh_hostkey_t* hostkey = host_.lock()->get_dh_key(data.group); // get or generate a host key
+    // Problem: once we've got the hostkey here, the timeout timer may fire and cause host's dh key to expire.
+    // @todo Need to protect against this race here...
+    if (!hostkey)
+        return warning("unrecognized DH key group");
+    // if (i1.dhi.size() > DH_size(hk->dh))
+        // return;     // Public key too large
+
+    // Generate an unpredictable responder's nonce
+    assert(crypto::prng_ok());
+    boost::array<uint8_t, crypto::hash::size> responder_nonce;
+    crypto::fill_random(responder_nonce);
+
+    // Compute the hash challenge
+    byte_array challenge_cookie = calc_dh_cookie(hostkey, responder_nonce, data.initiator_hashed_nonce, src);
+
+    // Build and send the response
+    dh_response1_chunk response;
+    response.group = data.group;
+    response.key_min_length = data.key_min_length;
+    response.initiator_hashed_nonce = data.initiator_hashed_nonce;
+    response.responder_nonce = responder_nonce;
+    response.responder_dh_public_key = hostkey->public_key;
+    response.responder_challenge_cookie = challenge_cookie;
+    // Don't offer responder's identity (eid, public key and signature) for now.
+    // send(magic(), response, dh_response1, src);
 }
 
 void key_responder::got_dh_init2(const dh_init2_chunk& data, const link_endpoint& src)
 {
+    logger::debug() << "Got DH init2";
     ssu::negotiation::dh_group_type group = ssu::negotiation::dh_group_type::dh_group_1024;
     int keylen = 16;
     byte_array initiator_hashed_nonce;
