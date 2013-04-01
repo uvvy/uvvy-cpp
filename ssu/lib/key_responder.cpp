@@ -57,10 +57,21 @@ void key_responder::receive(const byte_array& msg, const link_endpoint& src)
 	ia >> m;
     // XXX here may be some decoding error...
 
-    // for now only expect one type of handshake chunk - DH init1
     assert(m.magic == stream_protocol::magic);
-    assert(m.chunks[0].type == ssu::negotiation::key_chunk_type::dh_init1);
-    got_dh_init1(*m.chunks[0].dh_init1, src);
+
+    for (auto chunk : m.chunks)
+    {
+        switch (chunk.type)
+        {
+            case ssu::negotiation::key_chunk_type::dh_init1:
+                return got_dh_init1(*chunk.dh_init1, src);
+            case ssu::negotiation::key_chunk_type::dh_init2:
+                return got_dh_init2(*chunk.dh_init2, src);
+            default:
+                logger::warning() << "Unknown negotiation chunk type " << uint32_t(chunk.type);
+                break;
+        }
+    }
 };
 
 void key_responder::got_dh_init1(const dh_init1_chunk& data, const link_endpoint& src)
