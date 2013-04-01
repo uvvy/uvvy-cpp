@@ -9,6 +9,7 @@
 #pragma once
 
 #include "link.h"
+#include "dh.h"
 
 namespace ssu {
 
@@ -21,7 +22,9 @@ namespace ssu {
  * It is the client's responsibility to ensure that a host object
  * is not destroyed while any ssu objects still refer to it.
  */
-class host : public link_host_state
+class host
+    : public link_host_state
+    , public dh_host_state
 {
 public:
 	/**
