@@ -160,6 +160,18 @@ inline void decode_option(Archive& ia, T& t, uint32_t maxlen)
 
 }
 
+// boost::array compatible output for fixed-size vector represented as a boost::array<T,N>
+// @todo: specialization for non POD T's
+template<class Archive, class T, size_t N>
+inline Archive& operator << (Archive& oa, const boost::array<T,N>& ba)
+{
+    oa << ba;
+    xdr::pad_size(oa, N);
+    return oa;
+}
+
+
+
 /**
 int identifier;
 unsigned int identifier;
