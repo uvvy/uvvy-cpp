@@ -119,6 +119,7 @@
     class hash : boost::noncopyable
     {
     public:
+      enum { size = 32 };
       /// A convenience typedef for a 256 bit SHA-256 value.
       typedef boost::array<unsigned char, 32> value;
 
