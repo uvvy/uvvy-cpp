@@ -15,6 +15,8 @@ option(CLANG_ASAN "Use clang's address-sanitizer." ON)
 option(CLANG_LTO "[time-consuming] Enable link-time optimization with LLVM." OFF)
 option(CLANG_CHECK_DOCS "Check documentation consistency using clang's -Wdocumentation" ON)
 
+option(TRAVIS_CI "Build on Travis-CI nodes (disables some warnings)" OFF)
+
 if (CLANG)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 	set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -stdlib=libc++")
@@ -29,6 +31,9 @@ if (CLANG)
 	if (CLANG_LTO)
 		set(_extraFlags "${_extraFlags} -emit-llvm")
 		set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -O4")
+	endif ()
+	if (TRAVIS_CI)
+		set(_extraFlags "${_extraFlags} -Wno-uninitialized") # Qt code in travis-ci nodes is lame.
 	endif ()
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_extraFlags}")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_extraFlags}")
