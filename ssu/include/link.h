@@ -9,6 +9,7 @@
 #pragma once
 
 #include <map>
+#include <unordered_map>
 #include <memory>
 #include <boost/asio.hpp>
 #include <boost/signals2/signal.hpp>
@@ -92,12 +93,26 @@ public:
  */
 class link_host_state
 {
+    std::unordered_map<magic_t, link_receiver*> receivers;
+
     virtual link* create_link() { return 0; }
 public:
     /**
      * Create a receiver and bind it to control channel magic.
      */
-    virtual link_receiver* receiver(magic_t magic) { return 0; }
+    void bind_receiver(magic_t magic, link_receiver* receiver) {
+        receivers.insert(std::make_pair(magic, receiver)); // @todo: Will NOT replace existing element.
+    }
+
+    /**
+     * Find and return a receiver for given control channel magic value.
+     */
+    virtual link_receiver* receiver(magic_t magic) {
+        auto it = receivers.find(magic);
+        if (it == receivers.end())
+            return 0;
+        return it->second;
+    }
 };
 
 /**
