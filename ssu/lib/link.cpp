@@ -16,7 +16,7 @@ namespace ssu {
 
 bool link_endpoint::send(const char *data, int size) const
 {
-    if (auto l = link_.lock())
+    if (auto l = link_/*.lock()*/)
     {
         return l->send(*this, data, size);
     }
