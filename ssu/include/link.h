@@ -143,7 +143,7 @@ public:
     link(link_host_state& h) : host(h) {}
     ~link();
 
-    bool send(const endpoint&ep, const char* data, size_t size) { return false; }
+    virtual bool send(const endpoint&ep, const char* data, size_t size) { return false; }
 
 protected:
     /**
@@ -170,7 +170,7 @@ public:
 
     // bool bind(const endpoint& ep);
     /// Send a packet on this UDP socket.
-    bool send(const endpoint& ep, const char *data, int size);
+    virtual bool send(const endpoint& ep, const char *data, size_t size) override;
     inline bool send(const endpoint& ep, const byte_array& msg) {
         return send(ep, msg.const_data(), msg.size());
     }

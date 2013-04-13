@@ -118,7 +118,7 @@ void udp_link::prepare_async_receive()
 //  return true;
 // }
 
-bool udp_link::send(const endpoint& ep, const char *data, int size)
+bool udp_link::send(const endpoint& ep, const char *data, size_t size)
 {
     return udp_socket.send_to(boost::asio::buffer(data, size), ep);
 }
