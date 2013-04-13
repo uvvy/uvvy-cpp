@@ -56,7 +56,7 @@ protected:
     logging() {
         m.lock();
 	}
-    virtual ~logging() { std::clog << std::endl; m.unlock(); }
+    ~logging() { std::clog << std::endl; m.unlock(); }
 
 public:
     template <typename T>
