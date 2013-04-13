@@ -8,10 +8,13 @@ class dh_hostkey_t
 public:
     byte_array public_key;
     byte_array hkr; // hmac secret key
+
+    //temporary for testing
+    dh_hostkey_t() { public_key.resize(256); hkr.resize(32); }
 };
 
 class dh_host_state
 {
 public:
-    dh_hostkey_t* get_dh_key(ssu::negotiation::dh_group_type group) { return 0; }
+    dh_hostkey_t* get_dh_key(ssu::negotiation::dh_group_type group) { return new dh_hostkey_t; }
 };
