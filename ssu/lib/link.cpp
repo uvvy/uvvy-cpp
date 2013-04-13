@@ -131,7 +131,6 @@ void udp_link::udp_ready_read(const boost::system::error_code& error, std::size_
         byte_array b(boost::asio::buffer_cast<const char*>(received_buffer.data()), bytes_transferred);
         receive(b, received_from);
         received_buffer.consume(bytes_transferred);
-        // processed received buffers, continue receiving datagrams. @todo: reverse, allowing to receive datagrams before the previous was processed?
         prepare_async_receive();
     }
 }
