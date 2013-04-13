@@ -9,13 +9,46 @@
 #pragma once
 
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <mutex>
 #include <thread>
+#include <boost/archive/binary_oarchive.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace logger { // logger::debug()
 
+/**
+ * Binary dump a container to the log binary file.
+ * Usually only for byte_arrays.
+ * @todo Add timestamps for replaying.
+ */
+class file_dump
+{
+    static std::mutex m;
+public:
+    template <typename T>
+    file_dump(const T& data) {
+        m.lock();
+        std::ofstream out("dump.bin", std::ios::out|std::ios::app|std::ios::binary);
+        boost::archive::binary_oarchive oa(out, boost::archive::no_header);
+        char t = 'T';
+        char r = 'R';
+        char e = 'E';
+        char k = 'K'; // isn't it a bit... ridiculous?
+        size_t size = data.size();
+        oa << t << r << e << k << size << data;
+    }
+    ~file_dump() { m.unlock(); }
+};
+
+/**
+ * Base class for logging output.
+ *
+ * @todo: to control different output of different debug levels, consider replacing the
+ * streambuf on std::clog depending on logging levels, e.g.
+ * class debug would set clog wrbuf to either some output buf or null buf.
+ */
 class logging
 {
     static std::mutex m;

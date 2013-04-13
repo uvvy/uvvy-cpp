@@ -65,6 +65,10 @@ void link::receive(const byte_array& msg, const link_endpoint& src)
         return;
     }
 
+    {
+        logger::file_dump dump(msg);
+    }
+
     // First byte should be a channel number.
     // Try to find an endpoint-specific channel.
     channel_number cn = msg.at(0);

@@ -51,6 +51,7 @@ calc_signature_hash(ssu::negotiation::dh_group_type group,
         xdr::pad_size(oa, peer_eid.size());
     }
     assert(data.size() % 4 == 0);
+    logger::file_dump dump(data);
 
     crypto::hash md;
     crypto::hash::value sha256hash;
@@ -82,6 +83,8 @@ calc_dh_cookie(dh_hostkey_t* hostkey,
         uint16_t port = src.port();
         oa << port;
     }
+
+    logger::file_dump dump(data);
 
     // Compute the keyed hash
     assert(hostkey->hkr.size() == HMACKEYLEN);

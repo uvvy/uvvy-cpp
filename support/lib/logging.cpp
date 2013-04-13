@@ -9,5 +9,6 @@
 #include "logging.h"
 
 namespace logger {
+std::mutex file_dump::m;
 std::mutex logging::m;
 }
