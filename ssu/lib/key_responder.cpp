@@ -75,11 +75,15 @@ calc_dh_cookie(dh_hostkey_t* hostkey,
         boost::iostreams::filtering_ostream out(boost::iostreams::back_inserter(data.as_vector()));
         boost::archive::binary_oarchive oa(out, boost::archive::no_header); // Put together the data to hash
 
-        // @todo XDR zero-padding...
         oa << hostkey->public_key;
+        xdr::pad_size(oa, hostkey->public_key.size());
         oa << responder_nonce;
+        xdr::pad_size(oa, responder_nonce.size());
         oa << initiator_hashed_nonce;
-        oa << src.address().to_v4().to_bytes();
+        xdr::pad_size(oa, initiator_hashed_nonce.size());
+        // @todo XDR zero-padding...
+        auto lval_addr = src.address().to_v4().to_bytes();
+        oa << lval_addr;
         uint16_t port = src.port();
         oa << port;
     }
