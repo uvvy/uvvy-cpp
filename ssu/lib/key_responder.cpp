@@ -137,6 +137,34 @@ static void warning(std::string message)
     logger::warning() << "key_responder: " << message;
 }
 
+/**
+ * Send complete prepared key_message.
+ */
+static void send(key_message& m, const link_endpoint& target)
+{
+    byte_array msg;
+    {
+        boost::iostreams::filtering_ostream out(boost::iostreams::back_inserter(msg.as_vector()));
+        boost::archive::binary_oarchive oa(out, boost::archive::no_header);
+        oa << m;
+    }
+    target.send(msg);
+}
+
+static void send(magic_t magic, dh_response1_chunk& r, const link_endpoint& to)
+{
+    key_message m;
+    key_chunk chunk;
+
+    chunk.type = key_chunk_type::dh_response1;
+    chunk.dh_response1 = r;
+
+    m.magic = magic;
+    m.chunks.push_back(chunk);
+
+    send(m, to);
+}
+
 void key_responder::got_dh_init1(const dh_init1_chunk& data, const link_endpoint& src)
 {
     logger::debug() << "Got DH init1";
@@ -169,7 +197,7 @@ void key_responder::got_dh_init1(const dh_init1_chunk& data, const link_endpoint
     response.responder_dh_public_key = hostkey->public_key;
     response.responder_challenge_cookie = challenge_cookie;
     // Don't offer responder's identity (eid, public key and signature) for now.
-    // send(magic(), response, dh_response1, src);
+    send(magic(), response, src);
 }
 
 void key_responder::got_dh_init2(const dh_init2_chunk& data, const link_endpoint& src)
