@@ -38,7 +38,7 @@ class stream;
 class abstract_stream : public stream_protocol
 {
 protected:
-    host* const host_;                  ///< Per-host state.
+    std::weak_ptr<host> host_;                  ///< Per-host state.
     std::weak_ptr<stream> owner;        ///< Back-pointer to stream object, or nullptr if stream has been deleted.
     peer_id peerid;                     ///< EID of peer we're connected to.
 
@@ -50,7 +50,7 @@ public:
     /**
      * Create a new abstract_stream.
      */
-    abstract_stream(host* h);
+    abstract_stream(std::shared_ptr<host>& h);
 
     /**
      * Returns the endpoint identifier of the local host
