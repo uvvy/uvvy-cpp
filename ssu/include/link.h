@@ -83,9 +83,10 @@ class link_receiver
 protected:
     link_receiver() {}
 
-    inline uint32_t magic() { return magic_; }
+    inline magic_t magic() const { return magic_; }
 
 public:
+    inline void magic(magic_t set_magic) { magic_ = set_magic; } //temp?
     virtual void receive(const byte_array& msg, const link_endpoint& src) = 0;
 };
 
@@ -102,6 +103,7 @@ public:
      * Create a receiver and bind it to control channel magic.
      */
     void bind_receiver(magic_t magic, link_receiver* receiver) {
+        receiver->magic(magic);
         receivers.insert(std::make_pair(magic, receiver)); // @todo: Will NOT replace existing element.
     }
 
