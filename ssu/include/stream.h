@@ -45,7 +45,7 @@ class abstract_stream;
  */
 class stream
 {
-    abstract_stream* stream_;
+    abstract_stream* stream_{0};
 
 public:
     typedef uint16_t id_t;      ///< Stream ID within channel.

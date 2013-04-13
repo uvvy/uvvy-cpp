@@ -76,10 +76,10 @@ private:
  */
 class link_receiver
 {
-    uint32_t magic_;
+    uint32_t magic_{0};
 
 protected:
-    link_receiver() : magic_(0) {}
+    link_receiver() {}
 
     inline uint32_t magic() { return magic_; }
 
@@ -110,7 +110,7 @@ class link
 {
     link_host_state& host;
     std::map<std::pair<link_endpoint, channel_number>, link_channel*> channels;
-    bool active_;
+    bool active_{false};
 
     link_channel* channel(const endpoint& src, channel_number cn) { return 0; }
 

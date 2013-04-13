@@ -123,16 +123,11 @@ enum class dh_group_type : uint32_t {
 class dh_init1_chunk
 {
     public://temp
-    dh_group_type  group;                       // DH group of initiator's public key
-    uint32_t       key_min_length;              // Minimum AES key length: 16, 24, 32
-    byte_array     initiator_hashed_nonce;      // Initiator's SHA256-hashed nonce
-    byte_array     initiator_dh_public_key;     // Initiator's DH public key
-    byte_array     responder_eid;               // Optional: desired EID of responder
-
-    dh_init1_chunk()
-        : group(dh_group_type::dh_group_1024)
-        , key_min_length(0)
-    {}
+    dh_group_type  group{dh_group_type::dh_group_1024};  // DH group of initiator's public key
+    uint32_t       key_min_length{0};                    // Minimum AES key length: 16, 24, 32
+    byte_array     initiator_hashed_nonce;               // Initiator's SHA256-hashed nonce
+    byte_array     initiator_dh_public_key;              // Initiator's DH public key
+    byte_array     responder_eid;                        // Optional: desired EID of responder
 
     friend class boost::serialization::access;
     template<class Archive>
