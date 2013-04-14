@@ -23,7 +23,7 @@
 
 #include "dh.h"
 #include "key.h"
-#include "hmac.h"
+#include "crypto/hmac.h"
 #include "flow.h"
 #include "util.h"
 #include "timer.h"

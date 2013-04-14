@@ -28,6 +28,8 @@
 #include "sock.h"
 #include "host.h"
 #include "xdr.h"
+#include "crypto/aes.h"
+#include "crypto/hmac.h"
 
 using namespace SST;
 
@@ -993,9 +995,6 @@ bool ChecksumArmor::rxdec(qint64 pktseq, QByteArray &pkt)
 
 
 ////////// AESArmor //////////
-
-#include "aes.h"
-#include "hmac.h"
 
 AESArmor::AESArmor(const QByteArray &txenckey, const QByteArray &txmackey,
 		const QByteArray &rxenckey, const QByteArray &rxmackey)

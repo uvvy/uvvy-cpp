@@ -6,7 +6,7 @@
 #include <openssl/aes.h>
 
 #include "crypt.h"
-#include "sha2.h"
+#include "crypto/sha2.h"
 
 using namespace SST;
 

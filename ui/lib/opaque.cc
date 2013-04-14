@@ -8,7 +8,7 @@
 #include "chunk.h"
 #include "xdr.h"
 #include "util.h"
-#include "sha2.h"
+#include "crypto/sha2.h"
 #include "adler32.h"
 #include "rcsum.h"
 #include "crypt.h"

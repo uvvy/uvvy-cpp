@@ -2,8 +2,8 @@ set(QT_USE_QTNETWORK TRUE)
 include(${QT_USE_FILE})
 
 set(sst_SOURCES sock.cc key.cc dh.cc ident.cc flow.cc seg.cc stream.cc strm/abs.cc strm/base.cc strm/dgram.cc
-			  strm/peer.cc strm/sflow.cc strm/proto.cc sign.cc dsa.cc rsa.cc aes.cc
-			  sha2.cc hmac.cc chk32.cc xdr.cc util.cc timer.cc host.cc base32.cpp)
+			  strm/peer.cc strm/sflow.cc strm/proto.cc sign.cc crypto/dsa.cc crypto/rsa.cc crypto/aes.cc
+			  crypto/sha2.cc crypto/hmac.cc chk32.cc xdr.cc util.cc timer.cc host.cc base32.cpp)
 
 set(sst_RPC_SOURCES keyproto.x)
 wrap_rpc_sources(sst_SOURCES ${sst_RPC_SOURCES})

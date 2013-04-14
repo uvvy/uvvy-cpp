@@ -35,8 +35,8 @@ uint qHash(const SST::Endpoint &ep);
 #include "ident.h"
 #include "host.h"
 #include "dh.h"		// XX support multiple cyphersuites
-#include "aes.h"
-#include "hmac.h"
+#include "crypto/aes.h"
+#include "crypto/hmac.h"
 
 #include <openssl/dsa.h>
 #include <openssl/rand.h>

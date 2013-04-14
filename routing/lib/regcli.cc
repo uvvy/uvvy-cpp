@@ -28,7 +28,7 @@
 #include "sock.h"
 #include "host.h"
 #include "util.h"
-#include "sha2.h"
+#include "crypto/sha2.h"
 #include "xdr.h"
 
 using namespace SST;

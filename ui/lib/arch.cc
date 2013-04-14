@@ -5,7 +5,7 @@
 #include "arch.h"
 #include "env.h"
 #include "xdr.h"
-#include "sha2.h"
+#include "crypto/sha2.h"
 
 using namespace SST;
 

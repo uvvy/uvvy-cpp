@@ -27,12 +27,12 @@
 #include <QtDebug>
 
 #include "ident.h"
-#include "dsa.h"
+#include "crypto/dsa.h"
 #include "util.h"
-#include "sha2.h"
+#include "crypto/sha2.h"
 #include "xdr.h"
-#include "rsa.h"
-#include "dsa.h"
+#include "crypto/rsa.h"
+#include "crypto/dsa.h"
 
 using namespace SST;
 
