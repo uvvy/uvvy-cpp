@@ -830,16 +830,16 @@ KeyInitiator::gotDhR1(Host *h, KeyChunkDhR1Data &r1)
 	Ident hi = h->hostIdent();
 	QByteArray sighash =
 		calcSigHash((DhGroup)i->dhgroup, i->keylen, i->nhi, i->nr,
-				i->dhi, i->dhr, QByteArray()/*XX*/);
+				i->dhi, i->dhr, QByteArray()/*XXX*/);
 	QByteArray sigi = hi.sign(sighash);
 	qDebug() << "sighash" << sighash.toBase64() << "sigi" << sigi.toBase64();
 
 	// Build the part of the I2 message to be encrypted.
-	// (XX should we include anything for the 'sa' in the JFK spec?)
+	// (XXX should we include anything for the 'sa' in the JFK spec?)
 	KeyIdentI kii;
 	kii.chani = i->fl->localChannel();
 	kii.eidi = hi.id();
-	kii.eidr = QByteArray(); 	// XX
+	kii.eidr = QByteArray(); 	// XXX
 	kii.idpki = hi.key();
 	kii.sigi = sigi;
 	kii.ulpi = i->ulpi;
