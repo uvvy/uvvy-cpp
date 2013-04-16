@@ -779,7 +779,7 @@ KeyInitiator::gotDhR1(Host *h, KeyChunkDhR1Data &r1)
 {
 	// Lookup the Initiator based on the received nhi
 	KeyInitiator *i = h->initnhis.value(r1.nhi);
-	if (i == NULL || i->state == Done || i->dhgroup != r1.group)
+	if (i == NULL || i->isDone() || i->dhgroup != r1.group)
 		return qDebug("Got DhR1 for unknown I1");
 	if (i->isDone())
 		return qDebug("Got duplicate DhR1 for completed initiator");
