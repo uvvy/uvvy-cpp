@@ -9,6 +9,7 @@
 #include "negotiation/key_responder.h"
 #include "negotiation/key_message.h"
 #include "crypto.h"
+#include "host.h"
 
 // some temporary stuff to get things compile
 // Length of symmetric key material for HMAC-SHA-256-128
@@ -17,7 +18,10 @@
 #define HMACLEN     (128/8)
 //end temp junk
 
+//===========================================================================================================
 // Supplemental functions.
+//===========================================================================================================
+
 namespace {
 
 /**
@@ -65,7 +69,7 @@ calc_signature_hash(ssu::negotiation::dh_group_type group,
  * Compute HMAC challenge cookie for DH.
  */
 byte_array
-calc_dh_cookie(dh_hostkey_t* hostkey,
+calc_dh_cookie(ssu::negotiation::dh_hostkey_t* hostkey,
     const byte_array& responder_nonce,
     const byte_array& initiator_hashed_nonce,
     const ssu::link_endpoint& src)
@@ -104,6 +108,10 @@ calc_dh_cookie(dh_hostkey_t* hostkey,
 
 }
 
+//===========================================================================================================
+// key_responder
+//===========================================================================================================
+
 namespace ssu {
 namespace negotiation {
 
@@ -125,6 +133,8 @@ void key_responder::receive(const byte_array& msg, const link_endpoint& src)
                 return got_dh_init1(*chunk.dh_init1, src);
             case ssu::negotiation::key_chunk_type::dh_init2:
                 return got_dh_init2(*chunk.dh_init2, src);
+            case ssu::negotiation::key_chunk_type::dh_response1:
+                return got_dh_response1(*chunk.dh_response1, src);//key_initiator method?
             default:
                 logger::warning() << "Unknown negotiation chunk type " << uint32_t(chunk.type);
                 break;
@@ -167,7 +177,7 @@ static void send(magic_t magic, dh_response1_chunk& r, const link_endpoint& to)
 
 void key_responder::got_dh_init1(const dh_init1_chunk& data, const link_endpoint& src)
 {
-    logger::debug() << "Got DH init1";
+    logger::debug() << "Got dh_init1";
 
     if (data.key_min_length != 128/8 and data.key_min_length != 192/8 and data.key_min_length != 256/8)
         return warning("invalid minimum AES key length");
@@ -202,7 +212,7 @@ void key_responder::got_dh_init1(const dh_init1_chunk& data, const link_endpoint
 
 void key_responder::got_dh_init2(const dh_init2_chunk& data, const link_endpoint& src)
 {
-    logger::debug() << "Got DH init2";
+    logger::debug() << "Got dh_init2";
     ssu::negotiation::dh_group_type group = ssu::negotiation::dh_group_type::dh_group_1024;
     int keylen = 16;
     byte_array initiator_hashed_nonce;
@@ -213,5 +223,37 @@ void key_responder::got_dh_init2(const dh_init2_chunk& data, const link_endpoint
     byte_array hash = calc_signature_hash(group, keylen, initiator_hashed_nonce, responder_nonce, initiator_dh_public_key, responder_dh_public_key, peer_eid);
 }
 
+void key_responder::got_dh_response1(const dh_response1_chunk& data, const link_endpoint& src)
+{
+    // We got a response, this means we might've sent a request first, find the corresponding initiator.
+    key_initiator* initiator = host_.lock()->get_initiator(data.initiator_hashed_nonce);
+    if (!initiator or initiator->dh_group != data.group)
+        return warning("Got dh_response1 for unknown dh_init1");
+    if (initiator->is_done())
+        return warning("Got duplicate dh_response1 for completed initiator");
+
+    logger::debug() << "Got dh_response1";
+}
+
+//===========================================================================================================
+// key_initiator
+//===========================================================================================================
+
+void key_initiator::send_dh_init1()
+{
+    logger::debug() << "Send dh_init1 to " << to;
+    state_ = state::init1;
+}
+
 } // namespace negotiation
+
+//===========================================================================================================
+// key_host_state
+//===========================================================================================================
+
+negotiation::key_initiator* key_host_state::get_initiator(byte_array nonce)
+{
+    return 0;
+}
+
 } // namespace ssu

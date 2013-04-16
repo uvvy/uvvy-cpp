@@ -8,11 +8,14 @@
 //
 #pragma once
 
+#include <memory>
 #include "link.h"
-#include "host.h"
 #include "negotiation/key_message.h"
 
 namespace ssu {
+
+class host;
+
 namespace negotiation {
 
 /**
@@ -25,6 +28,7 @@ class key_responder : public link_receiver
     std::weak_ptr<host> host_;
 
     void got_dh_init1(const dh_init1_chunk& data, const link_endpoint& src);
+    void got_dh_response1(const dh_response1_chunk& data, const link_endpoint& src);
     void got_dh_init2(const dh_init2_chunk& data, const link_endpoint& src);
 
 public:
@@ -33,5 +37,37 @@ public:
 
 };
 
+class key_initiator
+{
+    std::weak_ptr<host> host_;
+    const link_endpoint& to;
+    enum class state {
+        init1, init2, done
+    } state_;
+public:
+    key_initiator(const link_endpoint& target) : to(target) {}
+    ~key_initiator();
+
+    inline bool is_done() const { return state_ == state::done; }
+    void send_dh_init1();
+
+    //temporarily public
+    ssu::negotiation::dh_group_type dh_group;
+};
+
 } // namespace negotiation
+
+/**
+ * Mixin for host state that manages the key exchange state.
+ */
+class key_host_state
+{
+    //std::map<chk_ep, std::weak_ptr<key_initiator>> chk_initiators;
+    std::map<byte_array, std::weak_ptr<negotiation::key_initiator>> dh_initiators;
+    // std::multimap<endpoint, std::weak_ptr<key_initiator>> ep_initiators;
+
+public:
+    negotiation::key_initiator* get_initiator(byte_array nonce);
+};
+
 } // namespace ssu
