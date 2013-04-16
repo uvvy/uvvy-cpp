@@ -8,8 +8,9 @@
 //
 #pragma once
 
-#include "link.h"
 #include "dh.h"
+#include "link.h"
+#include "negotiation/key_responder.h"
 
 namespace ssu {
 
@@ -25,6 +26,7 @@ namespace ssu {
 class host
     : public link_host_state
     , public dh_host_state
+    , public key_host_state
 {
 public:
 	/**
