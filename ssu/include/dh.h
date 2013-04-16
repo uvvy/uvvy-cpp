@@ -3,6 +3,9 @@
 #include "byte_array.h"
 #include "negotiation/key_message.h"
 
+namespace ssu {
+namespace negotiation {
+
 class dh_hostkey_t
 {
 public:
@@ -13,8 +16,12 @@ public:
     dh_hostkey_t() { public_key.resize(256); hkr.resize(32); }
 };
 
+} // namespace negotiation
+
 class dh_host_state
 {
 public:
-    dh_hostkey_t* get_dh_key(ssu::negotiation::dh_group_type group) { return new dh_hostkey_t; }
+    negotiation::dh_hostkey_t* get_dh_key(negotiation::dh_group_type group) { return new negotiation::dh_hostkey_t; }
 };
+
+} // namespace ssu
