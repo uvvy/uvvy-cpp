@@ -91,7 +91,7 @@ public:
 };
 
 /**
- * This class encapsulates link-related part of host state.
+ * This mixin class encapsulates link-related part of host state.
  */
 class link_host_state
 {
