@@ -15,3 +15,8 @@ add_executable(udpsender ${udpsender_SOURCES} ${udpsender_HEADERS_MOC})
 target_link_libraries(udpsender upnp ${QT_LIBRARIES})
 install(TARGETS udpsender
 	RUNTIME DESTINATION tools)
+
+add_executable(opus-streaming opus-streaming.cpp)
+target_link_libraries(udpsender ssu ${Boost_LIBRARIES})
+install(TARGETS opus-streaming
+    RUNTIME DESTINATION tools)
