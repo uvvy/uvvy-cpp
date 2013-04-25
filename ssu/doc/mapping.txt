@@ -21,9 +21,9 @@ BaseStream         | base_stream        | base.h         | base_stream.h
 StreamFlow         |                    | sflow.h        |
 StreamPeer         |                    | peer.h         |
 StreamResponder    |                    | stream.h       |
-KeyResponder       |                    | key.h          |
-KeyInitiator       |                    | key.h          |
-KeyHostState       |                    | key.h          |
+KeyResponder       | key_responder      | key.h          | key_responder.h
+KeyInitiator       | key_initiator      | key.h          | key_responder.h
+KeyHostState       | key_host_state     | key.h          | key_responder.h
 
 
 SocketReceiver         link_receiver          | sock.h
