@@ -147,6 +147,9 @@ public:
     ~link();
 
     virtual bool send(const endpoint&ep, const char* data, size_t size) { return false; }
+    inline bool send(const endpoint& ep, const byte_array& msg) {
+        return send(ep, msg.const_data(), msg.size());
+    }
 
 protected:
     /**
@@ -174,9 +177,6 @@ public:
     // bool bind(const endpoint& ep);
     /// Send a packet on this UDP socket.
     virtual bool send(const endpoint& ep, const char *data, size_t size) override;
-    inline bool send(const endpoint& ep, const byte_array& msg) {
-        return send(ep, msg.const_data(), msg.size());
-    }
 
     /// Return all known local endpoints referring to this link.
     std::vector<endpoint> local_endpoints();
