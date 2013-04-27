@@ -27,6 +27,7 @@ public:
     byte_array(const std::vector<char>&);
     byte_array(const char* str);
     byte_array(const char* data, size_t size);
+    explicit byte_array(size_t size) { resize(size); }
 
     template <typename T, size_t N>
     byte_array(const boost::array<T, N>& in) : value(in.begin(), in.begin() + N) {}
@@ -79,6 +80,20 @@ public:
     std::vector<char>& as_vector() { return value; }
     const std::vector<char>& as_vector() const { return value; }
 };
+
+// Hash specialization for byte_array
+namespace std {
+
+template<> struct hash<byte_array> : public std::unary_function<byte_array, size_t>
+{
+    inline size_t operator()(const byte_array& /*a*/) const noexcept
+    {
+        size_t seed = 0;
+        return seed;
+    }
+};
+
+} // namespace std
 
 bool operator ==(const byte_array& a, const byte_array& b);
 

@@ -62,9 +62,9 @@ public:
  */
 class key_host_state
 {
-    //std::map<chk_ep, std::weak_ptr<key_initiator>> chk_initiators;
-    std::map<byte_array, std::weak_ptr<negotiation::key_initiator>> dh_initiators;
-    // std::multimap<endpoint, std::weak_ptr<key_initiator>> ep_initiators;
+    //std::unordered_map<chk_ep, std::weak_ptr<key_initiator>> chk_initiators;
+    std::unordered_map<byte_array, std::weak_ptr<negotiation::key_initiator>> dh_initiators_;
+    // std::unordered_multimap<endpoint, std::weak_ptr<key_initiator>> ep_initiators;
 
 public:
     negotiation::key_initiator* get_initiator(byte_array nonce);

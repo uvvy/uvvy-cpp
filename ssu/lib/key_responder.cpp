@@ -243,6 +243,8 @@ void key_initiator::send_dh_init1()
 {
     logger::debug() << "Send dh_init1 to " << to;
     state_ = state::init1;
+
+    // Construct dh_init1 frame from the current state.
 }
 
 } // namespace negotiation
@@ -251,9 +253,14 @@ void key_initiator::send_dh_init1()
 // key_host_state
 //===========================================================================================================
 
-negotiation::key_initiator* key_host_state::get_initiator(byte_array nonce)
+//todo: should return the shared_ptr<> from the map..
+ssu::negotiation::key_initiator* key_host_state::get_initiator(byte_array nonce)
 {
-    return 0;
+    auto it = dh_initiators_.find(nonce);
+    if (it == dh_initiators_.end()) {
+        return 0;
+    }
+    return it->second.lock().get();
 }
 
 } // namespace ssu
