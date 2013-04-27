@@ -18,7 +18,7 @@ option(CLANG_CHECK_DOCS "Check documentation consistency using clang's -Wdocumen
 option(TRAVIS_CI "Build on Travis-CI nodes (disables some warnings)" OFF)
 
 if (CLANG)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
+	set(CMAKE_CXX_FLAGS "-ferror-limit=3 ${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 	set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -stdlib=libc++")
 	set(_extraFlags)
 	if (CLANG_ASAN)
