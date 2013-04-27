@@ -5,7 +5,7 @@ set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
 
-include_directories(../nat)
+include_directories(../nat ../ssu/include ../support/include ../ui/3rdparty/opus-1.0.1/include ../ui/3rdparty/rtaudio-4.0.11)
 
 set(udpsender_SOURCES udpsend.cpp main.cpp)
 set(udpsender_HEADERS udpsend.h)
@@ -17,6 +17,11 @@ install(TARGETS udpsender
 	RUNTIME DESTINATION tools)
 
 add_executable(opus-streaming opus-streaming.cpp)
-target_link_libraries(udpsender ssu ${Boost_LIBRARIES})
+target_link_libraries(opus-streaming ssu support rtaudio opus ${Boost_LIBRARIES})
 install(TARGETS opus-streaming
     RUNTIME DESTINATION tools)
+
+if (APPLE)
+    find_library(COREAUDIO_LIB CoreAudio)
+    target_link_libraries(opus-streaming ${COREAUDIO_LIB})
+endif (APPLE)
