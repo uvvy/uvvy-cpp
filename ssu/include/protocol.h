@@ -17,6 +17,8 @@ typename std::underlying_type<E>::type to_underlying(E e) {
     return static_cast<typename std::underlying_type<E>::type>(e);
 }
 
+namespace ssu {
+
 /**
  * @internal
  * SSU stream protocol definitions.
@@ -85,3 +87,5 @@ public:
         reset_remote      = 0x1,  ///< SID orientation (set: sent LSID is in remote space)
     };
 };
+
+} // namespace ssu

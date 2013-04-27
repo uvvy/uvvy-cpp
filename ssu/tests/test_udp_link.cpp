@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(receive_and_log_key_message)
 
     // Add key responder to link.
     ssu::negotiation::key_responder receiver;
-    host.bind_receiver(stream_protocol::magic, &receiver);
+    host.bind_receiver(ssu::stream_protocol::magic, &receiver);
 
     // Render key message to buffer.
     byte_array msg;
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(receive_and_log_key_message)
         k.type = ssu::negotiation::key_chunk_type::dh_init1;
         k.dh_init1 = dh;
 
-        m.magic = stream_protocol::magic;
+        m.magic = ssu::stream_protocol::magic;
         m.chunks.push_back(k);
 
         oa << m;
