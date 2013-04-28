@@ -181,6 +181,11 @@ private:
         // A PortAudio "frame" is one sample per channel,
         // whereas our "frame" is one buffer worth of data (as in Speex).
 
+#if 0
+        if (inputBuffer && outputBuffer) {
+            std::copy_n((char*)inputBuffer, nFrames*sizeof(float), (char*)outputBuffer);
+        }
+#else
         if (inputBuffer) {
             instance->sender_->send_packet((float*)inputBuffer, nFrames);
         }
@@ -189,7 +194,7 @@ private:
             // inefficient: should be writing directly into outputBuffer
             std::copy(pkt.data(), pkt.data()+pkt.size(), (float*)outputBuffer);
         }
-
+#endif
         return 0;
     }
 };
