@@ -101,8 +101,8 @@ public:
         opus_encoder_ctl(encstate, OPUS_GET_SAMPLE_RATE(&rate));
         framesize = rate / 100; // 10ms
 
-        opus_encoder_ctl(encstate, OPUS_SET_VBR(1));
         opus_encoder_ctl(encstate, OPUS_SET_BITRATE(OPUS_AUTO));
+        opus_encoder_ctl(encstate, OPUS_SET_VBR(1));
         opus_encoder_ctl(encstate, OPUS_SET_DTX(1));
     }
 
