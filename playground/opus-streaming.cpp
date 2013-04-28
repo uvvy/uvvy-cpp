@@ -9,10 +9,11 @@
 #include <queue>
 #include <mutex>
 #include "link.h"
-#include "protocol.h"
 #include "logging.h"
 #include "opus.h"
 #include "RtAudio.h"
+
+constexpr ssu::magic_t opus_magic = 0x00505553;
 
 // Receive packets from remote
 // Opus-decode and playback
@@ -118,7 +119,7 @@ public:
         opus_int32 nbytes = opus_encode_float(encstate, buffer, nFrames, (unsigned char*)samplebuf.data()+4, nFrames*sizeof(float)-4);
         assert(nbytes > 0);
         samplebuf.resize(nbytes+4);
-        *reinterpret_cast<ssu::magic_t*>(samplebuf.data()) = ssu::stream_protocol::magic;
+        *reinterpret_cast<ssu::magic_t*>(samplebuf.data()) = opus_magic;
         link_.send(ep_, samplebuf);
     }
 };
@@ -192,8 +193,6 @@ private:
         return 0;
     }
 };
-
-constexpr ssu::magic_t opus_magic = 0x4f505553;
 
 int main()
 {
