@@ -103,6 +103,9 @@ public:
      * Create a receiver and bind it to control channel magic.
      */
     void bind_receiver(magic_t magic, link_receiver* receiver) {
+        if (magic & 0xff000000) {
+            throw "Invalid magic value for binding a receiver.";
+        }
         receiver->magic(magic);
         receivers.insert(std::make_pair(magic, receiver)); // @todo: Will NOT replace existing element.
     }
