@@ -113,12 +113,7 @@ public:
     /**
      * Find and return a receiver for given control channel magic value.
      */
-    virtual link_receiver* receiver(magic_t magic) {
-        auto it = receivers.find(magic);
-        if (it == receivers.end())
-            return 0;
-        return it->second;
-    }
+    virtual link_receiver* receiver(magic_t magic);
 };
 
 /**

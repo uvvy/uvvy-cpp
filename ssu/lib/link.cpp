@@ -14,6 +14,17 @@
 
 namespace ssu {
 
+link_receiver* link_host_state::receiver(magic_t magic)
+{
+    auto it = receivers.find(magic);
+    if (it == receivers.end())
+    {
+        logger::debug() << "receiver not found looking for magic " << magic;
+        return 0;
+    }
+    return it->second;
+}
+
 bool link_endpoint::send(const char *data, int size) const
 {
     if (auto l = link_/*.lock()*/)
