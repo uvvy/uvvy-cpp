@@ -34,7 +34,7 @@ public:
         assert(!error);
 
         opus_decoder_ctl(decstate, OPUS_GET_SAMPLE_RATE(&rate));
-        framesize = rate / 50; // 20ms
+        framesize = rate / 100; // 10ms
     }
 
     ~audio_receiver()
@@ -98,7 +98,7 @@ public:
         assert(!error);
 
         opus_encoder_ctl(encstate, OPUS_GET_SAMPLE_RATE(&rate));
-        framesize = rate / 50; // 20ms
+        framesize = rate / 100; // 10ms
 
         opus_encoder_ctl(encstate, OPUS_SET_VBR(1));
         opus_encoder_ctl(encstate, OPUS_SET_BITRATE(OPUS_AUTO));
@@ -113,8 +113,9 @@ public:
     // Called by rtaudio callback to encode and send packet.
     void send_packet(float* buffer, size_t nFrames)
     {
+        assert((int)nFrames == framesize);
         byte_array samplebuf(nFrames*sizeof(float));
-        opus_int32 nbytes = opus_encode_float(encstate, buffer, framesize, (unsigned char*)samplebuf.data()+4, nFrames*sizeof(float)-4);
+        opus_int32 nbytes = opus_encode_float(encstate, buffer, nFrames, (unsigned char*)samplebuf.data()+4, nFrames*sizeof(float)-4);
         assert(nbytes > 0);
         samplebuf.resize(nbytes+4);
         *reinterpret_cast<ssu::magic_t*>(samplebuf.data()) = ssu::stream_protocol::magic;
