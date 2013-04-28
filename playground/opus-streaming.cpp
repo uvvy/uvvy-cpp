@@ -46,6 +46,7 @@ public:
     /* Get and return a packet, decoding it; decode a missing frame if queue is empty */
     byte_array get_packet()
     {
+        logger::debug() << "get_packet";
         std::unique_lock<std::mutex> lock(queue_mutex);
         byte_array decoded_packet(framesize*sizeof(float));
 
@@ -57,12 +58,14 @@ public:
             int len = opus_decode_float(decstate, (unsigned char*)pkt.data()+4, pkt.size()-4, (float*)decoded_packet.data(), framesize, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == framesize);
+            logger::debug() << "get_packet decoded frame of size " << pkt.size() << " into " << len << " frames";
         } else {
             lock.unlock();
             // "decode" a missing frame
             int len = opus_decode_float(decstate, NULL, 0, (float*)decoded_packet.data(), framesize, /*decodeFEC:*/0);
             assert(len > 0);
-            assert(len == framesize);
+            logger::debug() << "get_packet decoded missing frame of size " << len;
+            // assert(len == framesize);
         }
         return decoded_packet;
     }
@@ -71,6 +74,7 @@ protected:
     /* Put received packet into receive queue */
     virtual void receive(const byte_array& msg, const ssu::link_endpoint& src) override
     {
+        logger::debug() << "received packet of size " << msg.size();
         std::lock_guard<std::mutex> lock(queue_mutex);
         // extract payload
         packet_queue.push(msg);
@@ -114,6 +118,7 @@ public:
     // Called by rtaudio callback to encode and send packet.
     void send_packet(float* buffer, size_t nFrames)
     {
+        logger::debug() << "send_packet framesize " << framesize << ", got nFrames " << nFrames;
         assert((int)nFrames == framesize);
         byte_array samplebuf(nFrames*sizeof(float));
         opus_int32 nbytes = opus_encode_float(encstate, buffer, nFrames, (unsigned char*)samplebuf.data()+4, nFrames*sizeof(float)-4);
@@ -178,7 +183,9 @@ private:
     {
         audio_hardware* instance = reinterpret_cast<audio_hardware*>(userdata);
 
-        // A PortAudio "frame" is one sample per channel,
+        logger::debug() << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
+
+        // An RtAudio "frame" is one sample per channel,
         // whereas our "frame" is one buffer worth of data (as in Speex).
 
 #if 0
