@@ -93,7 +93,7 @@ void link::receive(const byte_array& msg, const link_endpoint& src)
     boost::archive::binary_iarchive ia(in, boost::archive::no_header);
     magic_t magic;
     ia >> magic;
-    magic = boost::endian2::big(magic);
+    // magic = boost::endian2::big(magic);
     link_receiver* recv = host.receiver(magic);
     if (recv)
     {
