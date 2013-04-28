@@ -53,13 +53,13 @@ public:
             byte_array pkt = packet_queue.front();
             packet_queue.pop();
             lock.unlock();
-            int len = opus_decode_float(decstate, (unsigned char*)pkt.data()+4, pkt.size()-4, (float*)decoded_packet.data(), framesize, /*decodeFEC:*/1);
+            int len = opus_decode_float(decstate, (unsigned char*)pkt.data()+4, pkt.size()-4, (float*)decoded_packet.data(), framesize, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == framesize);
         } else {
             lock.unlock();
             // "decode" a missing frame
-            int len = opus_decode_float(decstate, NULL, 0, (float*)decoded_packet.data(), framesize, /*decodeFEC:*/1);
+            int len = opus_decode_float(decstate, NULL, 0, (float*)decoded_packet.data(), framesize, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == framesize);
         }

@@ -227,7 +227,7 @@ void OpusOutput::produceOutput(float *samplebuf)
 	// Decode the frame
 	if (!bytebuf.isEmpty()) {
 		qWarning() << "Decode frame size:" << bytebuf.size();
-		unsigned int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(), bytebuf.size(), samplebuf, frameSize(), /*decodeFEC:*/1);
+		unsigned int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(), bytebuf.size(), samplebuf, frameSize(), /*decodeFEC:*/0);
 		// Q_ASSERT(len > 0);
 		Q_ASSERT(len == frameSize());
 
@@ -236,7 +236,7 @@ void OpusOutput::produceOutput(float *samplebuf)
 			queueEmpty();
 	} else {
 		// "decode" a missing frame
-		int len = opus_decode_float(decstate, NULL, 0, samplebuf, frameSize(), /*decodeFEC:*/1);
+		int len = opus_decode_float(decstate, NULL, 0, samplebuf, frameSize(), /*decodeFEC:*/0);
 		Q_ASSERT(len > 0);
 	}
 }
