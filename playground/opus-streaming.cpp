@@ -143,9 +143,9 @@ public:
 
         // Open the audio device
         RtAudio::StreamParameters inparam, outparam;
-        inparam.deviceId = 0;
+        inparam.deviceId = audio_inst->getDefaultInputDevice();
         inparam.nChannels = audio_sender::nChannels;
-        outparam.deviceId = 0;
+        outparam.deviceId = audio_inst->getDefaultOutputDevice();
         outparam.nChannels = audio_receiver::nChannels;
         unsigned int bufferFrames = 480;
 
