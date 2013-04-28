@@ -192,7 +192,7 @@ private:
         if (outputBuffer) {
             byte_array pkt = instance->receiver_->get_packet();
             // inefficient: should be writing directly into outputBuffer
-            std::copy(pkt.data(), pkt.data()+pkt.size(), (float*)outputBuffer);
+            std::copy_n(pkt.data(), pkt.size(), (char*)outputBuffer);
         }
 #endif
         return 0;
