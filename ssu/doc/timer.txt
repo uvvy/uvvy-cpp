@@ -1,0 +1,41 @@
+==============
+ Timer system
+==============
+
+Old SST implementation
+======================
+
+      +------------+                    +----------------+
+      |   Timer    |                    |  TimerEngine   |
+      +------------+                    +----------------+
+    1. HostState->newTimerEngine()       +  start()=0
+       +       +                         |  stop()=0
+       |       |                         |
+       |       |                         |   +--------------------+
+       |       |                         +-->| DefaultTimerEngine |
+       |       |                             +--------------------+
+    2. |-start()------------------------------->start()          ^
+    4. | timeout(bool)<---------------------+3. timerEvent()     |
+    5. +-stop()|------------------------------->stop()           |
+               |                                                 |
+               |                          +------------------+   |
+               |                          |  TimerHostState  |   |
+               |                          +------------------+   |
+               +--------------------------->newTimerEngine()+----+
+
+boost.asio based implementation
+===============================
+
+In our case we use boost::posix_time as time representation instead of Time.
+For timer we use either deadline_timer or mock_deadline_timer based on modified TimeTraits.
+@todo: How to abstract this enough so that Timer part in client need not change at all?
+
+The TimerEngine would apparently use two different times for it's timer implementation.
+E.g. DefaultTimerEngine would use plain deadline_timer, while MockTimerEngine would use mock_deadline_timer.
+
+Overrides:
+static time_type now(); returns current time, for mock this will be the simulation time.
+And that's it!!1
+
+See http://blog.think-async.com/2007/08/time-travel.html for details.
+Also this http://stackoverflow.com/questions/14191855/how-do-you-mock-the-time-for-boost-timers
