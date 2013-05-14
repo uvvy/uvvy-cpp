@@ -52,7 +52,7 @@
       /// Check return values from OpenSSL and throw an exception if it failed.
       /// @param what the logical operation being performed
       /// @success the return value from OpenSSL API
-      void api(const char *what, int ret)
+      inline void api(const char *what, int ret)
       {
         if (ret == 0)
         {
@@ -86,7 +86,7 @@
     /// Checks if the  underlying PRNG is sufficiently seeded. In  the (exceptional) situation where
     /// this check  returns 'false', you  /must/ use the  OpenSSL seed routines  RAND_seed, RAND_add
     /// directly to add entropy to the underlying PRNG.
-    bool prng_ok() { return RAND_status() == 1; }
+    inline bool prng_ok() { return RAND_status() == 1; }
 
     /// Fills the passed container with random bytes.
     /// @param c  (output) container populated with random bits
