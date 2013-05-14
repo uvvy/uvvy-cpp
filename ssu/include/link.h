@@ -78,7 +78,7 @@ private:
  */
 class link_receiver
 {
-    uint32_t magic_{0};
+    magic_t magic_{0};
 
 protected:
     link_receiver() {}
