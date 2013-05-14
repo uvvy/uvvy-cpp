@@ -52,6 +52,7 @@ IdentData::IdentData(const IdentData &other)
 		bool isPrivate = other.k->type() == SignKey::Private;
 		bool success = setKey(other.k->key(isPrivate));
 		Q_ASSERT(success);
+		(void)success;
 	}
 }
 
