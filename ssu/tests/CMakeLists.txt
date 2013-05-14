@@ -1,6 +1,6 @@
 create_test(link "ssu;support")
 create_test(udp_link "ssu;support;${OPENSSL_LIBRARIES}")
-create_test(host "ssu;support")
+create_test(host "ssu;support;${OPENSSL_LIBRARIES}")
 create_test(channel "ssu;support")
 create_test(stream_user "ssu;support")
 create_test(stream_internal "ssu;support")

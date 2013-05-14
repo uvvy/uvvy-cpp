@@ -4,8 +4,17 @@ project(mettanode)
 include(CTest)
 
 find_package(Qt4 REQUIRED)
-#find_package(Boost REQUIRED)
+
+# On mac, use openssl from brew, not the default system one, because it is too old.
+# Run 'brew install openssl' to install it.
+# A bug in cmake prevents use of OPENSSL_ROOT_DIR for finding a custom openssl,
+# so we use an internal variable instead. This needs to be fixed in cmake.
+if (APPLE)
+	set(_OPENSSL_ROOT_HINTS_AND_PATHS /usr/local/opt/openssl)
+endif (APPLE)
 find_package(OpenSSL REQUIRED)
+
+include_directories(${OPENSSL_INCLUDE_DIR})
 
 # Export compile commands for ST2 clang plugin.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -89,12 +98,6 @@ function(create_test NAME EXTRALIBS)
 	    RUNTIME DESTINATION tests/unittests)
 	add_test(${NAME} test_${NAME})
 endfunction(create_test)
-
-# We require a recent version of openssl, 1.0.0 or later, which OSX lacks.
-# Use one from brew.
-if (APPLE)
-	include_directories("/usr/local/Cellar/openssl/1.0.1c/include")
-endif (APPLE)
 
 add_subdirectory(support)
 
