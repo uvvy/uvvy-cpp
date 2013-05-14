@@ -37,6 +37,7 @@ public:
     byte_array& operator = (byte_array&& other);
 
     inline bool is_empty() const { return size() == 0; }
+    inline void clear() { value.clear(); }
 
     char* data();
     const char* data() const;
