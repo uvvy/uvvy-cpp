@@ -161,6 +161,20 @@ static void send(key_message& m, const link_endpoint& target)
     target.send(msg);
 }
 
+static void send(magic_t magic, dh_init1_chunk& r, const link_endpoint& to)
+{
+    key_message m;
+    key_chunk chunk;
+
+    chunk.type = key_chunk_type::dh_init1;
+    chunk.dh_init1 = r;
+
+    m.magic = magic;
+    m.chunks.push_back(chunk);
+
+    send(m, to);
+}
+
 static void send(magic_t magic, dh_response1_chunk& r, const link_endpoint& to)
 {
     key_message m;
@@ -184,7 +198,7 @@ void key_responder::got_dh_init1(const dh_init1_chunk& data, const link_endpoint
 
     dh_hostkey_t* hostkey = host_.lock()->get_dh_key(data.group); // get or generate a host key
     // Problem: once we've got the hostkey here, the timeout timer may fire and cause host's dh key to expire.
-    // @todo Need to protect against this race here...
+    // @todo Need to protect against this race here... (e.g. return hostkey in shared_ptr)
     if (!hostkey)
         return warning("unrecognized DH key group");
     // if (i1.dhi.size() > DH_size(hk->dh))
@@ -210,6 +224,10 @@ void key_responder::got_dh_init1(const dh_init1_chunk& data, const link_endpoint
     send(magic(), response, src);
 }
 
+/**
+ * We got init2, this means the init1/response1 phase might have been done.
+ * Find the key_initiator for this exchange and continue.
+ */
 void key_responder::got_dh_init2(const dh_init2_chunk& data, const link_endpoint& src)
 {
     logger::debug() << "Got dh_init2";
@@ -223,16 +241,20 @@ void key_responder::got_dh_init2(const dh_init2_chunk& data, const link_endpoint
     byte_array hash = calc_signature_hash(group, keylen, initiator_hashed_nonce, responder_nonce, initiator_dh_public_key, responder_dh_public_key, peer_eid);
 }
 
+/**
+ * We got a response, this means we might've sent a request first, find the corresponding initiator.
+ */
 void key_responder::got_dh_response1(const dh_response1_chunk& data, const link_endpoint& src)
 {
-    // We got a response, this means we might've sent a request first, find the corresponding initiator.
-    key_initiator* initiator = host_.lock()->get_initiator(data.initiator_hashed_nonce);
-    if (!initiator or initiator->dh_group != data.group)
+    key_initiator* initiator = host_.lock()->get_initiator(data.initiator_hashed_nonce).get();
+    if (!initiator or initiator->group() != data.group)
         return warning("Got dh_response1 for unknown dh_init1");
     if (initiator->is_done())
         return warning("Got duplicate dh_response1 for completed initiator");
 
     logger::debug() << "Got dh_response1";
+
+    initiator->send_dh_init2();
 }
 
 //===========================================================================================================
@@ -244,7 +266,26 @@ void key_initiator::send_dh_init1()
     logger::debug() << "Send dh_init1 to " << to;
     state_ = state::init1;
 
+    // Clear previous initiator state in case it was after init1, we're restarting the init.
+    // .... TODO ....
+
     // Construct dh_init1 frame from the current state.
+    dh_hostkey_t* hostkey = host_.lock()->get_dh_key(dh_group); // get or generate a host key
+
+    dh_init1_chunk init;
+    init.group = dh_group;
+    init.key_min_length = key_min_length;//?
+    init.initiator_hashed_nonce = initiator_hashed_nonce;
+    init.initiator_dh_public_key = hostkey->public_key;
+    init.responder_eid.clear();
+
+    send(magic(), init, to);
+}
+
+void key_initiator::send_dh_init2()
+{
+    logger::debug() << "Send dh_init2 to " << to;
+    state_ = state::init2;
 }
 
 } // namespace negotiation
@@ -253,14 +294,13 @@ void key_initiator::send_dh_init1()
 // key_host_state
 //===========================================================================================================
 
-//todo: should return the shared_ptr<> from the map..
-ssu::negotiation::key_initiator* key_host_state::get_initiator(byte_array nonce)
+std::shared_ptr<ssu::negotiation::key_initiator> key_host_state::get_initiator(byte_array nonce)
 {
     auto it = dh_initiators_.find(nonce);
     if (it == dh_initiators_.end()) {
         return 0;
     }
-    return it->second.lock().get();
+    return it->second.lock();
 }
 
 } // namespace ssu
