@@ -6,15 +6,15 @@ using namespace boost::posix_time;
 namespace ssu {
 namespace async {
 
-const boost::posix_time::time_duration timer::retry_min = boost::posix_time::milliseconds(500);
-const boost::posix_time::time_duration timer::retry_max = boost::posix_time::minutes(1);
-const boost::posix_time::time_duration timer::fail_max  = boost::posix_time::seconds(20);
+const timer::duration_type timer::retry_min = boost::posix_time::milliseconds(500);
+const timer::duration_type timer::retry_max = boost::posix_time::minutes(1);
+const timer::duration_type timer::fail_max  = boost::posix_time::seconds(20);
 
 //=========================================================
 // timer
 //=========================================================
 
-static ptime backoff(ptime interval, ptime max_interval = fail_max)
+static timer::duration_type backoff(timer::duration_type interval, timer::duration_type max_interval = timer::fail_max)
 {
 	return std::min(interval * 3 / 2, max_interval);
 }

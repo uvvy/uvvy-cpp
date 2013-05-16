@@ -14,11 +14,11 @@ class timer_engine;
 class timer
 {
 public:
-	typedef boost::posix_time::time_duration duration_type;
+	typedef boost::asio::deadline_timer::duration_type duration_type;
 
-	static const boost::posix_time::time_duration retry_min;
-	static const boost::posix_time::time_duration retry_max;
-	static const boost::posix_time::time_duration fail_max;
+	static const duration_type retry_min;
+	static const duration_type retry_max;
+	static const duration_type fail_max;
 
 private:
 	timer_engine* engine_{0};
