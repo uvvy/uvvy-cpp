@@ -11,6 +11,9 @@ namespace async {
 
 class timer_engine;
 
+/**
+ * Interval timer supporting usual packet resend timeouts and such.
+ */
 class timer
 {
 public:
