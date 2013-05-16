@@ -66,7 +66,7 @@ protected:
     inline magic_t magic() const { return magic_; }
 
 public:
-    key_initiator(const link_endpoint& target) : to(target), transmit_timer(0/*todo*/) {}
+    key_initiator(const link_endpoint& target);
     ~key_initiator();
 
     inline ssu::negotiation::dh_group_type group() const { return dh_group; }

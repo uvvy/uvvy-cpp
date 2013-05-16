@@ -261,6 +261,12 @@ void key_responder::got_dh_response1(const dh_response1_chunk& data, const link_
 // key_initiator
 //===========================================================================================================
 
+key_initiator::key_initiator(const link_endpoint& target)
+    : to(target)
+    , transmit_timer(host_.lock().get())
+{
+}
+
 void key_initiator::send_dh_init1()
 {
     logger::debug() << "Send dh_init1 to " << to;
