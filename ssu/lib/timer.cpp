@@ -1,14 +1,14 @@
 #include "timer.h"
 #include "timer_engine.h"
 
-using boost::posix_time;
+using namespace boost::posix_time;
 
 namespace ssu {
 namespace async {
 
-static const boost::posix_time::time_duration timer::retry_min = boost::posix_time::milliseconds(500);
-static const boost::posix_time::time_duration timer::retry_max = boost::posix_time::minutes(1);
-static const boost::posix_time::time_duration timer::fail_max  = boost::posix_time::seconds(20);
+const boost::posix_time::time_duration timer::retry_min = boost::posix_time::milliseconds(500);
+const boost::posix_time::time_duration timer::retry_max = boost::posix_time::minutes(1);
+const boost::posix_time::time_duration timer::fail_max  = boost::posix_time::seconds(20);
 
 //=========================================================
 // timer
@@ -19,7 +19,7 @@ static ptime backoff(ptime interval, ptime max_interval = fail_max)
 	return std::min(interval * 3 / 2, max_interval);
 }
 
-timer::timer(timer_host_state* host)
+timer::timer(ssu::timer_host_state* host)
 {
 	engine_ = host->create_timer_engine_for(this);
 }

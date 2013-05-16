@@ -4,10 +4,12 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
 namespace ssu {
+
+class timer_host_state;
+
 namespace async {
 
 class timer_engine;
-class timer_host_state;
 
 class timer
 {
@@ -25,7 +27,7 @@ private:
 	bool active_{false};
 
 public:
-	timer(timer_host_state* host);
+	timer(ssu::timer_host_state* host);
 
 	void start(duration_type interval); // @todo: support deadline timers too
 	void stop();
