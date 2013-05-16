@@ -10,6 +10,7 @@
 
 #include <memory>
 #include "link.h"
+#include "timer.h"
 #include "crypto.h"
 #include "negotiation/key_message.h"
 
@@ -59,11 +60,13 @@ class key_initiator
 
     magic_t magic_{0};
 
+    ssu::async::timer transmit_timer;
+
 protected:
     inline magic_t magic() const { return magic_; }
 
 public:
-    key_initiator(const link_endpoint& target) : to(target) {}
+    key_initiator(const link_endpoint& target) : to(target), transmit_timer(0/*todo*/) {}
     ~key_initiator();
 
     inline ssu::negotiation::dh_group_type group() const { return dh_group; }
