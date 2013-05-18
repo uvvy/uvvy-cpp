@@ -1,8 +1,6 @@
 #include "timer.h"
 #include "timer_engine.h"
 
-using namespace boost::posix_time;
-
 namespace ssu {
 namespace async {
 
@@ -45,13 +43,28 @@ void timer::restart()
 
 bool timer::has_failed() const
 {
+	return false;
 }
 
 //=========================================================
 // default_timer_engine
 //=========================================================
 
-default_timer_engine::default_timer_engine()
+class default_timer_engine : public timer_engine
+{
+	boost::asio::deadline_timer interval_timer;
+
+public:
+	default_timer_engine(timer* t, boost::asio::io_service& io_service);
+	~default_timer_engine();
+
+	virtual void start(duration_type interval) override;
+	virtual void stop() override;
+};
+
+default_timer_engine::default_timer_engine(timer* t, boost::asio::io_service& io_service)
+	: timer_engine(t)
+	, interval_timer(io_service)
 {
 }
 
@@ -60,5 +73,25 @@ default_timer_engine::~default_timer_engine()
 	stop();
 }
 
+void default_timer_engine::start(duration_type interval)
+{
+	interval_timer.expires_from_now(interval);
+	interval_timer.async_wait(std::bind(&default_timer_engine::timeout, this));
 }
+
+void default_timer_engine::stop()
+{
 }
+
+void timer_engine::timeout()
+{
+}
+
+} // namespace async
+
+async::timer_engine* timer_host_state::create_timer_engine_for(async::timer* t)
+{
+	return new async::default_timer_engine(t, io_service);
+}
+
+} // namespace ssu
