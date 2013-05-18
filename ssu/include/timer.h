@@ -47,7 +47,16 @@ public:
 
 } // namespace async
 
-class timer_host_state
+class asio_host_state
+{
+protected:
+	/**
+	 * I/O service that needs to be run in order to service protocol interactions.
+	 */
+	boost::asio::io_service io_service;
+};
+
+class timer_host_state : private virtual asio_host_state
 {
 public:
 	/**
