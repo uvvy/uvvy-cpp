@@ -3,6 +3,7 @@
 #include "asio_host_state.h"
 #include <boost/asio/deadline_timer.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/signals2/signal.hpp>
 
 namespace ssu {
 
@@ -46,7 +47,11 @@ public:
 	}
 
 	/**
+	 * Signaled when the timer expires.
+	 * Bool argument 'failed' is true if the hard failure deadline has been reached.
 	 */
+    typedef boost::signals2::signal<void (bool)> on_timeout;
+    on_timeout timeout;
 };
 
 } // namespace async
