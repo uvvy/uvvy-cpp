@@ -210,8 +210,7 @@ int main()
 {
     ssu::link_host_state host;
     ssu::endpoint local_ep(boost::asio::ip::udp::v4(), 9660);
-    boost::asio::io_service io_service;
-    ssu::udp_link l(io_service, local_ep, host);
+    ssu::udp_link l(local_ep, host);
 
     audio_receiver receiver;
     host.bind_receiver(opus_magic, &receiver);
@@ -220,5 +219,5 @@ int main()
 
     audio_hardware hw(&sender, &receiver); // open streams and start io
 
-    io_service.run();
+    host.run_io_service();
 }

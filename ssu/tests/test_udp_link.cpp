@@ -18,8 +18,7 @@ BOOST_AUTO_TEST_CASE(receive_and_log_key_message)
 {
 	ssu::link_host_state host;
     ssu::endpoint local_ep(boost::asio::ip::udp::v4(), 9660);
-    boost::asio::io_service io_service;
-    ssu::udp_link l(io_service, local_ep, host);
+    ssu::udp_link l(local_ep, host);
 
     // Add key responder to link.
     ssu::negotiation::key_responder receiver;
@@ -57,5 +56,5 @@ BOOST_AUTO_TEST_CASE(receive_and_log_key_message)
     // and send it to ourselves.
     l.send(local_ep, msg.data(), msg.size());//hmmm, send(ep, byte_array) doesn't work, why??
 
-    io_service.run();
+    host.run_io_service();
 }

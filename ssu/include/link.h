@@ -16,6 +16,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include "byte_array.h"
+#include "asio_host_state.h"
 
 namespace ssu {
 
@@ -93,7 +94,7 @@ public:
 /**
  * This mixin class encapsulates link-related part of host state.
  */
-class link_host_state
+class link_host_state : virtual public asio_host_state /* jeez, damn asio! */
 {
     std::unordered_map<magic_t, link_receiver*> receivers;
 
@@ -170,7 +171,7 @@ class udp_link : public link
     link_endpoint received_from;
 
 public:
-    udp_link(boost::asio::io_service& io_service, const endpoint& ep, link_host_state& h);
+    udp_link(const endpoint& ep, link_host_state& h);
 
     // bool bind(const endpoint& ep);
     /// Send a packet on this UDP socket.

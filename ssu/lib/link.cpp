@@ -104,9 +104,9 @@ void link::receive(const byte_array& msg, const link_endpoint& src)
                     << " buffer contents " << msg;
 }
 
-udp_link::udp_link(boost::asio::io_service& io_service, const endpoint& ep, link_host_state& h)
+udp_link::udp_link(const endpoint& ep, link_host_state& h)
     : link(h)
-    , udp_socket(io_service, ep)
+    , udp_socket(h.get_io_service(), ep)
     , received_from(ep, this)
 {
     prepare_async_receive();
