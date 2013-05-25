@@ -44,7 +44,7 @@
  * @param N Number of samples to encode
  * @param K Number of pulses to use
  * @param enc Entropy encoder state
- * @ret A mask indicating which blocks in the band received pulses
+ * @return A mask indicating which blocks in the band received pulses
 */
 unsigned alg_quant(celt_norm *X, int N, int K, int spread, int B,
       ec_enc *enc
@@ -58,7 +58,7 @@ unsigned alg_quant(celt_norm *X, int N, int K, int spread, int B,
  * @param N Number of samples to decode
  * @param K Number of pulses to use
  * @param dec Entropy decoder state
- * @ret A mask indicating which blocks in the band received pulses
+ * @return A mask indicating which blocks in the band received pulses
  */
 unsigned alg_unquant(celt_norm *X, int N, int K, int spread, int B,
       ec_dec *dec, opus_val16 gain);
