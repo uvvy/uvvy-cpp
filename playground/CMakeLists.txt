@@ -23,5 +23,6 @@ install(TARGETS opus-streaming
 
 if (APPLE)
     find_library(COREAUDIO_LIB CoreAudio)
-    target_link_libraries(opus-streaming ${COREAUDIO_LIB})
+	find_library(COREFOUNDATION_LIB CoreFoundation)
+    target_link_libraries(opus-streaming ${COREAUDIO_LIB} ${COREFOUNDATION_LIB})
 endif (APPLE)
