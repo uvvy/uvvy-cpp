@@ -23,6 +23,7 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(CLANG "Build using clang." ON)
+option(CLANG_GIT "[developer] Build using clang-git." OFF)
 option(CLANG_ASAN "Use clang's address-sanitizer." ON)
 option(CLANG_LTO "[time-consuming] Enable link-time optimization with LLVM." OFF)
 option(CLANG_CHECK_DOCS "[developer] Check documentation consistency using -Wdocumentation" ON)
@@ -47,6 +48,20 @@ if (CLANG)
 	if (TRAVIS_CI)
 		set(_extraFlags "${_extraFlags} -Wno-uninitialized") # Qt code in travis-ci nodes is lame.
 	endif ()
+
+	if (CLANG_GIT)
+		if (NOT LIBCXX_BASE)
+			message(FATAL_ERROR "Need to specify non-default libc++ location.")
+		endif (NOT LIBCXX_BASE)
+		message(STATUS "ENV{DYLD_LIBRARY_PATH} $ENV{DYLD_LIBRARY_PATH}")
+		#if (NOT $ENV{DYLD_LIBRARY_PATH})
+		#	message(FATAL_ERROR "Did you forget to set custom clang DYLD_LIBRARY_PATH location?")
+		#endif (NOT $ENV{DYLD_LIBRARY_PATH})
+
+		# Include local libcxx first.
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -iwithprefixbefore${LIBCXX_BASE}/include/c++/v1")
+	endif (CLANG_GIT)
+
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_extraFlags}")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_extraFlags}")
 endif (CLANG)
