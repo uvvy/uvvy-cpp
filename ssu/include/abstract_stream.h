@@ -161,7 +161,7 @@ public:
     /**
      * Accept a waiting incoming substream.
      *
-     * @Returns NULL if no incoming substreams are waiting.
+     * @return NULL if no incoming substreams are waiting.
      */
     virtual abstract_stream* accept_substream() = 0;
     /**
