@@ -25,7 +25,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(CLANG "Build using clang." ON)
 option(CLANG_ASAN "Use clang's address-sanitizer." ON)
 option(CLANG_LTO "[time-consuming] Enable link-time optimization with LLVM." OFF)
-option(CLANG_CHECK_DOCS "Check documentation consistency using clang's -Wdocumentation" ON)
+option(CLANG_CHECK_DOCS "[developer] Check documentation consistency using -Wdocumentation" ON)
 
 option(TRAVIS_CI "Build on Travis-CI nodes (disables some warnings)" OFF)
 
