@@ -3,16 +3,19 @@ cmake_minimum_required(VERSION 2.8)
 project(mettanode)
 include(CTest)
 
-find_package(Qt4 REQUIRED)
-
 # On mac, use openssl from brew, not the default system one, because it is too old.
 # Run 'brew install openssl' to install it.
-# A bug in cmake prevents use of OPENSSL_ROOT_DIR for finding a custom openssl,
-# so we use an internal variable instead. This needs to be fixed in cmake.
 if (APPLE)
-	set(_OPENSSL_ROOT_HINTS_AND_PATHS /usr/local/opt/openssl)
+	set(OPENSSL_ROOT_DIR /usr/local/opt/openssl)
+	# Set pkg-config path in case pkg-config is installed on the machine.
+	set(ENV{PKG_CONFIG_PATH} /usr/local/opt/openssl/lib/pkgconfig)
+	# A bug in cmake prevents use of OPENSSL_ROOT_DIR for finding a custom openssl,
+	# so we use an internal variable instead. This needs to be fixed in cmake.
+	set(_OPENSSL_ROOT_HINTS_AND_PATHS PATHS /usr/local/opt/openssl)
 endif (APPLE)
+
 find_package(OpenSSL REQUIRED)
+find_package(Qt4 REQUIRED)
 
 include_directories(${OPENSSL_INCLUDE_DIR})
 
