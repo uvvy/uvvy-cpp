@@ -81,6 +81,7 @@ void default_timer_engine::start(duration_type interval)
 
 void default_timer_engine::stop()
 {
+	interval_timer.cancel();
 }
 
 void timer_engine::timeout()
