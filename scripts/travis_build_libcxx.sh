@@ -2,10 +2,10 @@
 
 set -x
 
-svn co http://llvm.org/svn/llvm-project/libcxx/trunk libcxx
 ncpus=$(grep -c processor /proc/cpuinfo|wc -l)
 echo "Building on $ncpus processors"
 
+git clone http://llvm.org/git/libcxx.git
 mkdir -p libcxx/_build_
 cd libcxx/_build_
 # LIBCXX_LIBSUPCXX_INCLUDE_PATHS will break with libstdc++/gcc upgrade.
