@@ -101,6 +101,8 @@ list(APPEND BOOST_COMPONENTS system)
 list(APPEND BOOST_COMPONENTS date_time)
 # Serialization is used for streaming data to and from udp packets
 list(APPEND BOOST_COMPONENTS serialization)
+# Program_options used to parse cmdline args in some tests
+list(APPEND BOOST_COMPONENTS program_options)
 
 set(Boost_USE_MULTITHREAD ON)
 set(Boost_USE_STATIC_LIBS ON) # Easier to deploy elsewhere

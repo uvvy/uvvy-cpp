@@ -12,6 +12,10 @@
 #include "logging.h"
 #include "opus.h"
 #include "RtAudio.h"
+#include <boost/program_options/parsers.hpp>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <boost/program_options/positional_options.hpp>
 
 constexpr ssu::magic_t opus_magic = 0x00505553;
 
@@ -206,18 +210,78 @@ private:
     }
 };
 
-int main()
+namespace po = boost::program_options;
+
+/**
+ * Get the address to talk to over IPv6 from the command line.
+ * Parses [ipv6::]:port or [ipv6] with default port 9660.
+ */
+int main(int argc, char* argv[])
 {
-    ssu::link_host_state host;
-    ssu::endpoint local_ep(boost::asio::ip::udp::v4(), 9660);
-    ssu::udp_link l(local_ep, host);
+    std::string peer;
+    int port = 9660;
 
-    audio_receiver receiver;
-    host.bind_receiver(opus_magic, &receiver);
+    po::options_description desc("Program arguments");
+    desc.add_options()
+        ("peer,a", po::value<std::string>(), "Peer IPv6 address, can be ipv6, [ipv6] or [ipv6]:port")
+        ("port,p", po::value<int>(&port)->default_value(9660), "Run service on this port, connect peer on this port")
+        ("help", "Print this help message");
+    po::positional_options_description p;
+    p.add("peer", -1);
+    po::variables_map vm;
+    po::store(po::command_line_parser(argc, argv).
+          options(desc).positional(p).run(), vm);
+    po::notify(vm);
 
-    audio_sender sender(l, local_ep);
+    if (vm.count("help")) {
+        std::cout << desc << "\n";
+        return 1;
+    }
 
-    audio_hardware hw(&sender, &receiver); // open streams and start io
+    if (vm.count("port"))
+    {
+        port = vm["port"].as<int>();
+    }
 
-    host.run_io_service();
+    if (vm.count("peer"))
+    {
+        peer = vm["peer"].as<std::string>();
+        if (peer.find("]:") != peer.npos)
+        {
+            // split port off
+            port = boost::lexical_cast<int>(peer.substr(peer.find("]:")+2));
+            peer = peer.substr(0, peer.find("]:")+1);
+        }
+        if (peer.find("[") == 0)
+        {
+            peer = peer.substr(1, peer.find("]")-1);
+        }
+    }
+    else
+    {
+        std::cout << desc << "\n";
+        return 111;
+    }
+
+    std::cout << "Connecting to " << peer << " on port " << port << std::endl;
+
+    try {
+        ssu::link_host_state host;
+        ssu::endpoint local_ep(boost::asio::ip::udp::v6(), port);
+        ssu::endpoint remote_ep(boost::asio::ip::address_v6::from_string(peer), port);
+        ssu::udp_link l(local_ep, host);
+
+        audio_receiver receiver;
+        host.bind_receiver(opus_magic, &receiver);
+
+        audio_sender sender(l, remote_ep);
+
+        audio_hardware hw(&sender, &receiver); // open streams and start io
+
+        host.run_io_service();
+    } catch(std::exception& e)
+    {
+        std::cout << "EXCEPTION " << e.what() << std::endl;
+        return -1;
+    }
 }
