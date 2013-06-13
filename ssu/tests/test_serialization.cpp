@@ -15,7 +15,6 @@
 #include "custom_optional.h"
 #include "xdr.h"
 #include "negotiation/key_message.h"
-#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE Test_key_message_serialization
 #include <boost/test/unit_test.hpp>
 

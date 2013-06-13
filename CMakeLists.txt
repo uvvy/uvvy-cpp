@@ -103,6 +103,7 @@ list(APPEND BOOST_COMPONENTS date_time)
 list(APPEND BOOST_COMPONENTS serialization)
 
 set(Boost_USE_MULTITHREAD ON)
+set(Boost_USE_STATIC_LIBS ON) # Easier to deploy elsewhere
 find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
 # Additional unofficial boost libraries

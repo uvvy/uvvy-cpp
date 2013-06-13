@@ -13,7 +13,6 @@
 #include <boost/optional/optional.hpp>
 #include "custom_optional.h" // optional value serialization instead of boost version
 #include "byte_array.h"
-#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE Test_optional_serialization
 #include <boost/test/unit_test.hpp>
 
