@@ -2,7 +2,8 @@ language: cpp
 compiler: clang
 before_install:
   - ./scripts/travis_build_libcxx.sh
-  - sudo apt-get install -qq libasound2-dev libboost-test-dev libboost-serialization-dev libboost-system-dev libboost-date-time-dev
+  - sudo apt-get update
+  - sudo apt-get install -qq --fix-missing libasound2-dev libboost-test-dev libboost-serialization-dev libboost-system-dev libboost-date-time-dev libboost-program-options-dev
 script: ./scripts/travis_build.sh
 notifications:
   email: false
