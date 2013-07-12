@@ -16,5 +16,4 @@ EOF
 sudo ./b2 --prefix=/usr --libdir=/usr/lib64 -d2 -j2 --layout=system \
 	--user-config=user-config.jam threading=multi install toolset=clang \
 	cxxflags=-std=c++11 cxxflags=-stdlib=libc++ cxxflags=-fPIC cxxflags=-m64 \
-	linkflags=-stdlib=libc++ linkflags=-m64 \
-	--without-python
+	linkflags=-stdlib=libc++ linkflags=-m64
