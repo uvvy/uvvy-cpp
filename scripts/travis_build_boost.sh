@@ -11,7 +11,8 @@ cat <<EOF > user-config.jam
 using clang-linux : : /usr/bin/clang++-3.3 ;
 EOF
 ./bootstrap.sh --prefix=/usr --libdir=/usr/lib64 \
-	--with-toolset=clang --with-libraries=system,date_time,serialization,program_options \
+	--with-toolset=clang \
+	--with-libraries=system,date_time,serialization,program_options,test \
 	--without-icu
 sudo ./b2 --prefix=/usr --libdir=/usr/lib64 -d2 -j2 --layout=system \
 	--user-config=user-config.jam threading=multi install toolset=clang \
