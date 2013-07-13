@@ -117,6 +117,7 @@ include_directories(3rdparty/endian)
 function(create_test NAME EXTRALIBS)
 	add_executable(test_${NAME} test_${NAME}.cpp)
 	target_link_libraries(test_${NAME} ${EXTRALIBS} ${Boost_LIBRARIES})
+	target_link_libraries(test_${NAME} supc++)
 	install(TARGETS test_${NAME}
 	    RUNTIME DESTINATION tests/unittests)
 	add_test(${NAME} test_${NAME})
