@@ -2,6 +2,9 @@
 
 set -x
 
+# Print libsupc++ include paths
+echo | g++ -Wp,-v -x c++ - -fsyntax-only
+
 git clone http://llvm.org/git/libcxx.git
 mkdir -p libcxx/_build_
 cd libcxx/_build_
