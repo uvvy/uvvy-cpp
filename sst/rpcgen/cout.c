@@ -40,12 +40,12 @@
 static void print_trailer( void );
 static void print_stat( int , declaration * , int );
 static void emit_enum( definition * );
-static void emit_program( definition * );
+// static void emit_program( definition * );
 static void emit_union( definition * );
 static void emit_struct( definition * );
 static void emit_typedef( definition * );
-static void emit_inline( int, declaration *, int );
-static void emit_single_in_line( int, declaration *, int, relation );
+// static void emit_inline( int, declaration *, int );
+// static void emit_single_in_line( int, declaration *, int, relation );
 
 /*
  * Emit the C-routine for the given definition
@@ -90,28 +90,28 @@ emit(def)
 	}
 }
 
-static int
-findtype(def, type)
-	definition *def;
-	char *type;
-{
+// static int
+// findtype(def, type)
+// 	definition *def;
+// 	char *type;
+// {
 
-	if (def->def_kind == DEF_PROGRAM || def->def_kind == DEF_CONST) {
-		return (0);
-	} else {
-		return (streq(def->def_name, type));
-	}
-}
+// 	if (def->def_kind == DEF_PROGRAM || def->def_kind == DEF_CONST) {
+// 		return (0);
+// 	} else {
+// 		return (streq(def->def_name, type));
+// 	}
+// }
 
-static int
-undefined(type)
-	char *type;
-{
-	definition *def;
+// static int
+// undefined(type)
+// 	char *type;
+// {
+// 	definition *def;
 
-	def = (definition *) FINDVAL(defined, type, findtype);
-	return (def == NULL);
-}
+// 	def = (definition *) FINDVAL(defined, type, findtype);
+// 	return (def == NULL);
+// }
 
 
 static void
@@ -131,142 +131,142 @@ print_trailer()
 }
 
 
-static void
-print_ifopen(indent, name)
-	int indent;
-	char *name;
-{
-	tabify(fout, indent);
-	f_print(fout, "if (!xdr_%s(xdrs", name);
-}
+// static void
+// print_ifopen(indent, name)
+// 	int indent;
+// 	char *name;
+// {
+// 	tabify(fout, indent);
+// 	f_print(fout, "if (!xdr_%s(xdrs", name);
+// }
 
-static void
-print_ifarg(arg)
-	char *arg;
-{
-	f_print(fout, ", %s", arg);
-}
+// static void
+// print_ifarg(arg)
+// 	char *arg;
+// {
+// 	f_print(fout, ", %s", arg);
+// }
 
-static void
-print_ifsizeof(indent, prefix, type)
-	int indent;
-	char *prefix;
-	char *type;
-{
-	if (indent) {
-		f_print(fout, ",\n");
-		tabify(fout, indent);
-	} else  {
-		f_print(fout, ", ");
-	}
-	if (streq(type, "bool")) {
-		f_print(fout, "sizeof (bool_t), (xdrproc) xdr_bool");
-	} else {
-		f_print(fout, "sizeof (");
-		if (undefined(type) && prefix) {
-			f_print(fout, "%s ", prefix);
-		}
-		f_print(fout, "%s), (xdrproc) xdr_%s", type, type);
-	}
-}
+// static void
+// print_ifsizeof(indent, prefix, type)
+// 	int indent;
+// 	char *prefix;
+// 	char *type;
+// {
+// 	if (indent) {
+// 		f_print(fout, ",\n");
+// 		tabify(fout, indent);
+// 	} else  {
+// 		f_print(fout, ", ");
+// 	}
+// 	if (streq(type, "bool")) {
+// 		f_print(fout, "sizeof (bool_t), (xdrproc) xdr_bool");
+// 	} else {
+// 		f_print(fout, "sizeof (");
+// 		if (undefined(type) && prefix) {
+// 			f_print(fout, "%s ", prefix);
+// 		}
+// 		f_print(fout, "%s), (xdrproc) xdr_%s", type, type);
+// 	}
+// }
 
-static void
-print_ifclose(indent)
-	int indent;
-{
-	f_print(fout, "))\n");
-	tabify(fout, indent);
-	f_print(fout, "\treturn (XDR_FALSE);\n");
-}
+// static void
+// print_ifclose(indent)
+// 	int indent;
+// {
+// 	f_print(fout, "))\n");
+// 	tabify(fout, indent);
+// 	f_print(fout, "\treturn (XDR_FALSE);\n");
+// }
 
-static void
-print_ifstat(indent, prefix, type, rel, amax, objname, name)
-	int indent;
-	char *prefix;
-	char *type;
-	relation rel;
-	char *amax;
-	char *objname;
-	char *name;
-{
-	char *alt = NULL;
+// static void
+// print_ifstat(indent, prefix, type, rel, amax, objname, name)
+// 	int indent;
+// 	char *prefix;
+// 	char *type;
+// 	relation rel;
+// 	char *amax;
+// 	char *objname;
+// 	char *name;
+// {
+// 	char *alt = NULL;
 
-	switch (rel) {
-	case REL_POINTER:
-		print_ifopen(indent, "pointer");
-		print_ifarg("(char **)");
-		f_print(fout, "%s", objname);
-		print_ifsizeof(0, prefix, type);
-		break;
-	case REL_OPTION:
-		print_ifopen(indent, "option");
-		print_ifarg("(void **)");
-		if (*objname == '&') {
-			f_print(fout, "%s.val", objname);
-			print_ifsizeof(0, prefix, type);
-			f_print(fout, ", %s.xdr, %s.len", objname, objname);
-		} else {
-			f_print(fout, "&%s->val", objname);
-			print_ifsizeof(0, prefix, type);
-			f_print(fout, ", &%s->xdr, &%s->len", objname, objname);
-		}
-		break;
-	case REL_VECTOR:
-		if (streq(type, "string")) {
-			alt = "string";
-		} else if (streq(type, "opaque")) {
-			alt = "opaque";
-		}
-		if (alt) {
-			print_ifopen(indent, alt);
-			print_ifarg(objname);
-		} else {
-			print_ifopen(indent, "vector");
-			print_ifarg("(char *)");
-			f_print(fout, "%s", objname);
-		}
-		print_ifarg(amax);
-		if (!alt) {
-			print_ifsizeof(indent + 1, prefix, type);
-		}
-		break;
-	case REL_ARRAY:
-		if (streq(type, "string")) {
-			alt = "string";
-		} else if (streq(type, "opaque")) {
-			alt = "bytes";
-		}
-		if (streq(type, "string")) {
-			print_ifopen(indent, alt);
-			print_ifarg(objname);
-		} else {
-			if (alt) {
-				print_ifopen(indent, alt);
-			} else {
-				print_ifopen(indent, "array");
-			}
-			print_ifarg("(void **)");
-			if (*objname == '&') {
-				f_print(fout, "%s.%s_val, (uint32_t *) %s.%s_len",
-					objname, name, objname, name);
-			} else {
-				f_print(fout,
-					"&%s->%s_val, (uint32_t *) &%s->%s_len",
-					objname, name, objname, name);
-			}
-		}
-		print_ifarg(amax);
-		if (!alt) {
-			print_ifsizeof(indent + 1, prefix, type);
-		}
-		break;
-	case REL_ALIAS:
-		print_ifopen(indent, type);
-		print_ifarg(objname);
-		break;
-	}
-	print_ifclose(indent);
-}
+// 	switch (rel) {
+// 	case REL_POINTER:
+// 		print_ifopen(indent, "pointer");
+// 		print_ifarg("(char **)");
+// 		f_print(fout, "%s", objname);
+// 		print_ifsizeof(0, prefix, type);
+// 		break;
+// 	case REL_OPTION:
+// 		print_ifopen(indent, "option");
+// 		print_ifarg("(void **)");
+// 		if (*objname == '&') {
+// 			f_print(fout, "%s.val", objname);
+// 			print_ifsizeof(0, prefix, type);
+// 			f_print(fout, ", %s.xdr, %s.len", objname, objname);
+// 		} else {
+// 			f_print(fout, "&%s->val", objname);
+// 			print_ifsizeof(0, prefix, type);
+// 			f_print(fout, ", &%s->xdr, &%s->len", objname, objname);
+// 		}
+// 		break;
+// 	case REL_VECTOR:
+// 		if (streq(type, "string")) {
+// 			alt = "string";
+// 		} else if (streq(type, "opaque")) {
+// 			alt = "opaque";
+// 		}
+// 		if (alt) {
+// 			print_ifopen(indent, alt);
+// 			print_ifarg(objname);
+// 		} else {
+// 			print_ifopen(indent, "vector");
+// 			print_ifarg("(char *)");
+// 			f_print(fout, "%s", objname);
+// 		}
+// 		print_ifarg(amax);
+// 		if (!alt) {
+// 			print_ifsizeof(indent + 1, prefix, type);
+// 		}
+// 		break;
+// 	case REL_ARRAY:
+// 		if (streq(type, "string")) {
+// 			alt = "string";
+// 		} else if (streq(type, "opaque")) {
+// 			alt = "bytes";
+// 		}
+// 		if (streq(type, "string")) {
+// 			print_ifopen(indent, alt);
+// 			print_ifarg(objname);
+// 		} else {
+// 			if (alt) {
+// 				print_ifopen(indent, alt);
+// 			} else {
+// 				print_ifopen(indent, "array");
+// 			}
+// 			print_ifarg("(void **)");
+// 			if (*objname == '&') {
+// 				f_print(fout, "%s.%s_val, (uint32_t *) %s.%s_len",
+// 					objname, name, objname, name);
+// 			} else {
+// 				f_print(fout,
+// 					"&%s->%s_val, (uint32_t *) &%s->%s_len",
+// 					objname, name, objname, name);
+// 			}
+// 		}
+// 		print_ifarg(amax);
+// 		if (!alt) {
+// 			print_ifsizeof(indent + 1, prefix, type);
+// 		}
+// 		break;
+// 	case REL_ALIAS:
+// 		print_ifopen(indent, type);
+// 		print_ifarg(objname);
+// 		break;
+// 	}
+// 	print_ifclose(indent);
+// }
 
 static void
 print_encstat(int indent, relation rel, char *amax, char *objname)
@@ -333,25 +333,25 @@ emit_enum(definition *def)
 	print_trailer();
 }
 
-static void
-emit_program(def)
-	definition *def;
-{
-	decl_list *dl;
-	version_list *vlist;
-	proc_list *plist;
+// static void
+// emit_program(def)
+// 	definition *def;
+// {
+// 	decl_list *dl;
+// 	version_list *vlist;
+// 	proc_list *plist;
 
-	for (vlist = def->def.pr.versions; vlist != NULL; vlist = vlist->next)
-		for (plist = vlist->procs; plist != NULL; plist = plist->next) {
-			if (!newstyle || plist->arg_num < 2)
-				continue; /* old style, or single argument */
-			//print_prog_header(plist); XXX
-			for (dl = plist->args.decls; dl != NULL;
-			     dl = dl->next)
-				print_stat(1, &dl->decl, 1);
-			print_trailer();
-		}
-}
+// 	for (vlist = def->def.pr.versions; vlist != NULL; vlist = vlist->next)
+// 		for (plist = vlist->procs; plist != NULL; plist = plist->next) {
+// 			if (!newstyle || plist->arg_num < 2)
+// 				continue; /* old style, or single argument */
+// 			//print_prog_header(plist); XXX
+// 			for (dl = plist->args.decls; dl != NULL;
+// 			     dl = dl->next)
+// 				print_stat(1, &dl->decl, 1);
+// 			print_trailer();
+// 		}
+// }
 
 
 static void
@@ -417,7 +417,7 @@ emit_typedef(def)
 	definition *def;
 {
 	//char *prefix = def->def.ty.old_prefix;
-	char *type = def->def.ty.old_type;
+	// char *type = def->def.ty.old_type;
 	//char *amax = def->def.ty.array_max;
 	relation rel = def->def.ty.rel;
 
@@ -449,84 +449,84 @@ emit_typedef(def)
 
 char *upcase ();
 
-static void
-emit_inline(indent, decl, flag)
-int indent;
-declaration *decl;
-int flag;
-{
-	switch (decl->rel) {
-	case REL_ALIAS :
-		emit_single_in_line(indent, decl, flag, REL_ALIAS);
-		break;
-	case REL_VECTOR :
-		tabify(fout, indent);
-		f_print(fout, "{\n");
-		tabify(fout, indent + 1);
-		f_print(fout, "register %s *genp;\n\n", decl->type);
-		tabify(fout, indent + 1);
-		f_print(fout,
-			"for (i = 0, genp = objp->%s;\n", decl->name);
-		tabify(fout, indent + 2);
-		f_print(fout, "i < %s; i++) {\n", decl->array_max);
-		emit_single_in_line(indent + 2, decl, flag, REL_VECTOR);
-		tabify(fout, indent + 1);
-		f_print(fout, "}\n");
-		tabify(fout, indent);
-		f_print(fout, "}\n");
-		break;
-	default:
-		break;
-	}
-}
+// static void
+// emit_inline(indent, decl, flag)
+// int indent;
+// declaration *decl;
+// int flag;
+// {
+// 	switch (decl->rel) {
+// 	case REL_ALIAS :
+// 		emit_single_in_line(indent, decl, flag, REL_ALIAS);
+// 		break;
+// 	case REL_VECTOR :
+// 		tabify(fout, indent);
+// 		f_print(fout, "{\n");
+// 		tabify(fout, indent + 1);
+// 		f_print(fout, "register %s *genp;\n\n", decl->type);
+// 		tabify(fout, indent + 1);
+// 		f_print(fout,
+// 			"for (i = 0, genp = objp->%s;\n", decl->name);
+// 		tabify(fout, indent + 2);
+// 		f_print(fout, "i < %s; i++) {\n", decl->array_max);
+// 		emit_single_in_line(indent + 2, decl, flag, REL_VECTOR);
+// 		tabify(fout, indent + 1);
+// 		f_print(fout, "}\n");
+// 		tabify(fout, indent);
+// 		f_print(fout, "}\n");
+// 		break;
+// 	default:
+// 		break;
+// 	}
+// }
 
-static void
-emit_single_in_line(indent, decl, flag, rel)
-int indent;
-declaration *decl;
-int flag;
-relation rel;
-{
-	char *upp_case;
-	int freed = 0;
+// static void
+// emit_single_in_line(indent, decl, flag, rel)
+// int indent;
+// declaration *decl;
+// int flag;
+// relation rel;
+// {
+// 	char *upp_case;
+// 	int freed = 0;
 
-	tabify(fout, indent);
-	if (flag == PUT)
-		f_print(fout, "IXDR_PUT_");
-	else
-		if (rel == REL_ALIAS)
-			f_print(fout, "objp->%s = IXDR_GET_", decl->name);
-		else
-			f_print(fout, "*genp++ = IXDR_GET_");
+// 	tabify(fout, indent);
+// 	if (flag == PUT)
+// 		f_print(fout, "IXDR_PUT_");
+// 	else
+// 		if (rel == REL_ALIAS)
+// 			f_print(fout, "objp->%s = IXDR_GET_", decl->name);
+// 		else
+// 			f_print(fout, "*genp++ = IXDR_GET_");
 
-	upp_case = upcase(decl->type);
+// 	upp_case = upcase(decl->type);
 
-	/* hack	 - XX */
-	if (strcmp(upp_case, "INT") == 0)
-	{
-		free(upp_case);
-		freed = 1;
-		upp_case = "LONG";
-	}
+// 	/* hack	 - XX */
+// 	if (strcmp(upp_case, "INT") == 0)
+// 	{
+// 		free(upp_case);
+// 		freed = 1;
+// 		upp_case = "LONG";
+// 	}
 
-	if (strcmp(upp_case, "U_INT") == 0)
-	{
-		free(upp_case);
-		freed = 1;
-		upp_case = "U_LONG";
-	}
-	if (flag == PUT)
-		if (rel == REL_ALIAS)
-			f_print(fout,
-				"%s(buf, objp->%s);\n", upp_case, decl->name);
-		else
-			f_print(fout, "%s(buf, *genp++);\n", upp_case);
+// 	if (strcmp(upp_case, "U_INT") == 0)
+// 	{
+// 		free(upp_case);
+// 		freed = 1;
+// 		upp_case = "U_LONG";
+// 	}
+// 	if (flag == PUT)
+// 		if (rel == REL_ALIAS)
+// 			f_print(fout,
+// 				"%s(buf, objp->%s);\n", upp_case, decl->name);
+// 		else
+// 			f_print(fout, "%s(buf, *genp++);\n", upp_case);
 
-	else
-		f_print(fout, "%s(buf);\n", upp_case);
-	if (!freed)
-		free(upp_case);
-}
+// 	else
+// 		f_print(fout, "%s(buf);\n", upp_case);
+// 	if (!freed)
+// 		free(upp_case);
+// }
 
 char *upcase(str)
 char *str;

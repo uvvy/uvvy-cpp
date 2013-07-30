@@ -218,12 +218,11 @@ public:
     virtual void noEntries(int pos, qint64 recno, int nents) = 0;
 
 protected:
-
     // Our implementations of AbstractOpaqueReader's abstract methods
-    void gotData(const QByteArray &ohash,
+    virtual void gotData2(const QByteArray &ohash,
                 qint64 ofs, qint64 recno,
                 const QByteArray &data, int nrecs);
-    void noData(const QByteArray &ohash,
+    virtual void noData2(const QByteArray &ohash,
                 qint64 ofs, qint64 recno,
                 qint64 size, int nrecs);
 };

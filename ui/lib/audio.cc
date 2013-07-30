@@ -1,12 +1,8 @@
-
 #include <math.h>
-
 #include <QStringList>
 #include <QMutexLocker>
 #include <QtDebug>
-
 #include "audio.h"
-
 
 ////////// Audio //////////
 
@@ -28,15 +24,15 @@ QList<AbstractAudioOutput*> Audio::outstreams;	// Enabled output streams
 QString Audio::errmsg;
 
 static RtAudio *audio_inst;
-static double parate;
-static int paframesize;
+static double hwrate;
+static unsigned int hwframesize;
 
 static int inlev, outlev;
 
 static AudioInputMonitor *inmon;
 
 
-static const int monSampleRate = 8000;
+static const int monSampleRate = 48000;
 static const int monFrameSize = 160;
 
 
@@ -84,7 +80,7 @@ int Audio::scan()
 	int n = 0;
 	foreach(QString s, deviceNames())
 	{
-		qWarning() << "Device" << n << ":" << s;
+		qDebug() << "Device" << n << ":" << s;
 		++n;
 	}
 
@@ -176,7 +172,7 @@ void Audio::setInputDevice(const QString &name)
 			return;
 		}
 	}
-	qWarning("Audio: unknown input device %s", name.toLocal8Bit().data());
+	qWarning() << "Audio: unknown input device" << name;
 }
 
 void Audio::setOutputDevice(const QString &name)
@@ -187,7 +183,7 @@ void Audio::setOutputDevice(const QString &name)
 			return;
 		}
 	}
-	qWarning("Audio: unknown output device %s", name.toLocal8Bit().data());
+	qWarning() << "Audio: unknown output device" << name;
 }
 
 int Audio::inChannels(int dev)
@@ -264,27 +260,30 @@ void Audio::open()
 	if (!inena && !outena)
 		return;
 
+	qDebug() << "In streams:" << instreams.size() << " Out streams:" << outstreams.size();
+
 	// Use the maximum rate requested by any of our streams,
 	// and the minimum framesize requested by any of our streams,
 	// to maximize quality and minimize buffering latency.
 	double maxrate = 0;
-	int minframesize = 65536;
+	unsigned int minframesize = 65536;
 	for (int i = 0; i < instreams.size(); i++) {
-		maxrate = qMax(maxrate, instreams[i]->rate);
-		minframesize = qMin(minframesize, instreams[i]->framesize);
+		maxrate = qMax(maxrate, instreams[i]->sampleRate());
+		minframesize = qMin(minframesize, instreams[i]->frameSize());
 	}
 	for (int i = 0; i < outstreams.size(); i++) {
-		maxrate = qMax(maxrate, outstreams[i]->rate);
-		minframesize = qMin(minframesize, outstreams[i]->framesize);
+		maxrate = qMax(maxrate, outstreams[i]->sampleRate());
+		minframesize = qMin(minframesize, outstreams[i]->frameSize());
 	}
 	Q_ASSERT(maxrate > 0);
+	Q_ASSERT(minframesize < 65536);
 
 	// XXX check against rates supported by devices,
 	// resample if necessary...
 
-	qWarning() << "Open audio:"
+	qDebug() << "Open audio:"
 		<< "input:" << indev << deviceName(indev) << (inena ? "enable" : "disable")
-		<< "*;* output:" << outdev << deviceName(outdev) << (outena ? "enable" : "disable");
+		<< "; output:" << outdev << deviceName(outdev) << (outena ? "enable" : "disable");
 
 	// Open the audio device
 	RtAudio::StreamParameters inparam, outparam;
@@ -294,6 +293,8 @@ void Audio::open()
 	outparam.nChannels = AudioOutput::nChannels;
 	unsigned int bufferFrames = minframesize;
 
+	qDebug() << "Open input params: dev " << indev << " nChans " << inparam.nChannels << " rate " << maxrate << " minframesize " << minframesize;
+
 	try {
 		audio_inst->openStream(outena ? &outparam : NULL, inena ? &inparam : NULL, RTAUDIO_FLOAT32, maxrate, &bufferFrames, rtcallback);
 	}
@@ -302,8 +303,10 @@ void Audio::open()
     	return;
     }
 
-	parate = maxrate;
-	paframesize = bufferFrames;
+	hwrate = maxrate;
+	hwframesize = bufferFrames;
+
+	qDebug() << "Open resulting hwrate" << hwrate << "framesize" << hwframesize;
 
 	audio_inst->startStream();
 }
@@ -351,22 +354,14 @@ int Audio::rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
 {
 	// A PortAudio "frame" is one sample per channel,
 	// whereas our "frame" is one buffer worth of data (as in Speex).
-	Q_ASSERT(nFrames == paframesize);
+	Q_ASSERT(nFrames == hwframesize);
 
-	qWarning() << "rtcallback, inputBuffer" << inputBuffer << ", outputBuffer" << outputBuffer << ", nframes" << nFrames;
+	qDebug() << "rtcallback, inputBuffer" << inputBuffer << ", outputBuffer" << outputBuffer << ", nframes" << nFrames;
 
-#if 0
-	// Loopback test...
-	if (inputBuffer and outputBuffer)
-	{
-		memcpy(outputBuffer, inputBuffer, nFrames*sizeof(float));
-	}
-#else
 	if (inputBuffer != NULL)
 		sendin((float*)inputBuffer);
 	if (outputBuffer != NULL)
 		mixout((float*)outputBuffer);
-#endif
 
 	return 0;
 }
@@ -376,8 +371,9 @@ void Audio::sendin(const float *inbuf)
 	// Broadcast the audio input to all listening input streams
 	for (int i = 0; i < instreams.size(); i++) {
 		AbstractAudioInput *ins = instreams[i];
-		if (ins->rate == parate && ins->framesize == paframesize) {
+		if (ins->sampleRate() == hwrate && ins->frameSize() == hwframesize) {
 			// The easy case - no buffering or resampling needed.
+			qDebug() << "sendin captured signal";
 			ins->acceptInput(inbuf);
 			continue;
 		}
@@ -394,20 +390,30 @@ void Audio::mixout(float *outbuf)
 		qDebug() << "Audio:" << (oldnout = nout) << "output streams";
 
 	if (nout == 0) {	// Nothing playing
-		for (int i = 0; i < paframesize; i++)
+		for (unsigned int i = 0; i < hwframesize; i++)
 			outbuf[i] = 0.0;
 		setOutputLevel(0);
 		return;
 	}
 
+	qDebug() << "mixout playback signal";
+
+	// @TODO provide synchronization, the output stream might've ceased to exist here.
+	// virtual void AbstractAudioInput::setEnabled(bool) false 
+	// setInputLevel 52 
+	// virtual void AbstractAudioOutput::setEnabled(bool) false 
+	// mixout playback signal 
+	// Fatal: ASSERT failure in QList<T>::operator[]: "index out of range", file /usr/local/Cellar/qt/4.8.3/include/QtCore/qlist.h, line 477
+	// Audio::reopen 
+
 	// Produce the first output stream's data directly into outbuf.
 	outstreams[0]->getOutput(outbuf);
 
 	// Mix any other streams into it.
-	float encbuf[paframesize];
+	float encbuf[hwframesize];
 	for (int i = 1; i < nout; i++) {
 		outstreams[i]->getOutput(encbuf);
-		for (int j = 0; j < paframesize; j++)
+		for (unsigned int j = 0; j < hwframesize; j++)
 			outbuf[j] += encbuf[j];
 	}
 
@@ -420,13 +426,14 @@ void Audio::mixout(float *outbuf)
 int Audio::computeLevel(const float *buf)
 {
 	float lev = 0.0;
-	for (int i = 0; i < paframesize; i++) {
+	for (unsigned int i = 0; i < hwframesize; i++) {
 		float l = buf[i];
-		//lev = qMax(lev, l >= 0 ? l : -l);
 		lev = qMax(lev, qAbs(l));
 	}
+	if (lev > 1.0)
+		qWarning() << "HEY, TOO HIGH SIGNAL LEVEL" << lev;
+
 	return (int)(lev * 100.0);
-	return (int)((1.0 - log2f(lev)) * 100.0);
 }
 
 void Audio::setInputLevel(int lev)
@@ -434,7 +441,7 @@ void Audio::setInputLevel(int lev)
 	if (inlev == lev)
 		return;
 
-	qWarning() << "setInputLevel" << lev;
+	qDebug() << "setInputLevel" << lev;
 	inlev = lev;
 	instance()->inputLevelChanged(lev);
 }
@@ -444,7 +451,7 @@ void Audio::setOutputLevel(int lev)
 	if (outlev == lev)
 		return;
 
-	qWarning() << "setOutputLevel" << lev;
+	qDebug() << "setOutputLevel" << lev;
 	outlev = lev;
 	instance()->outputLevelChanged(lev);
 }
@@ -522,6 +529,7 @@ AbstractAudioInput::AbstractAudioInput(int framesize, double samplerate,
 
 void AbstractAudioInput::setEnabled(bool enabling)
 {
+	qDebug() << __PRETTY_FUNCTION__ << enabling;
 	if (enabling && !enabled()) {
 		if (frameSize() <= 0 || sampleRate() <= 0) {
 			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
@@ -532,7 +540,7 @@ void AbstractAudioInput::setEnabled(bool enabling)
 		bool wasempty = Audio::instreams.isEmpty();
 		Audio::instreams.append(this);
 		AudioStream::setEnabled(true);
-		if (wasempty || parate < sampleRate())
+		if (wasempty || hwrate < sampleRate())
 			Audio::reopen(); // (re-)open at suitable rate
 
 	} else if (!enabling && enabled()) {
@@ -562,7 +570,9 @@ AbstractAudioOutput::AbstractAudioOutput(int framesize, double samplerate,
 
 void AbstractAudioOutput::setEnabled(bool enabling)
 {
-	if (enabling && !enabled()) {
+	qDebug() << __PRETTY_FUNCTION__ << enabling;
+	if (enabling && !enabled())
+	{
 		if (frameSize() <= 0 || sampleRate() <= 0) {
 			qWarning() << this << "bad frame size" << frameSize() << "or sample rate" << sampleRate();
 			return;
@@ -572,10 +582,11 @@ void AbstractAudioOutput::setEnabled(bool enabling)
 		bool wasempty = Audio::outstreams.isEmpty();
 		Audio::outstreams.append(this);
 		AudioStream::setEnabled(true);
-		if (wasempty || parate < sampleRate())
+		if (wasempty || hwrate < sampleRate())
 			Audio::reopen(); // (re-)open at suitable rate
-
-	} else if (!enabling && enabled()) {
+	} 
+	else if (!enabling && enabled())
+	{
 		Q_ASSERT(Audio::outstreams.contains(this));
 		Audio::outstreams.removeAll(this);
 		AudioStream::setEnabled(false);
@@ -586,8 +597,8 @@ void AbstractAudioOutput::setEnabled(bool enabling)
 
 void AbstractAudioOutput::getOutput(float *buf)
 {
-	Q_ASSERT(sampleRate() == parate);	// XXX
-	Q_ASSERT(frameSize() == paframesize);
+	Q_ASSERT(sampleRate() == hwrate);	// XXX
+	Q_ASSERT(frameSize() == hwframesize);
 	produceOutput(buf);
 }
 
@@ -763,8 +774,8 @@ void AudioOutput::reset()
 ////////// AudioLoop //////////
 
 AudioLoop::AudioLoop(QObject *parent)
-:	AudioStream(parent),
-	delay(2.0)
+	: AudioStream(parent)
+	, delay(4.0)
 {
 	connect(&in, SIGNAL(readyRead()), this, SLOT(inReadyRead()));
 }
@@ -772,7 +783,7 @@ AudioLoop::AudioLoop(QObject *parent)
 void AudioLoop::setLoopDelay(float secs)
 {
 	Q_ASSERT(!enabled());
-	Q_ASSERT(secs > 0);
+	Q_ASSERT(secs > 0.0);
 	delay = secs;
 }
 

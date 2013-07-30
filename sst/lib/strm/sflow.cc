@@ -140,8 +140,7 @@ void StreamFlow::acked(quint64 txseq, int npackets, quint64 rxseq)
 		if (p.isNull())
 			continue;
 
-		//qDebug() << "Got ack for packet" << txseq
-		//	<< "of size" << p.buf.size();
+		qDebug() << "Got ack for packet" << txseq << "of size" << p.buf.size();
 		p.strm->acked(this, p, rxseq);
 	}
 }
@@ -151,14 +150,12 @@ void StreamFlow::missed(quint64 txseq, int npackets)
 	for (; npackets > 0; txseq++, npackets--) {
 		// find but don't remove (common case for missed packets)
 		if (!ackwait.contains(txseq)) {
-			//qDebug() << "Missed packet" << txseq
-			//	<< "but can't find it!";
+			qDebug() << "Missed packet" << txseq << "but can't find it!";
 			continue;
 		}
 		BaseStream::Packet &p = ackwait[txseq];
 
-		//qDebug() << "Missed packet" << txseq
-		//	<< "of size" << p.buf.size();
+		qDebug() << "Missed packet" << txseq << "of size" << p.buf.size();
 		if (!p.late) {
 			p.late = true;
 			if (!p.strm->missed(this, p))
@@ -173,8 +170,7 @@ void StreamFlow::expire(quint64 txseq, int npackets)
 		// find and unconditionally remove packet when it expires
 		BaseStream::Packet p = ackwait.take(txseq);
 		if (p.isNull()) {
-			//qDebug() << "Missed packet" << txseq
-			//	<< "but can't find it!";
+			qDebug() << "Missed packet" << txseq << "but can't find it!";
 			continue;
 		}
 
@@ -188,9 +184,24 @@ bool StreamFlow::flowReceive(qint64 pktseq, QByteArray &pkt)
 	return BaseStream::receive(pktseq, pkt, this);
 }
 
+static QString linkStatusString(LinkStatus status)
+{
+	switch (status)
+	{
+		case LinkDown:
+			return "Link down";
+		case LinkStalled:
+			return "Link stalled";
+		case LinkUp:
+			return "Link up";
+		default:
+			return "Unknown link status";
+	}
+}
+
 void StreamFlow::gotLinkStatusChanged(LinkStatus newstatus)
 {
-	qDebug() << this << "gotLinkStatusChanged:" << newstatus;
+	qDebug() << this << "gotLinkStatusChanged:" << newstatus << linkStatusString(newstatus);
 
 	if (newstatus != LinkDown)
 		return;
@@ -229,7 +240,7 @@ void StreamFlow::start(bool initiator)
 
 void StreamFlow::stop()
 {
-	//qDebug() << "StreamFlow::stop";
+	qDebug() << "StreamFlow::stop";
 
 	Flow::stop();
 

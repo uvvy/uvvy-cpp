@@ -19,11 +19,11 @@ public:
   virtual ~CEncryptStrategy ();
 
   // Reading and writing of course messes around with all the data
-  virtual int  DataRead(long, void*, int);
-  virtual void DataWrite(long, const void*, int);
+  virtual int  DataRead(t4_i32, void*, int);
+  virtual void DataWrite(t4_i32, const void*, int);
 
   // For this example, we also disable all explicit file flushes
-  virtual void DataCommit(long) { }
+  virtual void DataCommit(t4_i32) { }
 
   // Cannot use memory mapped file access when decoding on the fly
   virtual void ResetFileMapping() { }
@@ -45,7 +45,7 @@ CEncryptStrategy::~CEncryptStrategy ()
 {
 }
 
-int CEncryptStrategy::DataRead(long lOff, void* lpBuf, int nCount)
+int CEncryptStrategy::DataRead(t4_i32 lOff, void* lpBuf, int nCount)
 {
   int result = 0;
 
@@ -62,7 +62,7 @@ int CEncryptStrategy::DataRead(long lOff, void* lpBuf, int nCount)
   return result;
 }
 
-void CEncryptStrategy::DataWrite(long lOff, const void* lpBuf, int nCount)
+void CEncryptStrategy::DataWrite(t4_i32 lOff, const void* lpBuf, int nCount)
 {
   if (nCount > 0)
   {

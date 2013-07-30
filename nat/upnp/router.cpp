@@ -605,7 +605,7 @@ void UPnPRouter::UPnPRouterPrivate::getExternalIP()
         {
             QString action = "GetExternalIPAddress";
             QString comm = SOAP::createCommand(action,s.servicetype);
-            HTTPRequest* r = sendSoapQuery(comm,s.servicetype + "#" + action,s.controlurl, parent, SLOT(getExternalIPResult(HTTPRequest*)));
+            /*HTTPRequest* r =*/ sendSoapQuery(comm,s.servicetype + "#" + action,s.controlurl, parent, SLOT(getExternalIPResult(HTTPRequest*)));
             break;
         }
     }

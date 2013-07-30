@@ -13,7 +13,7 @@
 #include "util.h"
 #include "reginfo.h"
 #include "xdr.h"
-#include "sha2.h"
+#include "crypto/sha2.h"
 
 
 //=====================================================================================================================
@@ -399,12 +399,13 @@ RegServer::doDelete(XdrStream& rxs, const Endpoint& srcep)
 	if (reci == NULL)
 		return;
 
-	bool deleteStatus = idhash.remove(idi) > 0;
+	bool wasDeleted = idhash.count(idi) > 0;
+	delete reci; // will wipe it from idhash table.
 
 	// Response back notifying that the record was deleted.
 	QByteArray resp;
 	XdrStream wxs(&resp, QIODevice::WriteOnly);
-	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_DELETE) << hashedNonce << deleteStatus;
+	wxs << REG_MAGIC << (quint32)(REG_RESPONSE | REG_DELETE) << hashedNonce << wasDeleted;
 	sock.writeDatagram(resp, srcep.addr, srcep.port);
 
 	// XX Need to notify active listeners of the search results that one of the results is gone.
@@ -413,6 +414,8 @@ RegServer::doDelete(XdrStream& rxs, const Endpoint& srcep)
 RegRecord*
 RegServer::findCaller(const Endpoint &ep, const QByteArray &idi, const QByteArray &nhi)
 {
+	// @TODO: list the existing records here before lookup?
+
 	RegRecord *reci = idhash.value(idi);
 	if (reci == NULL) {
 		qDebug("Received request from non-registered caller");
@@ -446,15 +449,13 @@ RegRecord::RegRecord(RegServer *srv,
 	// replacing any existing entry with this ID.
 	RegRecord *old = srv->idhash.value(id);
 	if (old != NULL) {
-		qDebug() << "Replacing existing record for"<< id;
+		qDebug() << "Replacing existing record for" << id;
 		delete old;
 	}
 	srv->idhash[id] = this;
 	srv->allrecords += this;
 
-	PeerId peerid(id);
-
-	qDebug() << "Registering record for" << peerid << "at" << ep;
+	qDebug() << "Registering record for" << PeerId(id) << "at" << ep;
 
 	// Register all our keywords in the RegServer's keyword table.
 	regKeywords(true);
@@ -477,7 +478,8 @@ RegRecord::~RegRecord()
 void
 RegRecord::regKeywords(bool insert)
 {
-	foreach (QString kw, RegInfo(info).keywords()) {
+	foreach (QString kw, RegInfo(info).keywords())
+	{
 		QSet<RegRecord*> &set = srv->kwhash[kw];
 		if (insert) {
 			set.insert(this);

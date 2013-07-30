@@ -22,15 +22,15 @@
 #pragma once
 
 #include <QIODevice>
-
-#include "os.h"
+#include "os.h" // for ntohl/htonl
 
 class QByteArray;
 
 
 namespace SST {
 
-/** XDR encoding/decoding stream.
+/** 
+ * XDR encoding/decoding stream.
  * This class provides an interface modeled on QDataStream,
  * but uses the XDR encoding as specified in RFC 1832.
  */
@@ -406,6 +406,8 @@ inline void xdrDecodeArray(XdrStream &xs, QByteArray &v, quint32 maxlen)
  * In line with this usage, we map XDR pointers to an XdrPointer class
  * that represents a "captured", automatically-managed instance
  * of the appropriate target type.
+ *
+ * @fixme Can be represented by boost::optional<T>
  */
 template<class T> class XdrPointer
 {

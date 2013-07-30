@@ -12,7 +12,6 @@ class QCheckBox;
 class QLabel;
 class QModelIndex;
 class Meter;
-class AudioInput;
 class AudioLoop;
 
 

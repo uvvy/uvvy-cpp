@@ -100,18 +100,17 @@ const int cable_up_qlen[] = {100,800,1800,2200,2500,3000,4000};
 #define CABLE_DN_QLEN	130	// Very common among many ISPs
 #define CABLE_UP_QLEN	2200
 
-
 // Typical residential broadband DSL link
 const LinkParams dsl15_dn =
-	{ DSL_DN_BW*1024/8, DSL_RTDELAY*1000/2, DSL_DN_QLEN*1000 };
+	{ DSL_DN_BW*1024/8, DSL_RTDELAY*1000/2, DSL_DN_QLEN*1000, 0.0 };
 const LinkParams dsl15_up =
-	{ DSL_UP_BW*1024/8, DSL_RTDELAY*1000/2, DSL_UP_QLEN*1000 };
+	{ DSL_UP_BW*1024/8, DSL_RTDELAY*1000/2, DSL_UP_QLEN*1000, 0.0 };
 
 // Typical residential cable modem link
 const LinkParams cable5_dn =
-	{ CABLE_DN_BW*1024/8, CABLE_RTDELAY*1000/2, CABLE_DN_QLEN*1000 };
+	{ CABLE_DN_BW*1024/8, CABLE_RTDELAY*1000/2, CABLE_DN_QLEN*1000, 0.0 };
 const LinkParams cable5_up =
-	{ CABLE_UP_BW*1024/8, CABLE_RTDELAY*1000/2, CABLE_UP_QLEN*1000 };
+	{ CABLE_UP_BW*1024/8, CABLE_RTDELAY*1000/2, CABLE_UP_QLEN*1000, 0.0 };
 
 
 // Calculate transmission time of one packet in microseconds,
@@ -132,16 +131,16 @@ const LinkParams cable5_up =
 
 // Ethernet link parameters (XXX are queue length realistic?)
 const LinkParams eth10 =
-	{ ETH10_RATE, ETH10_DELAY/2, txtime(ETH_QBYTES,ETH10_RATE) };
+	{ ETH10_RATE, ETH10_DELAY/2, txtime(ETH_QBYTES,ETH10_RATE), 0.0 };
 const LinkParams eth100 =
-	{ ETH100_RATE, ETH100_DELAY/2, txtime(ETH_QBYTES,ETH100_RATE) };
+	{ ETH100_RATE, ETH100_DELAY/2, txtime(ETH_QBYTES,ETH100_RATE), 0.0 };
 const LinkParams eth1000 =
-	{ ETH1000_RATE, ETH1000_DELAY/2, txtime(ETH_QBYTES,ETH1000_RATE) };
+	{ ETH1000_RATE, ETH1000_DELAY/2, txtime(ETH_QBYTES,ETH1000_RATE), 0.0 };
 
 
 // Satellite link parameters (XXX need to check)
 const LinkParams sat10 =
-	{ ETH10_RATE, 500000, 1024*1024 };
+	{ ETH10_RATE, 500000, 1024*1024, 0.0 };
 
 
 static bool tracepkts = false;
@@ -164,13 +163,16 @@ QString LinkParams::toString()
 
 ////////// SimTimerEngine //////////
 
-SimTimerEngine::SimTimerEngine(Simulator *sim, Timer *t)
-:	TimerEngine(t), sim(sim), wake(-1)
+SimTimerEngine::SimTimerEngine(Simulator *sim, Timer *parent)
+	: TimerEngine(parent)
+	, sim(sim)
+	, wake(-1)
 {
 }
 
 SimTimerEngine::~SimTimerEngine()
 {
+	qDebug() << "~" << this;
 	stop();
 }
 
@@ -179,7 +181,7 @@ void SimTimerEngine::start(quint64 usecs)
 	stop();
 
 	wake = sim->cur.usecs + usecs;
-	//qDebug() << "start timer for" << wake;
+	qDebug() << this << "start timer until" << wake;
 
 	int pos = 0;
 	while (pos < sim->timers.size() && sim->timers[pos]->wake <= wake)
@@ -192,7 +194,7 @@ void SimTimerEngine::stop()
 	if (wake < 0)
 		return;
 
-	//qDebug() << "stop timer at" << wake;
+	qDebug() << this << "stop timer at" << wake;
 	sim->timers.removeAll(this);
 	wake = -1;
 }
@@ -203,10 +205,13 @@ void SimTimerEngine::stop()
 SimPacket::SimPacket(SimHost *srch, const Endpoint &src, 
 			SimLink *lnk, const Endpoint &dst,
 			const char *data, int size)
-:	QObject(srch->sim),
-	sim(srch->sim),
-	src(src), dst(dst), dsth(NULL),
-	buf(data, size), timer(srch, this)
+	: QObject(srch->sim)
+	, sim(srch->sim)
+	, src(src)
+	, dst(dst)
+	, dsth(NULL)
+	, buf(data, size)
+	, timer(srch, this)
 {
 	Q_ASSERT(srch->links.value(src.addr) == lnk);
 
@@ -215,8 +220,7 @@ SimPacket::SimPacket(SimHost *srch, const Endpoint &src,
 	int w = lnk->which(srch);
 	dsth = lnk->hosts[!w];
 	if (!dsth || !(lnk->addrs[!w] == dst.addr)) {
-		qDebug() << this << "target host"
-			<< dst.addr.toString() << "not on specified link!";
+		qDebug() << this << "target host" << dst.addr.toString() << "not on specified link!";
 		deleteLater();
 		return;
 	}
@@ -289,8 +293,7 @@ void SimPacket::arrive()
 {
 	// Make sure we're still on the destination host's queue
 	if (!dsth || !dsth->pqueue.contains(this)) {
-		qDebug() << this << "no longer queued to destination host"
-			<< dst.addr.toString();
+		qDebug() << this << "no longer queued to destination host" << dst.addr.toString();
 		return deleteLater();
 	}
 
@@ -365,8 +368,7 @@ bool SimSocket::bind(const QHostAddress &addr, quint16 port,
 	host->socks.insert(port, this);
 	this->port = port;
 
-	//qDebug() << "Bound virtual socket on host" << host->addr.toString()
-	//	<< "port" << port;
+	qDebug() << "Bound virtual socket on host" << addr << "port" << port;
 
 	setActive(true);
 	return true;
@@ -391,8 +393,7 @@ bool SimSocket::send(const Endpoint &dst, const char *data, int size)
 	src.port = port;
 	SimHost *dsth = host->neighborAt(dst.addr, src.addr);
 	if (!dsth) {
-		qDebug() << this << "unknown or un-adjacent target host"
-			<< dst.addr.toString();
+		qDebug() << this << "unknown or un-adjacent target host" << dst.addr.toString();
 		return false;
 	}
 
@@ -461,10 +462,10 @@ Time SimHost::currentTime()
 	return sim->realtime ? Host::currentTime() : sim->cur;
 }
 
-TimerEngine *SimHost::newTimerEngine(Timer *timer)
+TimerEngine *SimHost::newTimerEngineFor(Timer *timer)
 {
 	return sim->realtime
-		? Host::newTimerEngine(timer)
+		? Host::newTimerEngineFor(timer)
 		: new SimTimerEngine(sim, timer);
 }
 
@@ -566,7 +567,6 @@ void SimLink::disconnect()
 Simulator::Simulator(bool realtime)
 	: realtime(realtime)
 {
-	cur.usecs = 0;
 }
 
 Simulator::~Simulator()
@@ -588,7 +588,7 @@ Time Simulator::currentTime()
 
 void Simulator::run()
 {
-	//qDebug() << "Simulator::run()";
+	qDebug() << "Simulator::run()";
 	if (realtime)
 		qFatal("Simulator::run() is only for use with virtual time:\n"
 			"for real time, use QCoreApplication::exec() instead.");

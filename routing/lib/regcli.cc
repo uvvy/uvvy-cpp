@@ -28,7 +28,7 @@
 #include "sock.h"
 #include "host.h"
 #include "util.h"
-#include "sha2.h"
+#include "crypto/sha2.h"
 #include "xdr.h"
 
 using namespace SST;
@@ -38,6 +38,19 @@ using namespace SST;
 //=====================================================================================================================
 
 const qint64 RegClient::maxRereg;
+
+QString RegClient::stateString(int state)
+{
+	switch (state)
+	{
+		case Idle: return "Unregistered and not doing anything";
+		case Resolve: return "Resolving rendezvous server's host name";
+		case Insert1: return "Sent Insert1 request, waiting response";
+		case Insert2: return "Sent Insert2 request, waiting response";
+		case Registered: return "Successfully registered";
+		default: return "Unknown registration client state";
+	}
+}
 
 RegClient::RegClient(Host *h, QObject *parent)
 :	QObject(parent),
@@ -52,7 +65,7 @@ RegClient::RegClient(Host *h, QObject *parent)
 	connect(&reregtimer, SIGNAL(timeout(bool)),
 		this, SLOT(reregTimeout()));
 
-	h->cliset.insert(this);
+	h->regClientSet.insert(this);
 	h->regClientCreate(this);
 }
 
@@ -63,7 +76,7 @@ RegClient::~RegClient()
 
 	// Notify anyone interested of our upcoming destruction.
 	h->regClientDestroy(this);
-	h->cliset.remove(this);
+	h->regClientSet.remove(this);
 
 	// Remove any nonce we may have registered in the nhihash.
 	h->rcvr.nhihash.remove(nhi);
@@ -106,7 +119,7 @@ void RegClient::disconnect()
 	reregtimer.stop();
 
 	// Notify the user that we're not (or no longer) registered
-	stateChanged();
+	stateChanged(state);
 }
 
 void RegClient::registerAt(const QString &srvname, quint16 srvport)
@@ -260,7 +273,7 @@ void RegClient::gotInsert2Reply(XdrStream &rs)
 	// Notify anyone interested.
 	qDebug() << this << "registered with" << srvname << "for" << lifeSecs << "seconds";
 	qDebug() << this << "my public endpoint" << pubEp.toString();
-	stateChanged();
+	stateChanged(state);
 }
 
 void RegClient::lookup(const PeerId& idtarget, bool notify)
@@ -288,7 +301,7 @@ void RegClient::sendLookup(const PeerId& idtarget, bool notify)
 
 void RegClient::gotLookupReply(XdrStream &rs, bool isnotify)
 {
-	qDebug() << this << "gotLookupReply" << isnotify;
+	qDebug() << this << "gotLookupReply" << (isnotify ? "NOTIFY" : "RESPONSE");
 
 	// Decode the rest of the reply
 	QByteArray targetid, targetinfo;
@@ -351,7 +364,7 @@ void RegClient::gotSearchReply(XdrStream &rs)
 
 	// Make sure we actually did the indicated search
 	if (!searches.contains(text)) {
-		//qDebug("RegClient: useless Search result");
+		qDebug("RegClient: useless Search result");
 		return;
 	}
 
@@ -382,7 +395,7 @@ void RegClient::sendDelete()
 	send(msg);
 }
 
-void RegClient::gotDeleteReply(XdrStream &rs)
+void RegClient::gotDeleteReply(XdrStream &)
 {
 	// Ignore.
 	qDebug() << this << "got delete reply, ignored";

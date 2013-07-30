@@ -15,12 +15,12 @@
 #include "httprequest.h"
 
 HTTPRequest::HTTPRequest(const QNetworkRequest& rq, const QString& payld, bool verbose)
-    : req(rq)
+    : running(0)
+    , req(rq)
     , payload(payld)
     , verbose(verbose)
     , finished(false)
     , success(false)
-    , running(0)
 {
     manager = new QNetworkAccessManager(this);
 

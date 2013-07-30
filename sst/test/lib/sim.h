@@ -138,7 +138,7 @@ public:
 	~SimHost();
 
 	virtual Time currentTime();
-	virtual TimerEngine *newTimerEngine(Timer *timer);
+	virtual TimerEngine *newTimerEngineFor(Timer *timer);
 
 	virtual Socket *newSocket(QObject *parent = NULL);
 
@@ -223,8 +223,10 @@ public:
 	inline void setLinkQueue(int usecs) { setLinkQueue(usecs, usecs); }
 
 	// Set link's random loss rate as a fraction between 0.0 and 1.0.
-	inline void setLinkLoss(float down, float up)
-		{ params[0].loss = down; params[1].loss = up; }
+	inline void setLinkLoss(float down, float up) {
+		params[0].loss = down;
+		params[1].loss = up;
+	}
 	inline void setLinkLoss(float loss) { setLinkLoss(loss, loss); }
 };
 

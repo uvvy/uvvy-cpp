@@ -29,8 +29,8 @@
 
 // XXX for specific armor methods - break into separate module
 #include "chk32.h"
-#include "aes.h"
-#include "hmac.h"
+#include "crypto/aes.h"
+#include "crypto/hmac.h"
 
 
 namespace SST {

@@ -361,7 +361,7 @@ void Stream::dump()
 //=====================================================================================================================
 
 StreamResponder::StreamResponder(Host *h)
-:	KeyResponder(h, StreamProtocol::magic)
+	: KeyResponder(h, StreamProtocol::magic)
 {
 	// Get us connected to all currently extant RegClients
 	foreach (RegClient *rc, h->regClients())
@@ -380,7 +380,7 @@ void StreamResponder::conncli(RegClient *rc)
 		return;
 
 	connrcs.insert(rc);
-	connect(rc, SIGNAL(stateChanged()), this, SLOT(clientStateChanged()));
+	connect(rc, SIGNAL(stateChanged(int)), this, SLOT(clientStateChanged(int)));
 	connect(rc, SIGNAL(lookupNotify(const SST::PeerId&,
 			const Endpoint &, const RegInfo &)),
 		this, SLOT(lookupNotify(const SST::PeerId&,
@@ -409,15 +409,18 @@ Flow *StreamResponder::newFlow(const SocketEndpoint &epi, const QByteArray &idi,
 	return flow;
 }
 
-void StreamResponder::clientStateChanged()
+void StreamResponder::clientStateChanged(int state)
 {
-	qDebug() << "StreamResponder::clientStateChanged";
+	qDebug() << "StreamResponder::clientStateChanged" << state << RegClient::stateString(state);
 
 	// A RegClient changed state, potentially connected.
-	// (XX make the signal more specific.)
 	// Retry all outstanding lookups in case they might succeed now.
-	foreach (StreamPeer *peer, host()->peers)
-		peer->connectFlow();
+	if (state == RegClient::Registered)
+	{
+		foreach (StreamPeer *peer, host()->peers) {
+			peer->connectFlow();
+		}
+	}
 }
 
 void StreamResponder::lookupNotify(const SST::PeerId&, const Endpoint &loc, const RegInfo &)

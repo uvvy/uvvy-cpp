@@ -312,7 +312,7 @@ namespace bt
         
         
         qDebug() << "Received:";
-        for (uint32_t idx = 0;idx < lines.count(); idx++)
+        for (int idx = 0;idx < lines.count(); idx++)
             qDebug() << lines[idx];
         
         

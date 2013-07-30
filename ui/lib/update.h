@@ -18,14 +18,14 @@ class Update : public Action
         Update *up;
         QTemporaryFile tmp;
 
-        void gotData(const QByteArray &ohash,
+        virtual void gotData2(const QByteArray &ohash,
                     qint64 ofs, qint64 recno,
                     const QByteArray &data, int nrecs);
         void gotMetaData(const QByteArray &ohash,
                     const QByteArray &chunkdata,
                     qint64 ofs, qint64 recno,
                     qint64 size, int nrecs);
-        void noData(const QByteArray &ohash,
+        virtual void noData2(const QByteArray &ohash,
                     qint64 ofs, qint64 recno,
                     qint64 size, int nrecs);
         void readDone();
@@ -44,9 +44,8 @@ class Update : public Action
         Update *up;
         bool dirdone;
 
-        void gotData(const QByteArray &ohash, const QByteArray &data);
-        void gotEntries(int pos, qint64 recno,
-                    const QList<FileInfo> &ents);
+        virtual void gotData(const QByteArray &ohash, const QByteArray &data);
+        void gotEntries(int pos, qint64 recno, const QList<FileInfo> &ents);
         void noEntries(int pos, qint64 recno, int nents);
         void readDone();
 

@@ -4,6 +4,6 @@ set -x
 
 mkdir -p _build_
 cd _build_
-cmake -DCLANG=OFF -DBUILD_TESTS=YES -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX=`pwd`/dist/mettanode .. || exit 1
-make -j2 install || exit 1
+CC=clang-3.3 CXX=clang++-3.3 cmake -DTRAVIS_CI=YES -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=YES -G "Ninja" -DCMAKE_INSTALL_PREFIX=`pwd`/dist/mettanode -DBOOST_LIBRARYDIR=/usr/lib64 .. || exit 1
+ninja install || exit 1
 ctest || exit 1

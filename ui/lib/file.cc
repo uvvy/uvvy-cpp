@@ -165,7 +165,7 @@ int AbstractDirReader::findPos(qint64 recno)
 	return lo;
 }
 
-void AbstractDirReader::gotData(const QByteArray &, qint64, qint64 recno,
+void AbstractDirReader::gotData2(const QByteArray &, qint64, qint64 recno,
 				const QByteArray &data, int nrecs)
 {
 	// Decode the directory entries in this block.
@@ -202,7 +202,7 @@ void AbstractDirReader::gotData(const QByteArray &, qint64, qint64 recno,
 	gotEntries(pos, recno, fil);
 }
 
-void AbstractDirReader::noData(const QByteArray &, qint64, qint64 recno,
+void AbstractDirReader::noData2(const QByteArray &, qint64, qint64 recno,
 			qint64, int nrecs)
 {
 	// Find the position where the entries would go if we could get them.

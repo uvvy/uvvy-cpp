@@ -74,7 +74,7 @@ void StreamPeer::connectFlow()
 	// Initiate key exchange attempts to any already-known endpoints
 	// using each of the network sockets we have available.
 	foreach (Socket *sock, h->activeSockets()) {
-		//qDebug() << this << "connectFlow: using socket" << sock;
+		qDebug() << this << "connectFlow: using socket" << sock;
 		foreach (const Endpoint &ep, addrs)
 			initiate(sock, ep);
 	}
@@ -157,12 +157,18 @@ void StreamPeer::foundEndpoint(const Endpoint &ep)
 
 	qDebug() << "Found endpoint" << ep.toString() << "for target" << id;
 
+	// TEMPORARY TEST: IGNORE IPV6 ENDPOINTS
+	if (ep.addr.protocol() == QAbstractSocket::IPv4Protocol)
+	{
+
 	// Add this endpoint to our set
 	addrs.insert(ep);
 
 	// Attempt a connection to this endpoint
 	foreach (Socket *sock, h->activeSockets())
 		initiate(sock, ep);
+
+	}
 }
 
 void StreamPeer::initiate(Socket *sock, const Endpoint &ep)

@@ -23,7 +23,7 @@
 
 #include "dh.h"
 #include "key.h"
-#include "hmac.h"
+#include "crypto/hmac.h"
 #include "flow.h"
 #include "util.h"
 #include "timer.h"
@@ -176,6 +176,7 @@ DHKey::DHKey(Host *host, quint8 dhgroup, DH *dh, int timeoutSecs)
 	// Get the public key into a QByteArray
 	pubkey = bn2ba(dh->pub_key);
 
+	// Force key refresh every hour.
 	connect(&exptimer, SIGNAL(timeout(bool)), this, SLOT(timeout()));
 	exptimer.start((qint64)timeoutSecs * 1000000);
 }

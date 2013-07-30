@@ -231,7 +231,7 @@ void SegTest::srvMessage()
 		qint64 recvtime = sim.currentTime().usecs;
 		qint64 delay = recvtime - sendtime;
 		delaytot += delay;
-		double avgdelay = delaytot / recvcnt;
+		// double avgdelay = delaytot / recvcnt;
 
 		//printf("%lld %lld %d\n", sendtime, recvtime, buf.size());
 #if 0

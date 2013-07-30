@@ -52,9 +52,9 @@ extern void write_sample_clnt_main( void );
 extern void add_sample_msg( void );
 static void c_output( char *, char *, int, char * );
 static void h_output( char *, char *, int, char * );
-static void l_output( char *, char *, int, char * );
-static void t_output( char *, char *, int, char * );
-static void clnt_output( char *, char *, int, char * );
+// static void l_output( char *, char *, int, char * );
+// static void t_output( char *, char *, int, char * );
+// static void clnt_output( char *, char *, int, char * );
 void c_initialize( void );
 
 #if !defined(__FreeBSD__) && !defined(__NetBSD__)
@@ -63,11 +63,11 @@ char * rindex();
 
 static void usage(void);
 static void options_usage(void);
-static int do_registers(int, char **);
+// static int do_registers(int, char **);
 static int parseargs(int, char **, struct commandline *);
-static void svc_output(char *, char *, int, char *);
-static void mkfile_output(struct commandline *);
-static void s_output(int, char **, char *, char *, int, char *, int, int);
+// static void svc_output(char *, char *, int, char *);
+// static void mkfile_output(struct commandline *);
+// static void s_output(int, char **, char *, char *, int, char *, int, int);
 
 #define	EXTEND	1		/* alias for TRUE */
 #define	DONT_EXTEND	0		/* alias for FALSE */
@@ -81,14 +81,14 @@ static char *svcclosetime = "120";
 static char *CPP = SVR4_CPP;
 static char CPPFLAGS[] = "-C";
 static char pathbuf[MAXPATHLEN + 1];
-static char *allv[] = {
-	"rpcgen", "-s", "udp", "-s", "tcp",
-};
-static int allc = sizeof (allv)/sizeof (allv[0]);
-static char *allnv[] = {
-	"rpcgen", "-s", "netpath",
-};
-static int allnc = sizeof (allnv)/sizeof (allnv[0]);
+// static char *allv[] = {
+	// "rpcgen", "-s", "udp", "-s", "tcp",
+// };
+// static int allc = sizeof (allv)/sizeof (allv[0]);
+// static char *allnv[] = {
+	// "rpcgen", "-s", "netpath",
+// };
+// static int allnc = sizeof (allnv)/sizeof (allnv[0]);
 
 /*
  * machinations for handling expanding argument list
@@ -354,56 +354,56 @@ open_input(infile, define)
 }
 
 /* valid tirpc nettypes */
-static char* valid_ti_nettypes[] =
-{
-	"netpath",
-	"visible",
-	"circuit_v",
-	"datagram_v",
-	"circuit_n",
-	"datagram_n",
-	"udp",
-	"tcp",
-	"raw",
-	NULL
-	};
+// static char* valid_ti_nettypes[] =
+// {
+// 	"netpath",
+// 	"visible",
+// 	"circuit_v",
+// 	"datagram_v",
+// 	"circuit_n",
+// 	"datagram_n",
+// 	"udp",
+// 	"tcp",
+// 	"raw",
+// 	NULL
+// 	};
 
 /* valid inetd nettypes */
-static char* valid_i_nettypes[] =
-{
-	"udp",
-	"tcp",
-	NULL
-	};
+// static char* valid_i_nettypes[] =
+// {
+// 	"udp",
+// 	"tcp",
+// 	NULL
+// 	};
 
-static int check_nettype(name, list_to_check)
-char* name;
-char* list_to_check[];
-{
-	int i;
-	for (i = 0; list_to_check[i] != NULL; i++) {
-		if (strcmp(name, list_to_check[i]) == 0) {
-			return (1);
-		}
-	}
-	warnx("illegal nettype :\'%s\'", name);
-	return (0);
-}
+// static int check_nettype(name, list_to_check)
+// char* name;
+// char* list_to_check[];
+// {
+// 	int i;
+// 	for (i = 0; list_to_check[i] != NULL; i++) {
+// 		if (strcmp(name, list_to_check[i]) == 0) {
+// 			return (1);
+// 		}
+// 	}
+// 	warnx("illegal nettype :\'%s\'", name);
+// 	return (0);
+// }
 
-static char *
-file_name(file, ext)
-char *file;
-char *ext;
-{
-	char *temp;
-	temp = extendfile(file, ext);
+// static char *
+// file_name(file, ext)
+// char *file;
+// char *ext;
+// {
+// 	char *temp;
+// 	temp = extendfile(file, ext);
 
-	if (access(temp, F_OK) != -1)
-		return (temp);
-	else
-		return ((char *)" ");
+// 	if (access(temp, F_OK) != -1)
+// 		return (temp);
+// 	else
+// 		return ((char *)" ");
 
-}
+// }
 
 
 static void

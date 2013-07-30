@@ -24,9 +24,14 @@ Metta Grabber prototype
 Dependencies
 ============
 
-* Qt4 at http://qt-project.org/
+* Qt4 at http://qt-project.org/ (QtCore, QtNetwork; QtXml for UPnP; QtGui for demo apps)
 * cmake at http://cmake.org/
 * boost at http://boost.org/
+
+aptly
+ $ apt-get install git cmake clang libboost-test1.50-dev libqt4-dev libssl-dev libasound2-dev
+
+ With these MettaNode also compiles and runs in Raspberry Pi's raspbian.
 
 Included in this repository:
 
@@ -43,8 +48,20 @@ Not yet required
 Typical config command
 ======================
 
-cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DBUILD_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DCLANG=ON
+cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
 
 CI status
 =========
 [![Build Status](https://secure.travis-ci.org/berkus/mettanode.png)](http://travis-ci.org/berkus/mettanode)
+
+Authors
+=======
+Design and development:
+Stanislav Karchebny <berkus@exquance.com>
+
+Code contributions:
+Bogdan Lytvynovsky <>
+
+Original SST and UIA development:
+Bryan Ford <>
+

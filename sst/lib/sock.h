@@ -197,7 +197,7 @@ protected:
  * Multiplexes between flow-setup/key exchange traffic (which goes to key.cc)
  * and per-flow data traffic (which goes to flow.cc).
  *
- * XX Rename Socket* to Net* or Link*? 
+ * XXX Rename Socket* to Net* or Link*? 
  */
 class UdpSocket : public Socket
 {
@@ -218,7 +218,7 @@ public:
 		QUdpSocket::BindMode mode = QUdpSocket::DefaultForPlatform);
 
 	// Send a packet on this UDP socket.
-	// Implements of Socket::send().
+	// Implements Socket::send().
 	bool send(const Endpoint &ep, const char *data, int size);
 
 	// Return all known local endpoints referring to this socket.
@@ -343,7 +343,7 @@ protected:
 		: QObject(parent), h(h), mag(0) { }
 	inline SocketReceiver(SocketHostState *h, quint32 magic,
 				QObject *parent = NULL)
-		: QObject(parent), h(h), mag(0) { bind(magic); }
+		: QObject(parent), h(h), mag(0) { bind(magic); } // <--- BIND
 	virtual ~SocketReceiver();
 };
 

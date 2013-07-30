@@ -97,16 +97,16 @@ struct StreamTxFlowState
 #endif
 
 
-/** @internal Basic internal stream control object.
- * The separation between the internal stream control object
- * and the application-visible Stream object is primarily needed
- * so that SST can hold onto a stream's state and gracefully shut it down
+/**
+ * @internal
+ * Basic internal stream control object.
+ * The separation between the internal stream control object and the application-visible Stream
+ * object is primarily needed so that SST can hold onto a stream's state and gracefully shut it down
  * after the application deletes its Stream object representing it.
- * This separation also keeps the internal stream control variables
- * out of the public C++ API header files and thus able to change
- * without breaking binary compatibility,
- * and makes it easy to implement service/protocol negotiation
- * for top-level application streams by extending BaseStream (see AppStream).
+ * This separation also keeps the internal stream control variables out of the public C++ API
+ * header files and thus able to change without breaking binary compatibility, and makes it easy
+ * to implement service/protocol negotiation for top-level application streams by 
+ * extending BaseStream (see AppStream).
  *
  * @see Stream, AppStream
  */

@@ -15,6 +15,7 @@ class QTableWidgetItem;
 namespace SST {
 	class RegInfo;
 	class Endpoint;
+	class PeerId;
 }
 
 class SearchDialog : public QDialog

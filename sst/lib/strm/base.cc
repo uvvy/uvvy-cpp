@@ -136,7 +136,7 @@ BaseStream::BaseStream(Host *h, PeerId peerid, BaseStream *parent)
 
 BaseStream::~BaseStream()
 {
-    //qDebug() << "~" << this << (parent == NULL ? "(root)" : "");
+    qDebug() << "~" << this << (parent == NULL ? "(root)" : "");
     clear();
 }
 
@@ -209,8 +209,8 @@ void BaseStream::tattach()
     // If so, use it - otherwise, create one.
     if (!peer->flow) {
         // Get the flow setup process for this host ID underway.
-        // XX provide an initial packet to avoid an extra RTT!
-        //qDebug() << this << "tattach: wait for flow";
+        // XXX provide an initial packet to avoid an extra RTT!
+        qDebug() << this << "tattach: wait for flow";
         connect(peer, SIGNAL(flowConnected()),
             this, SLOT(gotFlowConnected()));
         return peer->connectFlow();
@@ -429,7 +429,7 @@ void BaseStream::txenqueue(const Packet &pkt)
 
 void BaseStream::txenqflow(bool immed)
 {
-    //qDebug() << this << "txenqflow" << immed;
+    qDebug() << this << "txenqflow" << (immed ? "IMMEDIATE" : "SCHEDULED");
 
     // Make sure we're attached to a flow - if not, attach.
     if (!tcuratt)
@@ -534,7 +534,7 @@ void BaseStream::transmit(StreamFlow *flow)
         // allowing us to indicate the parent with a short 16-bit LSID
         // and piggyback useful data onto the packet.
         // The parent must be attached to the same flow.
-        // XX probably should use some state invariant
+        // XXX probably should use some state invariant
         // in place of all these checks.
         if (toplev)
             parent = &flow->root;
@@ -705,7 +705,34 @@ void BaseStream::txAttach()
 
 void BaseStream::txReset(StreamFlow* flow, quint16 sid, quint8 flags)
 {
-    qWarning("XXX txReset NOT IMPLEMENTED YET!!!");
+    qDebug() << flow << "transmit Reset packet";
+
+    // Build the Reset packet header
+    Packet p(NULL, ResetPacket);
+    p.buf.resize(hdrlenReset);
+    ResetHeader *hdr = (ResetHeader*)(p.buf.data() + Flow::hdrlen);
+    hdr->sid = htons(sid);
+    hdr->type = (ResetPacket << typeShift) | (flags & 0xf /*XXX: find proper constant in proto.h*/);
+    hdr->win = 0;
+
+    // Transmit it on the current flow.
+    quint64 pktseq;
+    flow->flowTransmit(p.buf, pktseq);
+
+    // Save the attach packet in the flow's ackwait hash,
+    // so that we'll be notified when the attach packet gets acked.
+    // XXX for the packets with O flag set, we don't need to ack??
+    if (!(flags & resetRemoteFlag))
+    {
+        p.late = false;
+        flow->ackwait.insert(pktseq, p);
+    }
+
+    qDebug() << flow << "Reset packet sent, XXX garbage collect the stream!";
+
+    // abort the stream
+    // send RESET packet to the peer
+
 // as per the PDF:
 // As in TCP, either host may unilaterally terminate an SST stream in both directions and discard 
 // any buffered data. A host resets a stream by sending a Reset packet (Figure 6) containing 
@@ -902,7 +929,7 @@ bool BaseStream::rxInitPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
         // Ack the pktseq first so peer won't ignore the reset!
         qDebug("rxInitPacket: unknown parent stream ID");
         flow->acknowledge(pktseq, false);
-        txReset(flow, psid, resetDirFlag);
+        txReset(flow, psid, resetRemoteFlag);
         return false;
     }
     if (pktseq < patt->sidseq) {
@@ -940,7 +967,7 @@ BaseStream *BaseStream::rxSubstream(
         // Ack the pktseq first so peer won't ignore the reset!
         qDebug("rxInitPacket: other side trying to create substream, but we're not listening.");
         flow->acknowledge(pktseq, false);
-        txReset(flow, sid, resetDirFlag);
+        txReset(flow, sid, resetRemoteFlag);
         return NULL;
     }
 
@@ -1053,7 +1080,7 @@ bool BaseStream::rxDataPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
         // Ack the pktseq first so peer won't ignore the reset!
         qDebug() << "rxDataPacket: unknown stream ID";
         flow->acknowledge(pktseq, false);
-        txReset(flow, sid, resetDirFlag);
+        txReset(flow, sid, resetRemoteFlag);
         return false;
     }
     if (pktseq < att->sidseq) {
@@ -1257,7 +1284,7 @@ bool BaseStream::rxDatagramPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *f
         resetsid:
         qDebug("rxDatagramPacket: unknown stream ID");
         flow->acknowledge(pktseq, false);
-        txReset(flow, sid, resetDirFlag);
+        txReset(flow, sid, resetRemoteFlag);
         return false;
     }
     flow->acksid = sid;
@@ -1272,7 +1299,7 @@ bool BaseStream::rxDatagramPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *f
         goto resetsid;  // Only accept datagrams while connected
 
     int flags = hdr->type;
-    //qDebug() << "rxDatagramSegment" << segsize << "type" << type;
+    qDebug() << "rxDatagramSegment" /* << segsize */ << "type" << (flags >> typeShift);
 
     if (!(flags & dgramBeginFlag) || !(flags & dgramEndFlag)) {
         qWarning("OOPS, don't yet know how to reassemble datagrams");
@@ -1294,7 +1321,7 @@ bool BaseStream::rxDatagramPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *f
 
 bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
-    //qDebug() << "rxAckPacket" << this;
+    qDebug() << flow << "rxAckPacket";
 
     // Count this explicit ack packet as received,
     // but do NOT send another ack just to ack this ack!
@@ -1311,9 +1338,9 @@ bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
     if (att == NULL) {
         // Respond with a reset for the unknown stream ID.
         // Ack the pktseq first so peer won't ignore the reset!
-        qDebug("rxAckPacket: unknown stream ID");
+        qDebug() << "rxAckPacket: unknown stream ID";
 #if 0   // XXX do we want to do this, or not ???
-        txReset(flow, sid, resetDirFlag);
+        txReset(flow, sid, resetRemoteFlag);
 #endif
         return false;
     }
@@ -1338,6 +1365,17 @@ bool BaseStream::rxAckPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
  */
 bool BaseStream::rxResetPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flow)
 {
+    qDebug() << "rxResetPacket size" << pkt.size();
+    if (pkt.size() < hdrlenReset) {
+        qDebug() << "BaseStream::rxResetPacket: got runt packet";
+        return false;   // XXX Protocol error: close flow?
+    }
+
+    // Decode the packet header
+    // ResetHeader *hdr = (ResetHeader*)(pkt.data() + Flow::hdrlen);
+    // quint16 sid = ntohs(hdr->sid);
+    // bool localSid = hdr->type & resetRemoteFlag;
+
     Q_ASSERT(0);    // XXX
     (void)pktseq; (void)pkt; (void)flow;
     return false;
@@ -1348,7 +1386,7 @@ bool BaseStream::rxAttachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flo
     qDebug() << "rxAttachPacket size" << pkt.size();
     if (pkt.size() < hdrlenDatagram) {
         qDebug("BaseStream::rxAttachPacket: got runt packet");
-        return false;   // XX Protocol error: close flow?
+        return false;   // XXX Protocol error: close flow?
     }
 
     // Decode the packet header
@@ -1367,7 +1405,7 @@ bool BaseStream::rxAttachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flo
         xs >> pusid;
     if (xs.status() != xs.Ok || usid.isNull() || (init && pusid.isNull())) {
         qDebug("BaseStream::rxAttachPacket: invalid attach packet");
-        return false;   // XX protocol error - close flow?
+        return false;   // XXX protocol error - close flow?
     }
 
     // First try to look up the stream by its own USID.
@@ -1409,7 +1447,7 @@ bool BaseStream::rxAttachPacket(quint64 pktseq, QByteArray &pkt, StreamFlow *flo
     // No way to attach the stream - just reset it.
     qDebug() << "rxAttachPacket: unknown stream" << usid;
     flow->acknowledge(pktseq, false);
-    txReset(flow, sid, resetDirFlag);
+    txReset(flow, sid, resetRemoteFlag);
     return false;
 }
 
@@ -1440,10 +1478,9 @@ void BaseStream::calcReceiveWindow()
     int i = 0;
     while (((2 << i) - 1) <= rwin)
         i++;
-    rwinbyte = i;   // XX control bits?
+    rwinbyte = i;   // XXX control bits?
 
-    //qDebug() << this << "buffered" << ravail << "+" << (rbufused - ravail)
-    //  << "rwin" << rwin << "exp" << i;
+    qDebug() << this << "buffered" << ravail << "+" << (rbufused - ravail) << "rwin" << rwin << "exp" << i;
 }
 
 void BaseStream::calcTransmitWindow(quint8 win)
@@ -1454,8 +1491,7 @@ void BaseStream::calcTransmitWindow(quint8 win)
     int i = win & 0x1f;
     twin = (1 << i) - 1;
 
-    //qDebug() << this << "transmit window" << oldtwin << "->" << twin
-    //  << "in use" << tflt;
+    qDebug() << this << "transmit window" << oldtwin << "->" << twin << "in use" << tflt;
 
     if (twin > oldtwin)
         txenqflow(true);
@@ -1592,9 +1628,7 @@ int BaseStream::writeData(const char *data, int totsize, quint8 endflags)
         // Hold onto the packet data until it gets ACKed
         twait.insert(p.tsn);
         twaitsize += size;
-        //qDebug() << "twait insert" << p.tsn << "size" << size
-        //  << "new cnt" << twait.size()
-        //  << "twaitsize" << twaitsize;
+        qDebug() << "twait insert" << p.tsn << "size" << size << "new cnt" << twait.size() << "twaitsize" << twaitsize;
 
         // Queue up the segment for transmission ASAP
         txenqueue(p);

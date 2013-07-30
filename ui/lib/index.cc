@@ -1,4 +1,3 @@
-
 #include <QSet>
 #include <QHash>
 #include <QString>
@@ -14,7 +13,7 @@
 #include "index.h"
 #include "opaque.h"
 #include "file.h"
-#include "sha2.h"
+#include "crypto/sha2.h"
 #include "xdr.h"
 #include "env.h"
 

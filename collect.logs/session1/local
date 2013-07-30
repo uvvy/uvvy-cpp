@@ -1,0 +1,283 @@
+2013-03-03T13:54:09.763 D: MettaNode starting 
+2013-03-03T13:54:09.772 D: Bound to port 8661
+2013-03-03T13:54:09.853 D: Audio::scan: 7 devices found. 
+2013-03-03T13:54:09.873 D: Device 0 : "Apple Inc.: Built-in Microphone" 
+2013-03-03T13:54:09.874 D: Device 1 : "Apple Inc.: Built-in Input" 
+2013-03-03T13:54:09.874 D: Device 2 : "Apple Inc.: Built-in Output" 
+2013-03-03T13:54:09.874 D: Device 3 : "Unknown: 3xxPlantronics" 
+2013-03-03T13:54:09.874 D: Device 4 : "Unknown: 9xxPlantronics" 
+2013-03-03T13:54:09.874 D: Device 5 : "ma++ ingalls for Cycling '74: Soundflower (2ch)" 
+2013-03-03T13:54:09.874 D: Device 6 : "ma++ ingalls for Cycling '74: Soundflower (16ch)" 
+2013-03-03T13:54:09.937 D: Local IP address: "FE80::1" 
+2013-03-03T13:54:09.938 D: Local IP address: "FE80::225:FF:FE41:AAA5" 
+2013-03-03T13:54:09.938 D: Local IP address: "192.168.1.80" 
+2013-03-03T13:54:09.938 D: Local IP address: "FE80::641E:1EC8:A160:FACA" 
+2013-03-03T13:54:09.938 D: Local IP address: "FDFE:C3FA:30D3:EB5E:641E:1EC8:A160:FACA" 
+2013-03-03T13:54:09.938 D: Local endpoint "[FE80::1]:8661" 
+2013-03-03T13:54:09.938 D: Local endpoint "[FE80::225:FF:FE41:AAA5]:8661" 
+2013-03-03T13:54:09.939 D: Local endpoint "192.168.1.80:8661" 
+2013-03-03T13:54:09.939 D: Local endpoint "[FE80::641E:1EC8:A160:FACA]:8661" 
+2013-03-03T13:54:09.939 D: Local endpoint "[FDFE:C3FA:30D3:EB5E:641E:1EC8:A160:FACA]:8661" 
+2013-03-03T13:54:09.939 D: local endpoints 5 
+2013-03-03T13:54:09.944 D: SST::RegClient(0x118d70840) registerAt "ishikawa.local" 8662 
+2013-03-03T13:54:09.944 D: SST::RegClient(0x118d70840) reregister 
+2013-03-03T13:54:09.945 D: StreamServer: registering service "metta:Presence" protocol "NodePresence" 
+2013-03-03T13:54:09.946 D: StreamResponder: RegClient "ishikawa.local" 
+2013-03-03T13:54:09.946 D: PeerService "metta:Presence" "NodePresence" Attempt to reconnect peer "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:09.946 D: PeerService "metta:Presence" "NodePresence" connecting to peer "berkus" 
+2013-03-03T13:54:09.949 D: Transmit segment at 0 size 40 
+2013-03-03T13:54:09.954 D: SST::BaseStream(0x118d5bc40) tattach: wait for flow 
+2013-03-03T13:54:09.955 D: SST::StreamPeer(0x118de7c40) Lookup target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:09.957 D: SST::BaseStream(0x118d5bc40) tattach: wait for flow 
+2013-03-03T13:54:09.957 D: SST::StreamPeer(0x118de7c40) Lookup target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:09.958 D: PeerService "metta:Presence" "NodePresence" update status "berkus" row 0 
+2013-03-03T13:54:09.959 D: PeerTable::setData col 0 role 1 value "" 
+2013-03-03T13:54:09.959 D: StreamServer: registering service "metta:Voice" protocol "NodeVoice" 
+2013-03-03T13:54:09.960 D: PeerService "metta:Voice" "NodeVoice" Attempt to reconnect peer "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:09.961 D: PeerService "metta:Voice" "NodeVoice" connecting to peer "berkus" 
+2013-03-03T13:54:09.961 D: Transmit segment at 0 size 36 
+2013-03-03T13:54:09.961 D: SST::BaseStream(0x118d50a40) tattach: wait for flow 
+2013-03-03T13:54:09.961 D: SST::StreamPeer(0x118de7c40) Lookup target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:09.961 D: SST::BaseStream(0x118d50a40) tattach: wait for flow 
+2013-03-03T13:54:09.961 D: SST::StreamPeer(0x118de7c40) Lookup target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:09.961 D: PeerTable::setData col 3 role 0 value "Silent" 
+2013-03-03T13:54:09.961 D: PeerTable::setData col 3 role 0 value "Silent" 
+2013-03-03T13:54:09.962 D: PeerTable::setData col 4 role 0 value "Off" 
+2013-03-03T13:54:10.072 D: SST::RegClient(0x118d70840) primary server address "192.168.1.80" 
+2013-03-03T13:54:10.072 D: SST::RegClient(0x118d70840) Insert1 
+2013-03-03T13:54:10.085 D: SST::RegClient(0x118d70840) Insert1 reply 
+2013-03-03T13:54:10.085 D: SST::RegClient(0x118d70840) Insert1 reply looks good! 
+2013-03-03T13:54:10.086 D: SST::RegClient(0x118d70840) Insert2 
+2013-03-03T13:54:10.088 D: SST::RegClient(0x118d70840) Insert2 reply 
+2013-03-03T13:54:10.091 D: SST::RegClient(0x118d70840) registered with "ishikawa.local" for 3600 seconds 
+2013-03-03T13:54:10.092 D: SST::RegClient(0x118d70840) my public endpoint "192.168.1.80:8661" 
+2013-03-03T13:54:10.092 D: StreamResponder::clientStateChanged 4 "Successfully registered" 
+2013-03-03T13:54:10.092 D: SST::StreamPeer(0x118de7c40) Lookup target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:10.092 D: SST::RegClient(0x118d70840) send lookup for ID "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:10.093 D: SST::RegClient(0x118d70840) gotLookupReply false 
+2013-03-03T13:54:10.095 D: SST::RegClient(0x118d70840) processed Lookup for "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:10.096 D: StreamResponder::lookupDone: primary "192.168.1.64:8661" num secondaries 5 
+2013-03-03T13:54:10.096 D: Found endpoint "192.168.1.64:8661" for target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:10.096 D: SST::StreamPeer(0x118de7c40) initiate to "192.168.1.64:8661" 
+2013-03-03T13:54:10.097 D: SST::Flow(0x11a56ac40) ccReset: mode 0 
+2013-03-03T13:54:10.097 D: SST::StreamFlow(0x11a56ac40) bind "192.168.1.64:8661" chan 1 to SST::UdpSocket(0x11860b340) 
+2013-03-03T13:54:10.097 D: SST::KeyInitiator(0x11a71ea40) initiating to "192.168.1.64:8661" 
+2013-03-03T13:54:10.099 D: SST::KeyInitiator(0x11a71ea40) send I1 to "192.168.1.64:8661 via SST::UdpSocket(0x11860b340)" 
+2013-03-03T13:54:10.105 D: Found endpoint "[FE80::1]:8661" for target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:10.105 D: Found endpoint "[FE80::CA2A:14FF:FE56:2CB7]:8661" for target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:10.105 D: Found endpoint "[FE80::D08A:1484:51F8:32A7]:8661" for target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:10.105 D: Found endpoint "[FDFE:C3FA:30D3:EB5E:D08A:1484:51F8:32A7]:8661" for target "FSMBOWOWWU6LK7TCNLQORDZKRC3NH5DG" 
+2013-03-03T13:54:10.106 D: SST::KeyInitiator(0x11a71ea40) send I1 to "192.168.1.64:8661 via SST::UdpSocket(0x11860b340)" 
+2013-03-03T13:54:10.113 D: SST::KeyInitiator(0x11a71ea40) got DhR1 
+2013-03-03T13:54:10.119 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.119 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.120 D: SST::KeyInitiator(0x11a71ea40) send DhI2 
+2013-03-03T13:54:10.120 D: SST::KeyInitiator(0x11a71ea40) got DhR1 
+2013-03-03T13:54:10.126 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.126 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.126 D: SST::KeyInitiator(0x11a71ea40) send DhI2 
+2013-03-03T13:54:10.131 D: SST::KeyInitiator(0x11a71ea40) got DhR2 
+2013-03-03T13:54:10.131 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.131 D: Received R2 with bad responder identity MAC
+2013-03-03T13:54:10.132 D: SST::StreamFlow(0x11a56ac40) receive: inactive flow 
+2013-03-03T13:54:10.133 D: SST::StreamFlow(0x11a56ac40) receive: inactive flow 
+2013-03-03T13:54:10.152 D: SST::KeyInitiator(0x11a71ea40) got DhR2 
+2013-03-03T13:54:10.152 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.152 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.153 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.153 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.153 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.153 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.153 D: SST::FlowArmor(0x11a624840) txenc "KiMe71AOGZcRCOPnmVsAWw==" 
+2013-03-03T13:54:10.153 D: SST::FlowArmor(0x11a624840) rxenc "ZVWD0sMQIfcez0//Xm/6rA==" 
+2013-03-03T13:54:10.153 D: SST::FlowArmor(0x11a624840) txmac "2v8FvlBr6tge0z6tA6AbDwKF5pW13pefkr6YYvCoXDw=" 
+2013-03-03T13:54:10.154 D: SST::FlowArmor(0x11a624840) rxmac "St/wYhCc1p7Ww+4/AyLLRpRvdm13UV/rCrHndRLzg6M=" 
+2013-03-03T13:54:10.154 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.154 D: calcKey: master size 128 bytes
+2013-03-03T13:54:10.154 D: Key exchange completed!
+2013-03-03T13:54:10.154 D: SST::StreamFlow(0x11a56ac40) gotLinkStatusChanged: 2 "Link up" 
+2013-03-03T13:54:10.154 D: SST::StreamPeer(0x118de7c40) new primary SST::StreamFlow(0x11a56ac40) 
+2013-03-03T13:54:10.154 D: SST::BaseStream(0x118d5bc40) gotFlowConnected 
+2013-03-03T13:54:10.154 D: SST::BaseStream(0x118d5bc40) creating stream USID["hkw31XG5sfv+z6kqqWQXlw==":1] 
+2013-03-03T13:54:10.155 D: sending optimized Init packet 
+2013-03-03T13:54:10.155 D: SST::BaseStream(0x118d5bc40) inflight Init 0 bytes in flight (parent) 40 
+2013-03-03T13:54:10.155 D: SST::StreamFlow(0x11a56ac40) tx-data seq 2 txfltcnt 1 
+2013-03-03T13:54:10.155 D: SST::StreamFlow(0x11a56ac40) tx seq 2 size 72 
+2013-03-03T13:54:10.155 D: SST::Stream(0x1191be7c0) tx  1 posn 0 size 56 
+2013-03-03T13:54:10.156 D: SST::BaseStream(0x118d50a40) gotFlowConnected 
+2013-03-03T13:54:10.156 D: SST::BaseStream(0x118d50a40) creating stream USID["hkw31XG5sfv+z6kqqWQXlw==":2] 
+2013-03-03T13:54:10.156 D: sending optimized Init packet 
+2013-03-03T13:54:10.156 D: SST::BaseStream(0x118d50a40) inflight Init 0 bytes in flight (parent) 76 
+2013-03-03T13:54:10.156 D: SST::StreamFlow(0x11a56ac40) tx-data seq 3 txfltcnt 2 
+2013-03-03T13:54:10.156 D: SST::StreamFlow(0x11a56ac40) tx seq 3 size 68 
+2013-03-03T13:54:10.156 D: SST::Stream(0x1191a45c0) tx  2 posn 0 size 52 
+2013-03-03T13:54:10.157 D: SST::KeyInitiator(0x11a71ea40) done initiating to "192.168.1.64:8661" 
+2013-03-03T13:54:10.157 D: SST::KeyInitiator(0x11a71ea40) ~KeyInitiator 
+2013-03-03T13:54:10.157 D: SST::KeyInitiator(0x11a71ea40) done initiating to "192.168.1.64:8661" 
+2013-03-03T13:54:10.162 D: SST::StreamFlow(0x11a56ac40) rx seq 1 size 28 
+2013-03-03T13:54:10.162 D: Flow: recv seq 1 ack 2(2) len 12
+2013-03-03T13:54:10.162 D: SST::StreamFlow(0x11a56ac40) advanced 2 ackct 2 newpackets 2 txackseq 2 
+2013-03-03T13:54:10.163 D: BaseStream::acked packet of size 56 
+2013-03-03T13:54:10.163 D: SST::BaseStream(0x118d5bc40) got attach ack 1 
+2013-03-03T13:54:10.163 D: BaseStream::acked packet of size 52 
+2013-03-03T13:54:10.163 D: SST::BaseStream(0x118d50a40) got attach ack 1 
+2013-03-03T13:54:10.164 D: Slow start: 2 new ACKs; boost cwnd to 4 (ssthresh 1048576)
+2013-03-03T13:54:10.164 D: cwnd 5 ssthresh 1048576
+2013-03-03T13:54:10.164 D: Cumulative: rtt 438625.000[53703.125] pps 27.778[24.306] pwr 0.003 loss 0.125
+2013-03-03T13:54:10.165 D: SST::StreamFlow(0x11a56ac40) acknowledging 1 (not sending) rxunacked 0 
+2013-03-03T13:54:11.134 D: SST::StreamFlow(0x11a56ac40) rx seq 3 size 84 
+2013-03-03T13:54:11.134 D: SST::StreamFlow(0x11a56ac40) receive: auth failed on rx 3 
+2013-03-03T13:54:11.135 D: SST::StreamFlow(0x11a56ac40) rx seq 4 size 72 
+2013-03-03T13:54:11.135 D: SST::StreamFlow(0x11a56ac40) receive: auth failed on rx 4 
+2013-03-03T13:54:11.138 D: SST::StreamFlow(0x11a56ac40) rx seq 5 size 84 
+2013-03-03T13:54:11.138 D: SST::StreamFlow(0x11a56ac40) receive: auth failed on rx 5 
+2013-03-03T13:54:12.636 D: SST::StreamFlow(0x11a56ac40) rx seq 6 size 68 
+2013-03-03T13:54:12.636 D: SST::StreamFlow(0x11a56ac40) receive: auth failed on rx 6 
+2013-03-03T13:54:12.637 D: SST::StreamFlow(0x11a56ac40) rx seq 7 size 72 
+2013-03-03T13:54:12.637 D: SST::StreamFlow(0x11a56ac40) receive: auth failed on rx 7 
+2013-03-03T13:54:15.032 D: SST::StreamFlow(0x11a56ac40) rx seq 8 size 68 
+2013-03-03T13:54:15.032 D: SST::StreamFlow(0x11a56ac40) receive: auth failed on rx 8 
+2013-03-03T13:54:15.032 D: SST::StreamFlow(0x11a56ac40) rx seq 9 size 84 
+2013-03-03T13:54:15.032 D: SST::StreamFlow(0x11a56ac40) receive: auth failed on rx 9 
+2013-03-03T13:54:15.033 D: SST::StreamFlow(0x11a56ac40) rx seq 10 size 72 
+2013-03-03T13:54:15.033 D: SST::StreamFlow(0x11a56ac40) receive: auth failed on rx 10 
+2013-03-03T13:54:15.033 D: SST::RegClient(0x118d70840) gotLookupReply true 
+2013-03-03T13:54:15.034 D: StreamResponder::lookupNotify 
+2013-03-03T13:54:15.034 D: SST::StreamResponder(0x1191b9e40) send R0 to "192.168.1.64:8661" 
+2013-03-03T13:54:15.039 D: SST::StreamResponder(0x1191b9e40) got DhI1 from "192.168.1.64" 8661 
+2013-03-03T13:54:15.040 D: SST::StreamResponder(0x1191b9e40) got DhI1 from "192.168.1.64" 8661 
+2013-03-03T13:54:15.048 D: SST::StreamResponder(0x1191b9e40) got DhI2 
+2013-03-03T13:54:15.052 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.052 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.053 D: eidi "LJgXWda1PLV+Ymrg6I8qiLbT9GY=" idpki "AAAAgMRN7O1hstntMi5K9grGKy/9uwcB+URY092ZPfQGUmse0KR+n5sL3+qbTFiJdtHgnzB/cUZNRcu1dTkilRHvWz178s3EYe1cnnVkb6BdtkArSbQiPpRlUoWjkyaJB/4vL2LcWlD/qa0KCcffptVW4vHJL3RbLbSfEvMr4jSaGI4XAAAAAwEAAQAAAAAA" sigi "H47KNoXt+SxH+0aTqzaYZBjnB2GbCnA8KtBVQy/UQPyLWwOoOJR+LfSCFPDymoCubmnC7FezN9vBxWtCql1/yjjtETVYACvI9+cg1GU+i/miO+O0upG0F+thuAT4GXpyRMrZaGeSMfrwJFHrsCyy4l8nBC4JBUeMS2ahzr3y51Q=" 
+2013-03-03T13:54:15.053 D: i2.idi "AAAAAwAAABQsmBdZ1rU8tX5iauDojyqIttP0ZgAAAAAAAACQAAAAgMRN7O1hstntMi5K9grGKy/9uwcB+URY092ZPfQGUmse0KR+n5sL3+qbTFiJdtHgnzB/cUZNRcu1dTkilRHvWz178s3EYe1cnnVkb6BdtkArSbQiPpRlUoWjkyaJB/4vL2LcWlD/qa0KCcffptVW4vHJL3RbLbSfEvMr4jSaGI4XAAAAAwEAAQAAAAAAAAAAgB+OyjaF7fksR/tGk6s2mGQY5wdhmwpwPCrQVUMv1ED8i1sDqDiUfi30ghTw8pqArm5pwuxXszfbwcVrQqpdf8o47RE1WAAryPfnINRlPov5ojvjtLqRtBfrYbgE+Bl6ckTK2WhnkjH68CRR67AssuJfJwQuCQVHjEtmoc698udUAAAAAAAAgD8=" idpki "AAAAgMRN7O1hstntMi5K9grGKy/9uwcB+URY092ZPfQGUmse0KR+n5sL3+qbTFiJdtHgnzB/cUZNRcu1dTkilRHvWz178s3EYe1cnnVkb6BdtkArSbQiPpRlUoWjkyaJB/4vL2LcWlD/qa0KCcffptVW4vHJL3RbLbSfEvMr4jSaGI4XAAAAAwEAAQAAAAAA" sighash "VLn0pPgvPSMt2pTe6AXprPLlQV5V2/UNjNlrs+tUhOg=" sigi "H47KNoXt+SxH+0aTqzaYZBjnB2GbCnA8KtBVQy/UQPyLWwOoOJR+LfSCFPDymoCubmnC7FezN9vBxWtCql1/yjjtETVYACvI9+cg1GU+i/miO+O0upG0F+thuAT4GXpyRMrZaGeSMfrwJFHrsCyy4l8nBC4JBUeMS2ahzr3y51Q=" 
+2013-03-03T13:54:15.053 D: Authenticated initiator ID "AAAAAwAAABQsmBdZ1rU8tX5iauDojyqIttP0ZgAAAAAAAACQAAAAgMRN7O1hstntMi5K9grGKy/9uwcB+URY092ZPfQGUmse0KR+n5sL3+qbTFiJdtHgnzB/cUZNRcu1dTkilRHvWz178s3EYe1cnnVkb6BdtkArSbQiPpRlUoWjkyaJB/4vL2LcWlD/qa0KCcffptVW4vHJL3RbLbSfEvMr4jSaGI4XAAAAAwEAAQAAAAAAAAAAgB+OyjaF7fksR/tGk6s2mGQY5wdhmwpwPCrQVUMv1ED8i1sDqDiUfi30ghTw8pqArm5pwuxXszfbwcVrQqpdf8o47RE1WAAryPfnINRlPov5ojvjtLqRtBfrYbgE+Bl6ckTK2WhnkjH68CRR67AssuJfJwQuCQVHjEtmoc698udUAAAAAAAAgD8=" at "192.168.1.64:8661 via SST::UdpSocket(0x11860b340)" 
+2013-03-03T13:54:15.053 D: SST::Flow(0x11a558840) ccReset: mode 0 
+2013-03-03T13:54:15.054 D: SST::StreamFlow(0x11a558840) bind "192.168.1.64:8661" chan 2 to SST::UdpSocket(0x11860b340) 
+2013-03-03T13:54:15.055 D: encidr: "AAAAAgAAABQsCRziOEuoDE11UfbwxCagZ8QnLQAAAJAAAACAza4i05/GKplZMF54fn9HkRkfcls5aSDdDE8E9QpBDsH6rv6dTY7Uguh6N/IDC2LFmUFmauycyvIRfV3Gb2iBYogE1ht58EOW5zAyp79jiuuGPxS5wIbRhDDZJ433yi1iEcVY2rF0YytDO+Xi0txutee/yYqbLwDc3s60WyvQU5UAAAADAQABAAAAAAAAAACAJvdgpFN0b9D+Qj89gfWfRjdI28l3MrQsDD8AXif89io1/yzO/Bby3mYak1GjS/K9z6GlCVT8SQFIkI2lTLIANLZOZ4aHRl5V0iooMl/hAx/HIpKbHOBKUxFbOiu6CkWVAaW5ir33IaM/drQSIy4bpCAW0TuNCkHXPQLPk8t6MlUAAAAA" size 312 
+2013-03-03T13:54:15.056 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.056 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.056 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.056 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.056 D: SST::FlowArmor(0x11a629040) txenc "BS5knVxsCjJBourvhL9fzA==" 
+2013-03-03T13:54:15.056 D: SST::FlowArmor(0x11a629040) rxenc "C2YvJBaq7h+l7d9ivnRA/A==" 
+2013-03-03T13:54:15.056 D: SST::FlowArmor(0x11a629040) txmac "gdvJhqyR0dE9coxJ7/IbvWCC4W4oT+E1ui04OM/hCf4=" 
+2013-03-03T13:54:15.056 D: SST::FlowArmor(0x11a629040) rxmac "ZKgeoT5AkCFxRuDLprx0FTp4dtsCfPie+ul2qtZxvS0=" 
+2013-03-03T13:54:15.057 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.057 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.057 D: SST::StreamFlow(0x11a558840) gotLinkStatusChanged: 2 "Link up" 
+2013-03-03T13:54:15.057 D: SST::StreamResponder(0x1191b9e40) got DhI2 
+2013-03-03T13:54:15.061 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.061 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.062 D: eidi "LJgXWda1PLV+Ymrg6I8qiLbT9GY=" idpki "AAAAgMRN7O1hstntMi5K9grGKy/9uwcB+URY092ZPfQGUmse0KR+n5sL3+qbTFiJdtHgnzB/cUZNRcu1dTkilRHvWz178s3EYe1cnnVkb6BdtkArSbQiPpRlUoWjkyaJB/4vL2LcWlD/qa0KCcffptVW4vHJL3RbLbSfEvMr4jSaGI4XAAAAAwEAAQAAAAAA" sigi "Nsw5I8fNfYJ4SsXpf49fz9tMnFAWS+Supb6Oub6MgZUUfKjtE0ioEKnByBhPhBu+4JYhI/2uVdIfIrGmtKW7EG38ylTbjvwuuYEfa+MZM+05enVEJOAG0kpX7L910Pk4XyKnvszT646HDC2mY5Ey+6Q01Dj6MZwML9tnjWrQmoc=" 
+2013-03-03T13:54:15.062 D: i2.idi "AAAAAwAAABQsmBdZ1rU8tX5iauDojyqIttP0ZgAAAAAAAACQAAAAgMRN7O1hstntMi5K9grGKy/9uwcB+URY092ZPfQGUmse0KR+n5sL3+qbTFiJdtHgnzB/cUZNRcu1dTkilRHvWz178s3EYe1cnnVkb6BdtkArSbQiPpRlUoWjkyaJB/4vL2LcWlD/qa0KCcffptVW4vHJL3RbLbSfEvMr4jSaGI4XAAAAAwEAAQAAAAAAAAAAgDbMOSPHzX2CeErF6X+PX8/bTJxQFkvkrqW+jrm+jIGVFHyo7RNIqBCpwcgYT4QbvuCWISP9rlXSHyKxprSluxBt/MpU2478LrmBH2vjGTPtOXp1RCTgBtJKV+y/ddD5OF8ip77M0+uOhwwtpmORMvukNNQ4+jGcDC/bZ41q0JqHAAAAAAA7QYs=" idpki "AAAAgMRN7O1hstntMi5K9grGKy/9uwcB+URY092ZPfQGUmse0KR+n5sL3+qbTFiJdtHgnzB/cUZNRcu1dTkilRHvWz178s3EYe1cnnVkb6BdtkArSbQiPpRlUoWjkyaJB/4vL2LcWlD/qa0KCcffptVW4vHJL3RbLbSfEvMr4jSaGI4XAAAAAwEAAQAAAAAA" sighash "YeKQB9UpBlkpI/2JRECe9g0nEAU1GQBiWrRgoYpfy7E=" sigi "Nsw5I8fNfYJ4SsXpf49fz9tMnFAWS+Supb6Oub6MgZUUfKjtE0ioEKnByBhPhBu+4JYhI/2uVdIfIrGmtKW7EG38ylTbjvwuuYEfa+MZM+05enVEJOAG0kpX7L910Pk4XyKnvszT646HDC2mY5Ey+6Q01Dj6MZwML9tnjWrQmoc=" 
+2013-03-03T13:54:15.063 D: Authenticated initiator ID "AAAAAwAAABQsmBdZ1rU8tX5iauDojyqIttP0ZgAAAAAAAACQAAAAgMRN7O1hstntMi5K9grGKy/9uwcB+URY092ZPfQGUmse0KR+n5sL3+qbTFiJdtHgnzB/cUZNRcu1dTkilRHvWz178s3EYe1cnnVkb6BdtkArSbQiPpRlUoWjkyaJB/4vL2LcWlD/qa0KCcffptVW4vHJL3RbLbSfEvMr4jSaGI4XAAAAAwEAAQAAAAAAAAAAgDbMOSPHzX2CeErF6X+PX8/bTJxQFkvkrqW+jrm+jIGVFHyo7RNIqBCpwcgYT4QbvuCWISP9rlXSHyKxprSluxBt/MpU2478LrmBH2vjGTPtOXp1RCTgBtJKV+y/ddD5OF8ip77M0+uOhwwtpmORMvukNNQ4+jGcDC/bZ41q0JqHAAAAAAA7QYs=" at "192.168.1.64:8661 via SST::UdpSocket(0x11860b340)" 
+2013-03-03T13:54:15.063 D: SST::Flow(0x11a551040) ccReset: mode 0 
+2013-03-03T13:54:15.063 D: SST::StreamFlow(0x11a551040) bind "192.168.1.64:8661" chan 3 to SST::UdpSocket(0x11860b340) 
+2013-03-03T13:54:15.065 D: encidr: "AAAAAwAAABQsCRziOEuoDE11UfbwxCagZ8QnLQAAAJAAAACAza4i05/GKplZMF54fn9HkRkfcls5aSDdDE8E9QpBDsH6rv6dTY7Uguh6N/IDC2LFmUFmauycyvIRfV3Gb2iBYogE1ht58EOW5zAyp79jiuuGPxS5wIbRhDDZJ433yi1iEcVY2rF0YytDO+Xi0txutee/yYqbLwDc3s60WyvQU5UAAAADAQABAAAAAAAAAACAMQcbk89EcAotRFcNeXKSZmPfHxZAgrqYpHPQ4Di9SowufSgp/eqx6v64v0tH/WbmcO51xUwpuHjviN14UMl9TbBVtmp8HeiVXlEc1WCkjdnnqT7aqJ0if2pBW/VkNlhbhSns7nw5hWDGnETsz2paS+88CrhV9MOItUDWtVfYg0UAAAAA" size 312 
+2013-03-03T13:54:15.065 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.065 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.065 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.065 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.065 D: SST::FlowArmor(0x1113ad840) txenc "oLblabf446Aimt9w4yGQJg==" 
+2013-03-03T13:54:15.065 D: SST::FlowArmor(0x1113ad840) rxenc "OPrGzW/D7iF9qZcXXZ/YDg==" 
+2013-03-03T13:54:15.065 D: SST::FlowArmor(0x1113ad840) txmac "GhspiY+cc3VlB7xNKuqDgNxJjssepJl0A7p/ij/yuHo=" 
+2013-03-03T13:54:15.065 D: SST::FlowArmor(0x1113ad840) rxmac "6HKvdfLdSs3UU8PVRhdpZeEYnk31wGnJ0uAHM9y5kZ4=" 
+2013-03-03T13:54:15.066 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.066 D: calcKey: master size 128 bytes
+2013-03-03T13:54:15.066 D: SST::StreamFlow(0x11a551040) gotLinkStatusChanged: 2 "Link up" 
+2013-03-03T13:54:15.077 D: SST::RegClient(0x118d70840) gotLookupReply true 
+2013-03-03T13:54:15.077 D: StreamResponder::lookupNotify 
+2013-03-03T13:54:15.077 D: SST::StreamResponder(0x1191b9e40) send R0 to "192.168.1.64:8661" 
+2013-03-03T13:54:15.087 D: SST::StreamFlow(0x11a551040) rx seq 1 size 84 
+2013-03-03T13:54:15.087 D: Flow: recv seq 1 ack 0(0) len 68
+2013-03-03T13:54:15.087 D: rxAttachPacket size 68 
+2013-03-03T13:54:15.087 D: rxAttachPacket: unknown stream USID["bEonbDPwGgU7ndSk2pW7QQ==":2] 
+2013-03-03T13:54:15.087 D: SST::StreamFlow(0x11a551040) acknowledging 1 (not sending) rxunacked 0 
+2013-03-03T13:54:15.088 W: XXX txReset NOT IMPLEMENTED YET!!!
+2013-03-03T13:54:15.088 D: SST::StreamFlow(0x11a551040) rx seq 2 size 84 
+2013-03-03T13:54:15.089 D: Flow: recv seq 2 ack 0(0) len 68
+2013-03-03T13:54:15.089 D: rxAttachPacket size 68 
+2013-03-03T13:54:15.089 D: SST::BaseStream(0x118d5bc40) accepting attach USID["hkw31XG5sfv+z6kqqWQXlw==":1] 
+2013-03-03T13:54:15.089 D: SST::StreamFlow(0x11a551040) acknowledging 2 (sending) rxunacked 1 
+2013-03-03T13:54:15.089 D: SST::StreamFlow(0x11a551040) transmitAck 2 2 
+2013-03-03T13:54:15.089 D: SST::StreamFlow(0x11a551040) tx seq 2 size 28 
+2013-03-03T13:54:15.093 D: SST::StreamFlow(0x11a551040) rx seq 3 size 84 
+2013-03-03T13:54:15.093 D: Flow: recv seq 3 ack 1(1) len 68
+2013-03-03T13:54:15.093 D: SST::StreamFlow(0x11a551040) advanced 1 ackct 1 newpackets 1 txackseq 1 
+2013-03-03T13:54:15.093 D: Slow start: 1 new ACKs; boost cwnd to 3 (ssthresh 1048576)
+2013-03-03T13:54:15.094 D: cwnd 4 ssthresh 1048576
+2013-03-03T13:54:15.094 D: Cumulative: rtt 438125.000[54140.625] pps 25.000[21.875] pwr 0.005 loss 0.000
+2013-03-03T13:54:15.094 D: rxAttachPacket size 68 
+2013-03-03T13:54:15.094 D: rxAttachPacket: unknown stream USID["bEonbDPwGgU7ndSk2pW7QQ==":4] 
+2013-03-03T13:54:15.094 D: SST::StreamFlow(0x11a551040) acknowledging 3 (not sending) rxunacked 0 
+2013-03-03T13:54:15.094 W: XXX txReset NOT IMPLEMENTED YET!!!
+2013-03-03T13:54:15.094 D: SST::StreamFlow(0x11a551040) rx seq 4 size 68 
+2013-03-03T13:54:15.095 D: Flow: recv seq 4 ack 1(1) len 52
+2013-03-03T13:54:15.095 D: rxDataPacket: unknown stream ID
+2013-03-03T13:54:15.095 D: SST::StreamFlow(0x11a551040) acknowledging 4 (not sending) rxunacked 1 
+2013-03-03T13:54:15.095 W: XXX txReset NOT IMPLEMENTED YET!!!
+2013-03-03T13:54:15.095 D: SST::StreamFlow(0x11a551040) rx seq 5 size 40 
+2013-03-03T13:54:15.095 D: Flow: recv seq 5 ack 1(1) len 24
+2013-03-03T13:54:15.095 D: PeerService "metta:Presence" "NodePresence" connected 
+2013-03-03T13:54:15.095 D: PeerService "metta:Presence" "NodePresence" update status "berkus" row 0 
+2013-03-03T13:54:15.095 D: PeerTable::setData col 0 role 1 value "" 
+2013-03-03T13:54:15.096 D: SST::StreamFlow(0x11a551040) acknowledging 5 (sending) rxunacked 2 
+2013-03-03T13:54:15.098 D: SST::StreamFlow(0x11a551040) transmitAck 5 5 
+2013-03-03T13:54:15.098 D: SST::StreamFlow(0x11a551040) tx seq 3 size 28 
+2013-03-03T13:54:15.103 D: SST::StreamFlow(0x11a551040) rx seq 6 size 72 
+2013-03-03T13:54:15.103 D: Flow: recv seq 6 ack 2(2) len 56
+2013-03-03T13:54:15.103 D: SST::StreamFlow(0x11a551040) advanced 1 ackct 2 newpackets 1 txackseq 2 
+2013-03-03T13:54:15.103 D: Cumulative: rtt 383984.375[94746.094] pps 46.875[38.281] pwr 0.009 loss 0.000
+2013-03-03T13:54:15.103 D: rxDataPacket: unknown stream ID
+2013-03-03T13:54:15.103 D: SST::StreamFlow(0x11a551040) acknowledging 6 (not sending) rxunacked 0 
+2013-03-03T13:54:15.103 W: XXX txReset NOT IMPLEMENTED YET!!!
+2013-03-03T13:54:15.883 D: SST::StreamFlow(0x11a551040) rx seq 7 size 72 
+2013-03-03T13:54:15.883 D: Flow: recv seq 7 ack 2(2) len 56
+2013-03-03T13:54:15.884 D: rxDataPacket: unknown stream ID
+2013-03-03T13:54:15.884 D: SST::StreamFlow(0x11a551040) acknowledging 7 (not sending) rxunacked 1 
+2013-03-03T13:54:15.884 W: XXX txReset NOT IMPLEMENTED YET!!!
+2013-03-03T13:54:16.057 D: SST::StreamFlow(0x11a558840) rtxTimeout  period 1000000 
+2013-03-03T13:54:16.057 D: rtxTimeout: ssthresh = 2, cwnd = 2
+2013-03-03T13:54:16.057 D: SST::StreamFlow(0x11a558840) gotLinkStatusChanged: 1 "Link stalled" 
+2013-03-03T13:54:17.028 D: SST::StreamFlow(0x11a551040) rx seq 8 size 72 
+2013-03-03T13:54:17.029 D: Flow: recv seq 8 ack 2(2) len 56
+2013-03-03T13:54:17.029 D: rxDataPacket: unknown stream ID
+2013-03-03T13:54:17.029 D: SST::StreamFlow(0x11a551040) acknowledging 8 (not sending) rxunacked 2 
+2013-03-03T13:54:17.029 W: XXX txReset NOT IMPLEMENTED YET!!!
+2013-03-03T13:54:17.557 D: SST::StreamFlow(0x11a558840) rtxTimeout  period 1500000 
+2013-03-03T13:54:17.558 D: rtxTimeout: ssthresh = 2, cwnd = 2
+2013-03-03T13:54:17.558 D: SST::StreamFlow(0x11a558840) gotLinkStatusChanged: 1 "Link stalled" 
+2013-03-03T13:54:18.760 D: SST::StreamFlow(0x11a551040) rx seq 9 size 72 
+2013-03-03T13:54:18.760 D: Flow: recv seq 9 ack 2(2) len 56
+2013-03-03T13:54:18.760 D: rxDataPacket: unknown stream ID
+2013-03-03T13:54:18.760 D: SST::StreamFlow(0x11a551040) acknowledging 9 (not sending) rxunacked 3 
+2013-03-03T13:54:18.761 D: SST::StreamFlow(0x11a551040) transmitAck 9 9 
+2013-03-03T13:54:18.761 D: SST::StreamFlow(0x11a551040) tx seq 4 size 28 
+2013-03-03T13:54:18.761 W: XXX txReset NOT IMPLEMENTED YET!!!
+2013-03-03T13:54:18.762 D: SST::RegClient(0x118d70840) gotLookupReply true 
+2013-03-03T13:54:18.762 D: StreamResponder::lookupNotify 
+2013-03-03T13:54:18.762 D: SST::StreamResponder(0x1191b9e40) send R0 to "192.168.1.64:8661" 
+2013-03-03T13:54:18.763 D: SST::StreamResponder(0x1191b9e40) got DhI1 from "192.168.1.64" 8661 
+2013-03-03T13:54:19.808 D: SST::StreamFlow(0x11a558840) rtxTimeout  period 2250000 
+2013-03-03T13:54:19.808 D: rtxTimeout: ssthresh = 2, cwnd = 2
+2013-03-03T13:54:19.808 D: SST::StreamFlow(0x11a558840) gotLinkStatusChanged: 1 "Link stalled" 
+2013-03-03T13:54:23.184 D: SST::StreamFlow(0x11a558840) rtxTimeout  period 3375000 
+2013-03-03T13:54:23.184 D: rtxTimeout: ssthresh = 2, cwnd = 2
+2013-03-03T13:54:23.184 D: SST::StreamFlow(0x11a558840) gotLinkStatusChanged: 1 "Link stalled" 
+2013-03-03T13:54:28.246 D: SST::StreamFlow(0x11a558840) rtxTimeout  period 5062500 
+2013-03-03T13:54:28.246 D: rtxTimeout: ssthresh = 2, cwnd = 2
+2013-03-03T13:54:28.246 D: SST::StreamFlow(0x11a558840) gotLinkStatusChanged: 1 "Link stalled" 
+2013-03-03T13:54:35.839 D: SST::StreamFlow(0x11a558840) rtxTimeout - FAILED period 7593750 
+2013-03-03T13:54:35.840 D: rtxTimeout: ssthresh = 2, cwnd = 2
+2013-03-03T13:54:35.840 D: SST::StreamFlow(0x11a558840) gotLinkStatusChanged: 0 "Link down" 
+2013-03-03T13:54:35.840 D: SST::StreamFlow(0x11a558840) ~StreamFlow to "192.168.1.64:8661" lchan 2 rchan 3 
+2013-03-03T13:54:35.840 D: SST::Flow(0x11a558840) ~Flow() 
+2013-03-03T13:54:35.840 D: SST::SocketFlow(0x11a558840) unbind from sock SST::UdpSocket(0x11860b340) 
+2013-03-03T13:55:09.955 D: PeerService "metta:Presence" "NodePresence" reconnect timeout 
+2013-03-03T13:55:09.959 D: PeerService "metta:Voice" "NodeVoice" reconnect timeout 
+2013-03-03T13:56:14.602 D: MainWindow exit
+2013-03-03T13:56:14.603 D: SST::RegClient(0x118d70840) disconnect 
+2013-03-03T13:56:14.603 D: SST::RegClient(0x118d70840) send delete notice 
+2013-03-03T13:56:14.603 D: StreamResponder::clientStateChanged 0 "Unregistered and not doing anything" 
+2013-03-03T13:56:14.603 D: StreamPeer: RegClient destroyed before lookupDone 

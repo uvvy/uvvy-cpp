@@ -1,0 +1,35 @@
+{
+	"folders":
+	[
+		{
+			"path": "/Users/berkus/Hobby/mettanode"
+		}
+	],
+	"settings":
+	{
+	    "sublimeclang_enabled": false,
+	    "sublimeclang_options": [
+	    	"-I${folder${project_path:.gitignore}}/3rdparty/**",
+	    	"-I${folder${project_path:.gitignore}}/naming/**",
+	    	"-I${folder${project_path:.gitignore}}/nat/**",
+	    	"-I${folder${project_path:.gitignore}}/playground/**",
+	    	"-I${folder${project_path:.gitignore}}/routing/**",
+	    	"-I${folder${project_path:.gitignore}}/sst/**",
+	    	"-I${folder${project_path:.gitignore}}/ui/**"
+	    ],
+	    "sublimeclang_automatic_completion_popup": true,
+	    "sublimeclang_recompile_delay": 0,
+	    "sublimeclang_hide_output_when_empty": false,
+		"sublimeclang_show_output_panel": true,
+	    "sublimeclang_update_output_panel": true,
+	    "sublimeclang_show_status": true,
+	    "sublimeclang_show_visual_error_marks": true,
+		"sublimeclang_reparse_on_activated": true,
+	    "sublimeclang_reparse_on_save": true,
+		"sublimeclang_parse_status_messages": true,
+	    "sublimeclang_time_completions": true,
+		"sublimeclang_inhibit_sublime_completions": true,
+		// "sublimeclang_options_script": "python ${home}/Hobby/cmake_options_script.py ${project_path:_build_}/compile_commands.json",
+		"sublimeclang_debug_options": true
+	}
+}

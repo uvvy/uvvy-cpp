@@ -35,8 +35,8 @@ uint qHash(const SST::Endpoint &ep);
 #include "ident.h"
 #include "host.h"
 #include "dh.h"		// XX support multiple cyphersuites
-#include "aes.h"
-#include "hmac.h"
+#include "crypto/aes.h"
+#include "crypto/hmac.h"
 
 #include <openssl/dsa.h>
 #include <openssl/rand.h>
@@ -194,7 +194,7 @@ XdrStream &operator>>(XdrStream &xs, XdrOption<KeyChunkUnion> &o)
 }
 
 //=====================================================================================================================
-////////// KeyResponder //////////
+// KeyResponder
 //=====================================================================================================================
 
 KeyResponder::KeyResponder(Host *host, quint32 magic, QObject *parent)
@@ -472,6 +472,7 @@ void KeyResponder::gotDhI2(KeyChunkDhI2Data &i2, const SocketEndpoint &src)
 	qDebug() << "eidi" << kii.eidi.toBase64()
 		<< "idpki" << kii.idpki.toBase64()
 		<< "sigi" << kii.sigi.toBase64();
+
 	Ident identi(kii.eidi);
 	if (!identi.setKey(kii.idpki)) {
 		qDebug("Received I2 with bad initiator public key");
@@ -479,9 +480,10 @@ void KeyResponder::gotDhI2(KeyChunkDhI2Data &i2, const SocketEndpoint &src)
 	}
 	QByteArray sighash = calcSigHash(i2.group, i2.keylen, nhi, i2.nr,
 					i2.dhi, i2.dhr, kii.eidr);
-	qDebug("idi %s\nidpki %s\nsighash %s\nsigi %s\n",
-		i2.idi.toBase64().data(), kii.idpki.toBase64().data(),
-		sighash.toBase64().data(), kii.sigi.toBase64().data());
+
+	qDebug() << "i2.idi" << i2.idi.toBase64() << "idpki" << kii.idpki.toBase64() 
+		<< "sighash" << sighash.toBase64() << "sigi" << kii.sigi.toBase64();
+
 	if (!identi.verify(sighash, kii.sigi)) {
 		qDebug("Received I2 with bad initiator signature");
 		return;	// XXX generate cached error response instead
@@ -777,7 +779,7 @@ KeyInitiator::gotDhR1(Host *h, KeyChunkDhR1Data &r1)
 {
 	// Lookup the Initiator based on the received nhi
 	KeyInitiator *i = h->initnhis.value(r1.nhi);
-	if (i == NULL || i->state == Done || i->dhgroup != r1.group)
+	if (i == NULL || i->isDone() || i->dhgroup != r1.group)
 		return qDebug("Got DhR1 for unknown I1");
 	if (i->isDone())
 		return qDebug("Got duplicate DhR1 for completed initiator");
@@ -828,29 +830,28 @@ KeyInitiator::gotDhR1(Host *h, KeyChunkDhR1Data &r1)
 	Ident hi = h->hostIdent();
 	QByteArray sighash =
 		calcSigHash((DhGroup)i->dhgroup, i->keylen, i->nhi, i->nr,
-				i->dhi, i->dhr, QByteArray()/*XX*/);
+				i->dhi, i->dhr, QByteArray()/*XXX*/);
 	QByteArray sigi = hi.sign(sighash);
-	//qDebug("sighash %s\nsigi %s\n",
-	//	sighash.toBase64().data(), sigi.toBase64().data());
+	qDebug() << "sighash" << sighash.toBase64() << "sigi" << sigi.toBase64();
 
 	// Build the part of the I2 message to be encrypted.
-	// (XX should we include anything for the 'sa' in the JFK spec?)
+	// (XXX should we include anything for the 'sa' in the JFK spec?)
 	KeyIdentI kii;
 	kii.chani = i->fl->localChannel();
 	kii.eidi = hi.id();
-	kii.eidr = QByteArray(); 	// XX
+	kii.eidr = QByteArray(); 	// XXX
 	kii.idpki = hi.key();
 	kii.sigi = sigi;
 	kii.ulpi = i->ulpi;
-	//qDebug() << "eidi" << kii.eidi.toBase64()
-	//	<< "idpki" << kii.idpki.toBase64()
-	//	<< "sigi" << kii.sigi.toBase64();
+	qDebug() << "eidi" << kii.eidi.toBase64()
+		<< "idpki" << kii.idpki.toBase64()
+		<< "sigi" << kii.sigi.toBase64();
 	QByteArray encidi;
 	XdrStream wds(&encidi, QIODevice::WriteOnly);
 	wds << kii;
 	Q_ASSERT(wds.status() == wds.Ok);
 
-	// XX There appears to be a bug in the "optimized" x86 version
+	// XXX There appears to be a bug in the "optimized" x86 version
 	// of AES-CBC at least in openssl-0.9.8b when given an input
 	// that is not an exact multiple of the block length.
 	// (The C implementation in e.g., OpenSSL 0.9.7 works fine.)
@@ -930,7 +931,7 @@ KeyInitiator::gotDhR2(Host *h, KeyChunkDhR2Data &r2)
 	r2.idr = AES().setDecryptKey(enckey).cbcDecrypt(r2.idr);
 
 	// Decode the identity information
-	//qDebug() << "encidr:" << r2.idr.toBase64() << "size" << r2.idr.size();
+	qDebug() << "encidr:" << r2.idr.toBase64() << "size" << r2.idr.size();
 	XdrStream encrds(r2.idr);
 	KeyIdentR kir;
 	encrds >> kir;
@@ -975,7 +976,7 @@ KeyInitiator::gotDhR2(Host *h, KeyChunkDhR2Data &r2)
 	i->fl->setRemoteChannel(kir.chanr);
 
 	// Our job is done
-	qDebug("Key exchange completed!");
+	qDebug() << "Key exchange completed!";
 	i->state = Done;
 	i->txtimer.stop();
 
@@ -988,7 +989,7 @@ void
 KeyInitiator::retransmit(bool fail)
 {
 	if (fail) {
-		qDebug("Key exchange failed");
+		qDebug() << "Key exchange failed!";
 		state = Done;
 		txtimer.stop();
 		return completed(false);

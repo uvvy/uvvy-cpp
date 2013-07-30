@@ -16,8 +16,8 @@ uint qHash(const QPair<int,int> &p)
 }
 
 PeerTable::PeerTable(int numColumns, QObject *parent)
-:   QAbstractTableModel(parent),
-    cols(numColumns)
+    : QAbstractTableModel(parent)
+    , cols(numColumns)
 {
     Q_ASSERT(numColumns >= 2);
 
@@ -72,8 +72,7 @@ void PeerTable::insertAt(int row, const PeerId &id, const QString &name)
     p.name = name;
     p.id = id;
     p.flags.resize(cols);
-    p.flags[0] = Qt::ItemIsEnabled | Qt::ItemIsSelectable
-            | Qt::ItemIsEditable;
+    p.flags[0] = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
     p.flags[1] = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 
     peers.insert(row, p);
@@ -288,12 +287,12 @@ PeerService::PeerService(const QString &svname, const QString &svdesc,
     connect(&recontimer, SIGNAL(timeout()), this, SLOT(reconTimeout()));
 }
 
-void PeerService::setPeerTable(PeerTable *peers)
+void PeerService::setPeerTable(PeerTable *newPeers)
 {
-    Q_ASSERT(peers);
-    Q_ASSERT(!this->peers);
+    Q_ASSERT(newPeers);
+    Q_ASSERT(!peers);
 
-    this->peers = peers;
+    peers = newPeers;
 
     // Watch for future changes in the peer table
     connect(peers, SIGNAL(peerInsert(const SST::PeerId&)),

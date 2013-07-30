@@ -1,12 +1,11 @@
-
 #include <QtDebug>
-
 #include "strm/dgram.h"
 
 using namespace SST;
 
-
-////////// DatagramStream //////////
+//=================================================================================================
+// DatagramStream
+//=================================================================================================
 
 DatagramStream::DatagramStream(Host *host, const QByteArray &payload, int pos)
 :	AbstractStream(host),

@@ -10,6 +10,7 @@
 
 using namespace SST;
 
+#define STDIN_FILENO 0
 
 static bool termiosChanged;
 static struct termios termiosSave;

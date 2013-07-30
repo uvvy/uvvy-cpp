@@ -78,7 +78,7 @@ target_link_libraries(upnpc-static upnpc ${LDLIBS})
 install(TARGETS upnpc-static
   RUNTIME DESTINATION tools)
 
-if (BUILD_TESTS)
+if (BUILD_TESTING)
   include_directories(.)
   
   add_executable (testminixml test/testminixml.c minixml.c igd_desc_parse.c)
@@ -115,4 +115,4 @@ if (BUILD_TESTS)
   install(TARGETS testminiwget
     RUNTIME DESTINATION tests)
 
-endif (BUILD_TESTS)
+endif (BUILD_TESTING)

@@ -162,7 +162,7 @@ public:
     static const quint8 attachSlotMask  = 0x1;  // Slot to use
 
     // Flag bits for Reset packets
-    static const quint8 resetDirFlag    = 0x1;  // SID orientation
+    static const quint8 resetRemoteFlag = 0x1;  // SID orientation (set: sent LSID is in remote space)
 
     // StreamId 0 always refers to the root stream.
     static const StreamId sidRoot = 0x0000;
@@ -191,11 +191,6 @@ public:
 
     // Service/protocol pairs used to index registered StreamServers.
     typedef QPair<QString,QString> ServicePair;
-
-private:
-    friend class Stream;
-    friend class StreamFlow;
-    friend class StreamResponder;
 };
 
 } // namespace SST

@@ -1,4 +1,3 @@
-
 #include <QLineEdit>
 #include <QPushButton>
 #include <QTableWidget>
@@ -126,8 +125,7 @@ void SearchDialog::startSearch()
 	}
 	if (!found)
 		QMessageBox::warning(this, tr("Cannot Search"),
-				tr("You are not currently connected to any "
-					"registration servers to search."),
+				tr("You are not currently connected to any registration servers to search."),
 				QMessageBox::Ok, QMessageBox::NoButton);
 }
 

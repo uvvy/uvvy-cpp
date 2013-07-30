@@ -75,11 +75,11 @@ volatile int finished_punch = 0;
 void myMsgHandler(QtMsgType type, const char *msg)
 {
     QTextStream strm(&logfile);
-    QString now = QDateTime::currentDateTime().toString(Qt::ISODate);
+    QString now = QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss.zzz"); // ISO 8601 date with milliseconds
     switch (type) {
         case QtDebugMsg:
             strm << now << " D: " << msg << '\n';
-            // LogWindow::get() << msg;
+            // LogWindow::get() << msg; // TODO: use logmessagelistmodel and put the logs there
             if (spewdebug)
                 std::cout << msg << '\n';
             break;
@@ -573,10 +573,10 @@ int main(int argc, char **argv)
     myreginfo.setEndpoints(ssthost->activeLocalEndpoints());
     qDebug() << "local endpoints" << myreginfo.endpoints().size();
 
-    // if (!settings->contains("regservers"))
+    if (!settings->contains("regservers"))
     {
         QStringList rs;
-        rs << "ishikawa.local";
+        rs << "aramaki.local" << "section4.madfire.net";
         settings->setValue("regservers", rs);
     }
 
@@ -590,18 +590,18 @@ int main(int argc, char **argv)
     friends = new PeerTable(NCOLS);
     friends->setHeaderData(COL_ONLINE, Qt::Horizontal,
                 QObject::tr("Presence"), Qt::DisplayRole);
-    // friends->setHeaderData(COL_FILES, Qt::Horizontal,
-    //             QObject::tr("Files"), Qt::DisplayRole);
+    friends->setHeaderData(COL_FILES, Qt::Horizontal,
+                QObject::tr("Files"), Qt::DisplayRole);
     friends->setHeaderData(COL_TALK, Qt::Horizontal,
                 QObject::tr("Talk"), Qt::DisplayRole);
     friends->setHeaderData(COL_LISTEN, Qt::Horizontal,
                 QObject::tr("Listen"), Qt::DisplayRole);
     friends->useSettings(settings, "Friends");
 
-    PeerService* s = new PeerService("Presence", QObject::tr("Presence updates"),
-                                     "NstPresence", QObject::tr("Netsteria presence protocol"));
-    s->setPeerTable(friends);
-    s->setStatusColumn(COL_ONLINE, QIcon(":/img/status-online.png"), QIcon(":/img/status-offline.png"));
+    // PeerService* s = new PeerService("metta:Presence", QObject::tr("Presence updates"),
+    //                                  "NodePresence", QObject::tr("MettaNode presence protocol"));
+    // s->setPeerTable(friends);
+    // s->setStatusColumn(COL_ONLINE, QIcon(":/img/status-online.png"), QIcon(":/img/status-offline.png"));
 
     // Initialize our chunk sharing service
     // ChunkShare::instance()->setPeerTable(friends);
@@ -611,14 +611,14 @@ int main(int argc, char **argv)
     // appdir.mkdir("Files");
     // shareDir = appdir.path() + "/Files";
     // qDebug() << "Would share files from " << shareDir.path();
-    // or read from Settings...
+    // // or read from Settings...
     // FileSync *syncwatch = new FileSync;
     // Share* share = new Share(0, shareDir.path());
 
     talksrv = new VoiceService();
     talksrv->setPeerTable(friends);
     talksrv->setTalkColumn(COL_TALK, QObject::tr("Talking"), QObject::tr("Silent"), QObject::tr("Offline"));
-    talksrv->setListenColumn(COL_LISTEN);
+    talksrv->setListenColumn(COL_LISTEN, QObject::tr("Listening"), QObject::tr("Not Listening"));
 
     mainwin = new MainWindow;
 
@@ -626,7 +626,7 @@ int main(int argc, char **argv)
     // new ChatServer(mainwin);
 
     // Re-start incomplete downloads
-    SaveDialog::init();
+    // SaveDialog::init();
 
     mainwin->show();
     int r = app.exec();

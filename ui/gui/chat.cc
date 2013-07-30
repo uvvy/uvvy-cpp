@@ -86,7 +86,7 @@ ChatDialog::ChatDialog(const SST::PeerId &otherid, const QString &othername, Str
 
     if (!strm) {
         strm = new Stream(ssthost, this);
-        strm->connectTo(otherid, "IM", "NstChat");
+        strm->connectTo(otherid, "metta:Chat", "NodeChat");
         textentry->setText(tr("Contacting %0...").arg(othername));
         textentry->setReadOnly(true);
         button->setEnabled(false);
@@ -386,8 +386,8 @@ void ChatDialog::loadHistory()
 ChatServer::ChatServer(QObject *parent)
 :   StreamServer(ssthost, parent)
 {
-    listen("IM", "Instant Messaging",
-        "NstChat", "Netsteria Chat Protocol");
+    listen("metta:Chat", "Instant Messaging",
+        "NodeChat", "MettaNode Chat Protocol");
 
     connect(this, SIGNAL(newConnection()),
         this, SLOT(incoming()));
