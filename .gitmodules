@@ -1,3 +1,6 @@
 [submodule "3rdparty/endian"]
 	path = 3rdparty/endian
 	url = git://github.com/berkus/endian.git
+[submodule "ssu"]
+	path = ssu
+	url = https://berkus@github.com/berkus/libssu.git
