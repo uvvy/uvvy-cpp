@@ -110,6 +110,7 @@ list(APPEND BOOST_COMPONENTS program_options)
 set(Boost_USE_STATIC_LIBS ON) # Easier to deploy elsewhere
 find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
+include_directories(${Boost_INCLUDE_DIR})
 # Additional unofficial boost libraries
 include_directories(3rdparty/endian)
 
