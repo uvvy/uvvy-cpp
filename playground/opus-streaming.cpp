@@ -47,31 +47,34 @@ public:
         opus_decoder_destroy(decstate); decstate = 0;
     }
 
-    /* Get and return a packet, decoding it; decode a missing frame if queue is empty */
-    byte_array get_packet()
+    /**
+     * Decode a packet into the provided buffer; decode a missing frame if queue is empty.
+     * @param[out] decoded_packet Buffer for decoded packet.
+     * @param[in] max_frames Maximum number of floating point frames in provided buffer.
+     */
+    void get_packet(float* decoded_packet, size_t max_frames)
     {
         logger::debug() << "get_packet";
         std::unique_lock<std::mutex> lock(queue_mutex);
-        byte_array decoded_packet(framesize*sizeof(float));
+        assert(max_frames == framesize);
 
         if (packet_queue.size() > 0)
         {
             byte_array pkt = packet_queue.front();
             packet_queue.pop();
             lock.unlock();
-            int len = opus_decode_float(decstate, (unsigned char*)pkt.data()+4, pkt.size()-4, (float*)decoded_packet.data(), framesize, /*decodeFEC:*/0);
+            int len = opus_decode_float(decstate, (unsigned char*)pkt.data()+4, pkt.size()-4, decoded_packet, framesize, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == framesize);
             logger::debug() << "get_packet decoded frame of size " << pkt.size() << " into " << len << " frames";
         } else {
             lock.unlock();
             // "decode" a missing frame
-            int len = opus_decode_float(decstate, NULL, 0, (float*)decoded_packet.data(), framesize, /*decodeFEC:*/0);
+            int len = opus_decode_float(decstate, NULL, 0, decoded_packet, framesize, /*decodeFEC:*/0);
             assert(len > 0);
             logger::debug() << "get_packet decoded missing frame of size " << len;
             // assert(len == framesize);
         }
-        return decoded_packet;
     }
 
 protected:
@@ -201,9 +204,7 @@ private:
             instance->sender_->send_packet((float*)inputBuffer, nFrames);
         }
         if (outputBuffer) {
-            byte_array pkt = instance->receiver_->get_packet();
-            // inefficient: should be writing directly into outputBuffer
-            std::copy_n(pkt.data(), pkt.size(), (char*)outputBuffer);
+            instance->receiver_->get_packet((float*)outputBuffer, nFrames);
         }
 #endif
         return 0;
