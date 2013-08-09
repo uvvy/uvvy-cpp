@@ -73,14 +73,14 @@ public:
     // 0x535354 = 'SST': 'Structured Stream Transport'
     static const quint32 magic = 0x00535354;
 
-    // Maximum transmission unit. XX should be dynamic.
+    // Maximum transmission unit. XXX should be dynamic.
     static const int mtu = 1200;
 
-    // Minimum receive buffer size. XX should be dynamically based on mtu.
+    // Minimum receive buffer size. XXX should be dynamically based on mtu.
     static const int minReceiveBuffer = mtu*2;
 
     // Maximum size of datagram to send using the stateless optimization.
-    // XX should be dynamic.
+    // XXX should be dynamic.
     static const int maxStatelessDatagram = mtu * 4;
 
     // Sizes of various stream header types
