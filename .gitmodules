@@ -4,3 +4,6 @@
 [submodule "ssu"]
 	path = ssu
 	url = https://berkus@github.com/berkus/libssu.git
+[submodule "cmake"]
+	path = cmake
+	url = https://berkus@github.com/berkus/cmake-setup.git

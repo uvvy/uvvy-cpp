@@ -3,21 +3,9 @@ cmake_minimum_required(VERSION 2.8)
 project(mettanode)
 include(CTest)
 
-# On mac, use openssl from brew, not the default system one, because it is too old.
-# Run 'brew install openssl' to install it.
-if (APPLE)
-	set(OPENSSL_ROOT_DIR /usr/local/opt/openssl)
-	# Set pkg-config path in case pkg-config is installed on the machine.
-	set(ENV{PKG_CONFIG_PATH} /usr/local/opt/openssl/lib/pkgconfig)
-	# A bug in cmake prevents use of OPENSSL_ROOT_DIR for finding a custom openssl,
-	# so we use an internal variable instead. This needs to be fixed in cmake.
-	set(_OPENSSL_ROOT_HINTS_AND_PATHS PATHS /usr/local/opt/openssl)
-endif (APPLE)
+include(cmake/setup.cmake)
 
-find_package(OpenSSL REQUIRED)
 find_package(Qt4 REQUIRED)
-
-include_directories(${OPENSSL_INCLUDE_DIR})
 
 # Export compile commands for ST2 clang plugin.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -89,40 +77,8 @@ if (APPLE)
 	set(GUI_TYPE MACOSX_BUNDLE)
 endif (APPLE)
 
-set(BOOST_COMPONENTS)
-
-if (BUILD_TESTING)
-	list(APPEND BOOST_COMPONENTS unit_test_framework)
-	enable_testing()
-	include(Dart)
-endif (BUILD_TESTING)
-
-# For ssu we need boost/asio which depends on libboost_system
-list(APPEND BOOST_COMPONENTS system)
-# For logging we need boost/posix_time
-list(APPEND BOOST_COMPONENTS date_time)
-# Serialization is used for streaming data to and from udp packets
-list(APPEND BOOST_COMPONENTS serialization)
-# Program_options used to parse cmdline args in some tests
-list(APPEND BOOST_COMPONENTS program_options)
-
-#set(Boost_USE_MULTITHREAD ON)
-set(Boost_USE_STATIC_LIBS ON) # Easier to deploy elsewhere
-find_package(Boost REQUIRED COMPONENTS ${BOOST_COMPONENTS})
-
-include_directories(${Boost_INCLUDE_DIR})
 # Additional unofficial boost libraries
 include_directories(3rdparty/endian)
-
-# Create and link a test application.
-function(create_test NAME EXTRALIBS)
-	add_executable(test_${NAME} test_${NAME}.cpp)
-	target_link_libraries(test_${NAME} ${EXTRALIBS} ${Boost_LIBRARIES})
-	target_link_libraries(test_${NAME} supc++)
-	install(TARGETS test_${NAME}
-	    RUNTIME DESTINATION tests/unittests)
-	add_test(${NAME} test_${NAME})
-endfunction(create_test)
 
 add_subdirectory(support)
 
