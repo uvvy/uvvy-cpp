@@ -1183,7 +1183,8 @@ void BaseStream::rxData(QByteArray &pkt, quint32 byteseq)
             // below we'll re-add whatever part of it we use.
             rbufused -= segsize;
 
-            qDebug() << this << "Pull segment at" << rseg.rsn << "of size" << segsize << "from reorder buffer";
+            qDebug() << this << "Pull segment at" << rseg.rsn 
+                     << "of size" << segsize << "from reorder buffer";
 
             int actsize = segsize + rsndiff;
             if (actsize < 0 or (actsize == 0 and !rseg.hasFlags()))
@@ -1480,7 +1481,8 @@ void BaseStream::calcReceiveWindow()
         i++;
     rwinbyte = i;   // XXX control bits?
 
-    qDebug() << this << "buffered" << ravail << "+" << (rbufused - ravail) << "rwin" << rwin << "exp" << i;
+    qDebug() << this << "buffered" << ravail << "+" << (rbufused - ravail) 
+             << "rwin" << rwin << "exp" << i;
 }
 
 void BaseStream::calcTransmitWindow(quint8 win)
@@ -1628,7 +1630,8 @@ int BaseStream::writeData(const char *data, int totsize, quint8 endflags)
         // Hold onto the packet data until it gets ACKed
         twait.insert(p.tsn);
         twaitsize += size;
-        qDebug() << "twait insert" << p.tsn << "size" << size << "new cnt" << twait.size() << "twaitsize" << twaitsize;
+        qDebug() << "twait insert" << p.tsn << "size" << size << "new cnt" << twait.size() 
+                 << "twaitsize" << twaitsize;
 
         // Queue up the segment for transmission ASAP
         txenqueue(p);
