@@ -16,6 +16,7 @@ using namespace SST;
 
 //=================================================================================================
 // StreamTxAttachment
+// Where our stream attaches to flow.
 //=================================================================================================
 
 void StreamTxAttachment::setAttaching(StreamFlow *flow, quint16 sid)
@@ -69,6 +70,7 @@ void StreamTxAttachment::clear()
 
 //=================================================================================================
 // StreamRxAttachment
+// Where the peer's stream is attached to the flow.
 //=================================================================================================
 
 void StreamRxAttachment::setActive(StreamFlow *flow, quint16 sid, PacketSeq rxseq)

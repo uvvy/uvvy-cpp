@@ -986,7 +986,7 @@ bool ChecksumArmor::rxdec(qint64 pktseq, QByteArray &pkt)
 	QByteArray sumbuf((const char*)&sum, 4);
 
 	// Verify and strip the packet's checksum.
-	if (pkt.mid(size) != sumbuf)
+	if (pkt.mid(size) != sumbuf) // part of pkt starting at offset size, length remaining 4 bytes
 		return false;
 	pkt.resize(size);
 	return true;
