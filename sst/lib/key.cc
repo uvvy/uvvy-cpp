@@ -912,7 +912,7 @@ KeyInitiator::gotDhR2(Host *h, KeyChunkDhR2Data &r2)
 	qDebug() << i << "got DhR2";
 
 	// Make sure our host key hasn't expired in the meantime
-	// XXX but reverting here leaves the responder with a hung channel!
+	// XXX but reverting here leaves the responder with a hung channel! <---
 	DHKey *hk = h->getDHKey(i->dhgroup);
 	Q_ASSERT(hk != NULL);
 	if (i->dhi != hk->pubkey)
@@ -965,7 +965,7 @@ KeyInitiator::gotDhR2(Host *h, KeyChunkDhR2Data &r2)
 	QByteArray txmackey = calcKey(i->master, i->nhi, i->nr, 'A', 256/8);
 	QByteArray rxenckey = calcKey(i->master, i->nr, i->nhi, 'E', 128/8);
 	QByteArray rxmackey = calcKey(i->master, i->nr, i->nhi, 'A', 256/8);
-	i->fl->setArmor(new AESArmor(txenckey, txmackey, rxenckey, rxmackey));
+	i->fl->setArmor(new AESArmor(txenckey, txmackey, rxenckey, rxmackey)); ///<-- unique_ptr?
 
 	// Set up the new flow's channel IDs
 	QByteArray txchanid = calcKey(i->master, i->nhi, i->nr, 'I', 128/8);
