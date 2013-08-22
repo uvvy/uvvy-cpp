@@ -217,7 +217,7 @@ SimPacket::SimPacket(SimHost *srch, const Endpoint &src,
 
 	// Find the destination on the appropriate incident link;
 	// drop the packet if destination host not found.
-	int w = lnk->which(srch);
+	int w = lnk->which(srch); // w == is this the "up" link (true = up)
 	dsth = lnk->hosts[!w];
 	if (!dsth || !(lnk->addrs[!w] == dst.addr)) {
 		qDebug() << this << "target host" << dst.addr.toString() << "not on specified link!";
