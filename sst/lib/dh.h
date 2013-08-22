@@ -77,7 +77,7 @@ class DHHostState
 	friend class DHKey;
 
 private:
-	DHKey *dhkeys[KEYGROUP_JFDH_MAX];
+	DHKey *dhkeys[KEYGROUP_JFDH_MAX]; // this array gets overwritten with dhgroup 3
 
 	DHKey *gen(quint8 dhgroup, DH *(*groupfunc)());
 
