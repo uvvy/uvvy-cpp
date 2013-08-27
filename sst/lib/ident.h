@@ -279,8 +279,7 @@ public:
 	Ident hostIdent(bool create = true);
 
 	/** Set our primary host identity.
-	 * @param ident the new host identity to set,
-	 *		which should include a private key. */
+	 * @param ident the new host identity to set, which should include a private key. */
 	void setHostIdent(const Ident &ident);
 
 	/** Initialize our primary host identity
