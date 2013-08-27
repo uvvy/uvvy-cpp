@@ -67,6 +67,13 @@ void WebServer::gotConnection()
 	gotConnection();
 }
 
+static void bad(QString const& name, Stream* strm)
+{
+	qDebug() << "Can't open requested object " << name;
+	strm->shutdown(strm->Reset);	// Kinda severe, but...
+	strm->deleteLater();
+}
+
 void WebServer::connRead()
 {
 	Stream *strm = (Stream*)sender();
@@ -78,16 +85,12 @@ void WebServer::connRead()
 	QString name = "page/" + QString::fromAscii(msg);
 	QFile f(name);
 	if (!f.open(QIODevice::ReadOnly)) {
-		bad:
-		qDebug() << "Can't open requested object " << name;
-		strm->shutdown(strm->Reset);	// Kinda severe, but...
-		strm->deleteLater();
-		return;
+		return bad(name, strm);
 	}
 
 	QByteArray dat = f.readAll();
 	if (dat.isEmpty())
-		goto bad;
+		return bad(name, strm);
 
 	strm->writeMessage(dat);
 
