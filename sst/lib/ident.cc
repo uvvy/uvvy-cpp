@@ -27,7 +27,6 @@
 #include <QtDebug>
 
 #include "ident.h"
-#include "crypto/dsa.h"
 #include "util.h"
 #include "crypto/sha2.h"
 #include "xdr.h"
