@@ -683,7 +683,7 @@ void BaseStream::txAttach()
     p.buf.resize(hdrlenAttach);
     AttachHeader *hdr = (AttachHeader*)(p.buf.data() + Flow::hdrlen);
     hdr->sid = htons(tcuratt->sid);
-    hdr->type = (AttachPacket << typeShift) | (init ? attachInitFlag : 0)               | slot;
+    hdr->type = (AttachPacket << typeShift) | (init ? attachInitFlag : 0) | slot;
     hdr->win = receiveWindow();
 
     // The body of the Attach packet is the stream's full USID,
