@@ -320,7 +320,7 @@ void BaseStream::setUsid(const UniqueStreamId &newusid)
     Q_ASSERT(usid.isNull());
     Q_ASSERT(!newusid.isNull());
 
-    if (peer->usids.contains(usid))
+    if (peer->usids.contains(newusid))
         qWarning("Duplicate stream USID!?");
 
     usid = newusid;
