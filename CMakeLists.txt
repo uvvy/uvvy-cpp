@@ -34,6 +34,13 @@ if (CLANG)
 		set(_extraFlags "${_extraFlags} -Wdocumentation")
 	endif ()
 	set(_extraFlags "${_extraFlags} -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-private-field")
+
+	# Nasty boost.unit_test_framework
+	set(_extraFlags "${_extraFlags} -Wno-unneeded-internal-declaration")
+
+	# Temporary until I fix libSSU
+	set(_extraFlags "${_extraFlags} -Wno-mismatched-tags")
+
 	if (CLANG_LTO)
 		set(_extraFlags "${_extraFlags} -emit-llvm")
 		set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -O4")
