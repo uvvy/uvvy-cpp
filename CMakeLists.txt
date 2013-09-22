@@ -35,9 +35,6 @@ if (CLANG)
 	endif ()
 	set(_extraFlags "${_extraFlags} -Wno-unused-parameter -Wno-unused-private-field")
 
-	# Temporary until I fix libSSU
-	set(_extraFlags "${_extraFlags} -Wno-mismatched-tags")
-
 	if (CLANG_LTO)
 		set(_extraFlags "${_extraFlags} -emit-llvm")
 		set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -O4")
