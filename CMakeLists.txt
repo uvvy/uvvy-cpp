@@ -33,7 +33,7 @@ if (CLANG)
 	if (CLANG_CHECK_DOCS)
 		set(_extraFlags "${_extraFlags} -Wdocumentation")
 	endif ()
-	set(_extraFlags "${_extraFlags} -Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-private-field")
+	set(_extraFlags "${_extraFlags} -Wno-unused-parameter -Wno-unused-private-field")
 
 	# Temporary until I fix libSSU
 	set(_extraFlags "${_extraFlags} -Wno-mismatched-tags")
