@@ -12,7 +12,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "config.h"
-
+#include <stdint.h>
+ 
 /////////////////////////////////////////////////////////////////////////////
 // A number of preprocessor options are used in the source code
 //
@@ -137,13 +138,8 @@ defined(_AIX) || defined(__hpux)
 extern void f4_memmove(void *d, const void *s, int n);
 #endif 
 
-typedef unsigned char t4_byte; // create typedefs for t4_byte, etc.
-
-#if SIZEOF_LONG == 8
-typedef int t4_i32; // longs are 64b, so int must be 32b
-#else 
-typedef long t4_i32; // longs aren't 64b, so they are 32b
-#endif 
+typedef uint8_t t4_byte; // create typedefs for t4_byte, etc.
+typedef int32_t t4_i32; // longs are 64b, so int must be 32b
 
 /////////////////////////////////////////////////////////////////////////////
 // Include header files which contain additional os/cpu/ide/fw specifics
