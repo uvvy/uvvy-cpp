@@ -32,7 +32,8 @@ class audio_receiver : public ssu::link_receiver
 public:
     static constexpr int nChannels = 1;
 
-    audio_receiver()
+    audio_receiver(ssu::link_host_state& host)
+        : link_receiver(host)
     {
         int error = 0;
         decstate = opus_decoder_create(48000, nChannels, &error);
@@ -273,7 +274,7 @@ int main(int argc, char* argv[])
         ssu::endpoint remote_ep(boost::asio::ip::address_v6::from_string(peer), port);
         ssu::udp_link l(local_ep, host);
 
-        audio_receiver receiver;
+        audio_receiver receiver(host);
         host.bind_receiver(opus_magic, &receiver);
 
         audio_sender sender(l, remote_ep);
