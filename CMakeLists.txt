@@ -10,6 +10,9 @@ find_package(Qt4 REQUIRED)
 # Export compile commands for ST2 clang plugin.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Set flag for submodules build
+set(BUILD_IN_METTANODE ON)
+
 option(CLANG "Build using clang." ON)
 option(CLANG_GIT "[developer] Build using clang-git." OFF)
 option(CLANG_ASAN "Use clang's address-sanitizer." ON)

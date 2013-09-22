@@ -7,3 +7,6 @@
 [submodule "cmake"]
 	path = cmake
 	url = https://berkus@github.com/berkus/cmake-setup.git
+[submodule "support"]
+	path = support
+	url = https://berkus@github.com/berkus/libsupport.git
