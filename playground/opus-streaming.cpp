@@ -24,7 +24,8 @@ constexpr ssu::magic_t opus_magic = 0x00505553;
 class audio_receiver : public ssu::link_receiver
 {
     OpusDecoder *decstate{0};
-    int framesize{0}, rate{0};
+    size_t framesize{0};
+    int rate{0};
     std::mutex queue_mutex;
     std::queue<byte_array> packet_queue;
 
@@ -65,7 +66,7 @@ public:
             lock.unlock();
             int len = opus_decode_float(decstate, (unsigned char*)pkt.data()+4, pkt.size()-4, decoded_packet, framesize, /*decodeFEC:*/0);
             assert(len > 0);
-            assert(len == framesize);
+            assert(len == int(framesize));
             logger::debug() << "get_packet decoded frame of size " << pkt.size() << " into " << len << " frames";
         } else {
             lock.unlock();
