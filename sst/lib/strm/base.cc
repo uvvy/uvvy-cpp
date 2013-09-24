@@ -1254,9 +1254,9 @@ void BaseStream::rxData(QByteArray &pkt, quint32 byteseq)
         // (unless the duplicate actually has more data or new flags).
         if (lo < rahead.size() && rahead[lo].rsn == rseg.rsn
                 && segsize <= rahead[lo].segmentSize()
-                && rseg.flags() == rahead[lo].flags()) {
-            qDebug("rxseg duplicate out-of-order segment - RSN %d",
-                rseg.rsn);
+                && rseg.flags() == rahead[lo].flags())
+        {
+            qDebug("rxseg duplicate out-of-order segment - RSN %d", rseg.rsn);
             goto done;
         }
 
