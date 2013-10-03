@@ -13,6 +13,4 @@ That's right, a message can have several parents. By default the chat flow is li
 
 Protocol allows you to easily detect gaps in the conversation. When you receive a message and it's parent is not in the local database, you can query your peer for missing messages and receive them quickly in one roundtrip.
 
-One negative consequence of adopting git-like model for messages is editing. When you change a previous message, its hash changes, invalidating parent pointers in all following messages. When you modify the next message to point back to the modified parent, its hash also changes, resulting in a cascade of changes to all the following messages, which need then be resynchronised to other peers. This can be problematic if the messages are signed by their authors.
-
-@todo Investigate how bad it could be.
+When you change a previous message, it creates kind of a branch, rooted in the original message. Edit is a full new message, which has the original message as its parent. Messages within the branch are sorted by timestamp, the latest one represents the last actual contents of the edited message. (There needs to be a way to distinguish branch head from the main conversation head).
