@@ -8,7 +8,9 @@
 //
 #include <queue>
 #include <mutex>
-#include "link.h"
+#include "host.h"
+#include "stream.h"
+#include "server.h"
 #include "logging.h"
 #include "opus.h"
 #include "RtAudio.h"
@@ -16,6 +18,9 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/positional_options.hpp>
+
+using namespace std;
+using namespace ssu;
 
 constexpr ssu::magic_t opus_magic = 0x00505553;
 
@@ -269,20 +274,26 @@ int main(int argc, char* argv[])
     std::cout << "Connecting to " << peer << " on port " << port << std::endl;
 
     try {
-        ssu::link_host_state host;
-        ssu::endpoint local_ep(boost::asio::ip::udp::v6(), port);
-        ssu::endpoint remote_ep(boost::asio::ip::address_v6::from_string(peer), port);
-        ssu::udp_link l(local_ep, host);
+        peer_id eid; // dummy peer id for now
+        shared_ptr<host> host(make_shared<host>());
+        endpoint remote_ep(boost::asio::ip::address_v6::from_string(peer), port);
 
-        audio_receiver receiver(host);
-        host.bind_receiver(opus_magic, &receiver);
+        shared_ptr<stream> stream(make_shared<stream>(host));
+        stream->connect_to(eid, "streaming", "opus", remote_ep);
 
-        audio_sender sender(l, remote_ep);
+        shared_ptr<server> server(make_shared<server>(host));
+        server->listen("streaming", "Streaming services", "opus", "OPUS Audio protocol");
 
-        audio_hardware hw(&sender, &receiver); // open streams and start io
+        // audio_receiver receiver(host);
+        // host.bind_receiver(opus_magic, &receiver);
 
-        host.run_io_service();
-    } catch(std::exception& e)
+        // audio_sender sender(l, remote_ep);
+
+        // audio_hardware hw(&sender, &receiver); // open streams and start io
+
+        host->run_io_service();
+    }
+    catch(std::exception& e)
     {
         std::cout << "EXCEPTION " << e.what() << std::endl;
         return -1;
