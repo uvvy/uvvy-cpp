@@ -6,6 +6,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
+#include <boost/program_options/parsers.hpp>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <boost/program_options/positional_options.hpp>
 #include <queue>
 #include <mutex>
 #include "host.h"
@@ -14,10 +18,7 @@
 #include "logging.h"
 #include "opus.h"
 #include "RtAudio.h"
-#include <boost/program_options/parsers.hpp>
-#include <boost/program_options/options_description.hpp>
-#include <boost/program_options/variables_map.hpp>
-#include <boost/program_options/positional_options.hpp>
+#include "settings_provider.h"
 
 using namespace std;
 using namespace ssu;
@@ -226,6 +227,7 @@ namespace po = boost::program_options;
  */
 int main(int argc, char* argv[])
 {
+    bool connect_out{false};
     std::string peer;
     int port = 9660;
 
@@ -257,33 +259,37 @@ int main(int argc, char* argv[])
         if (peer.find("]:") != peer.npos)
         {
             // split port off
-            port = boost::lexical_cast<int>(peer.substr(peer.find("]:")+2));
+            port = boost::lexical_cast<int>(peer.substr(peer.find("]:")+2));//@todo ipv6 only
             peer = peer.substr(0, peer.find("]:")+1);
         }
         if (peer.find("[") == 0)
         {
             peer = peer.substr(1, peer.find("]")-1);
         }
-    }
-    else
-    {
-        std::cout << desc << "\n";
-        return 111;
+        connect_out = true;
     }
 
-    std::cout << "Connecting to " << peer << " on port " << port << std::endl;
-
-    try {
+    // try {
         peer_id eid; // dummy peer id for now
-        shared_ptr<host> host(make_shared<host>());
-        endpoint remote_ep(boost::asio::ip::address_v6::from_string(peer), port);
+        auto settings = settings_provider::instance();
+        shared_ptr<host> host(host::create(settings.get(), port));
 
-        shared_ptr<stream> stream(make_shared<stream>(host));
-        stream->connect_to(eid, "streaming", "opus", remote_ep);
+        if (connect_out)
+        {
+            endpoint remote_ep(boost::asio::ip::address_v6::from_string(peer), port);
+            logger::debug() << "Connecting to " << remote_ep;
 
-        shared_ptr<server> server(make_shared<server>(host));
-        server->listen("streaming", "Streaming services", "opus", "OPUS Audio protocol");
+            shared_ptr<stream> stream(make_shared<stream>(host));
+            stream->connect_to(eid, "streaming", "opus", remote_ep);
+        }
+        else
+        {
+            logger::debug() << "Listening on port " << port;
 
+            shared_ptr<server> server(make_shared<server>(host));
+            bool listening = server->listen("streaming", "Streaming services", "opus", "OPUS Audio protocol");
+            assert(listening);
+        }
         // audio_receiver receiver(host);
         // host.bind_receiver(opus_magic, &receiver);
 
@@ -292,10 +298,10 @@ int main(int argc, char* argv[])
         // audio_hardware hw(&sender, &receiver); // open streams and start io
 
         host->run_io_service();
-    }
-    catch(std::exception& e)
-    {
-        std::cout << "EXCEPTION " << e.what() << std::endl;
-        return -1;
-    }
+    // }
+    // catch(std::exception& e)
+    // {
+    //     std::cout << "EXCEPTION " << e.what() << std::endl;
+    //     return -1;
+    // }
 }
