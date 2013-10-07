@@ -53,6 +53,7 @@ cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DBUILD_TES
 CI status
 =========
 [![Build Status](https://secure.travis-ci.org/berkus/mettanode.png)](http://travis-ci.org/berkus/mettanode)
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/berkus/mettanode/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
 Authors
 =======
