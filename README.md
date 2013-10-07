@@ -65,3 +65,7 @@ Bogdan Lytvynovsky <>
 Original SST and UIA development:
 Bryan Ford <>
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/berkus/mettanode/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
