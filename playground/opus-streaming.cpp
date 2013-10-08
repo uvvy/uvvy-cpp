@@ -269,7 +269,7 @@ int main(int argc, char* argv[])
         connect_out = true;
     }
 
-    // try {
+    try {
         peer_id eid; // dummy peer id for now
         auto settings = settings_provider::instance();
         shared_ptr<host> host(host::create(settings.get(), port));
@@ -301,10 +301,10 @@ int main(int argc, char* argv[])
         // audio_hardware hw(&sender, &receiver); // open streams and start io
 
         host->run_io_service();
-    // }
-    // catch(std::exception& e)
-    // {
-    //     std::cout << "EXCEPTION " << e.what() << std::endl;
-    //     return -1;
-    // }
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "EXCEPTION " << e.what() << std::endl;
+        return -1;
+    }
 }
