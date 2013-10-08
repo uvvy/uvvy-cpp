@@ -273,20 +273,23 @@ int main(int argc, char* argv[])
         peer_id eid; // dummy peer id for now
         auto settings = settings_provider::instance();
         shared_ptr<host> host(host::create(settings.get(), port));
+        shared_ptr<stream> stream;
+        shared_ptr<server> server;
 
         if (connect_out)
         {
-            endpoint remote_ep(boost::asio::ip::address_v6::from_string(peer), port);
+            endpoint remote_ep(boost::asio::ip::address_v4::from_string(peer), port);
             logger::debug() << "Connecting to " << remote_ep;
 
-            shared_ptr<stream> stream(make_shared<stream>(host));
+            stream = make_shared<ssu::stream>(host);
             stream->connect_to(eid, "streaming", "opus", remote_ep);
         }
         else
         {
             logger::debug() << "Listening on port " << port;
 
-            shared_ptr<server> server(make_shared<server>(host));
+            server = make_shared<ssu::server>(host);
+            // server->on_new_connection.connect();
             bool listening = server->listen("streaming", "Streaming services", "opus", "OPUS Audio protocol");
             assert(listening);
         }
