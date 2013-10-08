@@ -1,4 +1,4 @@
-add_subdirectory(sstreams)
+#add_subdirectory(sstreams)
 
 set(QT_DONT_USE_QTGUI TRUE)
 set(QT_USE_QTNETWORK TRUE)

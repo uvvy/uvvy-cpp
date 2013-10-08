@@ -86,9 +86,9 @@ include_directories(3rdparty/endian)
 
 add_subdirectory(support)
 
-add_subdirectory(sst)
+#add_subdirectory(sst)
 add_subdirectory(ssu)
-add_subdirectory(routing)
+#add_subdirectory(routing)
 #add_subdirectory(naming)
 add_subdirectory(nat)
 add_subdirectory(ui)
