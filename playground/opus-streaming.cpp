@@ -23,23 +23,22 @@
 using namespace std;
 using namespace ssu;
 
-constexpr ssu::magic_t opus_magic = 0x00505553;
-
 // Receive packets from remote
 // Opus-decode and playback
-class audio_receiver : public ssu::link_receiver
+class audio_receiver
 {
     OpusDecoder *decstate{0};
     size_t framesize{0};
     int rate{0};
     std::mutex queue_mutex;
     std::queue<byte_array> packet_queue;
+    shared_ptr<stream> stream_;
 
 public:
     static constexpr int nChannels = 1;
 
-    audio_receiver(ssu::link_host_state& host)
-        : link_receiver(host)
+    audio_receiver(shared_ptr<stream> stream)
+        : stream_(stream)
     {
         int error = 0;
         decstate = opus_decoder_create(48000, nChannels, &error);
@@ -48,6 +47,9 @@ public:
 
         opus_decoder_ctl(decstate, OPUS_GET_SAMPLE_RATE(&rate));
         framesize = rate / 100; // 10ms
+
+        stream_->on_ready_read_datagram.connect(
+            boost::bind(&audio_receiver::on_packet_received, this));
     }
 
     ~audio_receiver()
@@ -87,11 +89,12 @@ public:
 
 protected:
     /* Put received packet into receive queue */
-    virtual void receive(const byte_array& msg, const ssu::link_endpoint& src) override
+    void on_packet_received()
     {
-        logger::debug() << "received packet of size " << msg.size();
         std::lock_guard<std::mutex> lock(queue_mutex);
         // extract payload
+        byte_array msg = stream_->read_datagram();
+        logger::debug() << "received packet of size " << msg.size();
         packet_queue.push(msg);
     }
 };
@@ -102,15 +105,13 @@ class audio_sender
 {
     OpusEncoder *encstate{0};
     int framesize{0}, rate{0};
-    ssu::link& link_;
-    ssu::endpoint& ep_;
+    shared_ptr<stream> stream_;
 
 public:
     static constexpr int nChannels = 1;
 
-    audio_sender(ssu::link& l, ssu::endpoint& e)
-        : link_(l)
-        , ep_(e)
+    audio_sender(shared_ptr<stream> stream)
+        : stream_(stream)
     {
         int error = 0;
         encstate = opus_encoder_create(48000, nChannels, OPUS_APPLICATION_VOIP, &error);
@@ -127,6 +128,7 @@ public:
 
     ~audio_sender()
     {
+        stream_->shutdown(stream::shutdown_mode::write);
         opus_encoder_destroy(encstate); encstate = 0;
     }
 
@@ -135,12 +137,10 @@ public:
     {
         logger::debug() << "send_packet framesize " << framesize << ", got nFrames " << nFrames;
         assert((int)nFrames == framesize);
-        byte_array samplebuf(nFrames*sizeof(float));
+        byte_array samplebuf(nFrames*sizeof(float)); // @todo Add channel and stream header space
         opus_int32 nbytes = opus_encode_float(encstate, buffer, nFrames, (unsigned char*)samplebuf.data()+4, nFrames*sizeof(float)-4);
         assert(nbytes > 0);
-        samplebuf.resize(nbytes+4);
-        *reinterpret_cast<ssu::magic_t*>(samplebuf.data()) = opus_magic;
-        link_.send(ep_, samplebuf);
+        stream_->write_datagram(samplebuf, stream::datagram_type::non_reliable);
     }
 };
 
