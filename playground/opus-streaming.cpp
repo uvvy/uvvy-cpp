@@ -254,14 +254,15 @@ int main(int argc, char* argv[])
     auto settings = settings_provider::instance();
 
     auto s_port = settings->get("port");
-    logger::debug() << "Type " << s_port.type().name();
     if (!s_port.empty()) {
-        port = boost::any_cast<int>(s_port);
+        port = boost::any_cast<long long>(s_port);
+        logger::debug() << "Setting port to " << port << " per settings file.";
     }
 
     if (vm.count("port"))
     {
         port = vm["port"].as<int>();
+        logger::debug() << "Setting port to " << port << " per command line.";
     }
 
     if (vm.count("peer"))
