@@ -229,12 +229,12 @@ int main(int argc, char* argv[])
 {
     bool connect_out{false};
     std::string peer;
-    int port = 9660;
+    uint16_t port = 9660;
 
     po::options_description desc("Program arguments");
     desc.add_options()
         ("peer,a", po::value<std::string>(), "Peer IPv6 address, can be ipv6, [ipv6] or [ipv6]:port")
-        ("port,p", po::value<int>(&port)->default_value(9660), "Run service on this port, connect peer on this port")
+        ("port,p", po::value<uint16_t>(&port)->default_value(9660), "Run service on this port, connect peer on this port")
         ("help", "Print this help message");
     po::positional_options_description p;
     p.add("peer", -1);
@@ -247,6 +247,13 @@ int main(int argc, char* argv[])
         std::cout << desc << "\n";
         return 1;
     }
+
+    settings_provider::set_organization_name("Exquance");
+    settings_provider::set_organization_domain("com.exquance");
+    settings_provider::set_application_name("opus-streaming");
+    auto settings = settings_provider::instance();
+
+    port = settings->get_uint("port");
 
     if (vm.count("port"))
     {
@@ -269,9 +276,10 @@ int main(int argc, char* argv[])
         connect_out = true;
     }
 
+    settings->set("port", size_t(port));
+
     try {
         peer_id eid; // dummy peer id for now
-        auto settings = settings_provider::instance();
         shared_ptr<host> host(host::create(settings.get(), port));
         shared_ptr<stream> stream;
         shared_ptr<server> server;
