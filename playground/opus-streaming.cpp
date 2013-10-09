@@ -229,12 +229,12 @@ int main(int argc, char* argv[])
 {
     bool connect_out{false};
     std::string peer;
-    uint16_t port = 9660;
+    int port = 9660;
 
     po::options_description desc("Program arguments");
     desc.add_options()
         ("peer,a", po::value<std::string>(), "Peer IPv6 address, can be ipv6, [ipv6] or [ipv6]:port")
-        ("port,p", po::value<uint16_t>(&port)->default_value(9660), "Run service on this port, connect peer on this port")
+        ("port,p", po::value<int>(&port)->default_value(9660), "Run service on this port, connect peer on this port")
         ("help", "Print this help message");
     po::positional_options_description p;
     p.add("peer", -1);
@@ -253,7 +253,11 @@ int main(int argc, char* argv[])
     settings_provider::set_application_name("opus-streaming");
     auto settings = settings_provider::instance();
 
-    port = settings->get_uint("port");
+    auto s_port = settings->get("port");
+    logger::debug() << "Type " << s_port.type().name();
+    if (!s_port.empty()) {
+        port = boost::any_cast<int>(s_port);
+    }
 
     if (vm.count("port"))
     {
@@ -276,10 +280,11 @@ int main(int argc, char* argv[])
         connect_out = true;
     }
 
-    settings->set("port", size_t(port));
+    settings->set("port", port);
+    settings->sync();
 
     try {
-        peer_id eid; // dummy peer id for now
+        peer_id eid;//(settings->get_byte_array("remote.eid"));
         shared_ptr<host> host(host::create(settings.get(), port));
         shared_ptr<stream> stream;
         shared_ptr<server> server;
