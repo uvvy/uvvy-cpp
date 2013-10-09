@@ -37,8 +37,7 @@ class audio_receiver
 public:
     static constexpr int nChannels = 1;
 
-    audio_receiver(shared_ptr<stream> stream)
-        : stream_(stream)
+    audio_receiver()
     {
         int error = 0;
         decstate = opus_decoder_create(48000, nChannels, &error);
@@ -47,14 +46,18 @@ public:
 
         opus_decoder_ctl(decstate, OPUS_GET_SAMPLE_RATE(&rate));
         framesize = rate / 100; // 10ms
-
-        stream_->on_ready_read_datagram.connect(
-            boost::bind(&audio_receiver::on_packet_received, this));
     }
 
     ~audio_receiver()
     {
         opus_decoder_destroy(decstate); decstate = 0;
+    }
+
+    void streaming(shared_ptr<stream> stream)
+    {
+        stream_ = stream;
+        stream_->on_ready_read_datagram.connect(
+            boost::bind(&audio_receiver::on_packet_received, this));
     }
 
     /**
@@ -110,8 +113,7 @@ class audio_sender
 public:
     static constexpr int nChannels = 1;
 
-    audio_sender(shared_ptr<stream> stream)
-        : stream_(stream)
+    audio_sender()
     {
         int error = 0;
         encstate = opus_encoder_create(48000, nChannels, OPUS_APPLICATION_VOIP, &error);
@@ -128,8 +130,15 @@ public:
 
     ~audio_sender()
     {
-        stream_->shutdown(stream::shutdown_mode::write);
+        if (stream_) {
+            stream_->shutdown(stream::shutdown_mode::write);
+        }
         opus_encoder_destroy(encstate); encstate = 0;
+    }
+
+    void streaming(shared_ptr<stream> stream)
+    {
+        stream_ = stream;
     }
 
     // Called by rtaudio callback to encode and send packet.
@@ -178,8 +187,6 @@ public:
             logger::warning() << "Couldn't open stream, " << error.what();
             return;
         }
-
-        audio_inst->startStream();
     }
 
     ~audio_hardware()
@@ -191,6 +198,18 @@ public:
             logger::warning() << "Couldn't close stream, " << error.what();
         }
         delete audio_inst; audio_inst = 0;
+    }
+
+    void new_connection(shared_ptr<server> server)
+    {
+        auto stream = server->accept();
+        if (!stream)
+            return;
+
+        sender_->streaming(stream);
+        receiver_->streaming(stream);
+
+        audio_inst->startStream();
     }
 
 private:
@@ -282,41 +301,33 @@ int main(int argc, char* argv[])
     settings->set("port", port);
     settings->sync();
 
-    try {
-        peer_id eid;//(settings->get_byte_array("remote.eid"));
-        shared_ptr<host> host(host::create(settings.get(), port));
-        shared_ptr<stream> stream;
-        shared_ptr<server> server;
+    peer_id eid{byte_array({0x58,0xda,0x12,0x97, 0xf9,0x61,0x6d,0x5c, 0x1a,0x9f,0x22,0x1e, 0x0e,0x29,0x4c,0xad,
+        0x5d,0x7d,0x22,0x53})};
+    shared_ptr<host> host(host::create(settings.get(), port));
+    shared_ptr<stream> stream;
+    shared_ptr<server> server;
 
-        if (connect_out)
-        {
-            endpoint remote_ep(boost::asio::ip::address_v4::from_string(peer), port);
-            logger::debug() << "Connecting to " << remote_ep;
+    audio_receiver receiver;
+    audio_sender sender;
+    audio_hardware hw(&sender, &receiver);
 
-            stream = make_shared<ssu::stream>(host);
-            stream->connect_to(eid, "streaming", "opus", remote_ep);
-        }
-        else
-        {
-            logger::debug() << "Listening on port " << port;
-
-            server = make_shared<ssu::server>(host);
-            // server->on_new_connection.connect();
-            bool listening = server->listen("streaming", "Streaming services", "opus", "OPUS Audio protocol");
-            assert(listening);
-        }
-        // audio_receiver receiver(host);
-        // host.bind_receiver(opus_magic, &receiver);
-
-        // audio_sender sender(l, remote_ep);
-
-        // audio_hardware hw(&sender, &receiver); // open streams and start io
-
-        host->run_io_service();
-    }
-    catch(std::exception& e)
+    if (connect_out)
     {
-        std::cout << "EXCEPTION " << e.what() << std::endl;
-        return -1;
+        endpoint remote_ep(boost::asio::ip::address_v4::from_string(peer), port);
+        logger::debug() << "Connecting to " << remote_ep;
+
+        stream = make_shared<ssu::stream>(host);
+        stream->connect_to(eid, "streaming", "opus", remote_ep);
     }
+    else
+    {
+        logger::debug() << "Listening on port " << port;
+
+        server = make_shared<ssu::server>(host);
+        server->on_new_connection.connect(boost::bind(&audio_hardware::new_connection, &hw, server));
+        bool listening = server->listen("streaming", "Streaming services", "opus", "OPUS Audio protocol");
+        assert(listening);
+    }
+
+    host->run_io_service();
 }
