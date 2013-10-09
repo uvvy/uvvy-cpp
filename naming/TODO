@@ -1,0 +1,5 @@
+Peering:
+ ☐ "Peer" is a remote contact.
+   Peer can have a profile, a set of EIDs, various access rights into our cluster(s).
+
+  peers are concepts in uia::naming namespace.
