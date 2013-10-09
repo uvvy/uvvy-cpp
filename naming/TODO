@@ -3,3 +3,9 @@ Peering:
    Peer can have a profile, a set of EIDs, various access rights into our cluster(s).
 
   peers are concepts in uia::naming namespace.
+
+
+Peer ::- list of EIDs, profile, list of peers (almost recursively - we don't know their lists of peers)
+       ::- with EIDs also list of last known endpoints for those EIDs
+
+This EIDs and endpoints information is also used by the uia::routing layer for DHT.
