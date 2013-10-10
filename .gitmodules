@@ -13,3 +13,6 @@
 [submodule "3rdparty/plist"]
 	path = 3rdparty/plist
 	url = https://berkus@github.com/berkus/PlistCpp.git
+[submodule "travis-ci"]
+	path = travis-ci
+	url = https://berkus@github.com/berkus/travis-scripts.git

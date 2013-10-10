@@ -1,13 +1,10 @@
 language: cpp
 compiler: clang
 before_install:
-  - sudo add-apt-repository -y ppa:h-rayflood/llvm
-  - sudo add-apt-repository -y ppa:28msec/utils
-  - sudo apt-get update
-  - sudo apt-get install -qq --fix-missing libpulse-dev clang-3.3 cmake
-  - ./scripts/travis_build_ninja.sh
-  - ./scripts/travis_build_libcxx.sh
-  - ./scripts/travis_build_boost.sh
+  - ./travis-ci/travis_install_packages.sh
+  - ./travis-ci/travis_build_ninja.sh
+  - ./travis-ci/travis_build_libcxx.sh
+  - ./travis-ci/travis_build_boost.sh
 script: ./scripts/travis_build.sh
 notifications:
   email: false
