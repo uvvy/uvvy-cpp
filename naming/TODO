@@ -9,3 +9,29 @@ Peer ::- list of EIDs, profile, list of peers (almost recursively - we don't kno
        ::- with EIDs also list of last known endpoints for those EIDs
 
 This EIDs and endpoints information is also used by the uia::routing layer for DHT.
+
+
+
+Urbit:
+  Profiles are interesting, you can specify a lot of information about yourself.
+
+  %lord male-identified individual
+  %lady female-identified individual
+  %punk opaque handle
+  %anon totally anonymous
+  %home family
+  %crew corporation
+  %band creative collective
+  %fair nonprofit
+  %dept government agency
+  %holy religious institution
+
+ Also ask for political alignments, profile pic, given name(s), nicknames, family names, CEO, leaders etc.
+ Probably look at a Facebook profile? What's relevant there - education, past working places etc.
+ You can add this in your profile yourself, but it can also be harvested and filled in by other peers in their instances
+ of your profile. The notes they keep and whatever you update never overwrite each other, so it's possible to
+ collect information you see relevant.
+
+Plist representation:
+  vector<uid> peers; => "peers"
+  peer.<uid>.[fields]
