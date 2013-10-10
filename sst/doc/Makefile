@@ -1,3 +1,0 @@
-
-all:
-	doxygen api.conf
