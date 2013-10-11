@@ -16,3 +16,6 @@
 [submodule "travis-ci"]
 	path = travis-ci
 	url = https://berkus@github.com/berkus/travis-scripts.git
+[submodule "routing"]
+	path = routing
+	url = https://berkus@github.com/berkus/librouting.git

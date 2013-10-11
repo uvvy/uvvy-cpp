@@ -70,6 +70,8 @@ include_directories(3rdparty/plist/include)
 add_subdirectory(3rdparty/plist)
 add_subdirectory(support)
 
+include_directories(routing/include) # For ssu access to routing client
+
 #add_subdirectory(sst)
 add_subdirectory(ssu)
 #add_subdirectory(routing)
