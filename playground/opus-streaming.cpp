@@ -27,37 +27,39 @@ using namespace ssu;
 // Opus-decode and playback
 class audio_receiver
 {
-    OpusDecoder *decstate{0};
-    size_t framesize{0};
-    int rate{0};
-    std::mutex queue_mutex;
-    std::queue<byte_array> packet_queue;
+    OpusDecoder *decode_state_{0};
+    size_t frame_size_{0};
+    int rate_{0};
+    std::mutex queue_mutex_;
+    std::queue<byte_array> packet_queue_;
     shared_ptr<stream> stream_;
 
 public:
-    static constexpr int nChannels = 1;
+    static constexpr int nChannels{1};
 
     audio_receiver()
     {
-        int error = 0;
-        decstate = opus_decoder_create(48000, nChannels, &error);
-        assert(decstate);
+        int error{0};
+        decode_state_ = opus_decoder_create(48000, nChannels, &error);
+        assert(decode_state_);
         assert(!error);
 
-        opus_decoder_ctl(decstate, OPUS_GET_SAMPLE_RATE(&rate));
-        framesize = rate / 100; // 10ms
+        opus_decoder_ctl(decode_state_, OPUS_GET_SAMPLE_RATE(&rate_));
+        frame_size_ = rate_ / 100; // 10ms
     }
 
     ~audio_receiver()
     {
-        opus_decoder_destroy(decstate); decstate = 0;
+        if (stream_) {
+            stream_->shutdown(stream::shutdown_mode::read);
+        }
+        opus_decoder_destroy(decode_state_); decode_state_ = 0;
     }
 
     void streaming(shared_ptr<stream> stream)
     {
         stream_ = stream;
-        stream_->on_ready_read_datagram.connect(
-            boost::bind(&audio_receiver::on_packet_received, this));
+        stream_->on_ready_read_datagram.connect([this]{ on_packet_received(); });
     }
 
     /**
@@ -68,25 +70,25 @@ public:
     void get_packet(float* decoded_packet, size_t max_frames)
     {
         logger::debug() << "get_packet";
-        std::unique_lock<std::mutex> lock(queue_mutex);
-        assert(max_frames == framesize);
+        std::unique_lock<std::mutex> lock(queue_mutex_);
+        assert(max_frames == frame_size_);
 
-        if (packet_queue.size() > 0)
+        if (packet_queue_.size() > 0)
         {
-            byte_array pkt = packet_queue.front();
-            packet_queue.pop();
+            byte_array pkt = packet_queue_.front();
+            packet_queue_.pop();
             lock.unlock();
-            int len = opus_decode_float(decstate, (unsigned char*)pkt.data()+4, pkt.size()-4, decoded_packet, framesize, /*decodeFEC:*/0);
+            int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+4, pkt.size()-4, decoded_packet, frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
-            assert(len == int(framesize));
+            assert(len == int(frame_size_));
             logger::debug() << "get_packet decoded frame of size " << pkt.size() << " into " << len << " frames";
         } else {
             lock.unlock();
             // "decode" a missing frame
-            int len = opus_decode_float(decstate, NULL, 0, decoded_packet, framesize, /*decodeFEC:*/0);
+            int len = opus_decode_float(decode_state_, NULL, 0, decoded_packet, frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
             logger::debug() << "get_packet decoded missing frame of size " << len;
-            // assert(len == framesize);
+            // assert(len == frame_size_);
         }
     }
 
@@ -94,11 +96,11 @@ protected:
     /* Put received packet into receive queue */
     void on_packet_received()
     {
-        std::lock_guard<std::mutex> lock(queue_mutex);
+        std::lock_guard<std::mutex> lock(queue_mutex_);
         // extract payload
         byte_array msg = stream_->read_datagram();
         logger::debug() << "received packet of size " << msg.size();
-        packet_queue.push(msg);
+        packet_queue_.push(msg);
     }
 };
 
@@ -106,26 +108,26 @@ protected:
 // send it to remote endpoint
 class audio_sender
 {
-    OpusEncoder *encstate{0};
-    int framesize{0}, rate{0};
+    OpusEncoder *encode_state_{0};
+    int frame_size_{0}, rate_{0};
     shared_ptr<stream> stream_;
 
 public:
-    static constexpr int nChannels = 1;
+    static constexpr int nChannels{1};
 
     audio_sender()
     {
-        int error = 0;
-        encstate = opus_encoder_create(48000, nChannels, OPUS_APPLICATION_VOIP, &error);
-        assert(encstate);
+        int error{0};
+        encode_state_ = opus_encoder_create(48000, nChannels, OPUS_APPLICATION_VOIP, &error);
+        assert(encode_state_);
         assert(!error);
 
-        opus_encoder_ctl(encstate, OPUS_GET_SAMPLE_RATE(&rate));
-        framesize = rate / 100; // 10ms
+        opus_encoder_ctl(encode_state_, OPUS_GET_SAMPLE_RATE(&rate_));
+        frame_size_ = rate_ / 100; // 10ms
 
-        opus_encoder_ctl(encstate, OPUS_SET_BITRATE(OPUS_AUTO));
-        opus_encoder_ctl(encstate, OPUS_SET_VBR(1));
-        opus_encoder_ctl(encstate, OPUS_SET_DTX(1));
+        opus_encoder_ctl(encode_state_, OPUS_SET_BITRATE(OPUS_AUTO));
+        opus_encoder_ctl(encode_state_, OPUS_SET_VBR(1));
+        opus_encoder_ctl(encode_state_, OPUS_SET_DTX(1));
     }
 
     ~audio_sender()
@@ -133,9 +135,13 @@ public:
         if (stream_) {
             stream_->shutdown(stream::shutdown_mode::write);
         }
-        opus_encoder_destroy(encstate); encstate = 0;
+        opus_encoder_destroy(encode_state_); encode_state_ = 0;
     }
 
+    /**
+     * Use given stream for sending out audio packets.
+     * @param stream Stream handed in from server->accept().
+     */
     void streaming(shared_ptr<stream> stream)
     {
         stream_ = stream;
@@ -144,11 +150,12 @@ public:
     // Called by rtaudio callback to encode and send packet.
     void send_packet(float* buffer, size_t nFrames)
     {
-        logger::debug() << "send_packet framesize " << framesize << ", got nFrames " << nFrames;
-        assert((int)nFrames == framesize);
-        byte_array samplebuf(nFrames*sizeof(float)); // @todo Add channel and stream header space
-        opus_int32 nbytes = opus_encode_float(encstate, buffer, nFrames, (unsigned char*)samplebuf.data()+4, nFrames*sizeof(float)-4);
+        logger::debug() << "send_packet frame size " << frame_size_ << ", got nFrames " << nFrames;
+        assert((int)nFrames == frame_size_);
+        byte_array samplebuf(nFrames*sizeof(float));
+        opus_int32 nbytes = opus_encode_float(encode_state_, buffer, nFrames, (unsigned char*)samplebuf.data(), nFrames*sizeof(float));
         assert(nbytes > 0);
+        samplebuf.resize(nbytes);
         stream_->write_datagram(samplebuf, stream::datagram_type::non_reliable);
     }
 };
