@@ -2,6 +2,7 @@ Fixes:
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
     Regserver deregistration on logout is added - should notify active connections somehow too?
+ ☐ run opus-streaming test in the simulation environment (file-to-file using arbitrary loss percentage)
 
 First of all:
  ☐ test SST connectivity. 
@@ -38,14 +39,6 @@ scripts/:
  ☐ grab llvm from http://llvm.org/releases/3.2/clang+llvm-3.2-x86-linux-ubuntu-12.04.tar.gz directly to build machine
  ☐ build ninja on linux statically and put in scripts/ folder
 
-libssu (Structured Streams Unleashed):
- ☐ check on boost's sockets support - need at least 
-    ☐ MTU detect
-    ☐ local network 
- ☐ detach registration protocol from the transport
- ☐ checkout older version (basic SST?) and try voice service with it...
- ☐ build 32-bits only version of SST and try voice service with it?...
-
 SST unfinished business:
  ☐ make regression tests pass and not crash
    ✔ dgram - passed @done (12-12-29 00:54)
@@ -77,23 +70,6 @@ Most immediate usability necessities:
  ☐ possible DOS if localhost is specified in Endpoints? yep, tested and true, fix.
 
   Possibly PID (Proportional-Integral-Differential) flow control.
-
-Renaming and restructuring to do at some point (tentative list):
- ☐ Socket -> Network (or -> Adapter?); Channel -> ChannelID (or -> FlowID?)
- ☐ SocketReceiver -> ControlProtocol?
- ✔ Flow -> Channel? @done (13-03-11 23:44)
- ☐ StreamTarget -> Target, separate into its own module
- ✔ Message -> Record (e.g., readMesage() -> readRecord)? @done (13-03-11 23:44)
-     Might help avoid confusion between "Message" and "Datagram".
-
-Qt wishlist for SST:
- ✔ Base64 conversion flags for URL-safe and/or '='-padding free variants. @done (12-12-24 23:19)
-     Used base32 instead.
- ☐ QTimer hooks allowing time virtualization for simulation purposes.
- ☐ Make *Datagram calls in QUdpSocket virtual, or else support custom NetworkProxy extensions for virtualizing the network.
- ☐ Make QAbstractSocket a "real" abstract base class that can be subclassed for reasons other than to wrap a different kind of native socket.
- ☐ Make Qt's signal/slot mechanism handle namespaces in type names properly.
- ☐ Access to OS's path MTU detection facilities under UDP
 
 sst/shell:
  ☐ unlock console fds once the shell connection ceases
