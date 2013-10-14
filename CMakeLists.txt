@@ -67,14 +67,15 @@ endif (APPLE)
 include_directories(3rdparty/endian) # Additional unofficial boost libraries
 include_directories(3rdparty/plist/include)
 
+include_directories(support/include) # For routing access to ssu host and link_receiver
+include_directories(ssu/include) # For routing access to ssu host and link_receiver
+include_directories(routing/include) # For ssu access to routing client
+
 add_subdirectory(3rdparty/plist)
 add_subdirectory(support)
 
-include_directories(routing/include) # For ssu access to routing client
-
-#add_subdirectory(sst)
 add_subdirectory(ssu)
-#add_subdirectory(routing)
+add_subdirectory(routing)
 #add_subdirectory(naming)
 add_subdirectory(nat)
 add_subdirectory(ui)
