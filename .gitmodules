@@ -19,3 +19,6 @@
 [submodule "routing"]
 	path = routing
 	url = https://berkus@github.com/berkus/librouting.git
+[submodule "krypto"]
+	path = krypto
+	url = https://berkus@github.com/berkus/libkrypto.git
