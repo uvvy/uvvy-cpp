@@ -1,6 +1,8 @@
 Metta Grabber prototype
 =======================
 
+Progress updates on [Trello](https://trello.com/b/oiE7fyvp/metta-public).
+
 ### First prototype requirements
 
 * should be possible to add a device to personal device "cluster", thus allowing it to search the entire cluster and modify (optionally) data in the cluster.
