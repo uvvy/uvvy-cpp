@@ -1,5 +1,5 @@
 MettaNode grabber prototype
-=======================
+===========================
 
 MettaNode is a tool for fully decentralized communications - grab data you like and store it forever, share it with your friends, start chats, voice and video calls, form groups by interest, transparently keep all your notes between all of your devices; all based on a simple ideas of [UIA](http://pdos.csail.mit.edu/uia/). It is still young and only base transport protocol is done, work now continues on overlay routing network.
 
@@ -10,6 +10,7 @@ Progress updates in [TODO](TODO).
 Dependencies
 ============
 
+* C++14 (right now, only Clang and libc++)
 * [Qt4](http://qt-project.org/) (QtCore, QtNetwork; QtXml for UPnP; QtGui for demo apps)
 * [cmake](http://cmake.org/)
 * [boost](http://boost.org/)
