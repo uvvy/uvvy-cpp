@@ -5,7 +5,8 @@ set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
 
-include_directories(../nat ../ssu/include ../support/include ../ui/3rdparty/opus-1.0.1/include ../ui/3rdparty/rtaudio-4.0.11)
+include_directories(../nat ../ssu/include ../support/include ../ui/3rdparty/opus-1.0.1/include)
+include_directories(../ui/3rdparty/rtaudio-4.0.11)
 
 set(udpsender_SOURCES udpsend.cpp main.cpp)
 set(udpsender_HEADERS udpsend.h)
