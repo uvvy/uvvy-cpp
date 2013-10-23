@@ -5,7 +5,7 @@ MettaNode is a tool for fully decentralized communications - grab data you like 
 
 Final target is to have a bunch of clients for desktop and mobile platforms (Win, Mac, Linux, Android, iOS) as well as own operating system implementation ([Metta](https://github.com/berkus/metta/wiki)) running together.
 
-Progress updates on [Trello](https://trello.com/b/oiE7fyvp/metta-public).
+Progress updates in [TODO](TODO).
 
 Dependencies
 ============
