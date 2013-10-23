@@ -1,23 +1,48 @@
-Fixes:
+UI:
+ ☐ Ubuntu 32/64 bit binaries repo for Matti.
+    ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
+ ☐ Deploy nshd to motoko?
+ ☐ how to perform search? an ESC-interface sounds intriguing
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
-    Regserver deregistration on logout is added - should notify active connections somehow too?
- ☐ run opus-streaming test in the simulation environment (file-to-file using arbitrary loss percentage)
 
-First of all:
- ☐ test SST connectivity. 
- ☐ Compare how much of it is done to the spec?
+Comms (voice/video/chat):
+ ☐ Sync history between instances
+     Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
+     non-existant entries once activated. How to track joins/leaves (+ history available to new joiners)?
+     (unread, originator, timestamp, target, msg_hash) - tuple for syncing messages.
+     Unread is not synced, it is implicitly 1 for synced messages. Actually, it can be synced, for example
+     if the chat was already read on a device, then unread=0 may be synced).
+     (originator_user, originator_eid, originator_timestamp) - to track source of the message.
+     (rx_timestamp) - to measure interdevice synchronization time.
+     (chat_id) - a hashed concatenation of originator and receiver ids plus, perhaps, some nonce.
+ ☐ Draw possible chat synchronization graph ideas between Alice's and Bob's personal cluser devices.
+ ☐ Group chat.
+ ☐ Chat join urls like nstchat://authblob or nst://chat?authblob
+ ☐ Event bells/notifications: friend online, chat/talk started, etc.
 
-Second:
- ✔ try the file synchronization (SaveDialog) @done (12-10-25 04:53)
- ✔ and how it manages to deliver the chunks. @done (12-10-25 04:53)
- works via Chat Dialog - just drag and drop the file there.
+Storage (grabber/file sync/versioning):
+ ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
+ ☐ Show file transfer progress on both sending and receiving sides. Also inside chat.
+ ☐ Make ongoing downloads automatically persist across restarts
+ ✔ Watch Files directory for new files and file changes (QFileSystemWatcher) @done (12-11-05 23:49)
+ ☐ Initiate file resync operation when change is detected.
+     Should work pretty much like file transfer, just the file save locations are predefined.
+     Different changes cause different synchronization commands to be sent.
+     E.g. moving a file issues RENAME, while deleting it issues REMOVE and changing it issues UPDATE_SYNC.
+     What to do with conflicting changes? One node sends rename, one remove and one modify?
+     Something like full-fledged git might be needed. At the very least a key-value like store, that resolves modifications using full file path 
+     as just another attribute (change in FILE_PATH attribute might cause a rename, for example).
 
-Third:
- ☐ since there is no naming/routing we should limit work to LAN only.
- ☐ LAN/Bonjour node discovery.
+     Try git model approach - files are in trees, trees are hashed and upon change a Change of tree is recorded with the link to previous (parent)
+     tree(s). Files are like git blobs but assembled of multiple chunks.
 
-Fourth:
+* Synchronized objects - some blobs with associated metadata. Blob structure is not defined and is not interesting to the synchronization layer. Metadata is a key-value store, with fine-grained synchronization.
+* Grab files from a specified directory a-la Dropbox.
+* If metadata points to a blob not in the local store, system tries to find the blob on other devices and synchronise it.
+* For the first version storage area can be limited to devices within the cluster. in general, blobs could be redundantly and securely stored on any nodes across the network.
+* monitor Files folder for stuff to sync.
+* metadata assignments - how? extract as much as possible automatically.
  ☐ synchronize arbitrary file chunks and their metadata between devices in the cluster (hardcoded for start).
  ☐ sync git-like file trees and chunk blobs
    ☐ split a file into a number of fixed-size blocks (plus a smaller trailing block if necessary)
@@ -31,25 +56,28 @@ Fourth:
       in general case sync doesn't have to bring in all changes of the history, e.g. each Change object lineage may be synced, but for the file blocks
       you only need to know the actual contents of the latest version and where to find the earlier version in case user takes a peek.
 
-Fifth:
- ✔ add features for capturing the data into the system. Agreed to do it Dropbox-style, so need to add and watch a directory. @done (12-12-11 01:37)
+Personal Cluster Management:
+ ☐ should be possible to add a device to personal device "cluster", thus allowing it to search the entire cluster and modify (optionally) data in the cluster.
+ ☐ should be possible to remove a device from cluster, there might be no access to this device anymore (e.g. lost phone)
+ ☐ devices in the cluster always keep track of status for other devices in the cluster and synchronize with them often.
+ ☐ search between devices is performed in metadata index, which devices try to synchronise with priority to other objects.
 
+Routing:
+ ☐ Port routing using rendezvous server from Netsteria.
+ ☐ Connect devices to each other, overlay routing lets device find another device and set up connection.
+ ☐ LAN/Bonjour node discovery.
+ ☐ Regserver deregistration on logout is added - should notify active connections somehow too?
+
+Structured Streams:
+ ☐ unit tests, unit tests, unit tests
+ ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
+ ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
+ ☐ run opus-streaming test in the simulation environment (file-to-file using arbitrary loss percentage)
+
+-----------
 
 scripts/:
  ☐ grab llvm from http://llvm.org/releases/3.2/clang+llvm-3.2-x86-linux-ubuntu-12.04.tar.gz directly to build machine
- ☐ build ninja on linux statically and put in scripts/ folder
-
-SST unfinished business:
- ☐ make regression tests pass and not crash
-   ✔ dgram - passed @done (12-12-29 00:54)
-   ✔ migrate - passed @done (12-12-29 00:54)
-   ✔ basic - passed @done (12-12-29 00:54)
-   ☐ seg - rtxTimeout - FAILED period 20000000
-   ☐ all - gets stuck in seg test
- ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
- ☐ all services are attempting to connect to a single host multiple times - would be better if this was orchestrated separately
-
- ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
 
 Most immediate usability necessities:
  ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document
@@ -62,9 +90,6 @@ Most immediate usability necessities:
    ☐ implement and use sequencing barriers properly (spec 3.4.1)
    ☐ txReset
  ☐ specify and fix negotiation protocol format
- ✔ registration protocol: specify, add explicit deregistration on shutdown @done (12-12-31 17:31)
-    ☐ would be nice to move registration protocol details to the routing lib if possible?
-        move started, but there are still deps on SST::Host
 
  ☐ give priority to local-network Endpoint addresses first (need to match network against available interfaces' IPs)
  ☐ possible DOS if localhost is specified in Endpoints? yep, tested and true, fix.
@@ -73,32 +98,26 @@ Most immediate usability necessities:
 
 sst/shell:
  ☐ unlock console fds once the shell connection ceases
- ✔ don't crash in nshd @done (12-12-21 00:40)
  ☐ after some waiting time the streams disconnect and mix up
 
 sst/test/regress Regression tests needed:
 
-substreams:
+substreams
  ☐ create a lot of substreams rapidly, hold onto them, use them once in a while
  ☐ create and destroy a lot of substreams in rapid succession
  ☐ rapidly create a deep hierarchy of nested substreams
 
-datagrams:
+datagrams
  ☐ send a stream of datagrams of widely varying size
  ☐ send a mix of datagram substreams and real two-way substreams
 
-flow control:
+flow control
  ☐ flow control for byte streams
  ☐ receive window borrowing
  ☐ receive window borrowing for datagram substreams
  ☐ inherited versus independent receive windows
 
 ----------------------------
-
-UI tasks:
-  ☐ Ubuntu 32/64 bit binaries repo for Matti.
-    ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
-  ☐ Deploy nshd to motoko?
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
@@ -137,52 +156,3 @@ NAT and UPnP:
      PortMappingNumberOfEntries - if changed, might need to re-read the actual mapping information.
      PortMappingLeaseDuration - is decremented and needs to be checked regularly, some seconds before the lease time out the lease must be extended for our port forwardings.
      Therefore, we need to maintain the status of UPnPRouter endpoint.
-
-Larger features planned:
- ☐ Integration with UIA - personal device cluster management, etc.
- ☐ Secure VNC-like remote desktop access
-
-Chat synchronization:
- ☐ Save/load chat history, how to synchronize history between devices?
-   ✔ Save history locally @done (12-11-04 00:33)
-   ☐ Load history locally
-   ☐ Sync history between instances
-     Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull non-existant entries
-     once activated. How to track joins/leaves (+ history available to new joiners)?
-     (unread, originator, timestamp, target, msg_hash) - tuple for syncing messages.
-     Unread is not synced, it is implicitly 1 for synced messages. Actually, it can be synced, for example
-     if the chat was already read on a device, then unread=0 may be synced).
-     (originator_user, originator_eid, originator_timestamp) - to track source of the message.
-     (rx_timestamp) - to measure interdevice synchronization time.
-     (chat_id) - a hashed concatenation of originator and receiver ids plus, perhaps, some nonce.
- ☐ Draw possible chat synchronization graph ideas between Alice's and Bob's personal cluser devices.
- ✔ Add Metakit in distribution. @done (12-10-30 10:52)
-     metakit could be used as storage for message view (easier to experiment - we only need a hashed view).
- ☐ Group chat.
- ☐ Chat join urls like nstchat://authblob or nst://chat?authblob
-
-File synchronization:
- ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
- ☐ Show file transfer progress on both sending and receiving sides. Also inside chat.
- ☐ Make ongoing downloads automatically persist across restarts
- ✔ Watch Files directory for new files and file changes (QFileSystemWatcher) @done (12-11-05 23:49)
- ☐ Initiate file resync operation when change is detected.
-     Should work pretty much like file transfer, just the file save locations are predefined.
-     Different changes cause different synchronization commands to be sent.
-     E.g. moving a file issues RENAME, while deleting it issues REMOVE and changing it issues UPDATE_SYNC.
-     What to do with conflicting changes? One node sends rename, one remove and one modify?
-     Something like full-fledged git might be needed. At the very least a key-value like store, that resolves modifications using full file path 
-     as just another attribute (change in FILE_PATH attribute might cause a rename, for example).
-
-     Try git model approach - files are in trees, trees are hashed and upon change a Change of tree is recorded with the link to previous (parent)
-     tree(s). Files are like git blobs but assembled of multiple chunks.
-
-Voice and video communication:
- ☐ Missing libalsa check in cmake
- ☐ Indicator showing when audio is being received, and from whom.
- ✔ ALSA backend for Linux and/or upgrade to PortAudio V19 @done (12-10-26 01:19)
- ✔ Make configure script detect absence of OSS, disable audio on Unix @done (12-10-26 01:19)
- ☐ Event bells/notifications: friend online, chat/talk started, etc.
-
-Names:
-  ☐ a "mongus" - nice name
