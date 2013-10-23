@@ -245,19 +245,6 @@ void ShellStream::setStream(Stream *strm)
 		this, SIGNAL(bytesWritten(qint64)));
 }
 
-#if 0
-void ShellStream::setInputEnabled(bool enable)
-{
-	Q_ASSERT(strm != NULL);
-
-	if (enable) {
-		connect(strm, SIGNAL(readyRead()), this, SLOT(readyRead()));
-		readyRead();
-	} else
-		disconnect(strm, SIGNAL(readyRead()), this, SLOT(readyRead()));
-}
-#endif
-
 void ShellStream::sendData(const char *data, int size)
 {
 	// Escape any SOH characters in the stream
