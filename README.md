@@ -24,9 +24,9 @@ Metta Grabber prototype
 Dependencies
 ============
 
-* Qt4 at http://qt-project.org/ (QtCore, QtNetwork; QtXml for UPnP; QtGui for demo apps)
-* cmake at http://cmake.org/
-* boost at http://boost.org/
+* [Qt4](http://qt-project.org/) (QtCore, QtNetwork; QtXml for UPnP; QtGui for demo apps)
+* [cmake](http://cmake.org/)
+* [boost](http://boost.org/)
 
 aptly
  $ apt-get install git cmake clang libboost-test1.50-dev libqt4-dev libssl-dev libasound2-dev
@@ -35,15 +35,14 @@ aptly
 
 Included in this repository:
 
-* sst from http://pdos.csail.mit.edu/uia/sst/
-* opus at http://opus-codec.org/
-* rtaudio at http://www.music.mcgill.ca/~gary/rtaudio/
-* miniupnpc from https://github.com/miniupnp/miniupnp/tree/master/miniupnpc
-* libnatpmp from http://thebends.googlecode.com/svn/trunk/nat/pmp
+* [opus](http://opus-codec.org/)
+* [rtaudio](http://www.music.mcgill.ca/~gary/rtaudio/)
+* [miniupnpc](https://github.com/miniupnp/miniupnp/tree/master/miniupnpc)
+* [libnatpmp](http://thebends.googlecode.com/svn/trunk/nat/pmp)
 
 Not yet required
 
-* libqxt at http://libqxt.org/
+* [libqxt](http://libqxt.org/)
 
 Typical config command
 ======================
