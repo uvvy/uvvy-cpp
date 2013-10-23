@@ -1,27 +1,11 @@
-Metta Grabber prototype
+MettaNode grabber prototype
 =======================
 
+MettaNode is a tool for fully decentralized communications - grab data you like and store it forever, share it with your friends, start chats, voice and video calls, form groups by interest, transparently keep all your notes between all of your devices; all based on a simple ideas of [UIA](http://pdos.csail.mit.edu/uia/). It is still young and only base transport protocol is done, work now continues on overlay routing network.
+
+Final target is to have a bunch of clients for desktop and mobile platforms (Win, Mac, Linux, Android, iOS) as well as own operating system implementation ([Metta](https://github.com/berkus/metta/wiki)) running together.
+
 Progress updates on [Trello](https://trello.com/b/oiE7fyvp/metta-public).
-
-### First prototype requirements
-
-* should be possible to add a device to personal device "cluster", thus allowing it to search the entire cluster and modify (optionally) data in the cluster.
-* should be possible to remove a device from cluster, there might be no access to this device anymore (e.g. lost phone)
-* devices in the cluster always keep track of status for other devices in the cluster and synchronize with them often.
-* synchronized objects - some blobs with associated metadata. blob structure is not defined and is not interesting to the synchronization layer. metadata is a key-value store, with fine-grained synchronization.
-* search between devices is performed in metadata index, which devices try to synchronize with priority to other objects.
-* if found metadata points to a blob absent in local store, system tries to find the blob on other devices and synchronize it.
-* for the first version storage area can be limited to devices within the cluster. in general, blobs could be redundantly and securely stored on any nodes across the network.
-
-### Future routing possibilities
-
-* UIP-like routing (EID's + extended DHT based routing through EID space)
-
-### GUI features
-
-* monitor Files folder for stuff to sync.
-* metadata assignments - how? extract as much as possible automatically.
-* how to perform search? an ESC-interface sounds intriguing
 
 Dependencies
 ============
@@ -33,18 +17,12 @@ Dependencies
 aptly
  $ apt-get install git cmake clang libboost-test1.50-dev libqt4-dev libssl-dev libasound2-dev
 
- With these MettaNode also compiles and runs in Raspberry Pi's raspbian.
-
 Included in this repository:
 
 * [opus](http://opus-codec.org/)
 * [rtaudio](http://www.music.mcgill.ca/~gary/rtaudio/)
 * [miniupnpc](https://github.com/miniupnp/miniupnp/tree/master/miniupnpc)
 * [libnatpmp](http://thebends.googlecode.com/svn/trunk/nat/pmp)
-
-Not yet required
-
-* [libqxt](http://libqxt.org/)
 
 Typical config command
 ======================
@@ -59,11 +37,11 @@ CI status
 Authors
 =======
 Design and development:
-Stanislav Karchebny <berkus@exquance.com>
+[Stanislav Karchebny](http://exocortex.madfire.net)
 
 Code contributions:
-Bogdan Lytvynovsky <>
+Bogdan Lytvynovsky
 
 Original SST and UIA development:
-Bryan Ford <>
+[Bryan Ford](http://www.brynosaurus.com)
 
