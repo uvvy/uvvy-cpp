@@ -63,7 +63,9 @@ Personal Cluster Management:
  ☐ search between devices is performed in metadata index, which devices try to synchronise with priority to other objects.
 
 Routing:
- ☐ Port routing using rendezvous server from Netsteria.
+ ✔ Port routing using rendezvous server from Netsteria. @done (13-10-24 22:07)
+   ☐ Needs bugfixes and polishing up.
+   ☐ Do the regserver_client part.
  ☐ Connect devices to each other, overlay routing lets device find another device and set up connection.
  ☐ LAN/Bonjour node discovery.
  ☐ Regserver deregistration on logout is added - should notify active connections somehow too?
