@@ -98,11 +98,15 @@ Later
  ☐ Drop OPENSSL_LIBRARIES - once nacl supports whatever needed.
  ☐ Change krypto to use cryptobox_*
 
-
  ☐ unit tests, unit tests, unit tests
  ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
  ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
  ☐ run opus-streaming test in the simulation environment (file-to-file using arbitrary loss percentage)
+
+Support:
+  ☐ Get rid of plist
+    ☐ Implement flurrying boost::any instead.
+ ☐ Un/Flurry map<string, boost::any> for settings storage.
 
 scripts/:
  ☐ grab llvm from http://llvm.org/releases/3.2/clang+llvm-3.2-x86-linux-ubuntu-12.04.tar.gz directly to build machine
