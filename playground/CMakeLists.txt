@@ -18,7 +18,7 @@ install(TARGETS udpsender
 	RUNTIME DESTINATION tools)
 
 add_executable(opus-streaming opus-streaming.cpp)
-target_link_libraries(opus-streaming ssu support rtaudio opus plist krypto
+target_link_libraries(opus-streaming ssu support rtaudio opus plist routing krypto
     ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS opus-streaming
     RUNTIME DESTINATION tools)
