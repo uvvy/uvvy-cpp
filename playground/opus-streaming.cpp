@@ -18,6 +18,7 @@
 #include "logging.h"
 #include "opus.h"
 #include "RtAudio.h"
+#include "algorithm.h"
 #include "settings_provider.h"
 
 #include "private/regserver_client.h" // @fixme Testing only.
@@ -313,6 +314,7 @@ int main(int argc, char* argv[])
     client.set_city("Tallinn");
     client.set_region("Harju");
     client.set_country("Estonia");
+    client.set_endpoints(set_to_vector(host->active_local_endpoints()));
     for (auto kw : client.keywords()) {
         logger::debug() << "Keyword: " << kw;
     }
