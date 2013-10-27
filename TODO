@@ -70,6 +70,8 @@ Routing:
  ☐ LAN/Bonjour node discovery.
  ☐ Regserver deregistration on logout is added - should notify active connections somehow too?
 
+ ☐ BUG: Crashes on access to client_profile.endpoints() if no endpoints was provided by the client.
+
 Structured Streams:
  
 zlib_armor
