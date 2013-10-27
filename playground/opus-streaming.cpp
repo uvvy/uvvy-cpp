@@ -20,6 +20,8 @@
 #include "RtAudio.h"
 #include "settings_provider.h"
 
+#include "private/regserver_client.h" // @fixme Testing only.
+
 using namespace std;
 using namespace ssu;
 
@@ -314,6 +316,19 @@ int main(int argc, char* argv[])
     shared_ptr<stream> stream;
     shared_ptr<server> server;
 
+    uia::routing::internal::regserver_client regclient(host.get());
+    uia::routing::client_profile client;
+    client.set_host_name("aramaki.local");
+    client.set_owner_name("Berkus");
+    client.set_city("Tallinn");
+    client.set_region("Harju");
+    client.set_country("Estonia");
+    for (auto kw : client.keywords()) {
+        logger::debug() << "Keyword: " << kw;
+    }
+    regclient.set_profile(client);
+    regclient.register_at("192.168.1.67");
+
     audio_receiver receiver;
     audio_sender sender;
     audio_hardware hw(&sender, &receiver);
@@ -328,7 +343,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        logger::debug() << "Listening on port " << port;
+        logger::debug() << "Listening on port " << dec << port;
 
         server = make_shared<ssu::server>(host);
         server->on_new_connection.connect(boost::bind(&audio_hardware::new_connection, &hw, server));
