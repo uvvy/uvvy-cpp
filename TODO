@@ -65,18 +65,44 @@ Personal Cluster Management:
 Routing:
  ✔ Port routing using rendezvous server from Netsteria. @done (13-10-24 22:07)
    ☐ Needs bugfixes and polishing up.
-   ☐ Do the regserver_client part.
+   ✔ Do the regserver_client part. @done (13-10-27 12:56)
  ☐ Connect devices to each other, overlay routing lets device find another device and set up connection.
  ☐ LAN/Bonjour node discovery.
  ☐ Regserver deregistration on logout is added - should notify active connections somehow too?
 
 Structured Streams:
+ 
+zlib_armor
+ ☐ using boost.iostreams?
+
+encryption/compression negotiation
+
+  vector<string> s = {"saes128ctr", "sxsalsa20", "ahmacsha512256", "czlib"};
+
+ ☐ saes256ctr  = 's'ymmetric key encryption
+ ☐ czlib                = 'c'ompression
+ ☐ hmacsha512256        = 'a'uthentication
+
+  can be multiple keys with all prefixes, in order of priority, other side picks best supported and responds.
+  symmetric encryption and authentication are mandatory, compression is optional.
+
+  initiator may skip compression request, for example for realtime audio/video streams.
+
+public API
+
+ ☐ how to specify required armors? probably just a no_compress flag from initiator API.
+
+Later
+ ☐ port from openssl to nacl - only add nacl now, since not all necessary methods are supported.
+ ✔ FindNaCl.cmake? @done (13-10-27 12:42)
+ ☐ Drop OPENSSL_LIBRARIES - once nacl supports whatever needed.
+ ☐ Change krypto to use cryptobox_*
+
+
  ☐ unit tests, unit tests, unit tests
  ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
  ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
  ☐ run opus-streaming test in the simulation environment (file-to-file using arbitrary loss percentage)
-
------------
 
 scripts/:
  ☐ grab llvm from http://llvm.org/releases/3.2/clang+llvm-3.2-x86-linux-ubuntu-12.04.tar.gz directly to build machine
@@ -118,8 +144,6 @@ flow control
  ☐ receive window borrowing
  ☐ receive window borrowing for datagram substreams
  ☐ inherited versus independent receive windows
-
-----------------------------
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
