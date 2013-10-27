@@ -261,7 +261,7 @@ int main(int argc, char* argv[])
 
     po::options_description desc("Program arguments");
     desc.add_options()
-        ("peer,a", po::value<std::string>(), "Peer IPv6 address, can be ipv6, [ipv6] or [ipv6]:port")
+        ("peer,a", po::value<std::string>(), "Peer EID as base32 identifier")
         ("port,p", po::value<int>(&port), "Run service on this port, connect peer on this port")
         ("help", "Print this help message");
     po::positional_options_description p;
@@ -294,29 +294,19 @@ int main(int argc, char* argv[])
     if (vm.count("peer"))
     {
         peer = vm["peer"].as<std::string>();
-        if (peer.find("]:") != peer.npos)
-        {
-            // split port off
-            port = boost::lexical_cast<int>(peer.substr(peer.find("]:")+2));//@todo ipv6 only
-            peer = peer.substr(0, peer.find("]:")+1);
-        }
-        if (peer.find("[") == 0)
-        {
-            peer = peer.substr(1, peer.find("]")-1);
-        }
         connect_out = true;
     }
 
     settings->set("port", port);
     settings->sync();
 
-    peer_id eid{byte_array({0x58,0xda,0x12,0x97, 0xf9,0x61,0x6d,0x5c, 0x1a,0x9f,0x22,0x1e, 0x0e,0x29,0x4c,0xad,
-        0x5d,0x7d,0x22,0x53})};
     shared_ptr<host> host(host::create(settings.get(), port));
     shared_ptr<stream> stream;
     shared_ptr<server> server;
 
     uia::routing::internal::regserver_client regclient(host.get());
+
+    // @todo Pull client profile from settings.
     uia::routing::client_profile client;
     client.set_host_name("aramaki.local");
     client.set_owner_name("Berkus");
@@ -327,6 +317,8 @@ int main(int argc, char* argv[])
         logger::debug() << "Keyword: " << kw;
     }
     regclient.set_profile(client);
+
+    // vector<string> regservers = settings->get("regservers");
     regclient.register_at("192.168.1.67");
 
     audio_receiver receiver;
@@ -335,11 +327,11 @@ int main(int argc, char* argv[])
 
     if (connect_out)
     {
-        endpoint remote_ep(boost::asio::ip::address_v4::from_string(peer), port);
-        logger::debug() << "Connecting to " << remote_ep;
+        peer_id eid{peer};
+        logger::debug() << "Connecting to " << eid;
 
         stream = make_shared<ssu::stream>(host);
-        stream->connect_to(eid, "streaming", "opus", remote_ep);
+        stream->connect_to(eid, "streaming", "opus");
     }
     else
     {
