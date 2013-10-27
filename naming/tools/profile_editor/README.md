@@ -16,7 +16,7 @@ See [settings-provider](https://github.com/berkus/libsupport/blob/develop/includ
 
 For now enough to read from [default settings file](https://github.com/berkus/libsupport/blob/develop/lib/settings_provider.cpp#L43-48).
 
-Example profile fields:
+Required host configuration:
 ``` cpp
     // This host identity (EID)
     // Generated via ssu::identity class, e.g. identity::generate()
