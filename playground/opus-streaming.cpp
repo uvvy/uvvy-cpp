@@ -36,11 +36,13 @@ class audio_receiver
     std::mutex queue_mutex_;
     std::queue<byte_array> packet_queue_;
     shared_ptr<stream> stream_;
+    boost::asio::strand strand_;
 
 public:
     static constexpr int nChannels{1};
 
-    audio_receiver()
+    audio_receiver(shared_ptr<host> host)
+        : strand_(host->get_io_service())
     {
         int error{0};
         decode_state_ = opus_decoder_create(48000, nChannels, &error);
@@ -114,11 +116,13 @@ class audio_sender
     OpusEncoder *encode_state_{0};
     int frame_size_{0}, rate_{0};
     shared_ptr<stream> stream_;
+    boost::asio::strand strand_;
 
 public:
     static constexpr int nChannels{1};
 
-    audio_sender()
+    audio_sender(shared_ptr<host> host)
+        : strand_(host->get_io_service())
     {
         int error{0};
         encode_state_ = opus_encoder_create(48000, nChannels, OPUS_APPLICATION_VOIP, &error);
@@ -159,7 +163,9 @@ public:
         opus_int32 nbytes = opus_encode_float(encode_state_, buffer, nFrames, (unsigned char*)samplebuf.data(), nFrames*sizeof(float));
         assert(nbytes > 0);
         samplebuf.resize(nbytes);
-        stream_->write_datagram(samplebuf, stream::datagram_type::non_reliable);
+        strand_.post([this, samplebuf]{
+            stream_->write_datagram(samplebuf, stream::datagram_type::non_reliable);
+        });        
     }
 };
 
@@ -323,8 +329,8 @@ int main(int argc, char* argv[])
     // vector<string> regservers = settings->get("regservers");
     regclient.register_at("192.168.1.67");
 
-    audio_receiver receiver;
-    audio_sender sender;
+    audio_receiver receiver(host);
+    audio_sender sender(host);
     audio_hardware hw(&sender, &receiver);
 
     if (connect_out)
