@@ -108,6 +108,7 @@ Later
 Support:
   ☐ Get rid of plist
     ☐ Implement flurrying boost::any instead.
+      ☐ Need a method to write any and a method to read any, that's it, really.
  ☐ Un/Flurry map<string, boost::any> for settings storage.
 
 scripts/:
