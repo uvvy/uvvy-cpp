@@ -222,10 +222,20 @@ public:
         if (!stream)
             return;
 
-        sender_->streaming(stream);
-        receiver_->streaming(stream);
+        streaming(stream);
 
         audio_inst->startStream();
+    }
+
+    void out_stream_ready()
+    {
+        audio_inst->startStream();
+    }
+
+    void streaming(shared_ptr<stream> stream)
+    {
+        sender_->streaming(stream);
+        receiver_->streaming(stream);
     }
 
 private:
@@ -339,6 +349,8 @@ int main(int argc, char* argv[])
         logger::debug() << "Connecting to " << eid;
 
         stream = make_shared<ssu::stream>(host);
+        hw.streaming(stream);
+        stream->on_link_up.connect([&] { hw.out_stream_ready(); });
         stream->connect_to(eid, "streaming", "opus");
     }
     else
@@ -346,7 +358,7 @@ int main(int argc, char* argv[])
         logger::debug() << "Listening on port " << dec << port;
 
         server = make_shared<ssu::server>(host);
-        server->on_new_connection.connect(boost::bind(&audio_hardware::new_connection, &hw, server));
+        server->on_new_connection.connect([&] { hw.new_connection(server); });
         bool listening = server->listen("streaming", "Streaming services", "opus", "OPUS Audio protocol");
         assert(listening);
     }
