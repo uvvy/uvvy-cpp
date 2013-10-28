@@ -81,7 +81,7 @@ public:
             byte_array pkt = packet_queue_.front();
             packet_queue_.pop();
             lock.unlock();
-            int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+4, pkt.size()-4, decoded_packet, frame_size_, /*decodeFEC:*/0);
+            int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data(), pkt.size(), decoded_packet, frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == int(frame_size_));
             logger::debug() << "get_packet decoded frame of size " << pkt.size() << " into " << len << " frames";
