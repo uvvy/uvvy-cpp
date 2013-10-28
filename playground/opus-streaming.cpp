@@ -276,6 +276,8 @@ int main(int argc, char* argv[])
     std::string peer;
     int port = 9660;
 
+    logger::set_verbosity(logger::verbosity::info);
+
     po::options_description desc("Program arguments");
     desc.add_options()
         ("peer,a", po::value<std::string>(), "Peer EID as base32 identifier")
@@ -346,7 +348,7 @@ int main(int argc, char* argv[])
     if (connect_out)
     {
         peer_id eid{peer};
-        logger::debug() << "Connecting to " << eid;
+        logger::info() << "Connecting to " << eid;
 
         stream = make_shared<ssu::stream>(host);
         hw.streaming(stream);
@@ -355,7 +357,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        logger::debug() << "Listening on port " << dec << port;
+        logger::info() << "Listening on port " << dec << port;
 
         server = make_shared<ssu::server>(host);
         server->on_new_connection.connect([&] { hw.new_connection(server); });
