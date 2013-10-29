@@ -25,6 +25,7 @@
 #include "private/regserver_client.h" // @fixme Testing only.
 
 namespace pt = boost::posix_time;
+namespace po = boost::program_options;
 using namespace std;
 using namespace ssu;
 
@@ -158,8 +159,13 @@ protected:
     }
 };
 
-// Capture and opus-encode audio
-// send it to remote endpoint
+//=================================================================================================
+// audio_sender
+//=================================================================================================
+
+/**
+ * Capture and Opus-encode audio, send it to remote endpoint.
+ */
 class audio_sender
 {
     OpusEncoder *encode_state_{0};
@@ -251,7 +257,7 @@ public:
         inparam.nChannels = audio_sender::nChannels;
         outparam.deviceId = audio_inst->getDefaultOutputDevice();
         outparam.nChannels = audio_receiver::nChannels;
-        unsigned int bufferFrames = 480;
+        unsigned int bufferFrames = 480; // 10ms
 
         try {
             audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, 48000, &bufferFrames, rtcallback, this);
@@ -320,8 +326,6 @@ private:
         return 0;
     }
 };
-
-namespace po = boost::program_options;
 
 /**
  * Get the address to talk to over IPv6 from the command line.
