@@ -10,6 +10,7 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/positional_options.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <queue>
 #include <mutex>
 #include "host.h"
@@ -23,11 +24,44 @@
 
 #include "private/regserver_client.h" // @fixme Testing only.
 
+namespace pt = boost::posix_time;
 using namespace std;
 using namespace ssu;
 
-// Receive packets from remote
-// Opus-decode and playback
+/**
+ * Record timing information into a gnuplot-compatible file.
+ */
+class plotfile
+{
+    std::mutex m;
+    std::ofstream out_;
+public:
+    plotfile()
+        : out_("timeplot.dat", std::ios::out|std::ios::trunc|std::ios::binary)
+    {
+        out_ << "# gnuplot data for packet timing\r\n"
+             << "# ts\tlocal_ts\tdifference\r\n";
+    }
+
+    ~plotfile()
+    {
+        out_ << "\r\n\r\n"; // gnuplot end marker
+        out_.close();
+    }
+
+    void dump(int64_t ts, int64_t local_ts) {
+        std::unique_lock<std::mutex> lock(m);
+        out_ << ts << '\t' << local_ts << '\t' << fabs(local_ts - ts) << "\r\n";
+    }
+};
+
+//=================================================================================================
+// audio_receiver
+//=================================================================================================
+
+/**
+ * Receive packets from remote, Opus-decode and playback.
+ */
 class audio_receiver
 {
     OpusDecoder *decode_state_{0};
@@ -37,6 +71,7 @@ class audio_receiver
     std::queue<byte_array> packet_queue_;
     shared_ptr<stream> stream_;
     boost::asio::strand strand_;
+    plotfile plot_;
 
 public:
     static constexpr int nChannels{1};
@@ -83,7 +118,10 @@ public:
             byte_array pkt = packet_queue_.front();
             packet_queue_.pop();
             lock.unlock();
-            int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data(), pkt.size(), decoded_packet, frame_size_, /*decodeFEC:*/0);
+
+            log_packet_delay(pkt);
+    
+            int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+8, pkt.size()-8, decoded_packet, frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == int(frame_size_));
             logger::debug() << "get_packet decoded frame of size " << pkt.size() << " into " << len << " frames";
@@ -106,6 +144,17 @@ protected:
         byte_array msg = stream_->read_datagram();
         logger::debug() << "received packet of size " << msg.size();
         packet_queue_.push(msg);
+    }
+
+    void log_packet_delay(byte_array const& pkt)
+    {
+        pt::ptime epoch(boost::gregorian::date(1970,boost::gregorian::Jan,1));
+        int64_t ts = pkt.as<int64_t>()[0];
+        int64_t local_ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
+        // logger::info() << "Packet ts " << ts << ", local ts " << local_ts << ", play difference "
+            // << fabs(local_ts - ts);
+
+        plot_.dump(ts, local_ts);
     }
 };
 
@@ -159,10 +208,18 @@ public:
     {
         logger::debug() << "send_packet frame size " << frame_size_ << ", got nFrames " << nFrames;
         assert((int)nFrames == frame_size_);
-        byte_array samplebuf(nFrames*sizeof(float));
-        opus_int32 nbytes = opus_encode_float(encode_state_, buffer, nFrames, (unsigned char*)samplebuf.data(), nFrames*sizeof(float));
+        byte_array samplebuf(nFrames*sizeof(float)+8);
+
+        // Timestamp the packet with our own clock reading.
+        pt::ptime epoch(boost::gregorian::date(1970,boost::gregorian::Jan,1));
+        int64_t ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
+        samplebuf.as<int64_t>()[0] = ts;
+        // Ideally, an ack packet would contain ts info at the receiving side for this packet.
+        // @todo Implement the RTT calculation in ssu::stream!
+
+        opus_int32 nbytes = opus_encode_float(encode_state_, buffer, nFrames, (unsigned char*)samplebuf.data()+8, nFrames*sizeof(float));
         assert(nbytes > 0);
-        samplebuf.resize(nbytes);
+        samplebuf.resize(nbytes+8);
         strand_.post([this, samplebuf]{
             stream_->write_datagram(samplebuf, stream::datagram_type::non_reliable);
         });        
