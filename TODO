@@ -74,6 +74,9 @@ Routing:
 
 Structured Streams:
  
+ ☐ BUG: Assertion failed: (transmit_sids_.empty()), function detach_all, file ../ssu/lib/stream_channel.cpp, line 195.
+   happens after a while on opus-streaming receiving side
+
 zlib_armor
  ☐ using boost.iostreams?
 
