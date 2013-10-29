@@ -110,7 +110,7 @@ public:
      */
     void get_packet(float* decoded_packet, size_t max_frames)
     {
-        logger::debug() << "get_packet";
+        // logger::debug() << "get_packet";
         std::unique_lock<std::mutex> lock(queue_mutex_);
         assert(max_frames == frame_size_);
 
@@ -125,13 +125,13 @@ public:
             int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+8, pkt.size()-8, decoded_packet, frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == int(frame_size_));
-            logger::debug() << "get_packet decoded frame of size " << pkt.size() << " into " << len << " frames";
+            // logger::debug() << "get_packet decoded frame of size " << pkt.size() << " into " << len << " frames";
         } else {
             lock.unlock();
             // "decode" a missing frame
             int len = opus_decode_float(decode_state_, NULL, 0, decoded_packet, frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
-            logger::debug() << "get_packet decoded missing frame of size " << len;
+            // logger::debug() << "get_packet decoded missing frame of size " << len;
             // assert(len == frame_size_);
         }
     }
@@ -143,7 +143,10 @@ protected:
         std::lock_guard<std::mutex> lock(queue_mutex_);
         // extract payload
         byte_array msg = stream_->read_datagram();
-        logger::debug() << "received packet of size " << msg.size();
+        // logger::debug() << "received packet of size " << msg.size();
+        
+        // log_packet_delay(msg);
+
         packet_queue_.push(msg);
     }
 
@@ -212,7 +215,7 @@ public:
     // Called by rtaudio callback to encode and send packet.
     void send_packet(float* buffer, size_t nFrames)
     {
-        logger::debug() << "send_packet frame size " << frame_size_ << ", got nFrames " << nFrames;
+        // logger::debug() << "send_packet frame size " << frame_size_ << ", got nFrames " << nFrames;
         assert((int)nFrames == frame_size_);
         byte_array samplebuf(nFrames*sizeof(float)+8);
 
@@ -306,7 +309,7 @@ private:
     {
         audio_hardware* instance = reinterpret_cast<audio_hardware*>(userdata);
 
-        logger::debug() << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
+        // logger::debug() << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
 
         // An RtAudio "frame" is one sample per channel,
         // whereas our "frame" is one buffer worth of data (as in Speex).
