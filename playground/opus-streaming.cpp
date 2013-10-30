@@ -50,7 +50,8 @@ public:
         out_.close();
     }
 
-    void dump(int64_t ts, int64_t local_ts) {
+    void dump(int64_t ts, int64_t local_ts)
+    {
         std::unique_lock<std::mutex> lock(m);
         out_ << ts << '\t' << local_ts << '\t' << fabs(local_ts - ts) << "\r\n";
     }
@@ -122,14 +123,17 @@ public:
 
             log_packet_delay(pkt);
     
-            int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+8, pkt.size()-8, decoded_packet, frame_size_, /*decodeFEC:*/0);
+            int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+8, pkt.size()-8,
+                decoded_packet, frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == int(frame_size_));
-            // logger::debug() << "get_packet decoded frame of size " << pkt.size() << " into " << len << " frames";
+            // logger::debug() << "get_packet decoded frame of size " << pkt.size()
+            // << " into " << len << " frames";
         } else {
             lock.unlock();
             // "decode" a missing frame
-            int len = opus_decode_float(decode_state_, NULL, 0, decoded_packet, frame_size_, /*decodeFEC:*/0);
+            int len = opus_decode_float(decode_state_, NULL, 0, decoded_packet,
+                frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
             // logger::debug() << "get_packet decoded missing frame of size " << len;
             // assert(len == frame_size_);
@@ -215,7 +219,8 @@ public:
     // Called by rtaudio callback to encode and send packet.
     void send_packet(float* buffer, size_t nFrames)
     {
-        // logger::debug() << "send_packet frame size " << frame_size_ << ", got nFrames " << nFrames;
+        // logger::debug() << "send_packet frame size " << frame_size_
+        // << ", got nFrames " << nFrames;
         assert((int)nFrames == frame_size_);
         byte_array samplebuf(nFrames*sizeof(float)+8);
 
@@ -226,7 +231,8 @@ public:
         // Ideally, an ack packet would contain ts info at the receiving side for this packet.
         // @todo Implement the RTT calculation in ssu::stream!
 
-        opus_int32 nbytes = opus_encode_float(encode_state_, buffer, nFrames, (unsigned char*)samplebuf.data()+8, nFrames*sizeof(float));
+        opus_int32 nbytes = opus_encode_float(encode_state_, buffer, nFrames,
+            (unsigned char*)samplebuf.data()+8, nFrames*sizeof(float));
         assert(nbytes > 0);
         samplebuf.resize(nbytes+8);
         strand_.post([this, samplebuf]{
@@ -263,7 +269,8 @@ public:
         unsigned int bufferFrames = 480; // 10ms
 
         try {
-            audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, 48000, &bufferFrames, rtcallback, this);
+            audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, 48000, &bufferFrames,
+                rtcallback, this);
         }
         catch (RtError &error) {
             logger::warning() << "Couldn't open stream, " << error.what();
@@ -305,11 +312,13 @@ public:
     }
 
 private:
-    static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double, RtAudioStreamStatus, void *userdata)
+    static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrames, double,
+        RtAudioStreamStatus, void *userdata)
     {
         audio_hardware* instance = reinterpret_cast<audio_hardware*>(userdata);
 
-        // logger::debug() << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
+        // logger::debug() << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer
+            // << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
 
         // An RtAudio "frame" is one sample per channel,
         // whereas our "frame" is one buffer worth of data (as in Speex).
@@ -425,7 +434,8 @@ int main(int argc, char* argv[])
 
         server = make_shared<ssu::server>(host);
         server->on_new_connection.connect([&] { hw.new_connection(server); });
-        bool listening = server->listen("streaming", "Streaming services", "opus", "OPUS Audio protocol");
+        bool listening = server->listen("streaming", "Streaming services",
+                                        "opus", "OPUS Audio protocol");
         assert(listening);
     }
 
