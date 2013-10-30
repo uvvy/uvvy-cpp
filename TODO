@@ -5,6 +5,7 @@ UI:
  ☐ how to perform search? an ESC-interface sounds intriguing
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
+ ☐ Add higher-priority RTCP stream in opus-streaming.
 
 Comms (voice/video/chat):
  ☐ Sync history between instances
@@ -17,6 +18,7 @@ Comms (voice/video/chat):
      (rx_timestamp) - to measure interdevice synchronization time.
      (chat_id) - a hashed concatenation of originator and receiver ids plus, perhaps, some nonce.
  ☐ Draw possible chat synchronization graph ideas between Alice's and Bob's personal cluser devices.
+ ☐ Chat documentation on https://github.com/berkus/mettanode/blob/develop/ui/doc/chat_and_messaging.md
  ☐ Group chat.
  ☐ Chat join urls like nstchat://authblob or nst://chat?authblob
  ☐ Event bells/notifications: friend online, chat/talk started, etc.
@@ -80,6 +82,8 @@ Structured Streams:
 zlib_armor
  ☐ using boost.iostreams?
 
+ negotiate zlib or bzip2 compression (gzip compression is for files, using same zlib)
+
 encryption/compression negotiation
 
   vector<string> s = {"saes128ctr", "sxsalsa20", "ahmacsha512256", "czlib"};
@@ -96,6 +100,7 @@ encryption/compression negotiation
 public API
 
  ☐ how to specify required armors? probably just a no_compress flag from initiator API.
+   or a no_compress, zlib_compress, bzip2_compress options - this limits the API
 
 Later
  ☐ port from openssl to nacl - only add nacl now, since not all necessary methods are supported.
@@ -113,9 +118,6 @@ Support:
     ☐ Implement flurrying boost::any instead.
       ☐ Need a method to write any and a method to read any, that's it, really.
  ☐ Un/Flurry map<string, boost::any> for settings storage.
-
-scripts/:
- ☐ grab llvm from http://llvm.org/releases/3.2/clang+llvm-3.2-x86-linux-ubuntu-12.04.tar.gz directly to build machine
 
 Most immediate usability necessities:
  ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document
@@ -161,7 +163,7 @@ Most immediate usability necessities:
  ☐ Public/friends-only choices on profile items
  ☐ Profile picture
  ☐ Log window for log display in real-time.
- ✔ Registration server logging to file. @done (12-11-18 16:30)
+ ☐ Registration server logging to file.
  ✔ Registration server proper handling of registrations from the same LAN. @done (12-12-09 16:26)
     (second client to register disconnects first). The problem appears to be more serious and is related to insufficient NAT handling.
 
