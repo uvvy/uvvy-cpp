@@ -24,6 +24,9 @@
 
 #include "private/regserver_client.h" // @fixme Testing only.
 
+// Set to 1 if you want to console-log in realtime thread.
+#define REALTIME_CRIME 0
+
 namespace pt = boost::posix_time;
 namespace po = boost::program_options;
 using namespace std;
@@ -111,7 +114,9 @@ public:
      */
     void get_packet(float* decoded_packet, size_t max_frames)
     {
-        // logger::debug() << "get_packet";
+#if REALTIME_CRIME
+        logger::debug() << "get_packet";
+#endif
         std::unique_lock<std::mutex> lock(queue_mutex_);
         assert(max_frames == frame_size_);
 
@@ -121,21 +126,25 @@ public:
             packet_queue_.pop();
             lock.unlock();
 
-            log_packet_delay(pkt);
+            // log_packet_delay(pkt);
     
             int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+8, pkt.size()-8,
                 decoded_packet, frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == int(frame_size_));
-            // logger::debug() << "get_packet decoded frame of size " << pkt.size()
-            // << " into " << len << " frames";
+#if REALTIME_CRIME
+            logger::debug() << "get_packet decoded frame of size " << pkt.size()
+                << " into " << len << " frames";
+#endif
         } else {
             lock.unlock();
             // "decode" a missing frame
             int len = opus_decode_float(decode_state_, NULL, 0, decoded_packet,
                 frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
-            // logger::debug() << "get_packet decoded missing frame of size " << len;
+#if REALTIME_CRIME
+            logger::debug() << "get_packet decoded missing frame of size " << len;
+#endif
             // assert(len == frame_size_);
         }
     }
@@ -147,9 +156,11 @@ protected:
         std::lock_guard<std::mutex> lock(queue_mutex_);
         // extract payload
         byte_array msg = stream_->read_datagram();
-        // logger::debug() << "received packet of size " << msg.size();
+#if REALTIME_CRIME
+        logger::debug() << "received packet of size " << msg.size();
+#endif
         
-        // log_packet_delay(msg);
+        log_packet_delay(msg);
 
         packet_queue_.push(msg);
     }
@@ -219,8 +230,10 @@ public:
     // Called by rtaudio callback to encode and send packet.
     void send_packet(float* buffer, size_t nFrames)
     {
-        // logger::debug() << "send_packet frame size " << frame_size_
-        // << ", got nFrames " << nFrames;
+#if REALTIME_CRIME
+        logger::debug() << "send_packet frame size " << frame_size_
+            << ", got nFrames " << nFrames;
+#endif
         assert((int)nFrames == frame_size_);
         byte_array samplebuf(nFrames*sizeof(float)+8);
 
@@ -317,8 +330,10 @@ private:
     {
         audio_hardware* instance = reinterpret_cast<audio_hardware*>(userdata);
 
-        // logger::debug() << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer
-            // << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
+#if REALTIME_CRIME
+        logger::debug() << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer
+            << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
+#endif
 
         // An RtAudio "frame" is one sample per channel,
         // whereas our "frame" is one buffer worth of data (as in Speex).
@@ -349,7 +364,9 @@ int main(int argc, char* argv[])
     std::string peer;
     int port = 9660;
 
+#if !REALTIME_CRIME
     logger::set_verbosity(logger::verbosity::info);
+#endif
 
     po::options_description desc("Program arguments");
     desc.add_options()
