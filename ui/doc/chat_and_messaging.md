@@ -1,5 +1,5 @@
 Messaging system
-==============
+================
 
 Messaging needs to be a mix between real-time chat and non real-time email.
 
@@ -31,3 +31,10 @@ First two points are automatically provided by the protocol. To communicate two 
 The last point is rather easy to have, as in mettanode protocol any message including realtime chat messages may carry additional payload. Either inline, or as a reference to separately shared file blob.
 
 The third point is entirely in UI space and can be solved by providing additional composing mode, where text editing is more like a regular Word document and sending is a separate controlled action.
+
+### Offline messaging
+
+A node going offline voluntarily might need to flush all undelivered messages to several of its peers for delivery.
+Messages need to be encrypted with recipient public key.
+
+A node that may go offline involuntarily shall flush undelivered messages to some of its peers periodically.
