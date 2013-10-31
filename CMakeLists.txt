@@ -63,6 +63,8 @@ if (CLANG)
 	endif ()
 	if (TRAVIS_CI)
 		set(_extraFlags "${_extraFlags} -Wno-uninitialized") # Qt code in travis-ci nodes is lame.
+		set(_extraFlags "${_extraFlags} -Wno-deprecated-register") # Qt code in travis-ci nodes is lame.
+		set(_extraFlags "${_extraFlags} -Wno-documentation") # boost doxygen documentation is lame.
 	endif ()
 
 	if (CLANG_GIT)
