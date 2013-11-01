@@ -132,6 +132,9 @@ public:
                 decoded_packet, frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
             assert(len == int(frame_size_));
+            if (len != int(frame_size_)) {
+                logger::warning() << "Short decode, decoded " << len << " frames, required " << frame_size_;
+            }
 #if REALTIME_CRIME
             logger::debug() << "get_packet decoded frame of size " << pkt.size()
                 << " into " << len << " frames";
@@ -142,6 +145,9 @@ public:
             int len = opus_decode_float(decode_state_, NULL, 0, decoded_packet,
                 frame_size_, /*decodeFEC:*/0);
             assert(len > 0);
+            if (len <= 0) {
+                logger::warning() << "Couldn't decode missing frame, returned " << len;
+            }
 #if REALTIME_CRIME
             logger::debug() << "get_packet decoded missing frame of size " << len;
 #endif
@@ -454,6 +460,9 @@ int main(int argc, char* argv[])
         bool listening = server->listen("streaming", "Streaming services",
                                         "opus", "OPUS Audio protocol");
         assert(listening);
+        if (!listening) {
+            throw std::runtime_error("Couldn't set up server listening to streaming:opus");
+        }
     }
 
     host->run_io_service();
