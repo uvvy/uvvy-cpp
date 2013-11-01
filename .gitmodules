@@ -22,3 +22,6 @@
 [submodule "krypto"]
 	path = krypto
 	url = https://berkus@github.com/berkus/libkrypto.git
+[submodule "nat"]
+	path = nat
+	url = https://berkus@github.com/berkus/libnat.git
