@@ -1,3 +1,9 @@
+From maidsafe (BSD variance, 2009):
+  ☐ nullstream
+  ☐ gateway
+  ☐ nat-pmp
+  ☐ upnp
+
 UI:
  ☐ Ubuntu 32/64 bit binaries repo for Matti.
     ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
@@ -9,6 +15,7 @@ UI:
  ☐ Build static regserver for linux.
 
 Comms (voice/video/chat):
+ ☐ opus does not build on linux - some configs missing?
  ☐ Sync history between instances
      Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
      non-existant entries once activated. How to track joins/leaves (+ history available to new joiners)?
