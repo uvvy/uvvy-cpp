@@ -75,14 +75,12 @@ class audio_receiver
     std::mutex queue_mutex_;
     std::queue<byte_array> packet_queue_;
     shared_ptr<stream> stream_;
-    boost::asio::strand strand_;
     plotfile plot_;
 
 public:
     static constexpr int nChannels{1};
 
-    audio_receiver(shared_ptr<host> host)
-        : strand_(host->get_io_service())
+    audio_receiver()
     {
         int error{0};
         decode_state_ = opus_decoder_create(48000, nChannels, &error);
@@ -250,13 +248,16 @@ public:
         // Ideally, an ack packet would contain ts info at the receiving side for this packet.
         // @todo Implement the RTT calculation in ssu::stream!
 
+        // @todo Perform encode in a separate thread, not capture thread.
+        //std::async{
         opus_int32 nbytes = opus_encode_float(encode_state_, buffer, nFrames,
             (unsigned char*)samplebuf.data()+8, nFrames*sizeof(float));
         assert(nbytes > 0);
         samplebuf.resize(nbytes+8);
         strand_.post([this, samplebuf]{
             stream_->write_datagram(samplebuf, stream::datagram_type::non_reliable);
-        });        
+        });
+        // }
     }
 };
 
@@ -437,7 +438,7 @@ int main(int argc, char* argv[])
     // vector<string> regservers = settings->get("regservers");
     regclient.register_at("192.168.1.67");
 
-    audio_receiver receiver(host);
+    audio_receiver receiver;
     audio_sender sender(host);
     audio_hardware hw(&sender, &receiver);
 
