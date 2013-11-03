@@ -1,5 +1,6 @@
 language: cpp
 compiler: clang
+cache: apt
 before_install:
   - ./travis-ci/travis_install_packages.sh
   - ./travis-ci/travis_build_ninja.sh
