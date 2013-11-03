@@ -21,6 +21,7 @@
 #include "RtAudio.h"
 #include "algorithm.h"
 #include "settings_provider.h"
+#include "upnpclient.h"
 
 #include "private/regserver_client.h" // @fixme Testing only.
 
@@ -361,6 +362,51 @@ private:
     }
 };
 
+shared_ptr<upnp::UpnpIgdClient> traverse_nat(int main_port)
+{
+    shared_ptr<upnp::UpnpIgdClient> upnp = make_shared<upnp::UpnpIgdClient>();
+
+    logger::debug() << "Initialising UPnP";
+
+    upnp->InitControlPoint();
+
+    bool main_port_mapped{false}, regserver_port_mapped{false};
+
+    if (upnp->IsAsync()) {
+        upnp->SetNewMappingCallback([&](const int &port, const upnp::ProtocolType &protocol) {
+            if (port == main_port) {
+                main_port_mapped = true;
+            } else if (port == 9669) {
+                regserver_port_mapped = true;
+            }
+        });
+    }
+
+    bool all_added = true;
+    all_added &= upnp->AddPortMapping(main_port, upnp::kTcp);
+    all_added &= upnp->AddPortMapping(main_port, upnp::kUdp);
+    all_added &= upnp->AddPortMapping(9669, upnp::kTcp);
+    all_added &= upnp->AddPortMapping(9669, upnp::kUdp);
+
+    if (upnp->IsAsync()) {
+        logger::debug() << "Waiting...";
+        boost::this_thread::sleep(boost::posix_time::seconds(5));
+    }
+
+    if (upnp->HasServices()) {
+      logger::debug() << "External IP: " << upnp->GetExternalIpAddress();
+      assert(all_added);
+      if (upnp->IsAsync()) {
+        assert(main_port_mapped and regserver_port_mapped);
+      }
+      logger::debug() << "All UPnP mappings successful";
+    } else {
+      logger::warning() << "Sorry, no port mappings via UPnP possible";
+    }
+
+    return upnp;
+}
+
 /**
  * Get the address to talk to over IPv6 from the command line.
  * Parses [ipv6::]:port or [ipv6] with default port 9660.
@@ -372,7 +418,7 @@ int main(int argc, char* argv[])
     int port = 9660;
 
 #if !REALTIME_CRIME
-    logger::set_verbosity(logger::verbosity::info);
+    // logger::set_verbosity(logger::verbosity::info);
 #endif
 
     po::options_description desc("Program arguments");
@@ -416,6 +462,9 @@ int main(int argc, char* argv[])
     settings->set("port", port);
     settings->sync();
 
+    // Shared ptr ensures nat is destroyed on exit...
+    shared_ptr<upnp::UpnpIgdClient> nat(traverse_nat(port));
+
     shared_ptr<host> host(host::create(settings.get(), port));
     shared_ptr<stream> stream;
     shared_ptr<server> server;
@@ -436,7 +485,13 @@ int main(int argc, char* argv[])
     regclient.set_profile(client);
 
     // vector<string> regservers = settings->get("regservers");
-    regclient.register_at("192.168.1.67");
+    // regclient.register_at("192.168.1.67");
+    regclient.register_at("section4.madfire.net");
+
+    // packets don't come back from the regserver located on the outside
+    // 1. elion port filtering? shouldn't be active
+    // 2. one of the routers fscking up? possible
+    // 3. need to set up nat-pmp or upnp port forwarding prior to contacting the server? most probably
 
     audio_receiver receiver;
     audio_sender sender(host);

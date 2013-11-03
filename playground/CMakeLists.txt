@@ -5,7 +5,7 @@ set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
 
-include_directories(../nat ../ssu/include ../support/include ../ui/3rdparty/opus-1.0.1/include)
+include_directories(../nat/include ../ssu/include ../support/include ../ui/3rdparty/opus-1.0.1/include)
 include_directories(../ui/3rdparty/rtaudio-4.0.11)
 
 #set(udpsender_SOURCES udpsend.cpp main.cpp)
@@ -18,7 +18,7 @@ include_directories(../ui/3rdparty/rtaudio-4.0.11)
 #	RUNTIME DESTINATION tools)
 
 add_executable(opus-streaming opus-streaming.cpp)
-target_link_libraries(opus-streaming ssu support rtaudio opus plist routing krypto
+target_link_libraries(opus-streaming ssu support rtaudio opus plist routing nat upnpc krypto
     ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS opus-streaming
     RUNTIME DESTINATION tools)
