@@ -41,6 +41,7 @@
 #include "entenc.h"
 #include "entdec.h"
 #include "arch.h"
+#include "modes.h"
 
 #ifdef __cplusplus
 extern "C" {
