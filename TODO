@@ -1,9 +1,3 @@
-From maidsafe (BSD variance, 2009):
-  ☐ nullstream
-  ☐ gateway
-  ☐ nat-pmp
-  ☐ upnp
-
 UI:
  ☐ Ubuntu 32/64 bit binaries repo for Matti.
     ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
@@ -12,10 +6,10 @@ UI:
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
  ☐ Add higher-priority RTCP stream in opus-streaming.
- ☐ Build static regserver for linux.
+ ✔ Build static regserver for linux. @done (13-11-04 01:02)
 
 Comms (voice/video/chat):
- ☐ opus does not build on linux - some configs missing?
+ ✔ opus does not build on linux - some configs missing? @done (13-11-04 01:02)
  ☐ Sync history between instances
      Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
      non-existant entries once activated. How to track joins/leaves (+ history available to new joiners)?
@@ -81,6 +75,7 @@ Routing:
  ☐ Regserver deregistration on logout is added - should notify active connections somehow too?
 
  ☐ BUG: Crashes on access to client_profile.endpoints() if no endpoints was provided by the client.
+ ☐ Regserver crash on client re-register (see collect.logs/linux64-reregister-fault.txt)
 
 Structured Streams:
  
@@ -111,7 +106,7 @@ public API
    or a no_compress, zlib_compress, bzip2_compress options - this limits the API
 
 Later
- ☐ port from openssl to nacl - only add nacl now, since not all necessary methods are supported.
+ ☐ add support for nacl - anticipating openssl primitives support in nacl soon
  ✔ FindNaCl.cmake? @done (13-10-27 12:42)
  ☐ Drop OPENSSL_LIBRARIES - once nacl supports whatever needed.
  ☐ Change krypto to use cryptobox_*
@@ -140,7 +135,9 @@ Most immediate usability necessities:
  ☐ specify and fix negotiation protocol format
 
  ☐ give priority to local-network Endpoint addresses first (need to match network against available interfaces' IPs)
- ☐ possible DOS if localhost is specified in Endpoints? yep, tested and true, fix.
+ ✔ possible DOS if localhost is specified in Endpoints? yep, tested and true, fix. @done (13-11-04 01:14)
+   ☐ first, never ever include loopback addresses in endpoints list
+   ✔ second, if ever encountered, just ignore those @done (13-11-04 01:14)
 
   Possibly PID (Proportional-Integral-Differential) flow control.
 
@@ -167,12 +164,13 @@ flow control
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
+   ☐ blog post on using libssu streams - in progress
  ☐ Automatic launching on host OS login
  ☐ Public/friends-only choices on profile items
  ☐ Profile picture
  ☐ Log window for log display in real-time.
  ☐ Registration server logging to file.
- ✔ Registration server proper handling of registrations from the same LAN. @done (12-12-09 16:26)
+ ☐ Registration server proper handling of registrations from the same LAN.
     (second client to register disconnects first). The problem appears to be more serious and is related to insufficient NAT handling.
 
 NAT and UPnP:
@@ -181,11 +179,6 @@ NAT and UPnP:
        and it was motoko firewalls indeed, 
        ✔ call infonet about it @done (13-03-11 23:57)
            infonet claim there is no UDP filtering whatsoever, can it be motoko's local portsentry or sth like that? check the services/ipfw settings.
-    ☐ http://tools.ietf.org/html/draft-cheshire-nat-pmp-05
-    ☐ http://miniupnp.free.fr/nat-pmp.html
-      ☐ needs default gateway knowledge, thus platform-dependent routing information access, e.g. http://qt-project.org/forums/viewthread/7497,
-         http://stackoverflow.com/questions/1738733/how-to-get-internal-ip-external-ip-and-default-gateway-for-upnp  
-         ☐ libnatpmp impl already has this!
   ☐ Integrate UPnP into SST::Host.
  ✔ Download router XML file using QNetworkAccessManager/QNetworkReply @done (12-11-18 16:24)
  ✔ Punching TCP holes via UPnP works, but UDP doesn't (apparently, Skype can do it!) - figure out why, find a workaround. @done (12-11-24 10:45)
