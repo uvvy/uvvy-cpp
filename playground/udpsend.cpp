@@ -1,10 +1,8 @@
 #include "udpsend.h"
 #include "upnp/router.h"
 #include "upnp/upnpmcastsocket.h"
-
+#include "protocol.h"
 #include <iostream>
-
-#define LOCAL_PORT 9660
 
 UdpTestSender::UdpTestSender(bt::UPnPMCastSocket* up)
     : QUdpSocket()
@@ -14,10 +12,10 @@ UdpTestSender::UdpTestSender(bt::UPnPMCastSocket* up)
     QObject::connect(this,SIGNAL(readyRead()),this,SLOT(onReadyRead()));
     QObject::connect(this,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(error(QAbstractSocket::SocketError)));
 
-    if (!bind(LOCAL_PORT, QUdpSocket::ShareAddress))
-        qWarning() << "Cannot bind to UDP port" << LOCAL_PORT;
+    if (!bind(stream_protocol::default_port, QUdpSocket::ShareAddress))
+        qWarning() << "Cannot bind to UDP port" << stream_protocol::default_port;
 
-    ping(QHostAddress("127.0.0.1"), LOCAL_PORT);
+    ping(QHostAddress("127.0.0.1"), stream_protocol::default_port);
 }
 
 UdpTestSender::~UdpTestSender()
@@ -60,7 +58,7 @@ void UdpTestSender::routerFound(UPnPRouter* r)
     connect(router, SIGNAL(portForwarded(bool)),
         this, SLOT(portForwarded(bool)));
 
-    Port p2(LOCAL_PORT, Port::UDP);
+    Port p2(stream_protocol::default_port, Port::UDP);
     router->forward(p2, /*leaseDuration:*/ 3600, /*extPort:*/ 0);
 }
 
@@ -69,7 +67,7 @@ void UdpTestSender::portForwarded(bool success)
     if (success)
     {
         qDebug() << "Port forwarding succeeded, sending UDP.";
-        ping(QHostAddress("212.7.7.70"), LOCAL_PORT);
+        ping(QHostAddress("212.7.7.70"), stream_protocol::default_port);
     }
 }
 

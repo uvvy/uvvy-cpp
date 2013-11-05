@@ -24,6 +24,7 @@
 #include "upnpclient.h"
 
 #include "private/regserver_client.h" // @fixme Testing only.
+constexpr uint16_t regserver_port = uia::routing::internal::REGSERVER_DEFAULT_PORT;
 
 // Set to 1 if you want to console-log in realtime thread.
 #define REALTIME_CRIME 0
@@ -376,7 +377,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(int main_port)
         upnp->SetNewMappingCallback([&](const int &port, const upnp::ProtocolType &protocol) {
             if (port == main_port) {
                 main_port_mapped = true;
-            } else if (port == 9669) {
+            } else if (port == regserver_port) {
                 regserver_port_mapped = true;
             }
         });
@@ -385,8 +386,8 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(int main_port)
     bool all_added = true;
     all_added &= upnp->AddPortMapping(main_port, upnp::kTcp);
     all_added &= upnp->AddPortMapping(main_port, upnp::kUdp);
-    all_added &= upnp->AddPortMapping(9669, upnp::kTcp);
-    all_added &= upnp->AddPortMapping(9669, upnp::kUdp);
+    all_added &= upnp->AddPortMapping(regserver_port, upnp::kTcp);
+    all_added &= upnp->AddPortMapping(regserver_port, upnp::kUdp);
 
     if (upnp->IsAsync()) {
         logger::debug() << "Waiting...";
@@ -415,7 +416,7 @@ int main(int argc, char* argv[])
 {
     bool connect_out{false};
     std::string peer;
-    int port = 9660;
+    int port = stream_protocol::default_port;
 
 #if !REALTIME_CRIME
     // logger::set_verbosity(logger::verbosity::info);

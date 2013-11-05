@@ -20,7 +20,7 @@
     // There should some sort of GUI to let user generate a new identity with given specification
     // (RSA or DSA etc)
 
-    settings->set("port", 9660); // Default client port binding
+    settings->set("port", stream_protocol::default_port);
 
     uia::routing::client_profile client;
     client.set_host_name("aramaki.local");
@@ -33,4 +33,3 @@
 
     vector<string> regservers = settings->get("regservers");
     // Regservers list as ipv4, ipv4:port, [ipv6], [ipv6]:port, srvname, srvname:srvport
-    // default srvport 9669

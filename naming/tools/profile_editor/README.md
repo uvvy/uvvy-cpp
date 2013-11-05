@@ -31,7 +31,7 @@ See [host-identity](https://github.com/berkus/libssu/blob/develop/lib/identity.c
 
 Client-specific settings:
 ``` cpp
-    settings->set("port", 9660); // Default client port binding
+    settings->set("port", stream_protocol::default_port);
 ```
 See [opus-streaming][2]
 
@@ -52,7 +52,6 @@ Rendezvous servers list:
 ``` cpp
     vector<string> regservers = settings->get("regservers");
     // Regservers list as ipv4, ipv4:port, [ipv6], [ipv6]:port, srvname, srvname:srvport
-    // default srvport 9669
 ```
 See [opus-streaming][2]
 
