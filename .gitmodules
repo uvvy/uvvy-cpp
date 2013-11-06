@@ -25,3 +25,6 @@
 [submodule "nat"]
 	path = nat
 	url = https://berkus@github.com/berkus/libnat.git
+[submodule "ssu-qt4"]
+	path = ssu-qt4
+	url = https://berkus@github.com/berkus/libssu-qt4.git
