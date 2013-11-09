@@ -501,14 +501,15 @@ int main(int argc, char* argv[])
     }
     regclient.set_profile(client);
 
-    // vector<string> regservers = settings->get("regservers");
-    // regclient.register_at("192.168.1.67");
-    regclient.register_at("section4.madfire.net");
-
-    // packets don't come back from the regserver located on the outside
-    // 1. elion port filtering? shouldn't be active
-    // 2. one of the routers fscking up? possible
-    // 3. need to set up nat-pmp or upnp port forwarding prior to contacting the server? most probably
+    boost::any rs = settings->get("regservers");
+    if (!rs.empty())
+    {
+        vector<string> regservers = boost::any_cast<vector<string>>(rs);
+        for (auto server : regservers)
+        {
+            regclient.register_at(server);
+        }
+    }
 
     audio_receiver receiver;
     audio_sender sender(host);
