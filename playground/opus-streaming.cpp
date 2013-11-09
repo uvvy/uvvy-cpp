@@ -427,6 +427,7 @@ int main(int argc, char* argv[])
     bool connect_out{false};
     std::string peer;
     int port = stream_protocol::default_port;
+    std::vector<std::string> location_hints;
 
 #if !VERBOSE_DEBUG
     logger::set_verbosity(logger::verbosity::info);
@@ -434,11 +435,16 @@ int main(int argc, char* argv[])
 
     po::options_description desc("Program arguments");
     desc.add_options()
-        ("peer,a", po::value<std::string>(), "Peer EID as base32 identifier")
-        ("port,p", po::value<int>(&port), "Run service on this port, connect peer on this port")
-        ("help", "Print this help message");
+        ("remote,r", po::value<std::string>(),
+            "Peer EID as base32 identifier")
+        ("endpoint,e", po::value<std::vector<std::string>>(&location_hints),
+            "Endpoint location hint (ipv4 or ipv6 address), can be specified multiple times")
+        ("port,p", po::value<int>(&port),
+            "Run service on this port, connect peer on this port")
+        ("help",
+            "Print this help message");
     po::positional_options_description p;
-    p.add("peer", -1);
+    p.add("remote", -1);
     po::variables_map vm;
     po::store(po::command_line_parser(argc, argv).
           options(desc).positional(p).run(), vm);
@@ -464,9 +470,9 @@ int main(int argc, char* argv[])
         port = vm["port"].as<int>();
     }
 
-    if (vm.count("peer"))
+    if (vm.count("remote"))
     {
-        peer = vm["peer"].as<std::string>();
+        peer = vm["remote"].as<std::string>();
         connect_out = true;
     }
 
@@ -517,6 +523,17 @@ int main(int argc, char* argv[])
         hw.streaming(stream);
         stream->on_link_up.connect([&] { hw.out_stream_ready(); });
         stream->connect_to(eid, "streaming", "opus");
+
+        if (!location_hints.empty())
+        {
+            for (auto epstr : location_hints)
+            {
+                // @todo Allow specifying a port too.
+                ssu::endpoint ep(boost::asio::ip::address::from_string(epstr), stream_protocol::default_port);
+                logger::debug() << "Connecting at location hint " << ep;
+                stream->connect_at(ep);
+            }
+        }
     }
     else
     {
