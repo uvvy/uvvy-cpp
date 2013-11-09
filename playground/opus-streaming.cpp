@@ -29,6 +29,11 @@ constexpr uint16_t regserver_port = uia::routing::internal::REGSERVER_DEFAULT_PO
 // Set to 1 if you want to console-log in realtime thread.
 #define REALTIME_CRIME 0
 
+// Set to 1 if you want to generate gnuplot file of delays.
+#define DELAY_PLOT 0
+
+#define VERBOSE_DEBUG 1
+
 namespace pt = boost::posix_time;
 namespace po = boost::program_options;
 using namespace std;
@@ -39,6 +44,7 @@ using namespace ssu;
  */
 class plotfile
 {
+#if DELAY_PLOT
     std::mutex m;
     std::ofstream out_;
 public:
@@ -60,6 +66,7 @@ public:
         std::unique_lock<std::mutex> lock(m);
         out_ << ts << '\t' << local_ts << '\t' << fabs(local_ts - ts) << "\r\n";
     }
+#endif
 };
 
 //=================================================================================================
@@ -173,6 +180,7 @@ protected:
 
     void log_packet_delay(byte_array const& pkt)
     {
+#if DELAY_PLOT
         pt::ptime epoch(boost::gregorian::date(1970,boost::gregorian::Jan,1));
         int64_t ts = pkt.as<int64_t>()[0];
         int64_t local_ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
@@ -180,6 +188,7 @@ protected:
             // << fabs(local_ts - ts);
 
         plot_.dump(ts, local_ts);
+#endif
     }
 };
 
@@ -418,8 +427,8 @@ int main(int argc, char* argv[])
     std::string peer;
     int port = stream_protocol::default_port;
 
-#if !REALTIME_CRIME
-    // logger::set_verbosity(logger::verbosity::info);
+#if !VERBOSE_DEBUG
+    logger::set_verbosity(logger::verbosity::info);
 #endif
 
     po::options_description desc("Program arguments");
