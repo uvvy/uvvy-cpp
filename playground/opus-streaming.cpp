@@ -338,6 +338,7 @@ public:
 
     void streaming(shared_ptr<stream> stream)
     {
+        logger::info() << "New incoming connection from " << stream->remote_host_id();
         sender_->streaming(stream);
         receiver_->streaming(stream);
     }
@@ -376,7 +377,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(int main_port)
 {
     shared_ptr<upnp::UpnpIgdClient> upnp = make_shared<upnp::UpnpIgdClient>();
 
-    logger::debug() << "Initialising UPnP";
+    logger::info() << "Initialising UPnP";
 
     upnp->InitControlPoint();
 
@@ -409,7 +410,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(int main_port)
       if (upnp->IsAsync()) {
         assert(main_port_mapped and regserver_port_mapped);
       }
-      logger::debug() << "All UPnP mappings successful";
+      logger::info() << "All UPnP mappings successful";
     } else {
       logger::warning() << "Sorry, no port mappings via UPnP possible";
     }
