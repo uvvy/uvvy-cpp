@@ -519,7 +519,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        logger::info() << "Listening on port " << dec << port;
+        logger::info() << "Host " << host->host_identity().id() << " listening on port " << dec << port;
 
         server = make_shared<ssu::server>(host);
         server->on_new_connection.connect([&] { hw.new_connection(server); });
