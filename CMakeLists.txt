@@ -99,7 +99,7 @@ add_subdirectory(krypto)
 
 add_subdirectory(ssu)
 add_subdirectory(routing)
-#add_subdirectory(naming)
+add_subdirectory(naming)
 add_subdirectory(nat)
 add_subdirectory(ui)
 
