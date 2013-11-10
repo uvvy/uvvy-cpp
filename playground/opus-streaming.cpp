@@ -492,13 +492,13 @@ int main(int argc, char* argv[])
 
     uia::routing::internal::regserver_client regclient(host.get());
 
-    // @todo Pull client profile from settings.
+    // Pull client profile from settings.
+    auto s_client = settings->get("profile");
     uia::routing::client_profile client;
-    client.set_host_name("aramaki.local");
-    client.set_owner_name("Berkus");
-    client.set_city("Tallinn");
-    client.set_region("Harju");
-    client.set_country("Estonia");
+    if (!s_client.empty()) {
+        uia::routing::client_profile client2(boost::any_cast<std::vector<char>>(s_client));
+        client = client2;
+    }
     client.set_endpoints(set_to_vector(host->active_local_endpoints()));
     for (auto kw : client.keywords()) {
         logger::debug() << "Keyword: " << kw;
