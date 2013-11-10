@@ -462,9 +462,6 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    settings_provider::set_organization_name("Exquance");
-    settings_provider::set_organization_domain("com.exquance");
-    settings_provider::set_application_name("opus-streaming");
     auto settings = settings_provider::instance();
 
     auto s_port = settings->get("port");
