@@ -17,4 +17,6 @@ public slots:
     void save();
     void quit();
     void generateNewEid();
+    void setStatus(QString const& text);
+    void clearStatus();
 };

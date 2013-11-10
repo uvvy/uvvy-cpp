@@ -70,12 +70,27 @@ void MainWindow::load()
         }
     }
 
-    hostEIDLineEdit->setText(ssu::peer_id(m_pimpl->host->host_identity().id().id()).to_string().c_str());
+    hostEIDLineEdit->setText(peer_id(m_pimpl->host->host_identity().id().id()).to_string().c_str());
+    setStatus("Profile loaded");
+}
+
+void MainWindow::setStatus(QString const& text)
+{
+    statusLabel->setText(text);
+    QTimer::singleShot(5000/*msec*/, this, SLOT(clearStatus()));
+}
+
+void MainWindow::clearStatus()
+{
+    statusLabel->clear();
 }
 
 void MainWindow::save()
 {
     qDebug() << "Saving settings";
+    m_pimpl->settings->set("id", m_pimpl->host->host_identity().id().id().as_vector());
+    m_pimpl->settings->set("key", m_pimpl->host->host_identity().private_key().as_vector());
+
     m_pimpl->settings->set("port", (long long)portSpinBox->value());
     uia::routing::client_profile client;
     client.set_host_name(QHostInfo::localHostName().toUtf8().constData());
@@ -100,6 +115,7 @@ void MainWindow::save()
     m_pimpl->settings->set("regservers", rs_ba);
 
     m_pimpl->settings->sync();
+    setStatus("Profile saved");
 }
 
 void MainWindow::quit()
@@ -112,4 +128,21 @@ void MainWindow::quit()
 void MainWindow::generateNewEid()
 {
     qDebug() << "Generating new host EID";
+
+    QMessageBox msgBox;
+    msgBox.setText("Generate new host EID");
+    msgBox.setInformativeText("Generating new EID will change your private key. You will lose your old private key and host EID. Do you want to create a new private key?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    int ret = msgBox.exec();
+
+    if (ret == QMessageBox::Cancel)
+        return;
+
+    identity host_identity = identity::generate();
+    m_pimpl->host->set_host_identity(host_identity);
+
+    hostEIDLineEdit->setText(peer_id(m_pimpl->host->host_identity().id().id()).to_string().c_str());
+
+    setStatus("New EID generated");
 }
