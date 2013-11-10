@@ -5,16 +5,17 @@
 #include "client_profile.h"
 
 using namespace std;
+using namespace ssu;
 
 class MainWindow::Private
 {
 public:
     shared_ptr<settings_provider> settings;
-    shared_ptr<ssu::host> host;
+    shared_ptr<host> host;
 
     Private()
         : settings(settings_provider::instance())
-        , host(ssu::host::create(settings.get()))
+        , host(host::create(settings.get()))
     {}
 };
 
@@ -42,7 +43,7 @@ void MainWindow::load()
     if (!s_port.empty()) {
         portSpinBox->setValue(boost::any_cast<long long>(s_port));
     } else {
-        portSpinBox->setValue(ssu::stream_protocol::default_port);
+        portSpinBox->setValue(stream_protocol::default_port);
     }
 
     auto s_client = m_pimpl->settings->get("profile");
