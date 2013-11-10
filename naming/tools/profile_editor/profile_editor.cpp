@@ -4,11 +4,13 @@
 #include "host.h"
 #include "client_profile.h"
 
+using namespace std;
+
 class MainWindow::Private
 {
 public:
-    std::shared_ptr<settings_provider> settings;
-    std::shared_ptr<ssu::host> host;
+    shared_ptr<settings_provider> settings;
+    shared_ptr<ssu::host> host;
 
     Private()
         : settings(settings_provider::instance())
@@ -22,7 +24,7 @@ public:
 // Save profile back.
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , m_pimpl(std::make_shared<Private>())
+    , m_pimpl(make_shared<Private>())
 {
     setupUi(this); // this sets up GUI
 
@@ -45,7 +47,7 @@ void MainWindow::load()
 
     auto s_client = m_pimpl->settings->get("profile");
     if (!s_client.empty()) {
-        uia::routing::client_profile client(boost::any_cast<std::vector<char>>(s_client));
+        uia::routing::client_profile client(boost::any_cast<vector<char>>(s_client));
         firstNameLineEdit->setText(client.owner_firstname().c_str());
         lastNameLineEdit->setText(client.owner_lastname().c_str());
         nicknameLineEdit->setText(client.owner_nickname().c_str());
