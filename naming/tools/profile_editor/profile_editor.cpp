@@ -56,6 +56,19 @@ void MainWindow::load()
         countryLineEdit->setText(client.country().c_str());
     }
 
+    boost::any s_rs = m_pimpl->settings->get("regservers");
+    if (!s_rs.empty())
+    {
+        byte_array rs_ba(boost::any_cast<vector<char>>(s_rs));
+        byte_array_iwrap<flurry::iarchive> read(rs_ba);
+        vector<string> regservers;
+        read.archive() >> regservers;
+        for (auto server : regservers)
+        {
+            routingServersTextEdit->appendPlainText(server.c_str());
+        }
+    }
+
     hostEIDLineEdit->setText(ssu::peer_id(m_pimpl->host->host_identity().id().id()).to_string().c_str());
 }
 
@@ -73,8 +86,17 @@ void MainWindow::save()
     client.set_country(countryLineEdit->text().toUtf8().constData());
     m_pimpl->settings->set("profile", client.enflurry());
 
-    // routingServersTextEdit
-    // vector<string> regservers = settings->get("regservers");
+    QStringList servers = routingServersTextEdit->toPlainText().split(QRegExp(" |\r|\n"), QString::SkipEmptyParts);
+    vector<string> regservers;
+    Q_FOREACH(QString s, servers) {
+        regservers.emplace_back(s.toUtf8().constData());
+    }
+    byte_array rs_ba;
+    {
+        byte_array_owrap<flurry::oarchive> write(rs_ba);
+        write.archive() << regservers;
+    }
+    m_pimpl->settings->set("regservers", rs_ba);
 
     m_pimpl->settings->sync();
 }

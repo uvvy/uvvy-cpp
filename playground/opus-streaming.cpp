@@ -505,10 +505,13 @@ int main(int argc, char* argv[])
     }
     regclient.set_profile(client);
 
-    boost::any rs = settings->get("regservers");
-    if (!rs.empty())
+    boost::any s_rs = settings->get("regservers");
+    if (!s_rs.empty())
     {
-        vector<string> regservers = boost::any_cast<vector<string>>(rs);
+        byte_array rs_ba(boost::any_cast<vector<char>>(s_rs));
+        byte_array_iwrap<flurry::iarchive> read(rs_ba);
+        vector<string> regservers;
+        read.archive() >> regservers;
         for (auto server : regservers)
         {
             regclient.register_at(server);
