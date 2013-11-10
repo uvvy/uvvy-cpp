@@ -38,7 +38,7 @@ void MainWindow::load()
     qDebug() << "Loading settings";
     auto s_port = m_pimpl->settings->get("port");
     if (!s_port.empty()) {
-        portSpinBox->setValue(boost::any_cast<uint16_t>(s_port)); // as set by link::init_link()
+        portSpinBox->setValue(boost::any_cast<long long>(s_port));
     } else {
         portSpinBox->setValue(ssu::stream_protocol::default_port);
     }
@@ -60,7 +60,7 @@ void MainWindow::load()
 void MainWindow::save()
 {
     qDebug() << "Saving settings";
-    m_pimpl->settings->set("port", portSpinBox->value());
+    m_pimpl->settings->set("port", (long long)portSpinBox->value());
     uia::routing::client_profile client;
     client.set_host_name(QHostInfo::localHostName().toUtf8().constData());
     client.set_owner_firstname(firstNameLineEdit->text().toUtf8().constData());

@@ -480,7 +480,7 @@ int main(int argc, char* argv[])
         connect_out = true;
     }
 
-    settings->set("port", port);
+    settings->set("port", (long long)port);
     settings->sync();
 
     // Shared ptr ensures nat is destroyed on exit...
