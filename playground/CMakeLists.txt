@@ -1,6 +1,6 @@
 #add_subdirectory(sstreams)
 
-set(QT_DONT_USE_QTGUI TRUE)
+set(QT_USE_QTGUI TRUE)
 set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
@@ -21,6 +21,11 @@ add_executable(opus-streaming opus-streaming.cpp)
 target_link_libraries(opus-streaming ssu support rtaudio opus plist routing nat upnpc krypto
     ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS opus-streaming
+    RUNTIME DESTINATION tools)
+
+add_executable(screencaster screencaster.cpp macosx.mm)
+target_link_libraries(screencaster ${QT_LIBRARIES} objc)
+install(TARGETS screencaster
     RUNTIME DESTINATION tools)
 
 if (APPLE)
