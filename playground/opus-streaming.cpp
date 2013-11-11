@@ -538,6 +538,7 @@ int main(int argc, char* argv[])
             for (auto epstr : location_hints)
             {
                 // @todo Allow specifying a port too.
+                // @todo Allow specifying a DNS name for endpoint.
                 ssu::endpoint ep(boost::asio::ip::address::from_string(epstr), stream_protocol::default_port);
                 logger::debug() << "Connecting at location hint " << ep;
                 stream->connect_at(ep);
