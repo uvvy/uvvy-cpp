@@ -32,8 +32,6 @@ constexpr uint16_t regserver_port = uia::routing::internal::REGSERVER_DEFAULT_PO
 // Set to 1 if you want to generate gnuplot file of delays.
 #define DELAY_PLOT 0
 
-#define VERBOSE_DEBUG 1
-
 namespace pt = boost::posix_time;
 namespace po = boost::program_options;
 using namespace std;
@@ -435,10 +433,7 @@ int main(int argc, char* argv[])
     std::string peer;
     int port = stream_protocol::default_port;
     std::vector<std::string> location_hints;
-
-#if !VERBOSE_DEBUG
-    logger::set_verbosity(logger::verbosity::info);
-#endif
+    bool verbose_debug{false};
 
     po::options_description desc("Program arguments");
     desc.add_options()
@@ -448,6 +443,8 @@ int main(int argc, char* argv[])
             "Endpoint location hint (ipv4 or ipv6 address), can be specified multiple times")
         ("port,p", po::value<int>(&port),
             "Run service on this port, connect peer on this port")
+        ("verbose,v", po::bool_switch(&verbose_debug),
+            "Print verbose output for debug")
         ("help",
             "Print this help message");
     po::positional_options_description p;
@@ -460,6 +457,10 @@ int main(int argc, char* argv[])
     if (vm.count("help")) {
         std::cout << desc << "\n";
         return 1;
+    }
+
+    if (!verbose_debug) {
+        logger::set_verbosity(logger::verbosity::info);
     }
 
     auto settings = settings_provider::instance();
