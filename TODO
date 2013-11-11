@@ -1,5 +1,5 @@
 UI:
- ☐ Ubuntu 32/64 bit binaries repo for Matti.
+ ✔ Ubuntu 32/64 bit binaries repo for Matti. @done (13-11-11 19:00)
     ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
  ☐ Deploy nshd to motoko?
  ☐ how to perform search? an ESC-interface sounds intriguing
@@ -14,8 +14,7 @@ Comms (voice/video/chat):
      Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
      non-existant entries once activated. How to track joins/leaves (+ history available to new joiners)?
      (unread, originator, timestamp, target, msg_hash) - tuple for syncing messages.
-     Unread is not synced, it is implicitly 1 for synced messages. Actually, it can be synced, for example
-     if the chat was already read on a device, then unread=0 may be synced).
+     Unread is synced, for example if the chat was already read on a device, then unread=0 may be synced.
      (originator_user, originator_eid, originator_timestamp) - to track source of the message.
      (rx_timestamp) - to measure interdevice synchronization time.
      (chat_id) - a hashed concatenation of originator and receiver ids plus, perhaps, some nonce.
@@ -24,6 +23,10 @@ Comms (voice/video/chat):
  ☐ Group chat.
  ☐ Chat join urls like nstchat://authblob or nst://chat?authblob
  ☐ Event bells/notifications: friend online, chat/talk started, etc.
+ ☐ Chat happens in chat room.
+ ☐ Rooms may be arbitrarily nested forming chat labyrinth.
+ ☐ Screencasting client
+   ☐ Capture screen and encode to video stream? libvpx or something like that. Run experiments.
 
 Storage (grabber/file sync/versioning):
  ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
@@ -59,6 +62,18 @@ Storage (grabber/file sync/versioning):
    ☐ this is where tree sync will start - other nodes compare their own HEAD changes with this node and perform a sync-fetch to align histories.
       in general case sync doesn't have to bring in all changes of the history, e.g. each Change object lineage may be synced, but for the file blocks
       you only need to know the actual contents of the latest version and where to find the earlier version in case user takes a peek.
+
+  grabber prototype:
+    ☐ Simple feature - grab YouTube "Favourites video" playlist, download all videos from there and store them.
+        https://developers.google.com/youtube/v3/ - api documentation
+        Needs OAuth to authenticate the user before grabbing his favourites.
+          - We need certain auth creds store to keep things for our app.
+             - Does Keychain allow storing this per-app? Check Apple docs.
+             - What could be used on other systems?
+    ☐ If user favourites is public, no need to auth?
+    ☐ Do that periodically to fetch new videos.
+    ☐ Use https://github.com/google/google-api-cpp-client/ - CRAP!
+    ☐ This is against the TOS!
 
 Personal Cluster Management:
  ☐ should be possible to add a device to personal device "cluster", thus allowing it to search the entire cluster and modify (optionally) data in the cluster.
@@ -195,3 +210,14 @@ NAT and UPnP:
      PortMappingNumberOfEntries - if changed, might need to re-read the actual mapping information.
      PortMappingLeaseDuration - is decremented and needs to be checked regularly, some seconds before the lease time out the lease must be extended for our port forwardings.
      Therefore, we need to maintain the status of UPnPRouter endpoint.
+
+Metta:
+  Kuso new internet:
+    "Kami" (paper) origami.
+    Origami - аллегория восприятия. Что мы увидели и почувствовали, без навешивания ярлыков.
+    Задача в том чтобы легче получать и доставлять впечатления.
+    
+    Just-in-time концептуализация.
+
+    UI: "Advertise my membership in room [#osdev] to [Nobody [v]"
+    -Wthread-safety
