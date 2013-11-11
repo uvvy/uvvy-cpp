@@ -1,7 +1,7 @@
 #include <QHostInfo>
 #include "profile_editor.h"
 #include "settings_provider.h"
-#include "host.h"
+#include "identity.h"
 #include "client_profile.h"
 
 using namespace std;
@@ -11,11 +11,11 @@ class MainWindow::Private
 {
 public:
     shared_ptr<settings_provider> settings;
-    shared_ptr<host> host;
+    identity ident;
 
     Private()
         : settings(settings_provider::instance())
-        , host(host::create(settings.get()))
+        , ident()
     {}
 };
 
@@ -70,8 +70,25 @@ void MainWindow::load()
         }
     }
 
-    hostEIDLineEdit->setText(peer_id(m_pimpl->host->host_identity().id().id()).to_string().c_str());
-    setStatus("Profile loaded");
+    byte_array id = m_pimpl->settings->get_byte_array("id");
+    byte_array key = m_pimpl->settings->get_byte_array("key");
+
+    if (!id.is_empty() and !key.is_empty())
+    {
+        m_pimpl->ident.set_id(id);
+        if (m_pimpl->ident.set_key(key) && m_pimpl->ident.has_private_key())
+        {
+            hostEIDLineEdit->setText(peer_id(m_pimpl->ident.id().id()).to_string().c_str());
+            setStatus("Profile loaded");
+            return;
+        }
+    }
+
+    // Generate a new key pair
+    m_pimpl->ident = identity::generate();
+
+    hostEIDLineEdit->setText(peer_id(m_pimpl->ident.id().id()).to_string().c_str());
+    setStatus("New host EID generated");
 }
 
 void MainWindow::setStatus(QString const& text)
@@ -88,8 +105,8 @@ void MainWindow::clearStatus()
 void MainWindow::save()
 {
     qDebug() << "Saving settings";
-    m_pimpl->settings->set("id", m_pimpl->host->host_identity().id().id().as_vector());
-    m_pimpl->settings->set("key", m_pimpl->host->host_identity().private_key().as_vector());
+    m_pimpl->settings->set("id", m_pimpl->ident.id().id().as_vector());
+    m_pimpl->settings->set("key", m_pimpl->ident.private_key().as_vector());
 
     m_pimpl->settings->set("port", (long long)portSpinBox->value());
     uia::routing::client_profile client;
@@ -139,10 +156,7 @@ void MainWindow::generateNewEid()
     if (ret == QMessageBox::Cancel)
         return;
 
-    identity host_identity = identity::generate();
-    m_pimpl->host->set_host_identity(host_identity);
-
-    hostEIDLineEdit->setText(peer_id(m_pimpl->host->host_identity().id().id()).to_string().c_str());
-
+    m_pimpl->ident = identity::generate();
+    hostEIDLineEdit->setText(peer_id(m_pimpl->ident.id().id()).to_string().c_str());
     setStatus("New EID generated");
 }
