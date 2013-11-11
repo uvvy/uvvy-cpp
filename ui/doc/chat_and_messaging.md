@@ -38,3 +38,37 @@ A node going offline voluntarily might need to flush all undelivered messages to
 Messages need to be encrypted with recipient public key.
 
 A node that may go offline involuntarily shall flush undelivered messages to some of its peers periodically.
+
+### One to one chat room
+
+```plain
+                      +---------------------------------+
+                      |By: Alice                        |
+  +-----------+       |To: chat[alice<->bob] <- UUID?   |           +----------+
+  |           |       |Parent: none (root message)      |           |          |
+  |   Alice   |------>|Date: 2013.11.11 19:12 UTC       |---------->|   Bob    |
+  |           |       |Text: Hi bob, how are you?       |           |          |
+  +-----------+       |UUID: acecabaceca                |           +----------+
+         ^            |HMAC: sha512256                  |<-+                 |
+         |            +---------------------------------+  |                 |
+         |              ^                                  |                 |
+         |            +---------------------------------+  |                 |
+         |            |By: Bob                          |  |                 |
+         |            |To: chat[alice<->bob]            |  |                 |
+         |            |Parent: acecabaceca              |  |                 |
+         |            |Date: 2013.11.11 19:17 UTC       |  |                 |
+         |            |Text: Hi alice, I'm fine thanks  |  |                 |
+         |            |UUID: becacecafe                 |  |                 |
+         |            |HMAC: sha512256                  |  |                 |
+         |            +---------------------------------+  |                 |
+         |               ^             +---------------------------------+   |
+         |               +-------------|Edit of: becacecafe              |   |
+         |                             |By: Bob                          |<--+
+         +-----------------------------|To: chat[alice<->bob]            |
+                                       |Parent: acecabaceca              |
+                                       |Date: 2013.11.11 19:18 UTC       |
+                                       |Text: Hi alice, I'm good thanks  |
+                                       |UUID: feeb1ef1ea                 |
+                                       |HMAC: sha512256                  |
+                                       +---------------------------------+
+```
