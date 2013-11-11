@@ -32,3 +32,7 @@ install(TARGETS ProfileEditor
     BUNDLE DESTINATION tools
     LIBRARY DESTINATION tools/lib
     ARCHIVE DESTINATION tools/lib)
+
+if (APPLE)
+    set_target_properties(ProfileEditor PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/ProfileEditor-Info.plist)
+endif()
