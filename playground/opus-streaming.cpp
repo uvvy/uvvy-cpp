@@ -333,6 +333,7 @@ public:
         if (!stream)
             return;
 
+        logger::info() << "New incoming connection from " << stream->remote_host_id();
         streaming(stream);
 
         audio_inst->startStream();
@@ -345,7 +346,6 @@ public:
 
     void streaming(shared_ptr<stream> stream)
     {
-        logger::info() << "New incoming connection from " << stream->remote_host_id();
         sender_->streaming(stream);
         receiver_->streaming(stream);
     }
