@@ -27,6 +27,7 @@ Comms (voice/video/chat):
  ☐ Rooms may be arbitrarily nested forming chat labyrinth.
  ☐ Screencasting client
    ☐ Capture screen and encode to video stream? libvpx or something like that. Run experiments.
+    ☐ Or, subtract one screen from another an lossless-encode the difference.
 
 Storage (grabber/file sync/versioning):
  ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
