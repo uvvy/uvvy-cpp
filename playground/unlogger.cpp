@@ -110,32 +110,57 @@ int main(int argc, char** argv)
     std::ifstream in(filename, std::ios::in|std::ios::binary);
     flurry::iarchive ia(in);
 
-    plotfile plot("packetsizes.plot");
-    uint32_t old_seq = 0;
-    Decoder dec;
-    std::ofstream os("decoded.mono.flt", std::ios::out|std::ios::trunc|std::ios::binary);
+    plotfile plot_local("local_packetsizes.plot");
+    plotfile plot_remote("remote_packetsizes.plot");
+    uint32_t old_seq_local = 0;
+    uint32_t old_seq_remote = 0;
+    Decoder dec_local, dec_remote;
+    std::ofstream os_local("local_voice.f32", std::ios::out|std::ios::trunc|std::ios::binary);
+    std::ofstream os_remote("remote_voice.f32", std::ios::out|std::ios::trunc|std::ios::binary);
+
+    uint32_t* old_seq = &old_seq_local;
+    Decoder* dec = &dec_local;
+    std::ofstream* os = &os_local;
+    plotfile* plot = &plot_local;
+
     while (ia >> data) {
-        // std::string what, stamp;
-        // byte_array blob;
-        // byte_array_iwrap<flurry::iarchive> read(data);
-        // read.archive() >> what >> stamp >> blob;
+        std::string what, stamp;
+        byte_array blob;
+        byte_array_iwrap<flurry::iarchive> read(data);
+        read.archive() >> what >> stamp >> blob;
         // cout << "*** BLOB " << blob.size() << " bytes *** " << stamp << ": " << what << endl;
-        // hexdump(blob);
+        data = blob;
+
+        if (what == "sending channel packet before encrypt") {
+            old_seq = &old_seq_local;
+            dec = &dec_local;
+            os = &os_local;
+            plot = &plot_local;
+        }
+        else if (what == "decoded channel packet") {
+            old_seq = &old_seq_remote;
+            dec = &dec_remote;
+            os = &os_remote;
+            plot = &plot_remote;
+        }
+        else {
+            continue;
+        }
 
         uint32_t magic = data.as<big_uint32_t>()[0];
         if ((magic & 0xff000000) == 0) {
             continue; // Ignore control packets
         }
         uint32_t seq = magic & 0xffffff;
-        if (old_seq != seq) {
-            if (seq - old_seq > 1) {
-                logger::warning() << "Non-consecutive sequence numbers " << old_seq << "->" << seq;
+        if (*old_seq != seq) {
+            if (seq - *old_seq > 1) {
+                logger::warning() << "Non-consecutive sequence numbers " << *old_seq << "->" << seq;
             }
-            old_seq = seq;
-            continue;
+            *old_seq = seq;
+            //continue; -- in the old style decoder
         }
-        byte_array out = dec.decode(data);
-        plot.dump(seq, data.size(), out.size());
-        os.write(out.data(), out.size());
+        byte_array out = dec->decode(data);
+        plot->dump(seq, data.size(), out.size());
+        os->write(out.data(), out.size());
     }
 }
