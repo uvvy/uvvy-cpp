@@ -23,6 +23,11 @@ target_link_libraries(opus-streaming ssu support rtaudio opus plist routing nat 
 install(TARGETS opus-streaming
     RUNTIME DESTINATION tools)
 
+add_executable(unlogger unlogger.cpp)
+target_link_libraries(unlogger support opus ${Boost_LIBRARIES})
+install(TARGETS unlogger
+    RUNTIME DESTINATION tools)
+
 add_executable(screencaster screencaster.cpp macosx.mm)
 target_link_libraries(screencaster ${QT_LIBRARIES} objc)
 install(TARGETS screencaster
