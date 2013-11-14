@@ -131,13 +131,26 @@ int main(int argc, char** argv)
         // cout << "*** BLOB " << blob.size() << " bytes *** " << stamp << ": " << what << endl;
         data = blob;
 
-        if (what == "sending channel packet before encrypt") {
+        // uint32_t magic = data.as<big_uint32_t>()[0];
+        // if ((magic & 0xff000000) == 0) {
+        //     continue; // Ignore control packets
+        // }
+        // uint32_t seq = magic & 0xffffff;
+        // if (*old_seq != seq) {
+        //     if (seq - *old_seq > 1) {
+        //         logger::warning() << "Non-consecutive sequence numbers " << *old_seq << "->" << seq;
+        //     }
+        //     *old_seq = seq;
+        //     //continue; -- in the old style decoder
+        // }
+
+        if (what == "encoded opus packet") {
             old_seq = &old_seq_local;
             dec = &dec_local;
             os = &os_local;
             plot = &plot_local;
         }
-        else if (what == "decoded channel packet") {
+        else if (what == "opus packet before decode") {
             old_seq = &old_seq_remote;
             dec = &dec_remote;
             os = &os_remote;
@@ -147,20 +160,15 @@ int main(int argc, char** argv)
             continue;
         }
 
-        uint32_t magic = data.as<big_uint32_t>()[0];
-        if ((magic & 0xff000000) == 0) {
-            continue; // Ignore control packets
+        if (data.size() < 8) {
+            logger::warning() << "Packet too small to decode";
+            continue;
         }
-        uint32_t seq = magic & 0xffffff;
-        if (*old_seq != seq) {
-            if (seq - *old_seq > 1) {
-                logger::warning() << "Non-consecutive sequence numbers " << *old_seq << "->" << seq;
-            }
-            *old_seq = seq;
-            //continue; -- in the old style decoder
-        }
+        //get time stamp from stamp and plot it too, per packet
+        int64_t ts = data.as<big_int64_t>()[0];
+
         byte_array out = dec->decode(data);
-        plot->dump(seq, data.size(), out.size());
+        plot->dump(ts, data.size(), out.size());
         os->write(out.data(), out.size());
     }
 }
