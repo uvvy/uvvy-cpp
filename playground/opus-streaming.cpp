@@ -132,6 +132,7 @@ public:
             lock.unlock();
 
             // log_packet_delay(pkt);
+            logger::file_dump dump(pkt, "opus packet before decode");
     
             int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+8, pkt.size()-8,
                 decoded_packet, frame_size_, /*decodeFEC:*/0);
@@ -263,6 +264,7 @@ public:
             (unsigned char*)samplebuf.data()+8, nFrames*sizeof(float));
         assert(nbytes > 0);
         samplebuf.resize(nbytes+8);
+        logger::file_dump dump(samplebuf, "encoded opus packet");
         strand_.post([this, samplebuf]{
             stream_->write_datagram(samplebuf, stream::datagram_type::non_reliable);
         });
