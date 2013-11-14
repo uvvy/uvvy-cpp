@@ -180,7 +180,7 @@ protected:
     {
 #if DELAY_PLOT
         pt::ptime epoch(boost::gregorian::date(1970,boost::gregorian::Jan,1));
-        int64_t ts = pkt.as<int64_t>()[0];
+        int64_t ts = pkt.as<big_int64_t>()[0];
         int64_t local_ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
         // logger::info() << "Packet ts " << ts << ", local ts " << local_ts << ", play difference "
             // << fabs(local_ts - ts);
@@ -253,7 +253,7 @@ public:
         // Timestamp the packet with our own clock reading.
         pt::ptime epoch(boost::gregorian::date(1970,boost::gregorian::Jan,1));
         int64_t ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
-        samplebuf.as<int64_t>()[0] = ts;
+        samplebuf.as<big_int64_t>()[0] = ts;
         // Ideally, an ack packet would contain ts info at the receiving side for this packet.
         // @todo Implement the RTT calculation in ssu::stream!
 
