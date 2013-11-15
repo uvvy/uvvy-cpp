@@ -10,7 +10,8 @@ set(profile_editor_FORMS main_window.ui)
 
 if (APPLE)
     #set(MACOSX_BUNDLE_ICON_FILE "ProfileEditor.icns")
-    #set_source_files_properties("img/${MACOSX_BUNDLE_ICON_FILE}" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    #set_source_files_properties("img/${MACOSX_BUNDLE_ICON_FILE}" PROPERTIES
+    #   MACOSX_PACKAGE_LOCATION Resources)
     #set(APPLE_BUNDLE_SRC "img/${MACOSX_BUNDLE_ICON_FILE}")
 endif (APPLE)
 
@@ -34,5 +35,6 @@ install(TARGETS ProfileEditor
     ARCHIVE DESTINATION tools/lib)
 
 if (APPLE)
-    set_target_properties(ProfileEditor PROPERTIES MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/ProfileEditor-Info.plist)
+    set_target_properties(ProfileEditor PROPERTIES
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/ProfileEditor-Info.plist)
 endif()
