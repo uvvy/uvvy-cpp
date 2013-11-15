@@ -8,6 +8,10 @@ UI:
  ☐ Add higher-priority RTCP stream in opus-streaming.
  ✔ Build static regserver for linux. @done (13-11-04 01:02)
 
+ ☐ Add PeerPicker to select an EID from regserver before attempting connection.
+   Should simplify work with opus-streaming etc.
+   see playground/PeerPicker
+
 Comms (voice/video/chat):
  ✔ opus does not build on linux - some configs missing? @done (13-11-04 01:02)
  ☐ Sync history between instances
@@ -27,7 +31,7 @@ Comms (voice/video/chat):
  ☐ Rooms may be arbitrarily nested forming chat labyrinth.
  ☐ Screencasting client
    ☐ Capture screen and encode to video stream? libvpx or something like that. Run experiments.
-    ☐ Or, subtract one screen from another an lossless-encode the difference.
+    ☐ Or, subtract one screen from another and lossless-encode the difference.
 
 Storage (grabber/file sync/versioning):
  ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
@@ -92,6 +96,13 @@ Routing:
 
  ☐ BUG: Crashes on access to client_profile.endpoints() if no endpoints was provided by the client.
  ☐ Regserver crash on client re-register (see collect.logs/linux64-reregister-fault.txt)
+
+ ☐ Regserver uses unencrypted network traffic.
+   ☐ a) switch regserver to use regular ssu streams
+   ☐ b) move regserver to a regular ssu protocol
+   ☐ c) run regserver inside host on the same port
+   ☐ d) regserver shall be integral part of each participating node
+   ☐ e) regserver will become a part of p2p directory when DHT is implemented
 
 Structured Streams:
  
