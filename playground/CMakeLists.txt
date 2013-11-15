@@ -1,4 +1,5 @@
 #add_subdirectory(sstreams)
+add_subdirectory(PeerPicker)
 
 set(QT_USE_QTGUI TRUE)
 set(QT_USE_QTNETWORK TRUE)
