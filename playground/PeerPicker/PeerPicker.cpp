@@ -1,5 +1,6 @@
 #include <QHostInfo>
 #include "PeerPicker.h"
+#include "PeerInfoProvider.h"
 #include "settings_provider.h"
 #include "host.h"
 #include "client_profile.h"
@@ -28,6 +29,9 @@ PeerPicker::PeerPicker(QWidget *parent)
     , m_pimpl(make_shared<Private>())
 {
     setupUi(this); // this sets up GUI
+
+    PeerInfoProvider* pp = new PeerInfoProvider(m_pimpl->host, this);
+    peersTableView->setModel(pp);
 
     load();
 
