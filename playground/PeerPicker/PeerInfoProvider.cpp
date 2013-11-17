@@ -146,8 +146,3 @@ Qt::ItemFlags PeerInfoProvider::flags(const QModelIndex &index) const
 
     return QAbstractTableModel::flags(index) | Qt::ItemIsEditable;
 }
-
-QList<QPair<QString,QString>> PeerInfoProvider::getList()
-{
-    return listOfPairs;
-}
