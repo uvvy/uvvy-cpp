@@ -13,11 +13,9 @@ class PeerInfoProvider : public QAbstractTableModel
     Q_OBJECT
     class Private;
     std::shared_ptr<Private> m_pimpl;
-    QList<QPair<QString,QString>> listOfPairs;
 
 public:
     PeerInfoProvider(std::shared_ptr<ssu::host> h, QObject *parent = 0);
-    PeerInfoProvider(QList<QPair<QString,QString>> listofPairs, QObject *parent = 0);
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
