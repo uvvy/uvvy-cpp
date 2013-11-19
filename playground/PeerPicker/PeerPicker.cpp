@@ -49,18 +49,6 @@ PeerPicker::PeerPicker(QWidget *parent)
 
 void PeerPicker::load()
 {
-    boost::any s_rs = m_pimpl->settings->get("regservers");
-    if (!s_rs.empty())
-    {
-        byte_array rs_ba(boost::any_cast<vector<char>>(s_rs));
-        byte_array_iwrap<flurry::iarchive> read(rs_ba);
-        vector<string> regservers;
-        read.archive() >> regservers;
-        for (auto server : regservers)
-        {
-            // routingServersTextEdit->appendPlainText(server.c_str());
-        }
-    }
 }
 
 void PeerPicker::addToFavorites()
