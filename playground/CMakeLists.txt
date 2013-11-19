@@ -15,9 +15,13 @@ include_directories(../ui/3rdparty/rtaudio-4.0.11)
 #install(TARGETS udpsender
 #	RUNTIME DESTINATION tools)
 
+include_directories(.)
+add_library(natclient STATIC traverse_nat.cpp)
+add_library(rclient STATIC client_utils.cpp)
+
 add_executable(opus-streaming opus-streaming.cpp)
-target_link_libraries(opus-streaming ssu support rtaudio opus plist routing nat upnpc krypto
-    ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(opus-streaming ssu support rtaudio opus plist rclient routing natclient nat
+    upnpc krypto ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS opus-streaming
     RUNTIME DESTINATION tools)
 

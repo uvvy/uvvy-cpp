@@ -21,10 +21,10 @@
 #include "RtAudio.h"
 #include "algorithm.h"
 #include "settings_provider.h"
-#include "upnpclient.h"
+#include "traverse_nat.h"
+#include "client_utils.h"
 
 #include "private/regserver_client.h" // @fixme Testing only.
-constexpr uint16_t regserver_port = uia::routing::internal::REGSERVER_DEFAULT_PORT;
 
 // Set to 1 if you want to console-log in realtime thread.
 #define REALTIME_CRIME 0
@@ -380,51 +380,6 @@ private:
     }
 };
 
-shared_ptr<upnp::UpnpIgdClient> traverse_nat(int main_port)
-{
-    shared_ptr<upnp::UpnpIgdClient> upnp = make_shared<upnp::UpnpIgdClient>();
-
-    logger::info() << "Initialising UPnP";
-
-    upnp->InitControlPoint();
-
-    bool main_port_mapped{false}, regserver_port_mapped{false};
-
-    if (upnp->IsAsync()) {
-        upnp->SetNewMappingCallback([&](const int &port, const upnp::ProtocolType &protocol) {
-            if (port == main_port) {
-                main_port_mapped = true;
-            } else if (port == regserver_port) {
-                regserver_port_mapped = true;
-            }
-        });
-    }
-
-    bool all_added = true;
-    all_added &= upnp->AddPortMapping(main_port, upnp::kTcp);
-    all_added &= upnp->AddPortMapping(main_port, upnp::kUdp);
-    all_added &= upnp->AddPortMapping(regserver_port, upnp::kTcp);
-    all_added &= upnp->AddPortMapping(regserver_port, upnp::kUdp);
-
-    if (upnp->IsAsync()) {
-        logger::debug() << "Waiting...";
-        boost::this_thread::sleep(boost::posix_time::seconds(5));
-    }
-
-    if (upnp->HasServices()) {
-      logger::debug() << "External IP: " << upnp->GetExternalIpAddress();
-      assert(all_added);
-      if (upnp->IsAsync()) {
-        assert(main_port_mapped and regserver_port_mapped);
-      }
-      logger::info() << "All UPnP mappings successful";
-    } else {
-      logger::warning() << "Sorry, no port mappings via UPnP possible";
-    }
-
-    return upnp;
-}
-
 /**
  * Get the address to talk to over IPv6 from the command line.
  * Parses [ipv6::]:port or [ipv6] with default port 9660.
@@ -495,31 +450,8 @@ int main(int argc, char* argv[])
 
     uia::routing::internal::regserver_client regclient(host.get());
 
-    // Pull client profile from settings.
-    auto s_client = settings->get("profile");
-    uia::routing::client_profile client;
-    if (!s_client.empty()) {
-        uia::routing::client_profile client2(boost::any_cast<std::vector<char>>(s_client));
-        client = client2;
-    }
-    client.set_endpoints(set_to_vector(host->active_local_endpoints()));
-    for (auto kw : client.keywords()) {
-        logger::debug() << "Keyword: " << kw;
-    }
-    regclient.set_profile(client);
-
-    boost::any s_rs = settings->get("regservers");
-    if (!s_rs.empty())
-    {
-        byte_array rs_ba(boost::any_cast<vector<char>>(s_rs));
-        byte_array_iwrap<flurry::iarchive> read(rs_ba);
-        vector<string> regservers;
-        read.archive() >> regservers;
-        for (auto server : regservers)
-        {
-            regclient.register_at(server);
-        }
-    }
+    regclient_set_profile(settings.get(), regclient, host.get());
+    regclient_connect_regservers(settings.get(), regclient);
 
     audio_receiver receiver;
     audio_sender sender(host);
