@@ -1,6 +1,3 @@
-#add_subdirectory(sstreams)
-add_subdirectory(PeerPicker)
-
 set(QT_USE_QTGUI TRUE)
 set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTXML TRUE)
@@ -45,3 +42,6 @@ if (UNIX AND NOT APPLE)
     find_library(PULSESIMPLE_LIB pulse-simple)
     target_link_libraries(opus-streaming ${PULSE_LIB} ${PULSESIMPLE_LIB})
 endif (UNIX AND NOT APPLE)
+
+#add_subdirectory(sstreams)
+add_subdirectory(PeerPicker)
