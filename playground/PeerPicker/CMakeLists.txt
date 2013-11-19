@@ -41,7 +41,7 @@ add_executable(PeerPicker ${GUI_TYPE}
     ${peer_picker_RESOURCES_RCC}
     ${peer_picker_FORMS_HEADERS}
     ${APPLE_BUNDLE_SRC})
-target_link_libraries(PeerPicker krypto routing ssu plist support
+target_link_libraries(PeerPicker krypto rclient routing ssu plist support natclient nat upnpc
     ${Boost_LIBRARIES} ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS PeerPicker
     RUNTIME DESTINATION tools
