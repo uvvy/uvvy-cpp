@@ -15,30 +15,32 @@ using namespace uia::routing;
 class PeerInfoProvider::Private
 {
 public:
-    internal::regserver_client client;
-    QList<pair<peer_id, client_profile>> peers;
+    PeerInfoProvider* parent_;
+    internal::regserver_client client_;
+    QList<pair<peer_id, client_profile>> peers_;
 
-    Private(ssu::host *h)
-        : client(h)
+    Private(PeerInfoProvider* parent, ssu::host *h)
+        : parent_(parent)
+        , client_(h)
     {
-        client.on_ready.connect([this] {
+        client_.on_ready.connect([this] {
             logger::debug() << "client ready";
-            client.search(""); // Trigger listing of all available peers.
+            client_.search(""); // Trigger listing of all available peers.
         });
-        client.on_disconnected.connect([] {
+        client_.on_disconnected.connect([] {
             logger::debug() << "client disconnected";
         });
-        client.on_lookup_done.connect([this](ssu::peer_id const& peer,
+        client_.on_lookup_done.connect([this](ssu::peer_id const& peer,
             ssu::endpoint const&,
             uia::routing::client_profile const& profile)
         {
             update_peer_profile(peer, profile);
         });
-        client.on_lookup_failed.connect([](ssu::peer_id const& peer) {
+        client_.on_lookup_failed.connect([](ssu::peer_id const& peer) {
             logger::debug() << "lookup failed";
         });
 
-        client.on_search_done.connect([this](std::string const&,
+        client_.on_search_done.connect([this](std::string const&,
             std::vector<ssu::peer_id> const& peers,
             bool last)
         {
@@ -50,27 +52,40 @@ public:
             uia::routing::client_profile const& profile)
     {
         logger::debug() << "update_peer_profile " << peer;
+        // find in peers entry with peer id "peer" and update it's profile.
+        int i = 0;
+        foreach (auto& pair, peers_)
+        {
+            if (pair.first == peer)
+            {
+                peers_[i].second = profile;
+                parent_->updateData(i);
+                break;
+            }
+            ++i;
+        }
     }
 
     void found_peers(std::vector<ssu::peer_id> const& peers, bool last)
     {
         for (auto peer : peers) {
             logger::debug() << "found_peers " << peer;
-            // peers[peer] = ??;
+            peers_.insert(0, make_pair(peer, client_profile()));
+            client_.lookup(peer);
         }
     }
 
     void connect_regservers()
     {
         auto settings = settings_provider::instance();
-        regclient_set_profile(settings.get(), client, client.get_host());
-        regclient_connect_regservers(settings.get(), client);
+        regclient_set_profile(settings.get(), client_, client_.get_host());
+        regclient_connect_regservers(settings.get(), client_);
     }
 };
 
 PeerInfoProvider::PeerInfoProvider(shared_ptr<ssu::host> h, QObject *parent)
     : QAbstractTableModel(parent)
-    , m_pimpl(make_shared<Private>(h.get()))
+    , m_pimpl(make_shared<Private>(this, h.get()))
 {
     m_pimpl->connect_regservers();
 }
@@ -78,7 +93,7 @@ PeerInfoProvider::PeerInfoProvider(shared_ptr<ssu::host> h, QObject *parent)
 int PeerInfoProvider::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return m_pimpl->peers.size();
+    return m_pimpl->peers_.size();
 }
 
 int PeerInfoProvider::columnCount(const QModelIndex &parent) const
@@ -93,12 +108,12 @@ QVariant PeerInfoProvider::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    if (index.row() >= ssize_t(m_pimpl->peers.size()) || index.row() < 0) {
+    if (index.row() >= ssize_t(m_pimpl->peers_.size()) || index.row() < 0) {
         return QVariant();
     }
 
     if (role == Qt::DisplayRole) {
-        auto pair = m_pimpl->peers.at(index.row());
+        auto pair = m_pimpl->peers_.at(index.row());
 
         if (index.column() == 0) {
             return pair.first.to_string().c_str();
@@ -151,7 +166,7 @@ bool PeerInfoProvider::insertRows(int position, int rows, const QModelIndex &ind
     for (int row=0; row < rows; row++)
     {
         pair<peer_id, client_profile> pair;
-        m_pimpl->peers.insert(position, pair);
+        m_pimpl->peers_.insert(position, pair);
     }
 
     endInsertRows();
@@ -164,11 +179,17 @@ bool PeerInfoProvider::removeRows(int position, int rows, const QModelIndex &ind
     beginRemoveRows(QModelIndex(), position, position+rows-1);
 
     for (int row=0; row < rows; ++row) {
-        m_pimpl->peers.removeAt(position);
+        m_pimpl->peers_.removeAt(position);
     }
 
     endRemoveRows();
     return true;
+}
+
+void PeerInfoProvider::updateData(int row)
+{
+    reset(); // Until I fix model indexes, full reload will do.
+    // emit dataChanged(index(row, 0), index(row, columnCount(QModelIndex())));
 }
 
 bool PeerInfoProvider::setData(const QModelIndex &index, const QVariant &value, int role)
