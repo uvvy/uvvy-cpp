@@ -424,7 +424,7 @@ int main(int argc, char* argv[])
 
     auto s_port = settings->get("port");
     if (!s_port.empty()) {
-        port = boost::any_cast<long long>(s_port);
+        port = boost::any_cast<int64_t>(s_port);
     }
 
     if (vm.count("port"))
@@ -438,7 +438,7 @@ int main(int argc, char* argv[])
         connect_out = true;
     }
 
-    settings->set("port", (long long)port);
+    settings->set("port", static_cast<int64_t>(port));
     settings->sync();
 
     // Shared ptr ensures nat is destroyed on exit...
