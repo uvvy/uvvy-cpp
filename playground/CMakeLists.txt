@@ -30,10 +30,12 @@ target_link_libraries(unlogger support opus ${Boost_LIBRARIES})
 install(TARGETS unlogger
     RUNTIME DESTINATION tools)
 
-add_executable(screencaster screencaster.cpp macosx.mm)
-target_link_libraries(screencaster ${QT_LIBRARIES} objc)
-install(TARGETS screencaster
-    RUNTIME DESTINATION tools)
+if (APPLE)
+    add_executable(screencaster screencaster.cpp macosx.mm)
+    target_link_libraries(screencaster ${QT_LIBRARIES} objc)
+    install(TARGETS screencaster
+        RUNTIME DESTINATION tools)
+endif (APPLE)
 
 if (APPLE)
     find_library(COREAUDIO_LIB CoreAudio)
