@@ -88,14 +88,14 @@ Personal Cluster Management:
 
 Routing:
  ✔ Port routing using rendezvous server from Netsteria. @done (13-10-24 22:07)
-   ☐ Needs bugfixes and polishing up.
+   ✔ Needs bugfixes and polishing up. @done (13-11-21 23:35)
    ✔ Do the regserver_client part. @done (13-10-27 12:56)
  ☐ Connect devices to each other, overlay routing lets device find another device and set up connection.
  ☐ LAN/Bonjour node discovery.
  ☐ Regserver deregistration on logout is added - should notify active connections somehow too?
 
  ☐ BUG: Crashes on access to client_profile.endpoints() if no endpoints was provided by the client.
- ☐ Regserver crash on client re-register (see collect.logs/linux64-reregister-fault.txt)
+ ✔ Regserver crash on client re-register (see collect.logs/linux64-reregister-fault.txt) @done (13-11-21 23:35)
 
  ☐ Regserver uses unencrypted network traffic.
    ☐ a) switch regserver to use regular ssu streams

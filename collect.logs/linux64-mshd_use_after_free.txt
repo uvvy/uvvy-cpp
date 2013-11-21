@@ -1,0 +1,154 @@
+[DEBUG] 2013-11-22T01:30:45.682198 T#139946958727008 stream_channel: link status changed, new status down
+[DEBUG] 2013-11-22T01:30:45.682418 T#139946958727008 Primary channel to host ID LDNBFF7ZMFWVYGU7EIPA4KKMVVOX2IST on endpoint 176.46.126.194:65467 failed
+[DEBUG] 2013-11-22T01:30:45.682988 T#139946958727008 dequeue_stream 0x61800000f098
+[DEBUG] 2013-11-22T01:30:45.683231 T#139946958727008 waiting ack size 0
+=================================================================
+==31243==ERROR: AddressSanitizer: heap-use-after-free on address 0x60300000b9b0 at pc 0x113d610 bp 0x7fff74f50210 sp 0x7fff74f50208
+READ of size 8 at 0x60300000b9b0 thread T0
+==31243==WARNING: Trying to symbolize code, but external symbolizer is not initialized!
+    #0 0x113d60f (/home/berkus/regserver/mshd+0x113d60f)
+    #1 0x126c1f7 (/home/berkus/regserver/mshd+0x126c1f7)
+    #2 0x112ed66 (/home/berkus/regserver/mshd+0x112ed66)
+    #3 0x121d5b8 (/home/berkus/regserver/mshd+0x121d5b8)
+    #4 0x121cfb1 (/home/berkus/regserver/mshd+0x121cfb1)
+    #5 0x121c94a (/home/berkus/regserver/mshd+0x121c94a)
+    #6 0x121ae91 (/home/berkus/regserver/mshd+0x121ae91)
+    #7 0x10c5687 (/home/berkus/regserver/mshd+0x10c5687)
+    #8 0x10c51ee (/home/berkus/regserver/mshd+0x10c51ee)
+    #9 0x10c4074 (/home/berkus/regserver/mshd+0x10c4074)
+    #10 0x10c337c (/home/berkus/regserver/mshd+0x10c337c)
+    #11 0x10c3020 (/home/berkus/regserver/mshd+0x10c3020)
+    #12 0x10c28e6 (/home/berkus/regserver/mshd+0x10c28e6)
+    #13 0x10c2315 (/home/berkus/regserver/mshd+0x10c2315)
+    #14 0x10c1a2d (/home/berkus/regserver/mshd+0x10c1a2d)
+    #15 0x10c13ed (/home/berkus/regserver/mshd+0x10c13ed)
+    #16 0x10669bc (/home/berkus/regserver/mshd+0x10669bc)
+    #17 0x10642e5 (/home/berkus/regserver/mshd+0x10642e5)
+    #18 0x1063489 (/home/berkus/regserver/mshd+0x1063489)
+    #19 0x179d6b3 (/home/berkus/regserver/mshd+0x179d6b3)
+    #20 0x17759a7 (/home/berkus/regserver/mshd+0x17759a7)
+    #21 0x1915a4f (/home/berkus/regserver/mshd+0x1915a4f)
+    #22 0x1915441 (/home/berkus/regserver/mshd+0x1915441)
+    #23 0x1914ffa (/home/berkus/regserver/mshd+0x1914ffa)
+    #24 0x1913549 (/home/berkus/regserver/mshd+0x1913549)
+    #25 0x140b25f (/home/berkus/regserver/mshd+0x140b25f)
+    #26 0x140adbe (/home/berkus/regserver/mshd+0x140adbe)
+    #27 0x1409c44 (/home/berkus/regserver/mshd+0x1409c44)
+    #28 0x1408f4c (/home/berkus/regserver/mshd+0x1408f4c)
+    #29 0x1408bf0 (/home/berkus/regserver/mshd+0x1408bf0)
+    #30 0x14084b6 (/home/berkus/regserver/mshd+0x14084b6)
+    #31 0x1407ee5 (/home/berkus/regserver/mshd+0x1407ee5)
+    #32 0x14075fd (/home/berkus/regserver/mshd+0x14075fd)
+    #33 0x1406fbd (/home/berkus/regserver/mshd+0x1406fbd)
+    #34 0x1400f4c (/home/berkus/regserver/mshd+0x1400f4c)
+    #35 0x13ff9c3 (/home/berkus/regserver/mshd+0x13ff9c3)
+    #36 0x13fda71 (/home/berkus/regserver/mshd+0x13fda71)
+    #37 0x13f8c9f (/home/berkus/regserver/mshd+0x13f8c9f)
+    #38 0x13f88b9 (/home/berkus/regserver/mshd+0x13f88b9)
+    #39 0x1425f3f (/home/berkus/regserver/mshd+0x1425f3f)
+    #40 0x1425975 (/home/berkus/regserver/mshd+0x1425975)
+    #41 0x142535a (/home/berkus/regserver/mshd+0x142535a)
+    #42 0x1425105 (/home/berkus/regserver/mshd+0x1425105)
+    #43 0x1424fc9 (/home/berkus/regserver/mshd+0x1424fc9)
+    #44 0x1424dec (/home/berkus/regserver/mshd+0x1424dec)
+    #45 0x14243ab (/home/berkus/regserver/mshd+0x14243ab)
+    #46 0x679fd7 (/home/berkus/regserver/mshd+0x679fd7)
+    #47 0x674772 (/home/berkus/regserver/mshd+0x674772)
+    #48 0x664fd9 (/home/berkus/regserver/mshd+0x664fd9)
+    #49 0x6641f5 (/home/berkus/regserver/mshd+0x6641f5)
+    #50 0x6460bf (/home/berkus/regserver/mshd+0x6460bf)
+    #51 0x640b3c (/home/berkus/regserver/mshd+0x640b3c)
+    #52 0x7f47ef2c776c (/home/berkus/regserver/libc.so.6+0x2176c)
+    #53 0x6401bc (/home/berkus/regserver/mshd+0x6401bc)
+
+0x60300000b9b0 is located 0 bytes inside of 32-byte region [0x60300000b9b0,0x60300000b9d0)
+freed by thread T0 here:
+    #0 0x62b9c9 (/home/berkus/regserver/mshd+0x62b9c9)
+    #1 0x1548eda (/home/berkus/regserver/mshd+0x1548eda)
+    #2 0x1544b79 (/home/berkus/regserver/mshd+0x1544b79)
+    #3 0x1463833 (/home/berkus/regserver/mshd+0x1463833)
+    #4 0x113d4dc (/home/berkus/regserver/mshd+0x113d4dc)
+    #5 0x126c1f7 (/home/berkus/regserver/mshd+0x126c1f7)
+    #6 0x112ed66 (/home/berkus/regserver/mshd+0x112ed66)
+    #7 0x121d5b8 (/home/berkus/regserver/mshd+0x121d5b8)
+    #8 0x121cfb1 (/home/berkus/regserver/mshd+0x121cfb1)
+    #9 0x121c94a (/home/berkus/regserver/mshd+0x121c94a)
+    #10 0x121ae91 (/home/berkus/regserver/mshd+0x121ae91)
+    #11 0x10c5687 (/home/berkus/regserver/mshd+0x10c5687)
+    #12 0x10c51ee (/home/berkus/regserver/mshd+0x10c51ee)
+    #13 0x10c4074 (/home/berkus/regserver/mshd+0x10c4074)
+    #14 0x10c337c (/home/berkus/regserver/mshd+0x10c337c)
+    #15 0x10c3020 (/home/berkus/regserver/mshd+0x10c3020)
+    #16 0x10c28e6 (/home/berkus/regserver/mshd+0x10c28e6)
+    #17 0x10c2315 (/home/berkus/regserver/mshd+0x10c2315)
+    #18 0x10c1a2d (/home/berkus/regserver/mshd+0x10c1a2d)
+    #19 0x10c13ed (/home/berkus/regserver/mshd+0x10c13ed)
+    #20 0x10669bc (/home/berkus/regserver/mshd+0x10669bc)
+    #21 0x10642e5 (/home/berkus/regserver/mshd+0x10642e5)
+    #22 0x1063489 (/home/berkus/regserver/mshd+0x1063489)
+    #23 0x179d6b3 (/home/berkus/regserver/mshd+0x179d6b3)
+    #24 0x17759a7 (/home/berkus/regserver/mshd+0x17759a7)
+    #25 0x1915a4f (/home/berkus/regserver/mshd+0x1915a4f)
+    #26 0x1915441 (/home/berkus/regserver/mshd+0x1915441)
+    #27 0x1914ffa (/home/berkus/regserver/mshd+0x1914ffa)
+    #28 0x1913549 (/home/berkus/regserver/mshd+0x1913549)
+    #29 0x140b25f (/home/berkus/regserver/mshd+0x140b25f)
+
+previously allocated by thread T0 here:
+    #0 0x62b6c9 (/home/berkus/regserver/mshd+0x62b6c9)
+    #1 0x1565d06 (/home/berkus/regserver/mshd+0x1565d06)
+    #2 0x1561faa (/home/berkus/regserver/mshd+0x1561faa)
+    #3 0x1481b66 (/home/berkus/regserver/mshd+0x1481b66)
+    #4 0x112aafa (/home/berkus/regserver/mshd+0x112aafa)
+    #5 0xec2546 (/home/berkus/regserver/mshd+0xec2546)
+    #6 0x196fe16 (/home/berkus/regserver/mshd+0x196fe16)
+    #7 0x195cae7 (/home/berkus/regserver/mshd+0x195cae7)
+    #8 0xbe6879 (/home/berkus/regserver/mshd+0xbe6879)
+    #9 0xbedc6e (/home/berkus/regserver/mshd+0xbedc6e)
+    #10 0xc3c08d (/home/berkus/regserver/mshd+0xc3c08d)
+    #11 0xc3ba1c (/home/berkus/regserver/mshd+0xc3ba1c)
+    #12 0xc3b2f4 (/home/berkus/regserver/mshd+0xc3b2f4)
+    #13 0xc3b009 (/home/berkus/regserver/mshd+0xc3b009)
+    #14 0xc3aeb9 (/home/berkus/regserver/mshd+0xc3aeb9)
+    #15 0xc3acd5 (/home/berkus/regserver/mshd+0xc3acd5)
+    #16 0xc3a1b9 (/home/berkus/regserver/mshd+0xc3a1b9)
+    #17 0x679fd7 (/home/berkus/regserver/mshd+0x679fd7)
+    #18 0xaef71a (/home/berkus/regserver/mshd+0xaef71a)
+    #19 0x679fd7 (/home/berkus/regserver/mshd+0x679fd7)
+    #20 0x674772 (/home/berkus/regserver/mshd+0x674772)
+    #21 0x664fd9 (/home/berkus/regserver/mshd+0x664fd9)
+    #22 0x6641f5 (/home/berkus/regserver/mshd+0x6641f5)
+    #23 0x6460bf (/home/berkus/regserver/mshd+0x6460bf)
+    #24 0x640b3c (/home/berkus/regserver/mshd+0x640b3c)
+    #25 0x7f47ef2c776c (/home/berkus/regserver/libc.so.6+0x2176c)
+
+SUMMARY: AddressSanitizer: heap-use-after-free ??:0 ??
+Shadow bytes around the buggy address:
+  0x0c067fff96e0: fa fa fd fd fd fd fa fa 00 00 00 fa fa fa 00 00
+  0x0c067fff96f0: 00 fa fa fa 00 00 00 fa fa fa 00 00 00 fa fa fa
+  0x0c067fff9700: fd fd fd fa fa fa fd fd fd fd fa fa fd fd fd fa
+  0x0c067fff9710: fa fa fd fd fd fa fa fa 00 00 00 00 fa fa 00 00
+  0x0c067fff9720: 00 fa fa fa 00 00 00 00 fa fa 00 00 00 fa fa fa
+=>0x0c067fff9730: 00 00 00 00 fa fa[fd]fd fd fd fa fa 00 00 00 fa
+  0x0c067fff9740: fa fa fd fd fd fa fa fa fd fd fd fa fa fa fd fd
+  0x0c067fff9750: fd fa fa fa fd fd fd fa fa fa fd fd fd fa fa fa
+  0x0c067fff9760: fd fd fd fa fa fa 00 00 04 fa fa fa 00 00 00 fa
+  0x0c067fff9770: fa fa 00 00 00 fa fa fa 00 00 00 fa fa fa 00 00
+  0x0c067fff9780: 00 fa fa fa 00 00 00 00 fa fa 00 00 00 fa fa fa
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:     fa
+  Heap right redzone:    fb
+  Freed heap region:     fd
+  Stack left redzone:    f1
+  Stack mid redzone:     f2
+  Stack right redzone:   f3
+  Stack partial redzone: f4
+  Stack after return:    f5
+  Stack use after scope: f8
+  Global redzone:        f9
+  Global init order:     f6
+  Poisoned by user:      f7
+  ASan internal:         fe
+==31243==ABORTING
