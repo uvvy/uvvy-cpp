@@ -18,10 +18,11 @@ include_directories(../ui/3rdparty/rtaudio-4.0.11)
 include_directories(.)
 add_library(natclient STATIC traverse_nat.cpp)
 add_library(rclient STATIC client_utils.cpp)
+add_library(audioclient STATIC audio_service.cpp)
 
 add_executable(opus-streaming opus-streaming.cpp)
-target_link_libraries(opus-streaming ssu support rtaudio opus plist rclient routing natclient nat
-    upnpc krypto ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
+target_link_libraries(opus-streaming ssu support audioclient rtaudio opus plist rclient routing
+    natclient nat upnpc krypto ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS opus-streaming
     RUNTIME DESTINATION tools)
 
@@ -37,17 +38,21 @@ if (APPLE)
         RUNTIME DESTINATION tools)
 endif (APPLE)
 
-if (APPLE)
-    find_library(COREAUDIO_LIB CoreAudio)
-    find_library(COREFOUNDATION_LIB CoreFoundation)
-    target_link_libraries(opus-streaming ${COREAUDIO_LIB} ${COREFOUNDATION_LIB})
-endif (APPLE)
+macro(link_audiolibs target)
+    if (APPLE)
+        find_library(COREAUDIO_LIB CoreAudio)
+        find_library(COREFOUNDATION_LIB CoreFoundation)
+        target_link_libraries(${target} ${COREAUDIO_LIB} ${COREFOUNDATION_LIB})
+    endif (APPLE)
 
-if (UNIX AND NOT APPLE)
-    find_library(PULSE_LIB pulse)
-    find_library(PULSESIMPLE_LIB pulse-simple)
-    target_link_libraries(opus-streaming ${PULSE_LIB} ${PULSESIMPLE_LIB})
-endif (UNIX AND NOT APPLE)
+    if (UNIX AND NOT APPLE)
+        find_library(PULSE_LIB pulse)
+        find_library(PULSESIMPLE_LIB pulse-simple)
+        target_link_libraries(${target} ${PULSE_LIB} ${PULSESIMPLE_LIB})
+    endif (UNIX AND NOT APPLE)
+endmacro()
+
+link_audiolibs(opus-streaming)
 
 #add_subdirectory(sstreams)
 add_subdirectory(PeerPicker)

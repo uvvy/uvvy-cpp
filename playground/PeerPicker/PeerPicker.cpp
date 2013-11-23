@@ -6,6 +6,7 @@
 #include "host.h"
 #include "client_profile.h"
 #include "traverse_nat.h"
+#include "audio_service.h"
 
 using namespace std;
 using namespace ssu;
@@ -17,24 +18,25 @@ public:
     shared_ptr<host> host;
     // shared_ptr<upnp::UpnpIgdClient> nat;
     std::thread runner;
+    audio_service audioclient_;
 
     Private()
         : settings(settings_provider::instance())
         , host(host::create(settings))
         //, nat(traverse_nat(stream_protocol::default_port)) // XXX take port from host
         , runner([this] { host->run_io_service(); })
+        , audioclient_(host)
     {}
 };
 
-// Simple client_profile editor.
-// Open settings_provider with default settings (or a specified settings file),
-// display current data and allow editing profile fields using Qt4 gui.
-// Save profile back.
 PeerPicker::PeerPicker(QWidget *parent)
     : QMainWindow(parent)
     , m_pimpl(make_shared<Private>())
 {
     setupUi(this); // this sets up GUI
+
+    peersTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    peersTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
     PeerInfoProvider* pp = new PeerInfoProvider(m_pimpl->host, this);
     peersTableView->setModel(pp);
@@ -57,6 +59,15 @@ void PeerPicker::addToFavorites()
 
 void PeerPicker::call()
 {
+    //get the text of the selected item
+    const QModelIndex index = peersTableView->selectionModel()->currentIndex();
+    QString selectedText = index.data(Qt::DisplayRole).toString();
+
+    qDebug() << peersTableView->selectionModel()->selectedRows();
+    qDebug() << selectedText;
+
+    m_pimpl->audioclient_.establish_outgoing_session(
+        string(selectedText.toUtf8().constData()), vector<string>());
 }
 
 void PeerPicker::chat()
