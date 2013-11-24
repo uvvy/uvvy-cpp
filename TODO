@@ -1,6 +1,6 @@
 UI:
  ☐ Maintain partial discoloration for online icon based on "stall count"
-   e.g. second stall online icon is 2/3 colored, third stall icon is 1/3 colored, then offline
+   e.g. second stall online icon is 2/3 colored, third stall icon is 1/3 colored, then offline (online-66%, online-33%)
    first stall is ignored as possibly temporary glitch
  ✔ Ubuntu 32/64 bit binaries repo for Matti. @done (13-11-11 19:00)
     ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
