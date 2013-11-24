@@ -17,9 +17,6 @@
  */
 class audio_service
 {
-    const std::string service_name{"streaming"};
-    const std::string protocol_name{"opus"};
-
     class private_impl;
     std::shared_ptr<private_impl> pimpl_;
 

@@ -26,6 +26,9 @@ namespace pt = boost::posix_time;
 using namespace std;
 using namespace ssu;
 
+const std::string service_name{"streaming"};
+const std::string protocol_name{"opus"};
+
 //=================================================================================================
 // plotfile
 //=================================================================================================
