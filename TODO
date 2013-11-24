@@ -1,4 +1,7 @@
 UI:
+ ☐ Maintain partial discoloration for online icon based on "stall count"
+   e.g. second stall online icon is 2/3 colored, third stall icon is 1/3 colored, then offline
+   first stall is ignored as possibly temporary glitch
  ✔ Ubuntu 32/64 bit binaries repo for Matti. @done (13-11-11 19:00)
     ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
  ☐ Deploy nshd to motoko?
@@ -6,9 +9,11 @@ UI:
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
  ☐ Add higher-priority RTCP stream in opus-streaming.
+   add to audio_service
+   rename audio_service to voice_service... like in netsteria
  ✔ Build static regserver for linux. @done (13-11-04 01:02)
 
- ☐ Add PeerPicker to select an EID from regserver before attempting connection.
+ ✔ Add PeerPicker to select an EID from regserver before attempting connection. @done (13-11-23 23:25)
    Should simplify work with opus-streaming etc.
    see playground/PeerPicker
 
@@ -25,7 +30,7 @@ Comms (voice/video/chat):
  ☐ Draw possible chat synchronization graph ideas between Alice's and Bob's personal cluser devices.
  ☐ Chat documentation on https://github.com/berkus/mettanode/blob/develop/ui/doc/chat_and_messaging.md
  ☐ Group chat.
- ☐ Chat join urls like nstchat://authblob or nst://chat?authblob
+ ☐ Chat join urls like metta:chat?authblob
  ☐ Event bells/notifications: friend online, chat/talk started, etc.
  ☐ Chat happens in chat room.
  ☐ Rooms may be arbitrarily nested forming chat labyrinth.
