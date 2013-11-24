@@ -8,14 +8,14 @@ namespace ssu {
     class host;
 }
 
-class PeerInfoProvider : public QAbstractTableModel
+class PeerTableModel : public QAbstractTableModel
 {
     Q_OBJECT
     class Private;
     std::shared_ptr<Private> m_pimpl;
 
 public:
-    PeerInfoProvider(std::shared_ptr<ssu::host> h, QObject *parent = 0);
+    PeerTableModel(std::shared_ptr<ssu::host> h, QObject *parent = 0);
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;

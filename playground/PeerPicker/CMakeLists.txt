@@ -18,8 +18,8 @@ set(QT_USE_QTNETWORK TRUE)
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 
-set(peer_picker_SOURCES main.cpp PeerInfoProvider.cpp PeerPicker.cpp)
-set(peer_picker_HEADERS PeerInfoProvider.h PeerPicker.h)
+set(peer_picker_SOURCES main.cpp PeerTableModel.cpp PeerPicker.cpp)
+set(peer_picker_HEADERS PeerTableModel.h PeerPicker.h)
 set(peer_picker_FORMS PeerPickerWindow.ui)
 #set(peer_picker_RESOURCES gui.qrc)
 

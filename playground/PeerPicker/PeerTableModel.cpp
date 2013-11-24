@@ -1,7 +1,7 @@
 // encapsulate  and connect it to regservers from settings_provider
 // query all peers or query filtered peer list
 // enter them into a table model
-#include "PeerInfoProvider.h"
+#include "PeerTableModel.h"
 #include "private/regserver_client.h"
 #include "client_profile.h"
 #include "client_utils.h"
@@ -12,14 +12,14 @@ using namespace std;
 using namespace ssu;
 using namespace uia::routing;
 
-class PeerInfoProvider::Private
+class PeerTableModel::Private
 {
 public:
-    PeerInfoProvider* parent_;
+    PeerTableModel* parent_;
     internal::regserver_client client_;
     QList<pair<peer_id, client_profile>> peers_;
 
-    Private(PeerInfoProvider* parent, ssu::host *h)
+    Private(PeerTableModel* parent, ssu::host *h)
         : parent_(parent)
         , client_(h)
     {
@@ -83,26 +83,26 @@ public:
     }
 };
 
-PeerInfoProvider::PeerInfoProvider(shared_ptr<ssu::host> h, QObject *parent)
+PeerTableModel::PeerTableModel(shared_ptr<ssu::host> h, QObject *parent)
     : QAbstractTableModel(parent)
     , m_pimpl(make_shared<Private>(this, h.get()))
 {
     m_pimpl->connect_regservers();
 }
 
-int PeerInfoProvider::rowCount(const QModelIndex &parent) const
+int PeerTableModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return m_pimpl->peers_.size();
 }
 
-int PeerInfoProvider::columnCount(const QModelIndex &parent) const
+int PeerTableModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 6;
 }
 
-QVariant PeerInfoProvider::data(const QModelIndex &index, int role) const
+QVariant PeerTableModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
         return QVariant();
@@ -137,7 +137,7 @@ QVariant PeerInfoProvider::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant PeerInfoProvider::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant PeerTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole) {
         return QVariant();
@@ -158,7 +158,7 @@ QVariant PeerInfoProvider::headerData(int section, Qt::Orientation orientation, 
     return QVariant();
 }
 
-bool PeerInfoProvider::insertRows(int position, int rows, const QModelIndex &index)
+bool PeerTableModel::insertRows(int position, int rows, const QModelIndex &index)
 {
     Q_UNUSED(index);
     beginInsertRows(QModelIndex(), position, position+rows-1);
@@ -173,7 +173,7 @@ bool PeerInfoProvider::insertRows(int position, int rows, const QModelIndex &ind
     return true;
 }
 
-bool PeerInfoProvider::removeRows(int position, int rows, const QModelIndex &index)
+bool PeerTableModel::removeRows(int position, int rows, const QModelIndex &index)
 {
     Q_UNUSED(index);
     beginRemoveRows(QModelIndex(), position, position+rows-1);
@@ -186,13 +186,13 @@ bool PeerInfoProvider::removeRows(int position, int rows, const QModelIndex &ind
     return true;
 }
 
-void PeerInfoProvider::updateData(int row)
+void PeerTableModel::updateData(int row)
 {
     reset(); // Until I fix model indexes, full reload will do.
     // emit dataChanged(index(row, 0), index(row, columnCount(QModelIndex())));
 }
 
-bool PeerInfoProvider::setData(const QModelIndex &index, const QVariant &value, int role)
+bool PeerTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     // if (index.isValid() && role == Qt::EditRole) {
         // int row = index.row();
@@ -218,7 +218,7 @@ bool PeerInfoProvider::setData(const QModelIndex &index, const QVariant &value, 
     return false;
 }
 
-Qt::ItemFlags PeerInfoProvider::flags(const QModelIndex &index) const
+Qt::ItemFlags PeerTableModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid()) {
         return Qt::ItemIsEnabled;

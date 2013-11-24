@@ -1,7 +1,7 @@
 #include <QHostInfo>
 #include <thread>
 #include "PeerPicker.h"
-#include "PeerInfoProvider.h"
+#include "PeerTableModel.h"
 #include "settings_provider.h"
 #include "host.h"
 #include "client_profile.h"
@@ -38,8 +38,8 @@ PeerPicker::PeerPicker(QWidget *parent)
     peersTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     peersTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    PeerInfoProvider* pp = new PeerInfoProvider(m_pimpl->host, this);
-    peersTableView->setModel(pp);
+    PeerTableModel* peers = new PeerTableModel(m_pimpl->host, this);
+    peersTableView->setModel(peers);
 
     load();
 
