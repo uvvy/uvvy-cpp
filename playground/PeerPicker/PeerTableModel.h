@@ -17,14 +17,15 @@ class PeerTableModel : public QAbstractTableModel
 public:
     PeerTableModel(std::shared_ptr<ssu::host> h, QObject *parent = 0);
 
-    int rowCount(const QModelIndex &parent) const;
-    int columnCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    Qt::ItemFlags flags(const QModelIndex &index) const;
-    bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
-    bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex());
-    bool removeRows(int position, int rows, const QModelIndex &index=QModelIndex());
+    // AbstractTableModel methods;
+    int rowCount(const QModelIndex &parent) const override;
+    int columnCount(const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
+    bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
+    bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex()) override;
+    bool removeRows(int position, int rows, const QModelIndex &index=QModelIndex()) override;
 
     // Internal use only.
     void updateData(int row);
