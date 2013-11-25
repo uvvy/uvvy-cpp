@@ -1,13 +1,20 @@
 #pragma once
 
 #include <QAbstractTableModel>
-#include <QPair>
-#include <QList>
 
 namespace ssu {
     class host;
+    class peer_id;
 }
 
+/**
+ * Qt table model describing a list of peers.
+ * The first column always lists the human-readable peer names,
+ * and the second column always lists the base64 encodings of the host IDs.
+ * (A UI would typically hide the second column except in "advanced" mode.)
+ * An arbitrary number of additional columns can hold dynamic content:
+ * e.g., online status information about each peer.
+ */
 class PeerTableModel : public QAbstractTableModel
 {
     Q_OBJECT
