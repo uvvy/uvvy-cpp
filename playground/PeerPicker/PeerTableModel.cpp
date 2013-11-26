@@ -1,7 +1,13 @@
-// encapsulate  and connect it to regservers from settings_provider
-// query all peers or query filtered peer list
-// enter them into a table model
+//
+// Part of Metta OS. Check http://metta.exquance.com for latest version.
+//
+// Copyright 2007 - 2013, Stanislav Karchebnyy <berkus@exquance.com>
+//
+// Distributed under the Boost Software License, Version 1.0.
+// (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
+//
 #include <QVector>
+#include <QDebug>
 #include "PeerTableModel.h"
 #include "private/regserver_client.h"
 #include "client_profile.h"
@@ -26,6 +32,8 @@ enum {
 
 struct Peer
 {
+    const int version_ = 1;
+
     // Basic peer info - always present
     QString name_;
     peer_id eid_;
@@ -56,6 +64,35 @@ struct Peer
     }
 };
 
+flurry::oarchive& operator << (flurry::oarchive& out, QString const& str)
+{
+    out << std::string(str.toUtf8().constData());
+    return out;
+}
+
+flurry::iarchive& operator >> (flurry::iarchive& in, QString& str)
+{
+    std::string s;
+    in >> s;
+    str = QString(s.c_str()); // @fixme That is a fromAscii() conversion...
+    return in;
+}
+
+flurry::oarchive& operator << (flurry::oarchive& out, Peer const& peer)
+{
+    out << peer.version_ << peer.name_ << peer.eid_ << peer.profile_;
+    return out;
+}
+
+flurry::iarchive& operator >> (flurry::iarchive& in, Peer& peer)
+{
+    int version;
+    in >> version >> peer.name_ >> peer.eid_ >> peer.profile_;
+    if (version != 1)
+        throw runtime_error("unsupported Peer structure serialization version");
+    return in;
+}
+
 class PeerTableModel::Private
 {
 public:
@@ -68,7 +105,8 @@ public:
      */
     QHash<QPair<int,int>, QVariant> headers_;
 
-    // shared_ptr<settings_provider> settings; // Save/load peer list in settings if not nullptr
+    // Save/load peer list in settings if not nullptr
+    shared_ptr<settings_provider> settings_;
 
     Private(PeerTableModel* parent, ssu::host *h)
         : parent_(parent)
@@ -167,7 +205,7 @@ int PeerTableModel::insert(ssu::peer_id const& eid, QString name)
     endInsertRows();
 
     // Update our persistent peers list - @todo berkus: umm, friend list management.
-    // writePeers();
+    write_settings();
 
     // Signal anyone interested
     Q_EMIT peerInserted(eid);
@@ -188,7 +226,7 @@ void PeerTableModel::remove(ssu::peer_id const& eid)
     endRemoveRows();
 
     // Update our persistent peers list
-    // writePeers();
+    write_settings();
 
     // Signal anyone interested
     Q_EMIT peerRemoved(eid);
@@ -352,7 +390,7 @@ bool PeerTableModel::setData(const QModelIndex &index, const QVariant &value, in
             }
 
             m_pimpl->peers_[row].name_ = str;
-            // writePeers();
+            write_settings();
             dataChanged(index, index);
             return true;
         }
@@ -434,4 +472,47 @@ bool PeerTableModel::setFlags(const QModelIndex &index, Qt::ItemFlags flags)
 
     m_pimpl->peers_[row].flags_[col] = flags;
     return true;
+}
+
+void PeerTableModel::use_settings(std::shared_ptr<settings_provider> settings)
+{
+    Q_ASSERT(!m_pimpl->settings_);
+    Q_ASSERT(settings);
+    Q_ASSERT(m_pimpl->peers_.isEmpty());
+
+    m_pimpl->settings_ = settings;
+    byte_array data(settings->get_byte_array("peers"));
+
+    if (data.size() > 0)
+    {
+        byte_array_iwrap<flurry::iarchive> read(data);
+        std::vector<Peer> in_peers;
+        read.archive() >> in_peers;
+        for (auto& peer : in_peers) {
+            if (peer.eid_.is_empty() or containsId(peer.eid_)) {
+                qDebug() << "Empty or duplicate peer ID";
+                continue;
+            }
+            m_pimpl->peers_.append(peer);
+        }
+    }
+}
+
+void PeerTableModel::write_settings()
+{
+    if (!m_pimpl->settings_)
+        return;
+
+    byte_array data;
+    {
+        byte_array_owrap<flurry::oarchive> write(data);
+        std::vector<Peer> out_peers;
+        for (auto& peer : m_pimpl->peers_) {
+            out_peers.emplace_back(peer);
+        }
+        write.archive() << out_peers;
+    }
+
+    m_pimpl->settings_->set("peers", data);
+    m_pimpl->settings_->sync();
 }
