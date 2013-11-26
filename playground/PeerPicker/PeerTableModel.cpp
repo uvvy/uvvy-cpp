@@ -212,6 +212,15 @@ ssu::peer_id PeerTableModel::id(int row) const
     return m_pimpl->peers_[row].eid_;
 }
 
+QList<ssu::peer_id> PeerTableModel::ids() const
+{
+    QList<ssu::peer_id> ids;
+    for (auto& peer : m_pimpl->peers_) {
+        ids.append(peer.eid_);
+    }
+    return ids;
+}
+
 int PeerTableModel::rowWithId(ssu::peer_id const& eid) const
 {
     for (int i = 0; i < m_pimpl->peers_.size(); i++)
