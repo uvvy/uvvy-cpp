@@ -237,68 +237,6 @@ int PeerTableModel::columnCount(const QModelIndex &parent) const
     return MaxColumns;
 }
 
-QVariant PeerTableModel::data(const QModelIndex &index, int role) const
-{
-    if (!index.isValid()) {
-        return QVariant();
-    }
-
-    if (index.row() >= ssize_t(m_pimpl->peers_.size()) || index.row() < 0) {
-        return QVariant();
-    }
-
-    auto peer = m_pimpl->peers_.at(index.row());
-
-    int column = index.column();
-    if (column == Name and (role == Qt::DisplayRole or role == Qt::EditRole))
-        return peer.name_;
-
-    if (role == Qt::DisplayRole) {
-        if (column == EID) {
-            return peer.eid_.to_string().c_str();
-        }
-        else if (column == Host) {
-            return peer.profile_.host_name().c_str();
-        }
-        else if (column == Owner_FirstName) {
-            return peer.profile_.owner_firstname().c_str();
-        }
-        else if (column == Owner_LastName) {
-            return peer.profile_.owner_lastname().c_str();
-        }
-        else if (column == Owner_NickName) {
-            return peer.profile_.owner_nickname().c_str();
-        }
-        else if (column == City) {
-            return peer.profile_.city().c_str();
-        }
-    }
-    return peer.additional_data_.value(QPair<int,int>(column, role));
-}
-
-QVariant PeerTableModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (orientation != Qt::Horizontal)
-        return QVariant();
-
-    return m_pimpl->headers_.value(QPair<int,int>(section, role));
-}
-
-bool PeerTableModel::setHeaderData(int section, Qt::Orientation orientation,
-    const QVariant& value, int role)
-{
-    if (orientation != Qt::Horizontal) {
-        return false;
-    }
-
-    if (section < 0 || section >= MaxColumns) {
-        return false;
-    }
-
-    m_pimpl->headers_.insert(QPair<int,int>(section,role), value);
-    return true;
-}
-
 void PeerTableModel::insertAt(int row, ssu::peer_id const& eid, QString const& name)
 {
     Peer p;
@@ -338,34 +276,124 @@ bool PeerTableModel::removeRows(int position, int rows, const QModelIndex &index
 
 void PeerTableModel::updateData(int row)
 {
+    // NB: this resets all selections made by user...
     reset(); // Until I fix model indexes, full reload will do.
     // emit dataChanged(index(row, 0), index(row, columnCount(QModelIndex())));
 }
 
+QVariant PeerTableModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid()) {
+        return QVariant();
+    }
+
+    if (index.row() >= ssize_t(m_pimpl->peers_.size()) || index.row() < 0) {
+        return QVariant();
+    }
+
+    auto peer = m_pimpl->peers_.at(index.row());
+
+    int column = index.column();
+    if (column == Name and (role == Qt::DisplayRole or role == Qt::EditRole))
+        return peer.name_;
+
+    if (role == Qt::DisplayRole) {
+        if (column == EID) {
+            return peer.eid_.to_string().c_str();
+        }
+        else if (column == Host) {
+            return peer.profile_.host_name().c_str();
+        }
+        else if (column == Owner_FirstName) {
+            return peer.profile_.owner_firstname().c_str();
+        }
+        else if (column == Owner_LastName) {
+            return peer.profile_.owner_lastname().c_str();
+        }
+        else if (column == Owner_NickName) {
+            return peer.profile_.owner_nickname().c_str();
+        }
+        else if (column == City) {
+            return peer.profile_.city().c_str();
+        }
+    }
+    return peer.additional_data_.value(QPair<int,int>(column, role));
+}
+
 bool PeerTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    // if (index.isValid() && role == Qt::EditRole) {
-        // int row = index.row();
+    int row = index.row();
+    if (row < 0 or row >= count()) {
+        return false;
+    }
 
-        // QPair<QString, QString> p = m_pimpl->peers.value(row);
+    int column = index.column();
+    if (column < 0 or column == 1 or column >= MaxColumns) {
+        return false;
+    }
 
-        // if (index.column() == 0) {
-        //     p.first = value.toString();
-        // }
-        // else if (index.column() == 1) {
-        //     p.second = value.toString();
-        // }
-        // else {
-            // return false;
-        // }
+    if (role == Qt::DisplayRole or role == Qt::EditRole)
+    {
+        if (column == Name)
+        {
+            // Changing a peer's human-readable name.
+            QString str = value.toString();
+            if (str.isEmpty()) {
+                str = tr("(unnamed peer)");
+            }
 
-        // m_pimpl->peers.replace(row, p);
-        // emit(dataChanged(index, index));
+            m_pimpl->peers_[row].name_ = str;
+            // writePeers();
+            dataChanged(index, index);
+            return true;
+        }
+        else if (column == EID) {
+            return false;
+        }
+        else if (column == Host) {
+            return false;
+        }
+        else if (column == Owner_FirstName) {
+            return false;
+        }
+        else if (column == Owner_LastName) {
+            return false;
+        }
+        else if (column == Owner_NickName) {
+            return false;
+        }
+        else if (column == City) {
+            return false;
+        }
+    }
 
-        // return true;
-    // }
+    // Changing some dynamic table content.
+    m_pimpl->peers_[row].additional_data_.insert(QPair<int,int>(column,role), value);
+    Q_EMIT dataChanged(index, index);
+    return true;
+}
 
-    return false;
+QVariant PeerTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (orientation != Qt::Horizontal)
+        return QVariant();
+
+    return m_pimpl->headers_.value(QPair<int,int>(section, role));
+}
+
+bool PeerTableModel::setHeaderData(int section, Qt::Orientation orientation,
+    const QVariant& value, int role)
+{
+    if (orientation != Qt::Horizontal) {
+        return false;
+    }
+
+    if (section < 0 || section >= MaxColumns) {
+        return false;
+    }
+
+    m_pimpl->headers_.insert(QPair<int,int>(section,role), value);
+    return true;
 }
 
 Qt::ItemFlags PeerTableModel::flags(const QModelIndex &index) const
