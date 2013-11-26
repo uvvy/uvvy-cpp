@@ -112,6 +112,15 @@ public:
         : parent_(parent)
         , client_(h)
     {
+        // Set up default header labels
+        headers_.insert(QPair<int,int>(Name, Qt::DisplayRole), tr("Name"));
+        headers_.insert(QPair<int,int>(EID, Qt::DisplayRole), tr("Host ID"));
+        headers_.insert(QPair<int,int>(Host, Qt::DisplayRole), tr("Host name"));
+        headers_.insert(QPair<int,int>(Owner_FirstName, Qt::DisplayRole), tr("First name"));
+        headers_.insert(QPair<int,int>(Owner_LastName, Qt::DisplayRole), tr("Last name"));
+        headers_.insert(QPair<int,int>(Owner_NickName, Qt::DisplayRole), tr("Nickname"));
+        headers_.insert(QPair<int,int>(City, Qt::DisplayRole), tr("City"));
+
         client_.on_ready.connect([this] {
             logger::debug() << "client ready";
             client_.search(""); // Trigger listing of all available peers.
@@ -155,11 +164,23 @@ public:
         }
     }
 
+    bool containsId(ssu::peer_id const& eid) const
+    {
+        for (auto& peer : peers_) {
+            if (peer.eid_ == eid) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void found_peers(std::vector<ssu::peer_id> const& peers, bool last)
     {
         for (auto peer : peers) {
             logger::debug() << "found_peers " << peer;
-            peers_.insert(0, Peer(peer));
+            if (!containsId(peer)) {
+                peers_.append(Peer(peer));
+            }
             client_.lookup(peer);
         }
     }
@@ -176,15 +197,15 @@ PeerTableModel::PeerTableModel(shared_ptr<ssu::host> h, QObject *parent)
     : QAbstractTableModel(parent)
     , m_pimpl(make_shared<Private>(this, h.get()))
 {
-    // Set up default header labels
-    m_pimpl->headers_.insert(QPair<int,int>(Name, Qt::DisplayRole), tr("Name"));
-    m_pimpl->headers_.insert(QPair<int,int>(EID, Qt::DisplayRole), tr("Host ID"));
-    m_pimpl->headers_.insert(QPair<int,int>(Host, Qt::DisplayRole), tr("Host name"));
-    m_pimpl->headers_.insert(QPair<int,int>(Owner_FirstName, Qt::DisplayRole), tr("First name"));
-    m_pimpl->headers_.insert(QPair<int,int>(Owner_LastName, Qt::DisplayRole), tr("Last name"));
-    m_pimpl->headers_.insert(QPair<int,int>(Owner_NickName, Qt::DisplayRole), tr("Nickname"));
-    m_pimpl->headers_.insert(QPair<int,int>(City, Qt::DisplayRole), tr("City"));
+    m_pimpl->connect_regservers();
+}
 
+PeerTableModel::PeerTableModel(shared_ptr<ssu::host> h, shared_ptr<settings_provider> s,
+    QObject *parent)
+    : QAbstractTableModel(parent)
+    , m_pimpl(make_shared<Private>(this, h.get()))
+{
+    use_settings(s);
     m_pimpl->connect_regservers();
 }
 

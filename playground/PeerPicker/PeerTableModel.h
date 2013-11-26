@@ -33,6 +33,7 @@ class PeerTableModel : public QAbstractTableModel
 
 public:
     PeerTableModel(std::shared_ptr<ssu::host> h, QObject *parent = 0);
+    PeerTableModel(std::shared_ptr<ssu::host> h, std::shared_ptr<settings_provider> s, QObject *parent = 0);
 
     // AbstractTableModel methods;
     int rowCount(const QModelIndex &parent) const override;
@@ -84,19 +85,20 @@ public:
      */
     QList<ssu::peer_id> ids() const;
 
+// private:
+    // Internal use only.
+    void updateData(int row);
+private:
     /**
      * Set up the PeerTableModel to keep its state persistent
      * in the specified settings_provider object under name "peers".
      * This method immediately reads the peer names from the settings,
      * then holds onto the settings and writes any updates to it.
-     * Must be called when PeerTableModel is freshly created and still empty.
+     * Must be called when PeerTableModel is freshly created and still empty
+     * (that's why there's a separate constructor you should use).
      */
     void use_settings(std::shared_ptr<settings_provider> settings);
 
-// private:
-    // Internal use only.
-    void updateData(int row);
-private:
     void insertAt(int row, ssu::peer_id const& eid, QString const& name);
     void write_settings();
 

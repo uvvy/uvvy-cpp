@@ -38,7 +38,7 @@ PeerPicker::PeerPicker(QWidget *parent)
     peersTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     peersTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    PeerTableModel* peers = new PeerTableModel(m_pimpl->host, this);
+    PeerTableModel* peers = new PeerTableModel(m_pimpl->host, m_pimpl->settings, this);
     peersTableView->setModel(peers);
 
     load();
