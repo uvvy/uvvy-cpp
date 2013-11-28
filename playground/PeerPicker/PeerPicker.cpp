@@ -58,6 +58,7 @@ PeerPicker::PeerPicker(QWidget *parent)
 
 void PeerPicker::addToFavorites()
 {
+    QMessageBox::information(this, "Not available", "Not implemented");
 }
 
 void PeerPicker::call()
@@ -75,6 +76,7 @@ void PeerPicker::call()
 
 void PeerPicker::chat()
 {
+    QMessageBox::information(this, "Not available", "Not implemented");
 }
 
 void PeerPicker::quit()
