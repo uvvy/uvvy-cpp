@@ -67,10 +67,9 @@ void PeerPicker::call()
 {
     //get the text of the selected item
     const QModelIndex index = peersTableView->selectionModel()->currentIndex();
-    QString selectedText = index.data(Qt::DisplayRole).toString();
+    const QModelIndex index2 = index.model()->index(index.row(), 1);
+    QString selectedText = index2.data(Qt::DisplayRole).toString();
 
-    qDebug() << peersTableView->selectionModel()->selectedRows();
-    qDebug() << selectedText;
 
     m_pimpl->audioclient_.establish_outgoing_session(
         string(selectedText.toUtf8().constData()), vector<string>());
