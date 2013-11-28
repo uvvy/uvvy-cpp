@@ -35,7 +35,9 @@ public:
         , runner([this] { host->run_io_service(); })
         , gone_natty([this] { nat = traverse_nat(host); })
         , audioclient_(host)
-    {}
+    {
+        audioclient_.listen_incoming_session();
+    }
 };
 
 PeerPicker::PeerPicker(QWidget *parent)
