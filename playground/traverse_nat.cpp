@@ -8,37 +8,42 @@
 //
 #include "traverse_nat.h"
 #include "logging.h"
+#include "host.h"
 #include "private/regserver_client.h" // @fixme Testing only.
 
 using namespace std;
+using namespace ssu;
 
 constexpr uint16_t regserver_port = uia::routing::internal::REGSERVER_DEFAULT_PORT;
 
-shared_ptr<upnp::UpnpIgdClient> traverse_nat(int main_port)
+shared_ptr<upnp::UpnpIgdClient> traverse_nat(std::shared_ptr<host> host)
 {
     shared_ptr<upnp::UpnpIgdClient> upnp = make_shared<upnp::UpnpIgdClient>();
 
     logger::info() << "Initialising UPnP";
 
-    upnp->InitControlPoint();
+    auto endpoints = host->active_local_endpoints();
+    std::set<uint16_t> ports;
+    for (auto& ep : endpoints) {
+        ports.insert(ep.port());
+    }
 
-    bool main_port_mapped{false}, regserver_port_mapped{false};
+    logger::debug() << "Need to map " << ports.size() << " ports";
+
+    upnp->InitControlPoint();
 
     if (upnp->IsAsync()) {
         upnp->SetNewMappingCallback([&](const int &port, const upnp::ProtocolType &protocol) {
-            if (port == main_port) {
-                main_port_mapped = true;
-            } else if (port == regserver_port) {
-                regserver_port_mapped = true;
-            }
+            ports.erase(port);
         });
     }
 
     bool all_added = true;
-    all_added &= upnp->AddPortMapping(main_port, upnp::kTcp);
-    all_added &= upnp->AddPortMapping(main_port, upnp::kUdp);
-    all_added &= upnp->AddPortMapping(regserver_port, upnp::kTcp);
-    all_added &= upnp->AddPortMapping(regserver_port, upnp::kUdp);
+    for (uint16_t port : ports)
+    {
+        all_added &= upnp->AddPortMapping(port, upnp::kTcp);
+        all_added &= upnp->AddPortMapping(port, upnp::kUdp);
+    }
 
     if (upnp->IsAsync()) {
         logger::debug() << "Waiting...";
@@ -46,14 +51,14 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(int main_port)
     }
 
     if (upnp->HasServices()) {
-      logger::debug() << "External IP: " << upnp->GetExternalIpAddress();
-      assert(all_added);
-      if (upnp->IsAsync()) {
-        assert(main_port_mapped and regserver_port_mapped);
-      }
-      logger::info() << "All UPnP mappings successful";
+        logger::debug() << "External IP: " << upnp->GetExternalIpAddress();
+        assert(all_added);
+        if (upnp->IsAsync()) {
+            assert(ports.size() == 0);
+        }
+        logger::info() << "All UPnP mappings successful";
     } else {
-      logger::warning() << "Sorry, no port mappings via UPnP possible";
+        logger::warning() << "Sorry, no port mappings via UPnP possible";
     }
 
     return upnp;

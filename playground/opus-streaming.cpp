@@ -85,8 +85,8 @@ int main(int argc, char* argv[])
     settings->sync();
 
     // Shared ptr ensures nat is destroyed on exit...
-    shared_ptr<upnp::UpnpIgdClient> nat(traverse_nat(port));
     shared_ptr<host> host(host::create(settings.get(), port));
+    shared_ptr<upnp::UpnpIgdClient> nat(traverse_nat(host));
 
     uia::routing::internal::regserver_client regclient(host.get());
     regclient_set_profile(settings.get(), regclient, host.get());

@@ -11,4 +11,6 @@
 #include <memory>
 #include "upnpclient.h"
 
-std::shared_ptr<upnp::UpnpIgdClient> traverse_nat(int main_port);
+namespace ssu { class host; }
+
+std::shared_ptr<upnp::UpnpIgdClient> traverse_nat(std::shared_ptr<ssu::host> host);
