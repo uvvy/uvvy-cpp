@@ -50,16 +50,10 @@ PeerPicker::PeerPicker(QWidget *parent)
     PeerTableModel* peers = new PeerTableModel(m_pimpl->host, m_pimpl->settings, this);
     peersTableView->setModel(peers);
 
-    load();
-
     connect(actionCall, SIGNAL(triggered()), this, SLOT(call()));
     connect(actionChat, SIGNAL(triggered()), this, SLOT(chat()));
     connect(actionAdd_to_favorites, SIGNAL(triggered()), this, SLOT(addToFavorites()));
     connect(actionQuit, SIGNAL(triggered()), this, SLOT(quit()));
-}
-
-void PeerPicker::load()
-{
 }
 
 void PeerPicker::addToFavorites()

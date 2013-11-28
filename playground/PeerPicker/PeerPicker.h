@@ -14,7 +14,6 @@ public:
  
 public slots:
     void quit();
-    void load();
     void chat();
     void call();
     void addToFavorites();
