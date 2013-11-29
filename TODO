@@ -110,7 +110,9 @@ Routing:
    ☐ e) regserver will become a part of p2p directory when DHT is implemented
 
 Structured Streams:
- 
+ ☐ tx_reset implementation - test
+ ☐ Congestion Control
+
  ☐ BUG: Assertion failed: (transmit_sids_.empty()), function detach_all, file ../ssu/lib/stream_channel.cpp, line 195.
    happens after a while on opus-streaming receiving side
 
