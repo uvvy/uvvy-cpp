@@ -8,6 +8,7 @@
 //
 #pragma once
 
+#include <boost/signals2/signal.hpp>
 #include "host.h"
 
 /**
@@ -26,4 +27,8 @@ public:
 
     void establish_outgoing_session(ssu::peer_id const& eid, std::vector<std::string> ep_hints);
     void listen_incoming_session();
+    // Voice service media signals
+    typedef boost::signals2::signal<void (void)> session_signal;
+    session_signal on_session_started;
+    session_signal on_session_finished;
 };
