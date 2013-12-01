@@ -52,6 +52,11 @@ PeerPicker::PeerPicker(QWidget *parent)
     PeerTableModel* peers = new PeerTableModel(m_pimpl->host, m_pimpl->settings, this);
     peersTableView->setModel(peers);
 
+    m_pimpl->audioclient_.on_session_started.connect([this] {
+        selectedPeerText->appendPlainText("Call started");
+        buttonCall->setText("Hang up");
+    });
+
     connect(actionCall, SIGNAL(triggered()), this, SLOT(call()));
     connect(actionChat, SIGNAL(triggered()), this, SLOT(chat()));
     connect(actionAdd_to_favorites, SIGNAL(triggered()), this, SLOT(addToFavorites()));

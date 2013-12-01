@@ -93,6 +93,12 @@ int main(int argc, char* argv[])
     regclient_connect_regservers(settings.get(), regclient);
 
     audio_service service(host);
+    service.on_session_started.connect([]{
+        logger::info() << "Audio session started";
+    });
+    service.on_session_finished.connect([]{
+        logger::info() << "Audio session stopped";
+    });
 
     if (connect_out)
     {
