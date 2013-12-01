@@ -177,7 +177,7 @@ protected:
     void log_packet_delay(byte_array const& pkt)
     {
 #if DELAY_PLOT
-        pt::ptime epoch(boost::gregorian::date(1970,boost::gregorian::Jan,1));
+        pt::ptime epoch(boost::gregorian::date(1970, boost::gregorian::Jan, 1));
         int64_t ts = pkt.as<big_int64_t>()[0];
         int64_t local_ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
         // logger::info() << "Packet ts " << ts << ", local ts " << local_ts << ", play difference "
