@@ -75,6 +75,7 @@ void PeerPicker::call()
     const QModelIndex index2 = index.model()->index(index.row(), 1);
     QString selectedText = index2.data(Qt::DisplayRole).toString();
 
+    logger::set_verbosity(logger::verbosity::info);
 
     m_pimpl->audioclient_.establish_outgoing_session(
         string(selectedText.toUtf8().constData()), vector<string>());

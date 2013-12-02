@@ -7,11 +7,11 @@
 //
 int main(int argc, char **argv)
 {
-    bool verbose_debug{false};
+    // bool verbose_debug{true};
 
-    if (!verbose_debug) {
-        logger::set_verbosity(logger::verbosity::info);
-    }
+    // if (!verbose_debug) {
+        // logger::set_verbosity(logger::verbosity::info);
+    // }
 
     QApplication app(argc, argv);
     PeerPicker *dlg = new PeerPicker;
