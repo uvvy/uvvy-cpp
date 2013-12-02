@@ -19,6 +19,7 @@ using namespace std;
 using namespace ssu;
 using namespace uia::routing;
 
+// @todo move to public API?
 enum {
     Name = 0,
     EID = 1,
