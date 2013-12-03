@@ -29,6 +29,8 @@ using namespace ssu;
 const std::string service_name{"streaming"};
 const std::string protocol_name{"opus"};
 
+static const pt::ptime epoch{boost::gregorian::date(1970, boost::gregorian::Jan, 1)};
+
 //=================================================================================================
 // plotfile
 //=================================================================================================
@@ -177,7 +179,6 @@ protected:
     void log_packet_delay(byte_array const& pkt)
     {
 #if DELAY_PLOT
-        pt::ptime epoch(boost::gregorian::date(1970, boost::gregorian::Jan, 1));
         int64_t ts = pkt.as<big_int64_t>()[0];
         int64_t local_ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
         // logger::info() << "Packet ts " << ts << ", local ts " << local_ts << ", play difference "
@@ -249,7 +250,6 @@ public:
         byte_array samplebuf(nFrames*sizeof(float)+8);
 
         // Timestamp the packet with our own clock reading.
-        pt::ptime epoch(boost::gregorian::date(1970,boost::gregorian::Jan,1));
         int64_t ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
         samplebuf.as<big_int64_t>()[0] = ts;
         // Ideally, an ack packet would contain ts info at the receiving side for this packet.
