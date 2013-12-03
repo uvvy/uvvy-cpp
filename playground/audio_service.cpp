@@ -78,7 +78,7 @@ class audio_receiver
     size_t frame_size_{0};
     int rate_{0};
     mutex queue_mutex_;
-    queue<byte_array> packet_queue_;
+    deque<byte_array> packet_queue_;
     shared_ptr<stream> stream_;
     plotfile plot_;
 
@@ -126,7 +126,7 @@ public:
         if (packet_queue_.size() > 0)
         {
             byte_array pkt = packet_queue_.front();
-            packet_queue_.pop();
+            packet_queue_.pop_front();
             lock.unlock();
 
             // log_packet_delay(pkt);
@@ -173,7 +173,25 @@ protected:
         
         log_packet_delay(msg);
 
-        packet_queue_.push(msg);
+        packet_queue_.push_back(msg);
+        sort(packet_queue_.begin(), packet_queue_.end(),
+        [](byte_array const& a, byte_array const& b)
+        {
+            int64_t tsa = a.as<big_int64_t>()[0];
+            int64_t tsb = b.as<big_int64_t>()[0];
+            return tsa < tsb;
+        });
+
+        // Packets should be in strictly sequential order
+        for (size_t i = 1; i < packet_queue_.size(); ++i)
+        {
+            int64_t tsa = packet_queue_[i-1].as<big_int64_t>()[0];
+            int64_t tsb = packet_queue_[i].as<big_int64_t>()[0];
+            if (tsb - tsa > 10) {
+                logger::warning() << "Discontinuity in audio stream: packets are "
+                    << (tsb - tsa) << "ms apart.";
+            }
+        }
     }
 
     void log_packet_delay(byte_array const& pkt)
