@@ -26,8 +26,8 @@ namespace pt = boost::posix_time;
 using namespace std;
 using namespace ssu;
 
-const std::string service_name{"streaming"};
-const std::string protocol_name{"opus"};
+static const std::string service_name{"streaming"};
+static const std::string protocol_name{"opus"};
 
 static const pt::ptime epoch{boost::gregorian::date(1970, boost::gregorian::Jan, 1)};
 
