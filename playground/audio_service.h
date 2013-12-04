@@ -25,8 +25,14 @@ public:
     audio_service(std::shared_ptr<ssu::host> host);
     ~audio_service();
 
+    bool is_active() const;
     void establish_outgoing_session(ssu::peer_id const& eid, std::vector<std::string> ep_hints);
     void listen_incoming_session();
+    /**
+     * Terminate an active session, causing all audio I/O to stop.
+     */
+    void end_session();
+
     // Voice service media signals
     typedef boost::signals2::signal<void (void)> session_signal;
     session_signal on_session_started;
