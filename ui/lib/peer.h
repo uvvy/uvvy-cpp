@@ -22,8 +22,8 @@ private:
     StreamServer server;                    // To accept incoming streams
     const QString svname;                   // Name of service we provide
     const QString prname;                   // Name of protocol we support
-    QHash<SST::PeerId, Stream*> out;         // Outoing streams by host ID
-    QHash<SST::PeerId, QSet<Stream*> > in;   // Incoming streams by host ID
+    QHash<SST::PeerId, Stream*> out;        // Outoing streams by host ID
+    QHash<SST::PeerId, QSet<Stream*> > in;  // Incoming streams by host ID
     QPointer<PeerTable> peers;              // Peer table to track
     QTimer recontimer;                      // To reconnect failed streams
     bool exclusive;
@@ -92,8 +92,7 @@ public:
      * @param  hostId [description]
      * @return        [description]
      */
-    inline Stream *outStream(const SST::PeerId &hostId)
-        { return out.value(hostId.getId()); }
+    inline Stream *outStream(const SST::PeerId &hostId) { return out.value(hostId.getId()); }
 
     /**
      * Returns true if an outgoing stream exists and is connected.
