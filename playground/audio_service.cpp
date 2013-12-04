@@ -81,6 +81,7 @@ class audio_receiver
     deque<byte_array> packet_queue_;
     shared_ptr<stream> stream_;
     plotfile plot_;
+    int64_t time_difference_{0};
 
 public:
     static constexpr int nChannels{1};
@@ -170,7 +171,12 @@ protected:
 #if REALTIME_CRIME
         logger::debug() << "received packet of size " << msg.size();
 #endif
-        
+
+        if (!time_difference_) {
+            time_difference_ = (pt::microsec_clock::universal_time() - epoch).total_milliseconds()
+                - msg.as<big_int64_t>()[0];
+        }
+
         log_packet_delay(msg);
 
         packet_queue_.push_back(msg);
