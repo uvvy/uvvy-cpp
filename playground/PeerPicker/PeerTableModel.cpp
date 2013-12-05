@@ -33,7 +33,7 @@ enum {
 
 struct Peer
 {
-    const int version_ = 1;
+    static const int version_ = 1;
 
     // Basic peer info - always present
     QString name_;
@@ -64,6 +64,8 @@ struct Peer
         flags_[0] = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
     }
 };
+
+const int Peer::version_;
 
 flurry::oarchive& operator << (flurry::oarchive& out, QString const& str)
 {
