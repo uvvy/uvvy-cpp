@@ -9,12 +9,12 @@
 #include "traverse_nat.h"
 #include "logging.h"
 #include "host.h"
-#include "private/regserver_client.h" // @fixme Testing only.
+// #include "private/regserver_client.h" // @fixme Testing only.
 
 using namespace std;
 using namespace ssu;
 
-constexpr uint16_t regserver_port = uia::routing::internal::REGSERVER_DEFAULT_PORT;
+// constexpr uint16_t regserver_port = uia::routing::internal::REGSERVER_DEFAULT_PORT;
 
 shared_ptr<upnp::UpnpIgdClient> traverse_nat(std::shared_ptr<host> host)
 {
