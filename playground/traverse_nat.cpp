@@ -16,6 +16,18 @@ using namespace ssu;
 
 // constexpr uint16_t regserver_port = uia::routing::internal::REGSERVER_DEFAULT_PORT;
 
+static
+bool open_ports(shared_ptr<upnp::UpnpIgdClient> upnp, std::set<uint16_t> ports)
+{
+    bool all_added = true;
+    for (uint16_t port : ports)
+    {
+        all_added &= upnp->AddPortMapping(port, upnp::kTcp);
+        all_added &= upnp->AddPortMapping(port, upnp::kUdp);
+    }
+    return all_added;
+}
+
 shared_ptr<upnp::UpnpIgdClient> traverse_nat(std::shared_ptr<host> host)
 {
     shared_ptr<upnp::UpnpIgdClient> upnp = make_shared<upnp::UpnpIgdClient>();
@@ -38,12 +50,11 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(std::shared_ptr<host> host)
         });
     }
 
-    bool all_added = true;
-    for (uint16_t port : ports)
-    {
-        all_added &= upnp->AddPortMapping(port, upnp::kTcp);
-        all_added &= upnp->AddPortMapping(port, upnp::kUdp);
-    }
+    // @todo
+    // Try port->port mapping first
+    // If it fails, try port->0 mapping to set external port automatically
+
+    bool all_added = open_ports(upnp, ports);
 
     if (upnp->IsAsync()) {
         logger::debug() << "Waiting...";
