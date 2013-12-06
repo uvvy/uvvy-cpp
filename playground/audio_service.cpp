@@ -318,6 +318,17 @@ public:
             return;
         }
 
+        open_audio();
+    }
+
+    ~audio_hardware()
+    {
+        close_audio();
+        delete audio_inst; audio_inst = 0;
+    }
+
+    void open_audio()
+    {
         // Open the audio device
         RtAudio::StreamParameters inparam, outparam;
         inparam.deviceId = audio_inst->getDefaultInputDevice();
@@ -332,19 +343,29 @@ public:
         }
         catch (RtError &error) {
             logger::warning() << "Couldn't open stream, " << error.what();
-            return;
+            throw;
         }
     }
 
-    ~audio_hardware()
+    void close_audio()
     {
         try {
             audio_inst->closeStream();
         }
         catch (RtError &error) {
             logger::warning() << "Couldn't close stream, " << error.what();
+            throw;
         }
-        delete audio_inst; audio_inst = 0;
+    }
+
+    void start_audio()
+    {
+        audio_inst->startStream();
+    }
+
+    void stop_audio()
+    {
+        audio_inst->stopStream();
     }
 
     void new_connection(shared_ptr<server> server)
@@ -356,12 +377,14 @@ public:
         logger::info() << "New incoming connection from " << stream->remote_host_id();
         streaming(stream);
 
-        audio_inst->startStream();
-    }
+        stream->on_link_up.connect([this] {
+            start_audio();
+        });
 
-    void out_stream_ready()
-    {
-        audio_inst->startStream();
+        if (stream->is_link_up()) {
+            logger::debug() << "Incoming stream is ready, start sending immediately.";
+            audio_inst->startStream();
+        }
     }
 
     void streaming(shared_ptr<stream> stream)
@@ -438,7 +461,7 @@ void audio_service::establish_outgoing_session(peer_id const& eid,
     pimpl_->hw.streaming(pimpl_->stream);
     pimpl_->stream->on_link_up.connect([this] {
         on_session_started();
-        pimpl_->hw.out_stream_ready();
+        pimpl_->hw.start_audio();
     });
     pimpl_->stream->connect_to(eid, service_name, protocol_name);
 
