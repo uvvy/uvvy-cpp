@@ -277,7 +277,6 @@ public:
         int64_t ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
         samplebuf.as<big_int64_t>()[0] = ts;
         // Ideally, an ack packet would contain ts info at the receiving side for this packet.
-        // @todo Implement the RTT calculation in ssu::stream!
 
         // @todo Perform encode in a separate thread, not capture thread.
         //async{
