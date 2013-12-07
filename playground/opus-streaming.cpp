@@ -61,6 +61,8 @@ int main(int argc, char* argv[])
 
     if (!verbose_debug) {
         logger::set_verbosity(logger::verbosity::info);
+    } else {
+        logger::logging::set_verbosity(199);
     }
 
     auto settings = settings_provider::instance();
