@@ -371,7 +371,9 @@ public:
         audio_inst->stopStream();
     }
 
-    void new_connection(shared_ptr<server> server)
+    void new_connection(shared_ptr<server> server,
+        std::function<void(void)> on_start,
+        std::function<void(void)> on_stop)
     {
         auto stream = server->accept();
         if (!stream)
@@ -380,13 +382,20 @@ public:
         logger::info() << "New incoming connection from " << stream->remote_host_id();
         streaming(stream);
 
-        stream->on_link_up.connect([this] {
+        stream->on_link_up.connect([this,on_start] {
+            on_start();
             start_audio();
+        });
+
+        stream->on_link_down.connect([this,on_stop] {
+            on_stop();
+            stop_audio();
         });
 
         if (stream->is_link_up()) {
             logger::debug() << "Incoming stream is ready, start sending immediately.";
-            audio_inst->startStream();
+            on_start();
+            start_audio();
         }
     }
 
@@ -466,6 +475,10 @@ void audio_service::establish_outgoing_session(peer_id const& eid,
         on_session_started();
         pimpl_->hw.start_audio();
     });
+    pimpl_->stream->on_link_down.connect([this] {
+        on_session_finished();
+        pimpl_->hw.stop_audio();
+    });
     pimpl_->stream->connect_to(eid, service_name, protocol_name);
 
     if (!ep_hints.empty())
@@ -487,8 +500,9 @@ void audio_service::listen_incoming_session()
     pimpl_->server = make_shared<ssu::server>(pimpl_->host_);
     pimpl_->server->on_new_connection.connect([this]
     {
-        on_session_started();
-        pimpl_->hw.new_connection(pimpl_->server);
+        pimpl_->hw.new_connection(pimpl_->server,
+            [this] { on_session_started(); },
+            [this] { on_session_finished(); });
     });
     bool listening = pimpl_->server->listen(service_name, "Streaming services",
                                             protocol_name, "OPUS Audio protocol");
@@ -497,3 +511,4 @@ void audio_service::listen_incoming_session()
         throw runtime_error("Couldn't set up server listening to streaming:opus");
     }
 }
+
