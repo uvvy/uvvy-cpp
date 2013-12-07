@@ -19,6 +19,9 @@
 // Set to 1 if you want to console-log in realtime thread.
 #define REALTIME_CRIME 0
 
+#define TRACE_ENTRY 250
+#define TRACE_DETAIL 251
+
 // Set to 1 if you want to generate gnuplot file of delays.
 #define DELAY_PLOT 0
 
@@ -119,7 +122,7 @@ public:
     void get_packet(float* decoded_packet, size_t max_frames)
     {
 #if REALTIME_CRIME
-        logger::debug() << "get_packet";
+        logger::debug(TRACE_ENTRY) << "get_packet";
 #endif
         unique_lock<mutex> lock(queue_mutex_);
         assert(max_frames == frame_size_);
@@ -142,7 +145,7 @@ public:
                     << frame_size_;
             }
 #if REALTIME_CRIME
-            logger::debug() << "get_packet decoded frame of size " << pkt.size()
+            logger::debug(TRACE_DETAIL) << "get_packet decoded frame of size " << pkt.size()
                 << " into " << len << " frames";
 #endif
         } else {
@@ -155,7 +158,7 @@ public:
                 logger::warning() << "Couldn't decode missing frame, returned " << len;
             }
 #if REALTIME_CRIME
-            logger::debug() << "get_packet decoded missing frame of size " << len;
+            logger::debug(TRACE_DETAIL) << "get_packet decoded missing frame of size " << len;
 #endif
             // assert(len == frame_size_);
         }
@@ -169,7 +172,7 @@ protected:
         // extract payload
         byte_array msg = stream_->read_datagram();
 #if REALTIME_CRIME
-        logger::debug() << "received packet of size " << msg.size();
+        logger::debug(TRACE_ENTRY) << "received packet of size " << msg.size();
 #endif
 
         if (!time_difference_) {
@@ -194,7 +197,7 @@ protected:
             int64_t tsa = packet_queue_[i-1].as<big_int64_t>()[0];
             int64_t tsb = packet_queue_[i].as<big_int64_t>()[0];
             if (tsb - tsa > 10) {
-                logger::warning() << "Discontinuity in audio stream: packets are "
+                logger::warning(TRACE_DETAIL) << "Discontinuity in audio stream: packets are "
                     << (tsb - tsa) << "ms apart.";
             }
         }
@@ -267,7 +270,7 @@ public:
     void send_packet(float* buffer, size_t nFrames)
     {
 #if REALTIME_CRIME
-        logger::debug() << "send_packet frame size " << frame_size_
+        logger::debug(TRACE_ENTRY) << "send_packet frame size " << frame_size_
             << ", got nFrames " << nFrames;
 #endif
         assert((int)nFrames == frame_size_);
@@ -400,7 +403,7 @@ private:
         audio_hardware* instance = reinterpret_cast<audio_hardware*>(userdata);
 
 #if REALTIME_CRIME
-        logger::debug() << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer
+        logger::debug(TRACE_ENTRY) << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer
             << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
 #endif
 
