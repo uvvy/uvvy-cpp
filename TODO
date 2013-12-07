@@ -113,7 +113,7 @@ Structured Streams:
  ☐ tx_reset implementation - test
  ☐ Congestion Control
 
- ☐ BUG: Assertion failed: (transmit_sids_.empty()), function detach_all, file ../ssu/lib/stream_channel.cpp, line 195.
+ ✔ BUG: Assertion failed: (transmit_sids_.empty()), function detach_all, file ../ssu/lib/stream_channel.cpp, line 195. @done (13-12-07 09:46)
    happens after a while on opus-streaming receiving side
 
 zlib_armor
