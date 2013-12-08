@@ -111,6 +111,7 @@ Routing:
 
 Structured Streams:
  ☐ tx_reset implementation - test
+ ☐ implement rx_reset_packet
  ☐ Congestion Control
 
  ✔ BUG: Assertion failed: (transmit_sids_.empty()), function detach_all, file ../ssu/lib/stream_channel.cpp, line 195. @done (13-12-07 09:46)
