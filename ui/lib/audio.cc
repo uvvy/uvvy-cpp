@@ -481,52 +481,7 @@ Audio::~Audio()
 	}
 }
 
-
-////////// AudioStream //////////
-
-AudioStream::AudioStream(QObject *parent)
-:	QObject(parent), enab(false), framesize(0), rate(0)
-{
-}
-
-AudioStream::~AudioStream()
-{
-	disable();
-}
-
-void AudioStream::setEnabled(bool enable)
-{
-	enab = enable;
-}
-
-void AudioStream::setFrameSize(int framesize)
-{
-	Q_ASSERT(!enabled());
-	this->framesize = framesize;
-}
-
-void AudioStream::setSampleRate(double samplerate)
-{
-	Q_ASSERT(!enabled());
-	this->rate = samplerate;
-}
-
-
 ////////// AbstractAudioInput //////////
-
-AbstractAudioInput::AbstractAudioInput(QObject *parent)
-:	AudioStream(parent)
-{
-}
-
-AbstractAudioInput::AbstractAudioInput(int framesize, double samplerate,
-					QObject *parent)
-:	AudioStream(parent)
-{
-	setFrameSize(framesize);
-	setSampleRate(samplerate);
-}
-
 void AbstractAudioInput::setEnabled(bool enabling)
 {
 	qDebug() << __PRETTY_FUNCTION__ << enabling;
@@ -554,20 +509,6 @@ void AbstractAudioInput::setEnabled(bool enabling)
 
 
 ////////// AbstractAudioOutput //////////
-
-AbstractAudioOutput::AbstractAudioOutput(QObject *parent)
-:	AudioStream(parent)
-{
-}
-
-AbstractAudioOutput::AbstractAudioOutput(int framesize, double samplerate,
-					QObject *parent)
-:	AudioStream(parent)
-{
-	setFrameSize(framesize);
-	setSampleRate(samplerate);
-}
-
 void AbstractAudioOutput::setEnabled(bool enabling)
 {
 	qDebug() << __PRETTY_FUNCTION__ << enabling;

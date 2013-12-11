@@ -11,7 +11,7 @@ class abstract_audio_input : public audio_stream
     typedef audio_stream super;
 public:
     abstract_audio_input() = default;
-    abstract_audio_input(int framesize, double samplerate);
+    abstract_audio_input(int framesize, double samplerate, int channels = 1);
 
     void set_enabled(bool enabled) override;
 
