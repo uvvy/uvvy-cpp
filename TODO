@@ -114,6 +114,8 @@ Structured Streams:
  ☐ implement rx_reset_packet
  ☐ Congestion Control
 
+ ☐ надо сунуть on_destroyed() member-ом в базовый класс - so it doesn't get destroyed until it fires
+
  ✔ BUG: Assertion failed: (transmit_sids_.empty()), function detach_all, file ../ssu/lib/stream_channel.cpp, line 195. @done (13-12-07 09:46)
    happens after a while on opus-streaming receiving side
 
@@ -166,7 +168,7 @@ Most immediate usability necessities:
    ☐ stream attachment and detachment
    ☐ proper stream ID allocation & assignment
    ☐ implement and use sequencing barriers properly (spec 3.4.1)
-   ☐ txReset
+   ✔ txReset @done (13-12-08 21:02)
  ☐ specify and fix negotiation protocol format
 
  ☐ give priority to local-network Endpoint addresses first (need to match network against available interfaces' IPs)
