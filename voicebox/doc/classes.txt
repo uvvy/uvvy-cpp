@@ -1,0 +1,79 @@
+Class trees
+
+Public-facing API:
+
+audio_service                  <-- audio session establishment/termination/state
+
+Internal classes:
+
+audio_hardware                 <-- audio hardware I/O using RtAudio API
+audio_receiver                 <-- ssu stream layer for receiving packets from remote
+audio_sender                   <-- ssu stream layer for sending packets to remote
+audio_stream                   <-- abstract base class for audio packets
++--audio_loopback
++--abstract_audio_input        <-- accept and encode microphone capture
+|  +--packetized_input         <-- packetize captured audio
+|     +--audio_input
+|     +--file_looped_input
+|     +--opus_input            <-- compress captured packets with OPUS
+|     +--raw_input             <-- encode audio frame as-is
++--abstract_audio_output       <-- receive, decode and produce playback output
+   +--packetized_output
+      +--audio_output
+      +--file_looped_output
+      +--opus_output
+      +--raw_output
+
+Useful chains of filters:
+
+-- push ----------------->  -- pull ----------------->
+rtaudio_source->packetizer->opus_encoder->network_sink
+
+push via rtcallback in rtaudio thread:
+
+rtaudio_source->accept_input(data)
+-->packetizer->accept_input(data, size)  <- interthread sync needed here
+
+pull via packetizer.on_ready_read() in sendthread:
+
+packetizer->get_packet()
+opus_encoder->encode_packet()
+network_sink->send_packet()
+
+-- push ------------------->  -- pull ------------------------------->
+network_source->jitterbuffer->opus_decoder->depacketizer->rtaudio_sink
+
+push via incoming network packet event:
+network_source->produce_output(data)
+->jitterbuffer->add_packet(seq, data)
+
+pull via rtaudio rtcallback:
+rtaudio_sink->produce_output()
+->depacketizer->produce_output()
+  ->opus_decoder->produce_output()
+    ->jitterbuffer->get_packet()          <- interthread sync needed here
+
+Jitterbuffer also needs to keep track of the current playback timestamp, to discard too old packets
+and fill in for missing packets in the queue.
+
+CONCEPTS:
+
+sources push data to an acceptor
+sinks pull data from a producer
+
+class source
+{
+    source* acceptor_{nullptr};
+
+    void set_acceptor(source*);
+    virtual void accept_input(byte_array data);
+};
+
+class sink
+{
+    sink* producer_{nullptr};
+
+    void set_producer(sink*);
+    virtual void produce_output(void* buffer);
+};
+
