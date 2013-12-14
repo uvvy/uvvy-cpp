@@ -36,44 +36,36 @@ rtaudio_source->accept_input(data)
 
 pull via packetizer.on_ready_read() in sendthread:
 
-packetizer->get_packet()
-opus_encoder->encode_packet()
-network_sink->send_packet()
+packetizer->produce_output() -> get_packet()
+opus_encoder->produce_output() -> encode_packet()
+network_sink->produce_output() -> send_packet()
 
--- push ------------------->  -- pull ------------------------------->
-network_source->jitterbuffer->opus_decoder->depacketizer->rtaudio_sink
+-- push ------------------->  -- pull ----------------->
+network_source->jitterbuffer->opus_decoder->rtaudio_sink
 
 push via incoming network packet event:
-network_source->produce_output(data)
-->jitterbuffer->add_packet(seq, data)
+network_source->accept_input(data)
+->jitterbuffer->accept_input() -> add_packet(seq, data)
 
 pull via rtaudio rtcallback:
 rtaudio_sink->produce_output()
-->depacketizer->produce_output()
   ->opus_decoder->produce_output()
-    ->jitterbuffer->get_packet()          <- interthread sync needed here
+    ->jitterbuffer->produce_output() -> get_packet()          <- interthread sync needed here
 
 Jitterbuffer also needs to keep track of the current playback timestamp, to discard too old packets
 and fill in for missing packets in the queue.
 
-CONCEPTS:
 
-sources push data to an acceptor
-sinks pull data from a producer
-
-class source
-{
-    source* acceptor_{nullptr};
-
-    void set_acceptor(source*);
-    virtual void accept_input(byte_array data);
-};
-
-class sink
-{
-    sink* producer_{nullptr};
-
-    void set_producer(sink*);
-    virtual void produce_output(void* buffer);
-};
-
+audio_stream
++--audio_source
+   +--file_source
+   +--packet_source (network)
+   +--rtaudio_source
+   +--jitterbuffer
+   +--packetizer
++--audio_sink
+   +--packet_sink
+   +--rtaudio_sink
+   +--jitterbuffer ?
+   +--opus_encoder_sink
+   +--opus_decoder_sink
