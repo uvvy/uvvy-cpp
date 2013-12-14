@@ -92,6 +92,7 @@ include_directories(support/include) # For routing access to ssu host and link_r
 include_directories(krypto/include) # For cryptographic primitives
 include_directories(ssu/include) # For routing access to ssu host and link_receiver
 include_directories(routing/include) # For ssu access to routing client
+include_directories(voicebox/include)
 
 add_subdirectory(3rdparty/plist)
 add_subdirectory(support)

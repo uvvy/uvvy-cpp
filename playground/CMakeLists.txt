@@ -5,7 +5,6 @@ include(${QT_USE_FILE})
 
 include_directories(../nat/include ../ssu/include ../support/include)
 include_directories(../ui/3rdparty/opus-1.0.1/include) # For unlogger
-include_directories(../voicebox)
 
 #set(udpsender_SOURCES udpsend.cpp main.cpp)
 #set(udpsender_HEADERS udpsend.h)
