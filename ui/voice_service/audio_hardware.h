@@ -1,5 +1,10 @@
 #pragma once
 
+#include <memory>
+#include <functional>
+#include "server.h"
+#include "stream.h"
+
 class RtAudio;
 class audio_sender; // @todo Remove
 class audio_receiver; // @todo Remove
@@ -24,15 +29,25 @@ public:
     static bool add_outstream(abstract_audio_output* out);
     static bool remove_outstream(abstract_audio_output* out);
 
+    static void reopen();
+    static int get_sample_rate();
+    static int get_frame_size();
+
     void open_audio();
     void close_audio();
 
     void start_audio();
     void stop_audio();
 
-    void new_connection(shared_ptr<server> server,
+    // @todo Move ssu-related handlers into a different class,
+    // leave only audio-hardware-related things here.
+    void new_connection(std::shared_ptr<ssu::server> server,
         std::function<void(void)> on_start,
         std::function<void(void)> on_stop);
 
-    void streaming(shared_ptr<stream> stream);
+    void streaming(std::shared_ptr<ssu::stream> stream);
+
+    // Hardware I/O handlers called from rtcallback
+    void capture(void* buffer, unsigned int nFrames);
+    void playback(void* buffer, unsigned int nFrames);
 };

@@ -1,8 +1,13 @@
-#include "audio_hardware.h"
 #include "RtAudio.h"
+#include "audio_hardware.h"
+#include "audio_sender.h"
+#include "audio_receiver.h"
 
-static std::set<abstract_audio_input*> instreams;
-static std::set<abstract_audio_output*> outstreams;
+using namespace std;
+using namespace ssu;
+
+static set<abstract_audio_input*> instreams;
+static set<abstract_audio_output*> outstreams;
 
 audio_hardware::audio_hardware(audio_sender* sender, audio_receiver* receiver)
     : sender_(sender)
@@ -11,7 +16,7 @@ audio_hardware::audio_hardware(audio_sender* sender, audio_receiver* receiver)
     try {
         audio_inst  = new RtAudio();
     }
-    catch (RtError &error) {
+    catch (RtError& error) {
         logger::warning() << "Can't initialize RtAudio library, " << error.what();
         return;
     }
@@ -44,7 +49,7 @@ bool audio_hardware::add_outstream(abstract_audio_output* out)
 {
     assert(!contains(outstreams, out));
     bool wasempty = outstreams.empty();
-    outstreams.append(out);
+    outstreams.insert(out);
     return wasempty;
 }
 
@@ -53,6 +58,44 @@ bool audio_hardware::remove_outstream(abstract_audio_output* out)
     assert(contains(outstreams, out));
     outstreams.erase(out);
     return outstreams.empty();
+}
+
+static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrames,
+    double, RtAudioStreamStatus, void *userdata)
+{
+    audio_hardware* instance = reinterpret_cast<audio_hardware*>(userdata);
+
+#if REALTIME_CRIME
+    logger::debug(TRACE_ENTRY) << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer
+        << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
+#endif
+
+    // An RtAudio "frame" is one sample per channel,
+    // whereas our "frame" is one buffer worth of data (as in Speex).
+
+#if 0
+    if (inputBuffer && outputBuffer) {
+        copy_n((char*)inputBuffer, nFrames*sizeof(float), (char*)outputBuffer);
+    }
+#else
+    instance->capture(inputBuffer, nFrames);
+    instance->playback(outputBuffer, nFrames);
+#endif
+    return 0;
+}
+
+void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
+{
+    if (inputBuffer) {
+        sender_->send_packet((float*)inputBuffer, nFrames);
+    }
+}
+
+void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
+{
+    if (outputBuffer) {
+        receiver_->get_packet((float*)outputBuffer, nFrames);
+    }
 }
 
 void audio_hardware::open_audio()
@@ -97,8 +140,8 @@ void audio_hardware::stop_audio()
 }
 
 void audio_hardware::new_connection(shared_ptr<server> server,
-    std::function<void(void)> on_start,
-    std::function<void(void)> on_stop)
+    function<void(void)> on_start,
+    function<void(void)> on_stop)
 {
     auto stream = server->accept();
     if (!stream)
@@ -128,32 +171,4 @@ void audio_hardware::streaming(shared_ptr<stream> stream)
 {
     sender_->streaming(stream);
     receiver_->streaming(stream);
-}
-
-static int audio_hardware::rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrames,
-    double, RtAudioStreamStatus, void *userdata)
-{
-    audio_hardware* instance = reinterpret_cast<audio_hardware*>(userdata);
-
-#if REALTIME_CRIME
-    logger::debug(TRACE_ENTRY) << "rtcallback["<<instance<<"] outputBuffer " << outputBuffer
-        << ", inputBuffer " << inputBuffer << ", nframes " << nFrames;
-#endif
-
-    // An RtAudio "frame" is one sample per channel,
-    // whereas our "frame" is one buffer worth of data (as in Speex).
-
-#if 0
-    if (inputBuffer && outputBuffer) {
-        copy_n((char*)inputBuffer, nFrames*sizeof(float), (char*)outputBuffer);
-    }
-#else
-    if (inputBuffer) {
-        instance->sender_->send_packet((float*)inputBuffer, nFrames);
-    }
-    if (outputBuffer) {
-        instance->receiver_->get_packet((float*)outputBuffer, nFrames);
-    }
-#endif
-    return 0;
 }

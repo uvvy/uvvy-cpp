@@ -11,6 +11,12 @@
 #include <boost/signals2/signal.hpp>
 #include "host.h"
 
+// Set to 1 if you want to console-log in realtime thread.
+#define REALTIME_CRIME 0
+
+#define TRACE_ENTRY 250
+#define TRACE_DETAIL 251
+
 /**
  * Audio service creates several streams for sending and receiving packetized audio data
  * as well as a special high-priority stream for controlling the session establishment

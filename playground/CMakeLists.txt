@@ -21,7 +21,7 @@ add_library(natclient STATIC traverse_nat.cpp)
 add_library(rclient STATIC client_utils.cpp)
 
 add_executable(opus-streaming opus-streaming.cpp)
-target_link_libraries(opus-streaming ssu support voiceclient rtaudio opus plist rclient routing
+target_link_libraries(opus-streaming ssu support voicebox rtaudio opus plist rclient routing
     natclient nat upnpc krypto ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS opus-streaming
     RUNTIME DESTINATION tools)

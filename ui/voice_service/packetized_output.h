@@ -1,7 +1,7 @@
 #pragma once
 
 #include <deque>
-#include <boost/mutex.hpp>
+#include <mutex>
 #include <boost/signals2/signal.hpp>
 #include "byte_array.h"
 #include "abstract_audio_output.h"
@@ -15,7 +15,7 @@
  */
 class packetized_output : public abstract_audio_output
 {
-    typedef super abstract_audio_output;
+    typedef abstract_audio_output super;
 
 protected:
     /**
@@ -24,13 +24,18 @@ protected:
     static const int max_skip = 3;
 
     // Inter-thread synchronization and queueing state
-    boost::mutex mutex_;               // Protection for output queue
+    std::mutex mutex_;                 // Protection for output queue
     std::deque<byte_array> out_queue_; // Queue of audio output frames
     uint64_t out_sequence_{0};
 
 public:
     packetized_output() = default;
+    packetized_output(int framesize, double samplerate, int channels = 1)
+        : abstract_audio_output(framesize, samplerate, channels)
+    {}
     ~packetized_output();
+
+    void set_frame_size(int framesize);
 
     /**
      * Write a frame with the given seqno to the tail of the queue,
@@ -40,7 +45,7 @@ public:
      * @param seqno    [description]
      * @param queuemax [description]
      */
-    void write_frame(byte_array const& buf, uint64_t seq_no, int queue_max);
+    void write_frame(byte_array const& buf, uint64_t seq_no, size_t queue_max);
 
     /**
      * Return the current length of the output queue.
