@@ -96,6 +96,7 @@ include_directories(routing/include) # For ssu access to routing client
 add_subdirectory(3rdparty/plist)
 add_subdirectory(support)
 add_subdirectory(krypto)
+add_subdirectory(voicebox)
 
 add_subdirectory(ssu)
 add_subdirectory(routing)

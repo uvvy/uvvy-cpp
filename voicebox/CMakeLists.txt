@@ -2,7 +2,7 @@
 # TODO: extract into a separate libvoicebox repo
 #
 include_directories(.)
-include_directories(../3rdparty/opus-1.0.1/include ../3rdparty/rtaudio-4.0.11)
+include_directories(../ui/3rdparty/opus-1.0.1/include ../ui/3rdparty/rtaudio-4.0.11)
 
 add_library(voicebox STATIC
     audio_service.cpp
