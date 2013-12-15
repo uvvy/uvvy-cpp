@@ -59,3 +59,5 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
         assert(len > 0);
     }
 }
+
+} // voicebox namespace
