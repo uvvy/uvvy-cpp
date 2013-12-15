@@ -3,6 +3,8 @@
 
 using namespace std;
 
+namespace voicebox {
+
 void opus_encode_sink::set_enabled(bool enabling)
 {
     if (enabling and !is_enabled()) {
@@ -54,3 +56,4 @@ void opus_encode_sink::produce_output(byte_array& buffer)
     logger::debug() << "Encoded frame size: " << nbytes;
 }
 
+} // voicebox namespace

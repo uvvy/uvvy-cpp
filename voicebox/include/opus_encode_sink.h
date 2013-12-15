@@ -3,6 +3,8 @@
 #include "audio_sink.h"
 #include "opus.h"
 
+namespace voicebox {
+
 /**
  * This class represents an OPUS-encoded sink for audio.
  */
@@ -24,3 +26,5 @@ public:
 private:
     void produce_output(byte_array& buffer) override;
 };
+
+} // voicebox namespace
