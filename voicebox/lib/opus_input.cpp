@@ -35,27 +35,18 @@ void opus_input::set_enabled(bool enabling)
     }
 }
 
-void opus_input::accept_input(const float *samplebuf)
+void opus_input::accept_input(byte_array samplebuf)
 {
     // Encode the frame and write it into a buffer
     byte_array bytebuf;
     int maxbytes = 1024;//meh, any opus option to get this?
     bytebuf.resize(maxbytes);
-    int nbytes = opus_encode_float(encstate, samplebuf, frame_size(),
+    int nbytes = opus_encode_float(encstate, (const float*)samplebuf.data(), frame_size(),
         (unsigned char*)bytebuf.data(), bytebuf.size());
     assert(nbytes <= maxbytes);
     bytebuf.resize(nbytes);
     logger::debug() << "Encoded frame size: " << nbytes;
 
-    // Queue it to the main thread
-    unique_lock<mutex> guard(mutex_);
-    bool wasempty = in_queue_.empty();
-    in_queue_.push_back(bytebuf);
-    guard.unlock();
-
-    // Signal the main thread if appropriate
-    if (wasempty) {
-        on_ready_read();
-    }
+    in_queue_.enqueue(bytebuf);
 }
 

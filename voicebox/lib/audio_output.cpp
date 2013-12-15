@@ -2,15 +2,15 @@
 
 using namespace std;
 
+// called by netlayer?
 int audio_output::write_frames(const float *buf, int nframes)
 {
-    int framesize = frame_size();
-    lock_guard<mutex> guard(mutex_);
+    // lock_guard<mutex> guard(mutex_);
     for (int i = 0; i < nframes; i++) {
-        byte_array frame(framesize * sizeof(float));
-        memcpy(frame.data(), buf, framesize * sizeof(float));
-        out_queue_.push_back(frame);
-        buf += framesize;
+        byte_array frame(frame_bytes());
+        memcpy(frame.data(), buf, frame_bytes());
+        out_queue_.enqueue(frame);
+        buf += frame_size();
     }
     return nframes;
 }
@@ -22,28 +22,18 @@ int audio_output::write_frames(const std::vector<float> &buf)
     return write_frames(&buf[0], nframes);
 }
 
+// called from rtcallback
 void audio_output::produce_output(float *buf)
 {
-    int framesize = frame_size();
-
-    unique_lock<mutex> guard(mutex_);
-    bool emptied{false};
-
+    // unique_lock<mutex> guard(mutex_);
     if (out_queue_.empty())
     {
-        memset(buf, 0, framesize * sizeof(float));
-        emptied = false;
+        memset(buf, 0, frame_bytes());
     }
     else
     {
-        byte_array frame = out_queue_.front();
-        out_queue_.pop_front();
-        memcpy(buf, frame.data(), framesize * sizeof(float));
-        emptied = out_queue_.empty();
+        byte_array frame = out_queue_.dequeue();
+        memcpy(buf, frame.data(), frame_bytes());
     }
-    guard.unlock();
-
-    if (emptied) {
-        on_queue_empty();
-    }
+    // guard.unlock();
 }
