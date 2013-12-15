@@ -6,7 +6,6 @@
 #include "stream.h"
 
 class RtAudio;
-class audio_sender; // @todo Remove
 class audio_receiver; // @todo Remove
 namespace voicebox {
     class audio_sink;
@@ -19,11 +18,10 @@ namespace voicebox {
 class audio_hardware
 {
     RtAudio* audio_inst{0};
-    audio_sender* sender_{0};
     audio_receiver* receiver_{0};
 
 public:
-    audio_hardware(audio_sender* sender, audio_receiver* receiver);
+    audio_hardware(audio_receiver* receiver);
     ~audio_hardware();
 
     static bool add_instream(voicebox::audio_source* in);

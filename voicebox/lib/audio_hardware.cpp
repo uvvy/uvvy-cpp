@@ -1,7 +1,7 @@
 #include <mutex>
 #include "RtAudio.h"
 #include "audio_hardware.h"
-#include "audio_sender.h"
+#include "audio_source.h"
 #include "audio_receiver.h"
 
 using namespace std;
@@ -9,11 +9,18 @@ using namespace ssu;
 
 static std::mutex stream_mutex_;
 
-audio_hardware::audio_hardware(audio_sender* sender, audio_receiver* receiver)
-    : sender_(sender)
-    , receiver_(receiver)
 static set<voicebox::audio_source*> instreams;
 static set<voicebox::audio_sink*> outstreams;
+
+static double hwrate;
+static int hwframesize;
+
+// @fixme Make a proper member
+static int max_capture_channels() { return 1; }
+static int max_playback_channels() { return 1; }
+
+audio_hardware::audio_hardware(audio_receiver* receiver)
+    : receiver_(receiver)
 {
     try {
         audio_inst  = new RtAudio();
@@ -84,39 +91,69 @@ static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
         copy_n((char*)inputBuffer, nFrames*sizeof(float), (char*)outputBuffer);
     }
 #else
-    instance->capture(inputBuffer, nFrames);
-    instance->playback(outputBuffer, nFrames);
+    if (inputBuffer) {
+        instance->capture(inputBuffer, nFrames);
+    }
+    if (outputBuffer) {
+        instance->playback(outputBuffer, nFrames);
+    }
 #endif
     return 0;
 }
 
+// Push to all registered sources in instreams.
 void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
 {
-    if (inputBuffer) {
-        sender_->send_packet((float*)inputBuffer, nFrames);
+    lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we send
+
+    // Broadcast the audio input to all listening input streams
+    for (auto s : instreams)
+    {
+        if (s->sample_rate() == hwrate and s->frame_size() == hwframesize)
+        {
+            // The easy case - no buffering or resampling needed.  v--frame_bytes(nFrames)?
+            s->accept_input(byte_array::wrap(
+                static_cast<const char*>(inputBuffer), nFrames*sizeof(float)));
+            continue;
+        }
+
+        // @todo Implement more tricky cases here, if necessary.
+        assert(false);
     }
+
+    // Now can remove that sender dude..
+    // sender_->send_packet((float*)inputBuffer, nFrames);
 }
 
+// Pull from all registered sinks in outstreams.
 void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
 {
-    if (outputBuffer) {
-        receiver_->get_packet((float*)outputBuffer, nFrames);
-    }
+    lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we mix
+    receiver_->get_packet((float*)outputBuffer, nFrames);
+
+    // Simple cases: no streams mixing, set output level to 0,
+    // 1 stream is mixing, just produce_output() into target buffer.
+    // More than 1 stream mixing: mix into temp buffers than add and normalize.
 }
+
+#define SAMPLE_RATE 48000
 
 void audio_hardware::open_audio()
 {
     // Open the audio device
     RtAudio::StreamParameters inparam, outparam;
     inparam.deviceId = audio_inst->getDefaultInputDevice();
-    inparam.nChannels = audio_sender::nChannels;
+    inparam.nChannels = max_capture_channels(); // of all instreams
     outparam.deviceId = audio_inst->getDefaultOutputDevice();
-    outparam.nChannels = audio_receiver::nChannels;
-    unsigned int bufferFrames = 480; // 10ms
+    outparam.nChannels = max_playback_channels(); // of all outstreams
+    unsigned int bufferFrames = SAMPLE_RATE/100; // 10ms
 
     try {
-        audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, 48000, &bufferFrames,
+        audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, SAMPLE_RATE, &bufferFrames,
             rtcallback, this);
+
+        hwrate = SAMPLE_RATE;
+        hwframesize = bufferFrames;
     }
     catch (RtError &error) {
         logger::warning() << "Couldn't open audio stream, " << error.what();
@@ -145,6 +182,8 @@ void audio_hardware::stop_audio()
 {
     audio_inst->stopStream();
 }
+
+// The following should go to packet_source/packet_sink code...
 
 void audio_hardware::new_connection(shared_ptr<server> server,
     function<void(void)> on_start,
@@ -176,6 +215,6 @@ void audio_hardware::new_connection(shared_ptr<server> server,
 
 void audio_hardware::streaming(shared_ptr<stream> stream)
 {
-    sender_->streaming(stream);
+    // sender_->streaming(stream);
     receiver_->streaming(stream);
 }

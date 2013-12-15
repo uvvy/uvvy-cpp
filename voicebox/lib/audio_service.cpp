@@ -33,7 +33,7 @@ class audio_service::private_impl
 public:
     std::shared_ptr<ssu::host> host_;
     audio_receiver receiver;
-    audio_sender sender;
+    audio_sender sender; // @todo Remove.
     audio_hardware hw;
     shared_ptr<stream> stream;
     shared_ptr<server> server;
@@ -42,7 +42,7 @@ public:
         : host_(host)
         , receiver()
         , sender(host)
-        , hw(&sender, &receiver)
+        , hw(&receiver)
     {}
 };
 
