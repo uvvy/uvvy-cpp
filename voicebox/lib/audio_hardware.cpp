@@ -1,3 +1,4 @@
+#include <mutex>
 #include "RtAudio.h"
 #include "audio_hardware.h"
 #include "audio_sender.h"
@@ -6,6 +7,7 @@
 using namespace std;
 using namespace ssu;
 
+static std::mutex stream_mutex_;
 
 audio_hardware::audio_hardware(audio_sender* sender, audio_receiver* receiver)
     : sender_(sender)
@@ -32,6 +34,7 @@ audio_hardware::~audio_hardware()
 
 bool audio_hardware::add_instream(voicebox::audio_source* in)
 {
+    lock_guard<mutex> guard(stream_mutex_);
     assert(!contains(instreams, in));
     bool wasempty = instreams.empty();
     instreams.insert(in);
@@ -40,6 +43,7 @@ bool audio_hardware::add_instream(voicebox::audio_source* in)
 
 bool audio_hardware::remove_instream(voicebox::audio_source* in)
 {
+    lock_guard<mutex> guard(stream_mutex_);
     assert(contains(instreams, in));
     instreams.erase(in);
     return instreams.empty();
@@ -47,6 +51,7 @@ bool audio_hardware::remove_instream(voicebox::audio_source* in)
 
 bool audio_hardware::add_outstream(voicebox::audio_sink* out)
 {
+    lock_guard<mutex> guard(stream_mutex_);
     assert(!contains(outstreams, out));
     bool wasempty = outstreams.empty();
     outstreams.insert(out);
@@ -55,6 +60,7 @@ bool audio_hardware::add_outstream(voicebox::audio_sink* out)
 
 bool audio_hardware::remove_outstream(voicebox::audio_sink* out)
 {
+    lock_guard<mutex> guard(stream_mutex_);
     assert(contains(outstreams, out));
     outstreams.erase(out);
     return outstreams.empty();
@@ -121,6 +127,7 @@ void audio_hardware::open_audio()
 void audio_hardware::close_audio()
 {
     try {
+        lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we down
         audio_inst->closeStream();
     }
     catch (RtError &error) {
