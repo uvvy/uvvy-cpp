@@ -1,15 +1,17 @@
 #include "logging.h"
-#include "opus_output.h"
+#include "opus_decode_sink.h"
 
 using namespace std;
 
-void opus_output::set_enabled(bool enabling)
+namespace voicebox {
+
+void opus_decode_sink::set_enabled(bool enabling)
 {
     if (enabling and !is_enabled())
     {
         assert(!decstate);
         int error = 0;
-        decstate = opus_decoder_create(48000, num_channels(), &error);
+        decstate = opus_decoder_create(sample_rate(), num_channels(), &error);
         assert(decstate);
         assert(!error);
 
