@@ -19,10 +19,12 @@ protected:
 
 public:
     audio_source() = default;
+    audio_source(int framesize, double samplerate, int channels = 1);
 
     inline void set_acceptor(audio_source* as) {
         acceptor_ = as;
     }
+
     /**
      * Accept input wrapped into a byte_array.
      * The parameters of data inside the array come from audio_stream's settings for
@@ -38,4 +40,4 @@ public:
     void set_num_channels(int num_channels) override;
 };
 
-}
+} // voicebox namespace
