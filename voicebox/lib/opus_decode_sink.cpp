@@ -30,7 +30,7 @@ void opus_decode_sink::set_enabled(bool enabling)
 
         assert(decstate);
         opus_decoder_destroy(decstate);
-        decstate = NULL;
+        decstate = nullptr;
     }
 }
 
@@ -38,9 +38,11 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
 {
     // Grab the next buffer from the queue
     byte_array bytebuf;
-    if (!out_queue_.empty()) { // @todo May become empty here...
-        bytebuf = out_queue_.dequeue();
+    if (producer()) {
+        producer()->produce_output(bytebuf);
     }
+
+    samplebuf.resize(frame_bytes());
 
     // Decode the frame
     if (!bytebuf.is_empty())
