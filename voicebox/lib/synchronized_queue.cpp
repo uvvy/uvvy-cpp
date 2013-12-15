@@ -1,4 +1,3 @@
-#include <boost/thread/locks.hpp> // lock_guard
 #include "synchronized_queue.h"
 
 using namespace std;

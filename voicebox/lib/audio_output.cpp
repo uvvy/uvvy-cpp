@@ -25,7 +25,6 @@ int audio_output::write_frames(const std::vector<float> &buf)
 // called from rtcallback
 void audio_output::produce_output(float *buf)
 {
-    // unique_lock<mutex> guard(mutex_);
     if (out_queue_.empty())
     {
         memset(buf, 0, frame_bytes());
@@ -35,5 +34,4 @@ void audio_output::produce_output(float *buf)
         byte_array frame = out_queue_.dequeue();
         memcpy(buf, frame.data(), frame_bytes());
     }
-    // guard.unlock();
 }

@@ -30,7 +30,7 @@ void packetized_output::write_frame(byte_array const& buf, uint64_t seq_no, size
     }
     seqdiff = min(seqdiff, max_skip);
 
-    // lock_guard<mutex> guard(mutex_);
+    // lock_guard<mutex> guard(mutex_); <- need to lock the whole step here
 
     // Queue up the missed frames, if any.
     for (int i = 0; i < seqdiff; i++) {
@@ -59,8 +59,6 @@ size_t packetized_output::num_frames_queued()
 void packetized_output::reset()
 {
     disable();
-
-    // lock_guard<mutex> guard(mutex_);
     out_queue_.clear();
 }
 

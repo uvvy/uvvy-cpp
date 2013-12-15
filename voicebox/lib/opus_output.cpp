@@ -36,11 +36,9 @@ void opus_output::produce_output(float *samplebuf)
 {
     // Grab the next buffer from the queue
     byte_array bytebuf;
-    // unique_lock<mutex> guard(mutex_);
-    if (!out_queue_.empty()) {
+    if (!out_queue_.empty()) { // @todo May become empty here...
         bytebuf = out_queue_.dequeue();
     }
-    // guard.unlock();
 
     // Decode the frame
     if (!bytebuf.is_empty())
@@ -50,11 +48,6 @@ void opus_output::produce_output(float *samplebuf)
             bytebuf.size(), samplebuf, frame_size(), /*decodeFEC:*/0);
         // assert(len > 0);
         assert(len == frame_size());
-
-        // Signal the main thread if the queue empties
-        // if (nowempty) {
-            // on_queue_empty();
-        // }
     }
     else
     {
