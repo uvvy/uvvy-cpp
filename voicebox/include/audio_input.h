@@ -13,7 +13,9 @@ class audio_input : public packetized_input
     typedef packetized_input super;
 
 public:
-    audio_input() = default;
+    audio_input() {
+        in_queue_.on_ready_read.connect([this] { on_ready_read(); });
+    }
     audio_input(int framesize, double samplerate, int channels = 1);
     ~audio_input();
 

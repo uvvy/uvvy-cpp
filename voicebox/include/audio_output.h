@@ -13,7 +13,9 @@ class audio_output : public packetized_output
     typedef packetized_output super;
 
 public:
-    audio_output() = default;
+    audio_output() {
+        out_queue_.on_queue_empty.connect([this] { on_queue_empty(); });
+    }
     audio_output(int framesize, double samplerate, int channels = 1)
         : packetized_output(framesize, samplerate, channels)
     {}
