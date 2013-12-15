@@ -34,6 +34,19 @@ rtaudio_source->packetizer->opus_encoder_sink->packet_sink
     push via rtcallback in rtaudio thread:
 
         rtaudio_source->accept_input(data)
+
+            What happens here is rtaudio_source collects received data into a ringbuffer at
+            hardware speed. Some hardware interfaces may call accept_input() at irregular
+            intervals with arbitrary buffer size, this source compensates by collecting enough
+            data to make up a packet before calling packetizer. This introduces jitter, but
+            on average it shall be compensated, since packetizer can be called several times in
+            a row, if there's enough data for multiple packets becomes available.
+
+            Packetizer is then called with a fixed-size chunks, comprising a single frame of audio.
+            It introduces its own jitter because packetizer uses synchronized_queue and can
+            possibly block. @todo Ideally it should use a lock-free queue so that at least the
+            rtaudio_source code could continue working if packetizing failed this time.
+
         packetizer->accept_input(data, size)  <-- interthread sync needed here
 
     pull via packetizer.on_ready_read() in sendthread:
