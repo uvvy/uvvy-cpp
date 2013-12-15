@@ -27,7 +27,7 @@ protected:
     // but this may be overridden to process the input data
     // directly in the context of the separate audio thread.
     // The subclass must handle multithread synchronization in this case!
-    void accept_input(const float *buf) override;
+    void accept_input(byte_array frame) override;
 
 private:
     void read_into(float *buf, int nframes);

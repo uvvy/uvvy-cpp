@@ -23,6 +23,11 @@ public:
     inline void set_acceptor(audio_source* as) {
         acceptor_ = as;
     }
+    /**
+     * Accept input wrapped into a byte_array.
+     * The parameters of data inside the array come from audio_stream's settings for
+     * frame_size(), num_channels() and sample_rate().
+     */
     virtual void accept_input(byte_array data);
 
     // Overrides to pass the request down the consumer chain.

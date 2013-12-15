@@ -1,6 +1,7 @@
 #pragma once
 
 #include "audio_stream.h"
+#include "byte_array.h"
 
 /**
  * This abstract base class represents a source of audio input
@@ -21,5 +22,5 @@ protected:
      * This method is typically called from a dedicated audio thread,
      * so the subclass must handle multithread synchronization!
      */
-    virtual void accept_input(const float *buf) = 0;
+    virtual void accept_input(byte_array frame) = 0;
 };

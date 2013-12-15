@@ -29,6 +29,6 @@ private:
      * Our implementation of AbstractAudioInput::acceptInput().
      * @param buf [description]
      */
-    void accept_input(const float *buf) override;
+    void accept_input(byte_array) override;
 };
 
