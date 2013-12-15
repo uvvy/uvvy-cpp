@@ -1,7 +1,10 @@
 #pragma once
 
 /**
- * Common base class for audio_input and audio_output.
+ * Represents information about typed audio stream.
+ * Keeps track of frame size, number of channels and sample rate.
+ *
+ * Common base class for audio_source and audio_sink.
  */
 class audio_stream
 {
@@ -23,15 +26,15 @@ public:
     /// Get or set the frame size of this stream.
     /// Frame size may only be changed while stream is disabled.
     inline int frame_size() const { return frame_size_; }
-    void set_frame_size(int frame_size);
+    virtual void set_frame_size(int frame_size);
 
     /// Get or set the sample rate for this stream.
     /// Sampling rate may only be changed while stream is disabled.
     inline double sample_rate() const { return rate_; }
-    void set_sample_rate(double rate);
+    virtual void set_sample_rate(double rate);
 
     /// Get or set the number of channels for this stream.
     /// Number of channels may only be changed while stream is disabled.
     inline int num_channels() const { return num_channels_; }
-    void set_num_channels(int num_channels);
+    virtual void set_num_channels(int num_channels);
 };

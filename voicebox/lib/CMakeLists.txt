@@ -1,6 +1,9 @@
 
 add_library(voicebox STATIC
     audio_service.cpp
+    audio_sink.cpp
+    audio_source.cpp
+
     audio_hardware.cpp
     audio_stream.cpp
     abstract_audio_input.cpp
