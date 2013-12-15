@@ -50,7 +50,7 @@ void opus_encode_sink::produce_output(byte_array& buffer)
     int maxbytes = 1024;//meh, any opus option to get this?
     buffer.resize(maxbytes);
     int nbytes = opus_encode_float(encstate, (const float*)samplebuf.data(), frame_size(),
-        (unsigned char*)bytebuf.data(), bytebuf.size());
+        (unsigned char*)buffer.data(), buffer.size());
     assert(nbytes <= maxbytes);
     buffer.resize(nbytes);
     logger::debug() << "Encoded frame size: " << nbytes;
