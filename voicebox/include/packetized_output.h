@@ -1,10 +1,7 @@
 #pragma once
 
-#include <deque>
-#include <mutex>
-#include <boost/signals2/signal.hpp>
-#include "byte_array.h"
 #include "abstract_audio_output.h"
+#include "synchronized_queue.h"
 
 /**
  * This class represents a high-level sink for audio output
@@ -23,9 +20,7 @@ protected:
      */
     static const int max_skip = 3;
 
-    // Inter-thread synchronization and queueing state
-    std::mutex mutex_;                 // Protection for output queue
-    std::deque<byte_array> out_queue_; // Queue of audio output frames
+    synchronized_queue out_queue_;
     uint64_t out_sequence_{0};
 
 public:

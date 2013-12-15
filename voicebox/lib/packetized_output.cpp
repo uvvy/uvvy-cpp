@@ -1,4 +1,3 @@
-#include <boost/thread/locks.hpp>
 #include "logging.h"
 #include "packetized_output.h"
 
@@ -31,21 +30,21 @@ void packetized_output::write_frame(byte_array const& buf, uint64_t seq_no, size
     }
     seqdiff = min(seqdiff, max_skip);
 
-    lock_guard<mutex> guard(mutex_);
+    // lock_guard<mutex> guard(mutex_);
 
     // Queue up the missed frames, if any.
     for (int i = 0; i < seqdiff; i++) {
-        out_queue_.push_back(byte_array());
+        out_queue_.enqueue(byte_array());
         logger::debug(199) << "MISSED audio frame " << out_sequence_ + i;
     }
 
     // Queue up the frame we actually got.
-    out_queue_.push_back(buf);
+    out_queue_.enqueue(buf);
     logger::debug(200) << "Received audio frame" << seq_no;
 
     // Discard frames from the head if we exceed queueMax
     while (out_queue_.size() > queue_max) {
-        out_queue_.pop_front();
+        out_queue_.dequeue();
     }
 
     // Remember which sequence we expect next
@@ -54,7 +53,6 @@ void packetized_output::write_frame(byte_array const& buf, uint64_t seq_no, size
 
 size_t packetized_output::num_frames_queued()
 {
-    lock_guard<mutex> guard(mutex_);
     return out_queue_.size();
 }
 
@@ -62,7 +60,7 @@ void packetized_output::reset()
 {
     disable();
 
-    lock_guard<mutex> guard(mutex_);
+    // lock_guard<mutex> guard(mutex_);
     out_queue_.clear();
 }
 
