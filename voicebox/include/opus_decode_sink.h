@@ -1,14 +1,16 @@
 #pragma once
 
-#include "packetized_output.h"
+#include "audio_sink.h"
 #include "opus.h"
+
+namespace voicebox {
 
 /**
  * This class represents a high-level sink for audio output by decoding OPUS stream.
  */
-class opus_output : public packetized_output
+class opus_decode_sink : public audio_sink
 {
-    typedef packetized_output super;
+    typedef audio_sink super;
 
     /**
      * Decoder state.
@@ -17,7 +19,7 @@ class opus_output : public packetized_output
     OpusDecoder* decstate{nullptr};
 
 public:
-    opus_output() = default;
+    opus_decode_sink() = default;
 
     void set_enabled(bool enabling) override;
 
@@ -29,3 +31,4 @@ private:
     void produce_output(byte_array& buffer) override;
 };
 
+} // voicebox namespace
