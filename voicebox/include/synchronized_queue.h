@@ -8,7 +8,7 @@
 class synchronized_queue
 {
     // Inter-thread synchronization and queueing state
-    std::mutex mutex_;             // Protection for input queue
+    mutable std::mutex mutex_;     // Protection for input queue
     std::deque<byte_array> queue_; // Queue of audio input frames
 
     typedef boost::signals2::signal<void (void)> state_signal;
