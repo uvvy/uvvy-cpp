@@ -1,6 +1,13 @@
 #include "audio_stream.h"
 #include <cassert>
 
+audio_stream::audio_stream(int framesize, double samplerate, int channels)
+{
+    set_frame_size(framesize);
+    set_sample_rate(samplerate);
+    set_num_channels(channels);
+}
+
 audio_stream::~audio_stream()
 {
     disable();

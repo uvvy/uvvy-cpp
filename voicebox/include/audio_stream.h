@@ -19,6 +19,7 @@ class audio_stream
 
 public:
     audio_stream() = default;
+    audio_stream(int framesize, double samplerate, int channels = 1);
     virtual ~audio_stream();
 
     inline bool is_enabled() const { return enabled_; }
