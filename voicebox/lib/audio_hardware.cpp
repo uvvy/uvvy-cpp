@@ -119,7 +119,7 @@ void audio_hardware::open_audio()
             rtcallback, this);
     }
     catch (RtError &error) {
-        logger::warning() << "Couldn't open stream, " << error.what();
+        logger::warning() << "Couldn't open audio stream, " << error.what();
         throw;
     }
 }
@@ -131,7 +131,7 @@ void audio_hardware::close_audio()
         audio_inst->closeStream();
     }
     catch (RtError &error) {
-        logger::warning() << "Couldn't close stream, " << error.what();
+        logger::warning() << "Couldn't close audio stream, " << error.what();
         throw;
     }
 }
