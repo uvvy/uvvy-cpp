@@ -3,6 +3,10 @@
 /**
  * Represents information about typed audio stream.
  * Keeps track of frame size, number of channels and sample rate.
+ * The sample format is 32 bits float for convenience.
+ * Frame size is number of samples in one frame. It does not take into account
+ * number of channels.
+ * Total size in bytes of one frame is frame_size() * num_channels() * sizeof(float).
  *
  * Common base class for audio_source and audio_sink.
  */
@@ -22,6 +26,8 @@ public:
     virtual void set_enabled(bool enable);
     inline void enable() { set_enabled(true); }
     inline void disable() { set_enabled(false); }
+
+    inline int frame_bytes() const { return frame_size_ * num_channels_ * sizeof(float); }
 
     /// Get or set the frame size of this stream.
     /// Frame size may only be changed while stream is disabled.
