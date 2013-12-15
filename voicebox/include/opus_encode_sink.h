@@ -22,5 +22,5 @@ public:
     void set_enabled(bool enabling) override;
 
 private:
-    void produce_output(void* buffer) override;
+    void produce_output(byte_array& buffer) override;
 };

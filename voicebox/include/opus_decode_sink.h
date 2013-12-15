@@ -26,6 +26,6 @@ private:
      * Our implementation of AbstractAudioOutput::produceOutput().
      * @param buf [description]
      */
-    void produce_output(float *buf) override;
+    void produce_output(byte_array& buffer) override;
 };
 

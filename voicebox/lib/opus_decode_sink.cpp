@@ -32,7 +32,7 @@ void opus_output::set_enabled(bool enabling)
     }
 }
 
-void opus_output::produce_output(float *samplebuf)
+void opus_decode_sink::produce_output(byte_array& samplebuf)
 {
     // Grab the next buffer from the queue
     byte_array bytebuf;
@@ -45,14 +45,15 @@ void opus_output::produce_output(float *samplebuf)
     {
         logger::debug() << "Decode frame size: " << bytebuf.size();
         int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(),
-            bytebuf.size(), samplebuf, frame_size(), /*decodeFEC:*/0);
+            bytebuf.size(), samplebuf.as<float>(), frame_size(), /*decodeFEC:*/0);
         // assert(len > 0);
         assert(len == frame_size());
     }
     else
     {
         // "decode" a missing frame
-        int len = opus_decode_float(decstate, NULL, 0, samplebuf, frame_size(), /*decodeFEC:*/0);
+        int len = opus_decode_float(decstate, NULL, 0, samplebuf.as<float>(),
+            frame_size(), /*decodeFEC:*/0);
         assert(len > 0);
     }
 }

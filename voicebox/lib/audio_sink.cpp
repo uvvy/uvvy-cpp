@@ -2,7 +2,7 @@
 
 namespace voicebox {
 
-void audio_sink::produce_output(void* buffer)
+void audio_sink::produce_output(byte_array& buffer)
 {
     if (producer_) {
         producer_->produce_output(buffer);

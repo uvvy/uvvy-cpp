@@ -1,6 +1,7 @@
 #pragma once
 
 #include "audio_stream.h"
+#include "byte_array.h"
 
 namespace voicebox {
 
@@ -32,7 +33,7 @@ public:
      * This method is typically called from a dedicated audio thread,
      * so the subclass must handle multithread synchronization!
      */
-    virtual void produce_output(void* buffer);
+    virtual void produce_output(byte_array& buffer);
 
     // Overrides to pass the request up the producer chain.
 
