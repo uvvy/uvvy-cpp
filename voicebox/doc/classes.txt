@@ -1,4 +1,4 @@
-Class trees
+VoiceBox classes
 
 Public-facing API:
 
@@ -9,66 +9,58 @@ Internal classes:
 audio_hardware                 <-- audio hardware I/O using RtAudio API
 audio_receiver                 <-- ssu stream layer for receiving packets from remote
 audio_sender                   <-- ssu stream layer for sending packets to remote
-audio_stream                   <-- abstract base class for audio packets
-+--audio_loopback
-+--abstract_audio_input        <-- accept and encode microphone capture
-|  +--packetized_input         <-- packetize captured audio
-|     +--audio_input
-|     +--file_looped_input
-|     +--opus_input            <-- compress captured packets with OPUS
-|     +--raw_input             <-- encode audio frame as-is
-+--abstract_audio_output       <-- receive, decode and produce playback output
-   +--packetized_output
-      +--audio_output
-      +--file_looped_output
-      +--opus_output
-      +--raw_output
+audio_stream                   <-- base class for audio data packets
++--audio_source                <-- base class for audio source chain
+|  +--file_source              <-- receive blocks of data from a file stream
+|  +--packet_source (network)  <-- receive datagram packets from ssu::stream
+|  +--rtaudio_source           <-- capture audio from audio_hardware (as instream)
+|  +--jitterbuffer
+|  +--packetizer
++--audio_sink                  <-- base class for audio sink chain
+   +--packet_sink              <-- send packets as datagrams over ssu::stream
+   +--rtaudio_sink             <-- playback audio to audio_hardware (as outstream)
+   +--opus_encoder_sink        <-- compress captured packets with OPUS
+   +--opus_decoder_sink        <-- decompress received OPUS packets
+   +--raw_encoder_sink         <-- encode audio frame as-is
+   +--raw_decoder_sink         <-- decode audio frame as-is
+   +--jitterbuffer
+   +--packetizer
 
 Useful chains of filters:
 
--- push ----------------->  -- pull ----------------->
-rtaudio_source->packetizer->opus_encoder->network_sink
+-- push ----------------->  -- pull --------------------->
+rtaudio_source->packetizer->opus_encoder_sink->packet_sink
 
-push via rtcallback in rtaudio thread:
+    push via rtcallback in rtaudio thread:
 
-rtaudio_source->accept_input(data)
--->packetizer->accept_input(data, size)  <- interthread sync needed here
+        rtaudio_source->accept_input(data)
+        packetizer->accept_input(data, size)  <-- interthread sync needed here
 
-pull via packetizer.on_ready_read() in sendthread:
+    pull via packetizer.on_ready_read() in sendthread:
 
-packetizer->produce_output() -> get_packet() <- interthread sync needed here
-opus_encoder->produce_output() -> encode_packet()
-network_sink->produce_output() -> send_packet()
+        packet_sink->produce_output() - send_packet()
+        opus_encoder_sink->produce_output() - encode_packet()
+        packetizer->produce_output() - get_packet()  <-- interthread sync needed here
 
--- push ------------------->  -- pull ----------------->
-network_source->jitterbuffer->opus_decoder->rtaudio_sink
+-- push ------------------>  -- pull ---------------------->
+packet_source->jitterbuffer->opus_decoder_sink->rtaudio_sink
 
-push via incoming network packet event:
-network_source->accept_input(data)
-->jitterbuffer->accept_input() -> add_packet(seq, data)
+    push via incoming network packet event:
 
-pull via rtaudio rtcallback:
-rtaudio_sink->produce_output()
-  ->opus_decoder->produce_output()
-    ->jitterbuffer->produce_output() -> get_packet()          <- interthread sync needed here
+        network_source->accept_input(data)
+        jitterbuffer->accept_input() - add_packet(seq, data)  <-- interthread sync needed here
 
-Jitterbuffer also needs to keep track of the current playback timestamp, to discard too old packets
-and fill in for missing packets in the queue.
+    pull via rtaudio rtcallback:
+
+        rtaudio_sink->produce_output()
+        opus_decoder_sink->produce_output() - decode_packet()
+        jitterbuffer->produce_output() -> get_packet()  <-- interthread sync needed here
 
 On the edge between sources and sinks usually a thread synchronization primitives are used.
 There are two edge classes by default: packetizer and jitterbuffer.
 
-audio_stream
-+--audio_source
-   +--file_source
-   +--packet_source (network)
-   +--rtaudio_source
-   +--jitterbuffer
-   +--packetizer
-+--audio_sink
-   +--packet_sink
-   +--rtaudio_sink
-   +--opus_encoder_sink
-   +--opus_decoder_sink
-   +--jitterbuffer
-   +--packetizer
+Jitterbuffer also needs to keep track of the current playback timestamp, to discard too old packets
+and fill in for missing packets in the queue.
+
+Decoders can either be sources or sinks, depending on where decoding is happening - in push or in
+pull threads. It's usually done in pull thread, to decode only what's necessary.
