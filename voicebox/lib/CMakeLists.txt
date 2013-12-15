@@ -3,6 +3,7 @@ add_library(voicebox STATIC
     audio_service.cpp
     audio_sink.cpp
     audio_source.cpp
+    synchronized_queue.cpp
 
     audio_hardware.cpp
     audio_stream.cpp
