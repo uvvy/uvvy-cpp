@@ -8,7 +8,8 @@ void rtaudio_source::set_enabled(bool enabling)
     logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled())
     {
-        if (frame_size() <= 0 or sample_rate() <= 0.0) {
+        if (frame_size() <= 0 or sample_rate() <= 0.0)
+        {
             logger::warning() << "Bad frame size " << frame_size()
                 << " or sample rate " << sample_rate();
             return;
