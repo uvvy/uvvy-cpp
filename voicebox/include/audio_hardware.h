@@ -8,8 +8,10 @@
 class RtAudio;
 class audio_sender; // @todo Remove
 class audio_receiver; // @todo Remove
-class abstract_audio_input;
-class abstract_audio_output;
+namespace voicebox {
+    class audio_sink;
+    class audio_source;
+} // voicebox namespace
 
 /**
  * Controls the audio layer and starts playback and capture.
@@ -24,10 +26,10 @@ public:
     audio_hardware(audio_sender* sender, audio_receiver* receiver);
     ~audio_hardware();
 
-    static bool add_instream(abstract_audio_input* in);
-    static bool remove_instream(abstract_audio_input* in);
-    static bool add_outstream(abstract_audio_output* out);
-    static bool remove_outstream(abstract_audio_output* out);
+    static bool add_instream(voicebox::audio_source* in);
+    static bool remove_instream(voicebox::audio_source* in);
+    static bool add_outstream(voicebox::audio_sink* out);
+    static bool remove_outstream(voicebox::audio_sink* out);
 
     static void reopen();
     static int get_sample_rate();

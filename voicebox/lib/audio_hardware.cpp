@@ -6,12 +6,12 @@
 using namespace std;
 using namespace ssu;
 
-static set<abstract_audio_input*> instreams;
-static set<abstract_audio_output*> outstreams;
 
 audio_hardware::audio_hardware(audio_sender* sender, audio_receiver* receiver)
     : sender_(sender)
     , receiver_(receiver)
+static set<voicebox::audio_source*> instreams;
+static set<voicebox::audio_sink*> outstreams;
 {
     try {
         audio_inst  = new RtAudio();
@@ -30,7 +30,7 @@ audio_hardware::~audio_hardware()
     delete audio_inst; audio_inst = 0;
 }
 
-bool audio_hardware::add_instream(abstract_audio_input* in)
+bool audio_hardware::add_instream(voicebox::audio_source* in)
 {
     assert(!contains(instreams, in));
     bool wasempty = instreams.empty();
@@ -38,14 +38,14 @@ bool audio_hardware::add_instream(abstract_audio_input* in)
     return wasempty;
 }
 
-bool audio_hardware::remove_instream(abstract_audio_input* in)
+bool audio_hardware::remove_instream(voicebox::audio_source* in)
 {
     assert(contains(instreams, in));
     instreams.erase(in);
     return instreams.empty();
 }
 
-bool audio_hardware::add_outstream(abstract_audio_output* out)
+bool audio_hardware::add_outstream(voicebox::audio_sink* out)
 {
     assert(!contains(outstreams, out));
     bool wasempty = outstreams.empty();
@@ -53,7 +53,7 @@ bool audio_hardware::add_outstream(abstract_audio_output* out)
     return wasempty;
 }
 
-bool audio_hardware::remove_outstream(abstract_audio_output* out)
+bool audio_hardware::remove_outstream(voicebox::audio_sink* out)
 {
     assert(contains(outstreams, out));
     outstreams.erase(out);
