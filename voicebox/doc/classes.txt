@@ -28,8 +28,9 @@ audio_stream                   <-- base class for audio data packets
 
 Useful chains of filters:
 
--- push ----------------->  -- pull --------------------->
+-- push ----------------->
 rtaudio_source->packetizer->opus_encoder_sink->packet_sink
+                -- pull --------------------------------->
 
     push via rtcallback in rtaudio thread:
 
@@ -55,8 +56,9 @@ rtaudio_source->packetizer->opus_encoder_sink->packet_sink
         opus_encoder_sink->produce_output() - encode_packet()
         packetizer->produce_output() - get_packet()  <-- interthread sync needed here
 
--- push ------------------>  -- pull ---------------------->
+-- push ------------------>
 packet_source->jitterbuffer->opus_decoder_sink->rtaudio_sink
+               -- pull ------------------------------------>
 
     push via incoming network packet event:
 
