@@ -11,7 +11,6 @@ add_library(voicebox STATIC
     opus_encode_sink.cpp
     opus_decode_sink.cpp
 
-    audio_sender.cpp
     audio_receiver.cpp)
 
 #    audio_input.cpp
