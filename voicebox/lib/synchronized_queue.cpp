@@ -33,7 +33,7 @@ byte_array synchronized_queue::dequeue()
     unique_lock<mutex> guard(mutex_);
         byte_array data = queue_.front();
         queue_.pop_front();
-        emptied = queue_.empty();
+        bool emptied = queue_.empty();
     guard.unlock();
 
     if (emptied) {
