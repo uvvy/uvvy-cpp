@@ -1,15 +1,14 @@
 #pragma once
 
-#include "packetized_input.h"
+#include "audio_sink.h"
 #include "opus.h"
 
 /**
- * This class represents an Opus-encoded source of audio input,
- * providing automatic queueing and interthread synchronization.
+ * This class represents an OPUS-encoded sink for audio.
  */
-class opus_input : public packetized_input
+class opus_encode_sink : public audio_sink
 {
-    typedef packetized_input super;
+    typedef audio_sink super;
 
     /**
      * Encoder state.
@@ -18,17 +17,10 @@ class opus_input : public packetized_input
     OpusEncoder *encstate{nullptr};
 
 public:
-    opus_input() = default;
+    opus_encode_sink() = default;
 
     void set_enabled(bool enabling) override;
 
-    byte_array read_frame();
-
 private:
-    /**
-     * Our implementation of AbstractAudioInput::acceptInput().
-     * @param buf [description]
-     */
-    void accept_input(byte_array) override;
+    void produce_output(void* buffer) override;
 };
-

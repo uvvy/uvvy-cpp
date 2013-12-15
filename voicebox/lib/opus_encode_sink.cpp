@@ -1,14 +1,15 @@
 #include "logging.h"
-#include "opus_input.h"
+#include "opus_encode_sink.h"
 
 using namespace std;
 
-void opus_input::set_enabled(bool enabling)
+void opus_encode_sink::set_enabled(bool enabling)
 {
     if (enabling and !is_enabled()) {
         assert(!encstate);
         int error = 0;
-        encstate = opus_encoder_create(48000, num_channels(), OPUS_APPLICATION_VOIP, &error);
+        encstate = opus_encoder_create(sample_rate(), num_channels(),
+            OPUS_APPLICATION_VOIP, &error);
         assert(encstate);
         assert(!error);
 
@@ -35,18 +36,21 @@ void opus_input::set_enabled(bool enabling)
     }
 }
 
-void opus_input::accept_input(byte_array samplebuf)
+void opus_encode_sink::produce_output(byte_array& buffer)
 {
+    // Get data from our producer, if any.
+    byte_array samplebuf;
+    if (producer()) {
+        producer()->produce_output(samplebuf);
+    }
+
     // Encode the frame and write it into a buffer
-    byte_array bytebuf;
     int maxbytes = 1024;//meh, any opus option to get this?
-    bytebuf.resize(maxbytes);
+    buffer.resize(maxbytes);
     int nbytes = opus_encode_float(encstate, (const float*)samplebuf.data(), frame_size(),
         (unsigned char*)bytebuf.data(), bytebuf.size());
     assert(nbytes <= maxbytes);
-    bytebuf.resize(nbytes);
+    buffer.resize(nbytes);
     logger::debug() << "Encoded frame size: " << nbytes;
-
-    in_queue_.enqueue(bytebuf);
 }
 
