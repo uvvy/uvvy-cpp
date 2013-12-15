@@ -8,6 +8,7 @@ add_library(voicebox STATIC
     rtaudio_source.cpp
     audio_hardware.cpp
     audio_stream.cpp
+    opus_encode_sink.cpp
 
     audio_sender.cpp
     audio_receiver.cpp)
@@ -16,7 +17,6 @@ add_library(voicebox STATIC
 #    audio_output.cpp
 #    audio_loopback.cpp
 #    file_looped_output.cpp
-#    opus_input.cpp
 #    opus_output.cpp
 #    packetized_input.cpp
 #    packetized_output.cpp
