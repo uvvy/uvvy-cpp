@@ -36,7 +36,7 @@ rtaudio_source->accept_input(data)
 
 pull via packetizer.on_ready_read() in sendthread:
 
-packetizer->produce_output() -> get_packet()
+packetizer->produce_output() -> get_packet() <- interthread sync needed here
 opus_encoder->produce_output() -> encode_packet()
 network_sink->produce_output() -> send_packet()
 
@@ -55,6 +55,8 @@ rtaudio_sink->produce_output()
 Jitterbuffer also needs to keep track of the current playback timestamp, to discard too old packets
 and fill in for missing packets in the queue.
 
+On the edge between sources and sinks usually a thread synchronization primitives are used.
+There are two edge classes by default: packetizer and jitterbuffer.
 
 audio_stream
 +--audio_source
@@ -66,6 +68,7 @@ audio_stream
 +--audio_sink
    +--packet_sink
    +--rtaudio_sink
-   +--jitterbuffer ?
    +--opus_encoder_sink
    +--opus_decoder_sink
+   +--jitterbuffer
+   +--packetizer
