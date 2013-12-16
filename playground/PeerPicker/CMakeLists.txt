@@ -42,7 +42,7 @@ add_executable(PeerPicker ${GUI_TYPE}
     ${peer_picker_FORMS_HEADERS}
     ${APPLE_BUNDLE_SRC})
 target_link_libraries(PeerPicker krypto rclient routing ssu plist support natclient nat upnpc
-    voicebox rtaudio opus
+    ${VOICEBOX_LIBS} opus
     ${Boost_LIBRARIES} ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS PeerPicker
     RUNTIME DESTINATION tools
@@ -54,5 +54,3 @@ if (APPLE)
     set_target_properties(PeerPicker PROPERTIES
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/PeerPicker-Info.plist)
 endif()
-
-link_audiolibs(PeerPicker)
