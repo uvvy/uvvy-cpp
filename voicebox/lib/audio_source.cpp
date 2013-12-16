@@ -25,7 +25,7 @@ void audio_source::set_enabled(bool enable)
     }
 }
 
-void audio_source::set_frame_size(int frame_size)
+void audio_source::set_frame_size(unsigned int frame_size)
 {
     super::set_frame_size(frame_size);
     if (acceptor_) {
@@ -41,7 +41,7 @@ void audio_source::set_sample_rate(double rate)
     }
 }
 
-void audio_source::set_num_channels(int num_channels)
+void audio_source::set_num_channels(unsigned int num_channels)
 {
     super::set_num_channels(num_channels);
     if (acceptor_) {

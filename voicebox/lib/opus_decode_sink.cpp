@@ -58,8 +58,10 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
         logger::debug() << "Decode frame size: " << bytebuf.size();
         int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(),
             bytebuf.size(), samplebuf.as<float>(), frame_size(), /*decodeFEC:*/0);
-        // assert(len > 0);
-        assert(len == frame_size());
+        if (len < 0) {
+            // perform recovery - fill buffer with 0 for example...
+        }
+        assert(len == (int)frame_size());
     }
     else
     {

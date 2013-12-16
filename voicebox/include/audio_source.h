@@ -43,9 +43,9 @@ public:
     // Overrides to pass the request down the consumer chain.
 
     void set_enabled(bool enable) override;
-    void set_frame_size(int frame_size) override;
+    void set_frame_size(unsigned int frame_size) override;
     void set_sample_rate(double rate) override;
-    void set_num_channels(int num_channels) override;
+    void set_num_channels(unsigned int num_channels) override;
 };
 
 } // voicebox namespace

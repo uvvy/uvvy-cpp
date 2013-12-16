@@ -26,7 +26,7 @@ void audio_stream::set_enabled(bool enable)
     enabled_ = enable;
 }
 
-void audio_stream::set_frame_size(int frame_size)
+void audio_stream::set_frame_size(unsigned int frame_size)
 {
     assert(!is_enabled());
     frame_size_ = frame_size;
@@ -38,7 +38,7 @@ void audio_stream::set_sample_rate(double rate)
     rate_ = rate;
 }
 
-void audio_stream::set_num_channels(int num_channels)
+void audio_stream::set_num_channels(unsigned int num_channels)
 {
     assert(!is_enabled());
     num_channels_ = num_channels;
