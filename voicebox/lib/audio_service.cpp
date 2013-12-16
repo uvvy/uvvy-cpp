@@ -53,7 +53,7 @@ void audio_service::establish_outgoing_session(peer_id const& eid,
     logger::info() << "Connecting to " << eid;
 
     pimpl_->stream = make_shared<ssu::stream>(pimpl_->host_);
-    pimpl_->hw.streaming(pimpl_->stream);
+    // pimpl_->hw.streaming(pimpl_->stream);
     pimpl_->stream->on_link_up.connect([this] {
         on_session_started();
         pimpl_->hw.start_audio();
@@ -83,9 +83,9 @@ void audio_service::listen_incoming_session()
     pimpl_->server = make_shared<ssu::server>(pimpl_->host_);
     pimpl_->server->on_new_connection.connect([this]
     {
-        pimpl_->hw.new_connection(pimpl_->server,
-            [this] { on_session_started(); },
-            [this] { on_session_finished(); });
+        // pimpl_->hw.new_connection(pimpl_->server,
+        //     [this] { on_session_started(); },
+        //     [this] { on_session_finished(); });
     });
     bool listening = pimpl_->server->listen(service_name, "Streaming services",
                                             protocol_name, "OPUS Audio protocol");

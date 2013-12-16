@@ -181,39 +181,3 @@ void audio_hardware::stop_audio()
 {
     audio_inst->stopStream();
 }
-
-// The following should go to packet_source/packet_sink code...
-
-void audio_hardware::new_connection(shared_ptr<server> server,
-    function<void(void)> on_start,
-    function<void(void)> on_stop)
-{
-    auto stream = server->accept();
-    if (!stream)
-        return;
-
-    logger::info() << "New incoming connection from " << stream->remote_host_id();
-    streaming(stream);
-
-    stream->on_link_up.connect([this,on_start] {
-        on_start();
-        start_audio();
-    });
-
-    stream->on_link_down.connect([this,on_stop] {
-        on_stop();
-        stop_audio();
-    });
-
-    if (stream->is_link_up()) {
-        logger::debug() << "Incoming stream is ready, start sending immediately.";
-        on_start();
-        start_audio();
-    }
-}
-
-void audio_hardware::streaming(shared_ptr<stream> stream)
-{
-    // sender_->streaming(stream);
-    receiver_->streaming(stream);
-}
