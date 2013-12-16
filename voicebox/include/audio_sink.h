@@ -49,13 +49,6 @@ public:
     void set_frame_size(int frame_size) override;
     void set_sample_rate(double rate) override;
     void set_num_channels(int num_channels) override;
-
-// private: old AbstractAudioOutput had this:
-    /**
-     * Get output from client, resampling and/or buffering it as necessary
-     * to match hwrate and hwframesize (in audio.cc).
-     */
-    // void get_output(float *buf);
 };
 
 } // voicebox namespace
