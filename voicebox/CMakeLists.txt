@@ -17,5 +17,9 @@ include_directories(../ui/3rdparty/opus-1.0.1/include ../ui/3rdparty/rtaudio-4.0
 
 add_subdirectory(lib)
 
+if (BUILD_TESTING)
+    add_subdirectory(tests)
+endif (BUILD_TESTING)
+
 # TODO: This breaks modularity...
 set(VOICEBOX_LIBS ${VOICEBOX_LIBS} PARENT_SCOPE)
