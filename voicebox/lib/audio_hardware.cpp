@@ -136,6 +136,16 @@ static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
     return 0;
 }
 
+int audio_hardware::get_sample_rate()
+{
+    return hwrate;
+}
+
+int audio_hardware::get_frame_size()
+{
+    return hwframesize;
+}
+
 void audio_hardware::set_input_level(int level)
 {
     input_level = level;
