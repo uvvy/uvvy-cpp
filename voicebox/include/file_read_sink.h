@@ -7,7 +7,8 @@ namespace voicebox {
 
 /**
  * This class provides data from pseudo-input by reading a specified file in a loop.
- * Current implementation reads 16 bit 48000KHz Mono raw audio file in an endless loop.
+ * Current implementation reads 16 bit raw audio file in an endless loop. Set sample rate
+ * and number of channels through a regular audio_stream interface.
  */
 class file_read_sink : public audio_sink
 {
@@ -21,8 +22,6 @@ public:
     file_read_sink(std::string const& filename);
 
     void set_enabled(bool enabling) override;
-    // void set_num_channels(unsigned int num_channels) override;
-    // void set_sample_rate(double rate) override;
 
     void produce_output(byte_array& buffer) override;
 };

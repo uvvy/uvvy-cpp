@@ -16,11 +16,6 @@ void file_read_sink::set_enabled(bool enabling)
     {
         assert(!file_.is_open());
         file_.open(filename_, ios::in|ios::binary);
-
-        // @todo Figure this info from the file header.
-        set_frame_size(480);
-        set_sample_rate(48000);
-
         offset_ = 0;
 
         super::set_enabled(true);
@@ -28,26 +23,22 @@ void file_read_sink::set_enabled(bool enabling)
     else if (!enabling and is_enabled())
     {
         super::set_enabled(false);
-
         file_.close();
     }
 }
-
-// void set_num_channels(unsigned int num_channels) override;
-// void set_sample_rate(double rate) override;
 
 void file_read_sink::produce_output(byte_array& buffer)
 {
     if (!file_.is_open())
         return;
 
-    short samples[frame_size()];
+    short samples[frame_size() * num_channels()];
     off_t off = 0;
-    size_t nbytesToRead = frame_size() * sizeof(short);
+    size_t nbytesToRead = frame_size() * num_channels() * sizeof(short);
 
     file_.seekg(offset_);
 
-    while (nbytesToRead > 0 and !file_.eof())
+    while ((nbytesToRead > 0) and file_)
     {
         file_.read((char*)&samples[off], nbytesToRead);
         size_t nread = file_.gcount();
@@ -57,7 +48,7 @@ void file_read_sink::produce_output(byte_array& buffer)
         nbytesToRead -= nread;
         assert(nbytesToRead >= 0);
 
-        if (nread < nbytesToRead)
+        if (nread <= nbytesToRead)
         {
             // Loop the file
             offset_ = 0;
@@ -66,7 +57,7 @@ void file_read_sink::produce_output(byte_array& buffer)
     }
 
     buffer.resize(frame_bytes());
-    for (unsigned int i = 0; i < frame_size(); ++i) {
+    for (unsigned int i = 0; i < frame_size() * num_channels(); ++i) {
         buffer.as<float>()[i] = float(samples[i]) / 32767.0;
     }
 }

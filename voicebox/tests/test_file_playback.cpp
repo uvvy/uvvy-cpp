@@ -12,6 +12,10 @@ int main()
     rtaudio_sink sink;
     sink.set_producer(&readfile);
 
+    sink.set_frame_size(480);
+    sink.set_sample_rate(48000);
+    sink.set_num_channels(2);
+
     sink.enable();
 
     this_thread::sleep_for(chrono::seconds(30));
