@@ -14,10 +14,11 @@
 #include "stream.h"
 
 class RtAudio;
+
 namespace voicebox {
-    class audio_sink;
-    class audio_source;
-} // voicebox namespace
+
+class audio_sink;
+class audio_source;
 
 /**
  * Controls the audio layer and starts playback and capture.
@@ -52,3 +53,5 @@ public:
     void capture(void* buffer, unsigned int nFrames);
     void playback(void* buffer, unsigned int nFrames);
 };
+
+} // voicebox namespace

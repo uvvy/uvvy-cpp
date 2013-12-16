@@ -56,11 +56,11 @@ void audio_service::establish_outgoing_session(peer_id const& eid,
     // pimpl_->hw.streaming(pimpl_->stream);
     pimpl_->stream->on_link_up.connect([this] {
         on_session_started();
-        pimpl_->hw.start_audio();
+        voicebox::audio_hardware::instance()->start_audio();
     });
     pimpl_->stream->on_link_down.connect([this] {
         on_session_finished();
-        pimpl_->hw.stop_audio();
+        voicebox::audio_hardware::instance()->stop_audio();
     });
     pimpl_->stream->connect_to(eid, service_name, protocol_name);
 

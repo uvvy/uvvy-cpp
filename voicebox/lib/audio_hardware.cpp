@@ -15,6 +15,8 @@
 using namespace std;
 using namespace ssu;
 
+namespace voicebox {
+
 static std::mutex stream_mutex_;
 
 static set<voicebox::audio_source*> instreams;
@@ -225,3 +227,5 @@ void audio_hardware::stop_audio()
 {
     audio_inst->stopStream();
 }
+
+} // voicebox namespace
