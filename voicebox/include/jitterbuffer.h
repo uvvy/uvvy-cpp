@@ -10,7 +10,21 @@
 
 namespace voicebox {
 
+/**
+ * It doesn't have, neither use acceptor or producer, since it sits at the intersection
+ * of push and pull threads, all other components call into jitterbuffer.
+ * It passes the data on, using synchronization.
+ */
 class jitterbuffer : public audio_source, public audio_sink
-{};
+{
+protected:
+    synchronized_queue queue_;
+
+public:
+    jitterbuffer() = default;
+
+    void produce_output(byte_array& buffer) override; // from sink
+    void accept_input(byte_array data) override; // from source
+};
 
 }
