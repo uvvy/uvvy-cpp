@@ -132,6 +132,12 @@ void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
     // sender_->send_packet((float*)inputBuffer, nFrames);
 }
 
+void audio_hardware::set_input_level(double level)
+{}
+
+void audio_hardware::set_output_level(double level)
+{}
+
 // Pull from all registered sinks in outstreams.
 void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
 {
