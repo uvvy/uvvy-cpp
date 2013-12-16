@@ -67,7 +67,7 @@ void file_read_sink::produce_output(byte_array& buffer)
 
     buffer.resize(frame_bytes());
     for (unsigned int i = 0; i < frame_size(); ++i) {
-        buffer.as<float>()[i] = (float)samples[i];
+        buffer.as<float>()[i] = float(samples[i]) / 32767.0;
     }
 }
 
