@@ -303,6 +303,12 @@ void audio_hardware::open_audio()
     outparam.deviceId = output_device;
     outparam.nChannels = max_out_channels;
 
+    logger::debug() << "Open audio: rate " << max_rate << ", frame " << min_frame_size
+        << (enable_capture ? ", " : ", NO ") << "CAPTURE, device "
+        << input_device << ", channels " << max_in_channels
+        << (enable_playback ? "; " : "; NO ") << "PLAYBACK, device "
+        << output_device << ", channels " << max_out_channels;
+
     try {
         audio_inst->openStream(enable_playback ? &outparam : NULL,
                                enable_capture ? &inparam : NULL,

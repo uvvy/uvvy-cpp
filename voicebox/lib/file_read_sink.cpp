@@ -11,12 +11,15 @@ file_read_sink::file_read_sink(std::string const& filename)
 
 void file_read_sink::set_enabled(bool enabling)
 {
-    logger::debug() << __PRETTY_FUNCTION__ << enabling << is_enabled();
+    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled())
     {
         assert(!file_.is_open());
         file_.open(filename_, ios::in|ios::binary);
         offset_ = 0;
+
+        logger::debug() << "File read sink enabled: rate " << sample_rate()
+            << ", channels " << num_channels() << ", frame size " << frame_size();
 
         super::set_enabled(true);
     }
@@ -40,8 +43,10 @@ void file_read_sink::produce_output(byte_array& buffer)
 
     while ((nbytesToRead > 0) and file_)
     {
+        logger::debug() << "Reading " << nbytesToRead << " bytes from file.";
         file_.read((char*)&samples[off], nbytesToRead);
         size_t nread = file_.gcount();
+        logger::debug() << "Read    " << nbytesToRead << " bytes actually.";
         assert(!(nread % 2));
         offset_ += nread;
         off += nread/2;
@@ -51,6 +56,7 @@ void file_read_sink::produce_output(byte_array& buffer)
         if (nread <= nbytesToRead)
         {
             // Loop the file
+            logger::debug() << "File ran out, restarting. Remaining to read " << nbytesToRead;
             offset_ = 0;
             file_.seekg(offset_);// clear eof() condition
         }
