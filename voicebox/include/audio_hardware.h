@@ -42,11 +42,18 @@ public:
     static int get_sample_rate();
     static int get_frame_size();
 
+    /**
+     * Detect available devices.
+     * @return Number of available audio devices.
+     */
+    int scan();
+
     void open_audio();
     void close_audio();
 
     void start_audio();
     void stop_audio();
+    bool is_running() const;
 
     void set_input_level(int level);
     void set_output_level(int level);

@@ -17,17 +17,18 @@ using namespace ssu;
 
 namespace voicebox {
 
+static int num_devices = -1;
+static int input_device = -1;
+static int output_device = -1;
+
 static std::mutex stream_mutex_;
 
 static set<voicebox::audio_source*> instreams;
 static set<voicebox::audio_sink*> outstreams;
 
 static double hwrate;
-static int hwframesize;
+static unsigned int hwframesize;
 
-// @fixme Make a proper member
-static int max_capture_channels() { return 1; }
-static int max_playback_channels() { return 1; }
 static int input_level, output_level;
 
 audio_hardware* audio_hardware::instance()
@@ -38,21 +39,38 @@ audio_hardware* audio_hardware::instance()
 
 audio_hardware::audio_hardware()
 {
-    try {
-        audio_inst  = new RtAudio();
-    }
-    catch (RtError& error) {
-        logger::warning() << "Can't initialize RtAudio library, " << error.what();
-        return;
-    }
-
-    open_audio();
+    scan();
 }
 
 audio_hardware::~audio_hardware()
 {
     close_audio();
     delete audio_inst; audio_inst = nullptr;
+}
+
+int audio_hardware::scan()
+{
+    if (num_devices >= 0) {
+        return num_devices;
+    }
+
+    try {
+        audio_inst = new RtAudio();
+    }
+    catch (RtError& error) {
+        logger::warning() << "Can't initialize RtAudio library, " << error.what();
+        return -1;
+    }
+
+    num_devices = audio_inst->getDeviceCount();
+    if (num_devices == 0) {
+        logger::warning() << "No audio devices available";
+    }
+
+    input_device = audio_inst->getDefaultInputDevice();
+    output_device = audio_inst->getDefaultOutputDevice();
+
+    return num_devices;
 }
 
 bool audio_hardware::add_instream(voicebox::audio_source* in)
@@ -89,8 +107,18 @@ bool audio_hardware::remove_outstream(voicebox::audio_sink* out)
     return outstreams.empty();
 }
 
+void audio_hardware::reopen()
+{
+    bool was_running = instance()->is_running();
+    instance()->close_audio();
+    instance()->open_audio();
+    if (was_running) {
+        instance()->start_audio();
+    }
+}
+
 static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrames,
-    double, RtAudioStreamStatus, void *userdata)
+                      double, RtAudioStreamStatus, void *userdata)
 {
     audio_hardware* instance = reinterpret_cast<audio_hardware*>(userdata);
 
@@ -192,23 +220,25 @@ void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
         for (auto s : outstreams) {
             s->produce_output(outbuf);
         }
-        for (int j = 0; j < hwframesize; ++j) {
+        for (unsigned int j = 0; j < hwframesize; ++j) {
             floatBuf[j] = outbuf.as<float>()[j];
         }
-        return;
     }
-    // More than 1 stream mixing: mix into temp buffers than add and normalize.
-    byte_array encbuf;
-    fill_n(floatBuf, hwframesize, 0.0);
-    for (auto s : outstreams)
+    else
     {
-        s->produce_output(encbuf);
-        // Mixing in based on 
-        // http://dsp.stackexchange.com/questions/3581/algorithms-to-mix-audio-signals
-        // to maintain the signal level of the mix.
-        // Need to apply compressor/limiter afterwards if there are spikes.
-        for (int j = 0; j < hwframesize; ++j) {
-            floatBuf[j] += encbuf.as<float>()[j];
+        // More than 1 stream mixing: mix into temp buffers then add and normalize.
+        byte_array encbuf;
+        fill_n(floatBuf, hwframesize, 0.0);
+        for (auto s : outstreams)
+        {
+            s->produce_output(encbuf);
+            // Mixing in based on 
+            // http://dsp.stackexchange.com/questions/3581/algorithms-to-mix-audio-signals
+            // to maintain the signal level of the mix.
+            // Need to apply compressor/limiter afterwards if there are spikes.
+            for (unsigned int j = 0; j < hwframesize; ++j) {
+                floatBuf[j] += encbuf.as<float>()[j];
+            }
         }
     }
 
@@ -219,20 +249,63 @@ void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
 
 void audio_hardware::open_audio()
 {
+    if (is_running()) {
+        return; // Already open
+    }
+
+    // Make sure we're initialized
+    // scan();
+
+    lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we open
+
+    bool enable_capture = !instreams.empty();
+    bool enable_playback = !outstreams.empty();
+
+    // See if any input or output streams are actually enabled
+    if (!enable_capture && !enable_playback) {
+        return;
+    }
+
+    // Use the maximum rate requested by any of our streams,
+    // and the minimum framesize requested by any of our streams,
+    // to maximize quality and minimize buffering latency.
+
+    double max_rate{0.0};
+    unsigned int min_frame_size{9999999};
+    unsigned int max_in_channels{0};
+    unsigned int max_out_channels{0};
+
+    for (auto s : instreams)
+    {
+        max_rate = max(max_rate, s->sample_rate());
+        min_frame_size = min(min_frame_size, s->frame_size());
+        max_in_channels = max(max_in_channels, s->num_channels());
+    }
+
+    for (auto s : outstreams)
+    {
+        max_rate = max(max_rate, s->sample_rate());
+        min_frame_size = min(min_frame_size, s->frame_size());
+        max_out_channels = max(max_out_channels, s->num_channels());
+    }
+
+    // @todo Check against rates supported by devices, resample if necessary...
+
     // Open the audio device
     RtAudio::StreamParameters inparam, outparam;
-    inparam.deviceId = audio_inst->getDefaultInputDevice();
-    inparam.nChannels = max_capture_channels(); // of all instreams
-    outparam.deviceId = audio_inst->getDefaultOutputDevice();
-    outparam.nChannels = max_playback_channels(); // of all outstreams
-    unsigned int bufferFrames = SAMPLE_RATE/100; // 10ms
+    inparam.deviceId = input_device;
+    inparam.nChannels = max_in_channels;
+    outparam.deviceId = output_device;
+    outparam.nChannels = max_out_channels;
 
     try {
-        audio_inst->openStream(&outparam, &inparam, RTAUDIO_FLOAT32, SAMPLE_RATE, &bufferFrames,
-            rtcallback, this);
+        audio_inst->openStream(enable_playback ? &outparam : NULL,
+                               enable_capture ? &inparam : NULL,
+                               RTAUDIO_FLOAT32, max_rate, &min_frame_size,
+                               rtcallback, this);
 
-        hwrate = SAMPLE_RATE;
-        hwframesize = bufferFrames;
+        hwrate = max_rate;
+        hwframesize = min_frame_size;
     }
     catch (RtError &error) {
         logger::warning() << "Couldn't open audio stream, " << error.what();
@@ -242,8 +315,12 @@ void audio_hardware::open_audio()
 
 void audio_hardware::close_audio()
 {
+    if (!is_running()) {
+        return;
+    }
+
     try {
-        lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we down
+        lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we close
         audio_inst->closeStream();
     }
     catch (RtError &error) {
@@ -263,6 +340,11 @@ void audio_hardware::start_audio()
 void audio_hardware::stop_audio()
 {
     audio_inst->stopStream();
+}
+
+bool audio_hardware::is_running() const
+{
+    return audio_inst->isStreamOpen();
 }
 
 } // voicebox namespace
