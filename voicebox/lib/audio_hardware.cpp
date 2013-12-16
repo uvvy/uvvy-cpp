@@ -142,11 +142,41 @@ void audio_hardware::set_output_level(double level)
 void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
 {
     lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we mix
-    receiver_->get_packet((float*)outputBuffer, nFrames);
+
+    float* floatBuf = static_cast<float*>(outputBuffer);
+    byte_array outbuf;
 
     // Simple cases: no streams mixing, set output level to 0,
+    if (outstreams.empty())
+    {
+        fill_n(floatBuf, hwframesize, 0.0);
+        set_output_level(0);
+        return;
+    }
     // 1 stream is mixing, just produce_output() into target buffer.
+    if (outstreams.size() == 1) {
+        for (auto s : outstreams) {
+            s->produce_output(outbuf);
+        }
+        for (int j = 0; j < hwframesize; ++j) {
+            floatBuf[j] = outbuf.as<float>()[j];
+        }
+        return;
+    }
     // More than 1 stream mixing: mix into temp buffers than add and normalize.
+    byte_array encbuf;
+    fill_n(floatBuf, hwframesize, 0.0);
+    for (auto s : outstreams)
+    {
+        s->produce_output(encbuf);
+        // Mixing in based on 
+        // http://dsp.stackexchange.com/questions/3581/algorithms-to-mix-audio-signals
+        // to maintain the signal level of the mix.
+        // Need to apply compressor/limiter afterwards if there are spikes.
+        for (int j = 0; j < hwframesize; ++j) {
+            floatBuf[j] += encbuf.as<float>()[j];
+        }
+    }
 }
 
 #define SAMPLE_RATE 48000
