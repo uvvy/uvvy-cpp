@@ -1,8 +1,8 @@
 #include <mutex>
 #include "RtAudio.h"
 #include "audio_hardware.h"
+#include "audio_sink.h"
 #include "audio_source.h"
-#include "audio_receiver.h"
 
 using namespace std;
 using namespace ssu;
@@ -19,8 +19,7 @@ static int hwframesize;
 static int max_capture_channels() { return 1; }
 static int max_playback_channels() { return 1; }
 
-audio_hardware::audio_hardware(audio_receiver* receiver)
-    : receiver_(receiver)
+audio_hardware::audio_hardware()
 {
     try {
         audio_inst  = new RtAudio();

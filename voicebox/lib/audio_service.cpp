@@ -10,8 +10,6 @@
 #include <mutex>
 #include "audio_service.h"
 #include "audio_hardware.h"
-#include "audio_sender.h"
-#include "audio_receiver.h"
 #include "plotfile.h"
 #include "stream.h"
 #include "server.h"
@@ -32,15 +30,13 @@ class audio_service::private_impl
 {
 public:
     std::shared_ptr<ssu::host> host_;
-    audio_receiver receiver;
     audio_hardware hw;
     shared_ptr<stream> stream;
     shared_ptr<server> server;
 
     private_impl(std::shared_ptr<ssu::host> host)
         : host_(host)
-        , receiver()
-        , hw(&receiver)
+        , hw()
     {}
 };
 
