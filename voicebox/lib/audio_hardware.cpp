@@ -109,12 +109,8 @@ bool audio_hardware::remove_outstream(voicebox::audio_sink* out)
 
 void audio_hardware::reopen()
 {
-    bool was_running = instance()->is_running();
     instance()->close_audio();
     instance()->open_audio();
-    if (was_running) {
-        instance()->start_audio();
-    }
 }
 
 static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrames,
@@ -303,6 +299,8 @@ void audio_hardware::open_audio()
         logger::warning() << "Couldn't open audio stream, " << error.what();
         throw;
     }
+
+    start_audio();
 }
 
 void audio_hardware::close_audio()
