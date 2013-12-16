@@ -9,4 +9,5 @@ add_library(voicebox STATIC
     rtaudio_sink.cpp
     rtaudio_source.cpp
     opus_encode_sink.cpp
-    opus_decode_sink.cpp)
+    opus_decode_sink.cpp
+    file_read_sink.cpp)
