@@ -130,18 +130,13 @@ static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
     // An RtAudio "frame" is one sample per channel,
     // whereas our "frame" is one buffer worth of data (as in Speex).
 
-#if 0
-    if (inputBuffer && outputBuffer) {
-        copy_n((char*)inputBuffer, nFrames*sizeof(float), (char*)outputBuffer);
-    }
-#else
     if (inputBuffer) {
         instance->capture(inputBuffer, nFrames);
     }
     if (outputBuffer) {
         instance->playback(outputBuffer, nFrames);
     }
-#endif
+
     return 0;
 }
 
@@ -187,7 +182,7 @@ void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
         if (s->sample_rate() == hwrate and s->frame_size() == hwframesize)
         {
             // The easy case - no buffering or resampling needed.  v--frame_bytes(nFrames)?
-            s->accept_input(byte_array::wrap(
+            s->accept_input(byte_array::wrap( //                   v
                 static_cast<const char*>(inputBuffer), nFrames*sizeof(float)));
             continue;
         }
@@ -195,9 +190,6 @@ void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
         // @todo Implement more tricky cases here, if necessary.
         assert(false);
     }
-
-    // Now can remove that sender dude..
-    // sender_->send_packet((float*)inputBuffer, nFrames);
 }
 
 // Pull from all registered sinks in outstreams.
