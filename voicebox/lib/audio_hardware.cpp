@@ -29,6 +29,12 @@ static int hwframesize;
 static int max_capture_channels() { return 1; }
 static int max_playback_channels() { return 1; }
 
+audio_hardware* audio_hardware::instance()
+{
+    static audio_hardware hw;
+    return &hw;
+}
+
 audio_hardware::audio_hardware()
 {
     try {

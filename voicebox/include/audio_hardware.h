@@ -27,9 +27,11 @@ class audio_hardware
 {
     RtAudio* audio_inst{0};
 
-public:
     audio_hardware();
     ~audio_hardware();
+
+public:
+    static audio_hardware* instance();
 
     static bool add_instream(voicebox::audio_source* in);
     static bool remove_instream(voicebox::audio_source* in);

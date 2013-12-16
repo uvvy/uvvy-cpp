@@ -30,13 +30,11 @@ class audio_service::private_impl
 {
 public:
     std::shared_ptr<ssu::host> host_;
-    audio_hardware hw;
     shared_ptr<stream> stream;
     shared_ptr<server> server;
 
     private_impl(std::shared_ptr<ssu::host> host)
         : host_(host)
-        , hw()
     {}
 };
 
