@@ -21,6 +21,9 @@ static int num_devices = -1;
 static int input_device = -1;
 static int output_device = -1;
 
+static int input_channels = 0;
+static int output_channels = 0;
+
 static std::mutex stream_mutex_;
 
 static set<voicebox::audio_source*> instreams;
@@ -178,6 +181,8 @@ void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
 {
     lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we send
 
+    nFrames *= input_channels;
+
     // Compute the audio input level if necessary
     // if (receivers(SIGNAL(inputLevelChanged(int))) > 0)
         set_input_level(compute_level(static_cast<float*>(inputBuffer), nFrames));
@@ -203,30 +208,32 @@ void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
 {
     lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we mix
 
+    nFrames *= output_channels;
+
     float* floatBuf = static_cast<float*>(outputBuffer);
     byte_array outbuf;
 
     // Simple cases: no streams mixing, set output level to 0,
     if (outstreams.empty())
     {
-        fill_n(floatBuf, hwframesize, 0.0);
+        fill_n(floatBuf, nFrames, 0.0);
         set_output_level(0);
         return;
     }
+
     // 1 stream is mixing, just produce_output() into target buffer.
     if (outstreams.size() == 1) {
         for (auto s : outstreams) {
             s->produce_output(outbuf);
         }
-        for (unsigned int j = 0; j < hwframesize; ++j) {
-            floatBuf[j] = outbuf.as<float>()[j];
-        }
+        logger::debug() << "Outputting " << hwframesize << " bytes, passed in " << nFrames;
+        copy_n(outbuf.as<float>(), nFrames, floatBuf);
     }
     else
     {
         // More than 1 stream mixing: mix into temp buffers then add and normalize.
         byte_array encbuf;
-        fill_n(floatBuf, hwframesize, 0.0);
+        fill_n(floatBuf, nFrames, 0.0);
         for (auto s : outstreams)
         {
             s->produce_output(encbuf);
@@ -234,7 +241,7 @@ void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
             // http://dsp.stackexchange.com/questions/3581/algorithms-to-mix-audio-signals
             // to maintain the signal level of the mix.
             // Need to apply compressor/limiter afterwards if there are spikes.
-            for (unsigned int j = 0; j < hwframesize; ++j) {
+            for (unsigned int j = 0; j < nFrames; ++j) {
                 floatBuf[j] += encbuf.as<float>()[j];
             }
         }
@@ -309,6 +316,9 @@ void audio_hardware::open_audio()
         logger::warning() << "Couldn't open audio stream, " << error.what();
         throw;
     }
+
+    input_channels = max_in_channels;
+    output_channels = max_out_channels;
 
     start_audio();
 }
