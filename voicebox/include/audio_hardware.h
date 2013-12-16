@@ -48,8 +48,8 @@ public:
     void start_audio();
     void stop_audio();
 
-    void set_input_level(double level);
-    void set_output_level(double level);
+    void set_input_level(int level);
+    void set_output_level(int level);
 
     // Hardware I/O handlers called from rtcallback
     void capture(void* buffer, unsigned int nFrames);

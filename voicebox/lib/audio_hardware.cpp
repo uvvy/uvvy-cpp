@@ -28,6 +28,7 @@ static int hwframesize;
 // @fixme Make a proper member
 static int max_capture_channels() { return 1; }
 static int max_playback_channels() { return 1; }
+static int input_level, output_level;
 
 audio_hardware* audio_hardware::instance()
 {
@@ -116,10 +117,41 @@ static int rtcallback(void *outputBuffer, void *inputBuffer, unsigned int nFrame
     return 0;
 }
 
+void audio_hardware::set_input_level(int level)
+{
+    input_level = level;
+}
+
+void audio_hardware::set_output_level(int level)
+{
+    output_level = level;
+}
+
+// This simply computes a peak level of the signal, not signal energy.
+static int compute_level(const float *buf, int nframes)
+{
+    float level{0.0};
+    for (int i = 0; i < nframes; i++)
+    {
+        level = max(level, fabs(buf[i]));
+    }
+    if (level > 1.0)
+    {
+        logger::warning() << "TOO HIGH SIGNAL LEVEL " << level;
+        // Needs compression...
+    }
+
+    return (int)(level * 100.0);
+}
+
 // Push to all registered sources in instreams.
 void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
 {
     lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we send
+
+    // Compute the audio input level if necessary
+    // if (receivers(SIGNAL(inputLevelChanged(int))) > 0)
+        set_input_level(compute_level(static_cast<float*>(inputBuffer), nFrames));
 
     // Broadcast the audio input to all listening input streams
     for (auto s : instreams)
@@ -139,12 +171,6 @@ void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
     // Now can remove that sender dude..
     // sender_->send_packet((float*)inputBuffer, nFrames);
 }
-
-void audio_hardware::set_input_level(double level)
-{}
-
-void audio_hardware::set_output_level(double level)
-{}
 
 // Pull from all registered sinks in outstreams.
 void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
@@ -185,9 +211,11 @@ void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
             floatBuf[j] += encbuf.as<float>()[j];
         }
     }
-}
 
-#define SAMPLE_RATE 48000
+    // Compute the output level if necessary
+    // if (receivers(SIGNAL(outputLevelChanged(int))) > 0)
+        set_output_level(compute_level(floatBuf, nFrames));
+}
 
 void audio_hardware::open_audio()
 {
@@ -222,6 +250,9 @@ void audio_hardware::close_audio()
         logger::warning() << "Couldn't close audio stream, " << error.what();
         throw;
     }
+
+    set_input_level(0);
+    set_output_level(0);
 }
 
 void audio_hardware::start_audio()
