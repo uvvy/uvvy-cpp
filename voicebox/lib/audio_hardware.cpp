@@ -43,7 +43,7 @@ audio_hardware::audio_hardware()
 audio_hardware::~audio_hardware()
 {
     close_audio();
-    delete audio_inst; audio_inst = 0;
+    delete audio_inst; audio_inst = nullptr;
 }
 
 bool audio_hardware::add_instream(voicebox::audio_source* in)
