@@ -59,8 +59,7 @@ void file_read_sink::produce_output(byte_array& buffer)
         {
             // Loop the file
             offset_ = 0;
-            file_.close();
-            file_.open(filename_, ios::in|ios::binary);
+            file_.clear();
             file_.seekg(offset_);
         }
     }
