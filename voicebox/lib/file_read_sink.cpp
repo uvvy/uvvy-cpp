@@ -35,9 +35,11 @@ void file_read_sink::produce_output(byte_array& buffer)
     if (!file_.is_open())
         return;
 
-    short samples[frame_size() * num_channels()];
+    size_t n_frames = frame_size() * num_channels();
+
+    short samples[n_frames];
     off_t off = 0;
-    size_t nbytesToRead = frame_size() * num_channels() * sizeof(short);
+    size_t nbytesToRead = n_frames * sizeof(short);
 
     file_.seekg(offset_);
 
@@ -60,7 +62,7 @@ void file_read_sink::produce_output(byte_array& buffer)
     }
 
     buffer.resize(frame_bytes());
-    for (unsigned int i = 0; i < frame_size() * num_channels(); ++i) {
+    for (unsigned int i = 0; i < n_frames; ++i) {
         buffer.as<float>()[i] = float(samples[i]) / 32767.0;
     }
 }
