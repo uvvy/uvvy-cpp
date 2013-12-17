@@ -43,10 +43,8 @@ void file_read_sink::produce_output(byte_array& buffer)
 
     while ((nbytesToRead > 0) and file_)
     {
-        logger::debug() << "Reading " << nbytesToRead << " bytes from file.";
         file_.read((char*)&samples[off], nbytesToRead);
         size_t nread = file_.gcount();
-        logger::debug() << "Read    " << nbytesToRead << " bytes actually.";
         assert(!(nread % 2));
         offset_ += nread;
         off += nread/2;
@@ -56,7 +54,6 @@ void file_read_sink::produce_output(byte_array& buffer)
         if (nread <= nbytesToRead)
         {
             // Loop the file
-            logger::debug() << "File ran out, restarting. Remaining to read " << nbytesToRead;
             offset_ = 0;
             file_.seekg(offset_);// clear eof() condition
         }

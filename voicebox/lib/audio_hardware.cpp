@@ -226,7 +226,6 @@ void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
         for (auto s : outstreams) {
             s->produce_output(outbuf);
         }
-        logger::debug() << "Outputting " << hwframesize << " bytes, passed in " << nFrames;
         copy_n(outbuf.as<float>(), nFrames, floatBuf);
     }
     else
