@@ -16,23 +16,23 @@ namespace voicebox {
 void opus_encode_sink::set_enabled(bool enabling)
 {
     if (enabling and !is_enabled()) {
-        assert(!encstate);
+        assert(!encode_state_);
         int error = 0;
-        encstate = opus_encoder_create(sample_rate(), num_channels(),
+        encode_state_ = opus_encoder_create(sample_rate(), num_channels(),
             OPUS_APPLICATION_VOIP, &error);
-        assert(encstate);
+        assert(encode_state_);
         assert(!error);
 
         int framesize, rate;
-        opus_encoder_ctl(encstate, OPUS_GET_SAMPLE_RATE(&rate));
+        opus_encoder_ctl(encode_state_, OPUS_GET_SAMPLE_RATE(&rate));
         framesize = rate / 100; // 10ms
         set_frame_size(framesize);
         set_sample_rate(rate);
         logger::debug() << "opus_input: frame size " << framesize << " sample rate " << rate;
 
-        opus_encoder_ctl(encstate, OPUS_SET_VBR(1));
-        opus_encoder_ctl(encstate, OPUS_SET_BITRATE(OPUS_AUTO));
-        opus_encoder_ctl(encstate, OPUS_SET_DTX(1));
+        opus_encoder_ctl(encode_state_, OPUS_SET_VBR(1));
+        opus_encoder_ctl(encode_state_, OPUS_SET_BITRATE(OPUS_AUTO));
+        opus_encoder_ctl(encode_state_, OPUS_SET_DTX(1));
 
         super::set_enabled(true);
 
@@ -40,9 +40,9 @@ void opus_encode_sink::set_enabled(bool enabling)
 
         super::set_enabled(false);
 
-        assert(encstate);
-        opus_encoder_destroy(encstate);
-        encstate = nullptr;
+        assert(encode_state_);
+        opus_encoder_destroy(encode_state_);
+        encode_state_ = nullptr;
     }
 }
 
@@ -57,7 +57,7 @@ void opus_encode_sink::produce_output(byte_array& buffer)
     // Encode the frame and write it into a buffer
     int maxbytes = 1024;//meh, any opus option to get this?
     buffer.resize(maxbytes);
-    int nbytes = opus_encode_float(encstate, (const float*)samplebuf.data(), frame_size(),
+    int nbytes = opus_encode_float(encode_state_, (const float*)samplebuf.data(), frame_size(),
         (unsigned char*)buffer.data(), buffer.size());
     assert(nbytes <= maxbytes);
     buffer.resize(nbytes);

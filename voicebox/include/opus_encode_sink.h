@@ -24,7 +24,7 @@ class opus_encode_sink : public audio_sink
      * Encoder state.
      * Owned exclusively by the audio thread while enabled.
      */
-    OpusEncoder *encstate{nullptr};
+    OpusEncoder *encode_state_{nullptr};
 
 public:
     opus_encode_sink() = default;
