@@ -41,6 +41,8 @@ void file_read_sink::produce_output(byte_array& buffer)
     off_t off = 0;
     size_t nbytesToRead = n_frames * sizeof(short);
 
+    fill_n(samples, n_frames, 0);
+
     file_.seekg(offset_);
 
     while ((nbytesToRead > 0) and file_)
