@@ -17,14 +17,14 @@ void opus_decode_sink::set_enabled(bool enabling)
 {
     if (enabling and !is_enabled())
     {
-        assert(!decstate);
+        assert(!decode_state_);
         int error = 0;
-        decstate = opus_decoder_create(sample_rate(), num_channels(), &error);
-        assert(decstate);
+        decode_state_ = opus_decoder_create(sample_rate(), num_channels(), &error);
+        assert(decode_state_);
         assert(!error);
 
         int framesize, rate;
-        opus_decoder_ctl(decstate, OPUS_GET_SAMPLE_RATE(&rate));
+        opus_decoder_ctl(decode_state_, OPUS_GET_SAMPLE_RATE(&rate));
         framesize = rate / 100; // 10ms
         set_frame_size(framesize);
         set_sample_rate(rate);
@@ -36,9 +36,9 @@ void opus_decode_sink::set_enabled(bool enabling)
     {
         super::set_enabled(false);
 
-        assert(decstate);
-        opus_decoder_destroy(decstate);
-        decstate = nullptr;
+        assert(decode_state_);
+        opus_decoder_destroy(decode_state_);
+        decode_state_ = nullptr;
     }
 }
 
@@ -56,7 +56,7 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
     if (!bytebuf.is_empty())
     {
         logger::debug() << "Decode frame size: " << bytebuf.size();
-        int len = opus_decode_float(decstate, (unsigned char*)bytebuf.data(),
+        int len = opus_decode_float(decode_state_, (unsigned char*)bytebuf.data(),
             bytebuf.size(), samplebuf.as<float>(), frame_size(), /*decodeFEC:*/0);
         if (len < 0) {
             // perform recovery - fill buffer with 0 for example...
@@ -66,7 +66,7 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
     else
     {
         // "decode" a missing frame
-        int len = opus_decode_float(decstate, NULL, 0, samplebuf.as<float>(),
+        int len = opus_decode_float(decode_state_, NULL, 0, samplebuf.as<float>(),
             frame_size(), /*decodeFEC:*/0);
         assert(len > 0);
     }

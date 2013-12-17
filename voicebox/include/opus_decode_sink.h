@@ -24,7 +24,7 @@ class opus_decode_sink : public audio_sink
      * Decoder state.
      * Owned exclusively by the audio thread while enabled.
      */
-    OpusDecoder* decstate{nullptr};
+    OpusDecoder* decode_state_{nullptr};
 
 public:
     opus_decode_sink() = default;
