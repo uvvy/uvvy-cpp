@@ -55,11 +55,13 @@ void file_read_sink::produce_output(byte_array& buffer)
         nbytesToRead -= nread;
         assert(nbytesToRead >= 0);
 
-        if (nread <= nbytesToRead)
+        if (nread <= nbytesToRead or file_.eof())
         {
             // Loop the file
             offset_ = 0;
-            file_.seekg(offset_);// clear eof() condition
+            file_.close();
+            file_.open(filename_, ios::in|ios::binary);
+            file_.seekg(offset_);
         }
     }
 
