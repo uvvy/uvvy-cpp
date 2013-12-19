@@ -14,6 +14,9 @@ namespace voicebox {
 
 /**
  * RtAudio source uses audio_hardware to receive captured input stream.
+ *
+ * @todo Set a fixed-size ringbuffer to store audio data before packetizer
+ * gets it chunked.
  */
 class rtaudio_source : public audio_source
 {
