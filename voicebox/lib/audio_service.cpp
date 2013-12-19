@@ -81,9 +81,7 @@ void audio_service::listen_incoming_session()
     pimpl_->server = make_shared<ssu::server>(pimpl_->host_);
     pimpl_->server->on_new_connection.connect([this]
     {
-        // pimpl_->hw.new_connection(pimpl_->server,
-        //     [this] { on_session_started(); },
-        //     [this] { on_session_finished(); });
+        new_connection(pimpl_->server);
     });
     bool listening = pimpl_->server->listen(service_name, "Streaming services",
                                             protocol_name, "OPUS Audio protocol");
@@ -93,3 +91,30 @@ void audio_service::listen_incoming_session()
     }
 }
 
+
+void audio_service::new_connection(shared_ptr<server> server)
+{
+    auto stream = server->accept();
+    if (!stream) {
+        return;
+    }
+
+    logger::info() << "New incoming connection from " << stream->remote_host_id();
+    // streaming(stream);
+
+    stream->on_link_up.connect([this] {
+        on_session_started();
+        // network_sink.enable();
+    });
+
+    stream->on_link_down.connect([this] {
+        // network_sink.disable();
+        on_session_finished();
+    });
+
+    if (stream->is_link_up()) {
+        logger::debug() << "Incoming stream is ready, start sending immediately.";
+        on_session_started();
+        // network_sink.enable();
+    }
+}
