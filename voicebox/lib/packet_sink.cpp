@@ -30,4 +30,17 @@ void packet_sink::produce_output(byte_array& buffer)
     }
 }
 
+void packet_sink::send_packets()
+{
+    if (!stream_->is_connected()) {
+        logger::warning() << "packet_sink - Stream is not connected, cannot send";
+        return;
+    }
+
+    byte_array buffer;
+    do {
+        produce_output(buffer);
+    } while(!buffer.is_empty());
+}
+
 } // voicebox namespace

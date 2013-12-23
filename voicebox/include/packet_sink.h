@@ -27,6 +27,11 @@ public:
     {}
 
     void produce_output(byte_array& buffer) override;
+
+    /**
+     * Run produce loop until it returns an empty buffer.
+     */
+    void send_packets();
 };
 
 } // voicebox namespace
