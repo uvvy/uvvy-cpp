@@ -9,32 +9,28 @@
 #pragma once
 
 #include "stream.h"
-#include "audio_sink.h"
+#include "audio_source.h"
 
 namespace voicebox {
 
 /**
- * Packet sink sends data to the network using an ssu::stream.
+ * Packet source receives data from the network using an ssu::stream.
  */
-class packet_sink : public audio_sink
+class packet_source : public audio_source
 {
-    typedef audio_sink super;
-
+    typedef audio_source super;
     std::shared_ptr<ssu::stream> stream_;
     uint32_t sequence_number_{0};
 
 public:
-    packet_sink(std::shared_ptr<ssu::stream> stream)
-        : audio_sink()
+    packet_source(std::shared_ptr<ssu::stream> stream)
+        : audio_source()
         , stream_(stream)
     {}
 
-    void produce_output(byte_array& buffer) override;
+    void set_enabled(bool enable) override;
 
-    /**
-     * Run produce loop until it returns an empty buffer.
-     */
-    void send_packets();
+private:
 };
 
 } // voicebox namespace
