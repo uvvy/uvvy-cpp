@@ -11,9 +11,11 @@
 namespace voicebox {
 
 /**
- * It doesn't have, neither use acceptor or producer, since it sits at the intersection
+ * It doesn't have, neither use, acceptor or producer, since it sits at the intersection
  * of push and pull threads, all other components call into jitterbuffer.
  * It passes the data on, using synchronization.
+ *
+ * Jitterbuffer forwards queue signals for use by other layers.
  */
 class jitterbuffer : public audio_source, public audio_sink
 {

@@ -15,6 +15,10 @@ namespace voicebox {
 
 /**
  * Sources push data to an acceptor.
+ *
+ * A source is an active object in the sense that the first source usually initiates send of data.
+ * A source at the end of the chain is usually a mix of source and sink, providing a connection
+ * and synchronization between sources and sinks.
  */
 class audio_source : public audio_stream
 {

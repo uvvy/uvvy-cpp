@@ -9,7 +9,7 @@
 // remote stream.
 
 // Packet with the least timestamp is taken from the queue when produce_output() is called.
-// The latest timestamp is then bumbed to timestamp of that packet.
+// The latest timestamp is then bumped to timestamp of that packet.
 
 void jitterbuffer::accept_input(byte_array msg)
 {
@@ -39,6 +39,8 @@ void jitterbuffer::accept_input(byte_array msg)
 }
 
 const int packetized_output::max_skip;
+
+// sequence number is coming from where? - see voice.cc:156
 
 // // Determine how many frames we missed.
 // int seqdiff = seq_no - out_sequence_;
