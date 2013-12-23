@@ -23,10 +23,16 @@ protected:
     synchronized_queue queue_;
 
 public:
-    jitterbuffer() = default;
+    jitterbuffer() {
+        queue_.on_ready_read.connect([this] { on_ready_read(); });
+        queue_.on_queue_empty.connect([this] { on_queue_empty(); });
+    }
 
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source
+
+    synchronized_queue::state_signal on_ready_read;
+    synchronized_queue::state_signal on_queue_empty;
 };
 
 }

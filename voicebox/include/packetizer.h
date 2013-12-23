@@ -8,6 +8,8 @@
 //
 #pragma once
 
+#include "synchronized_queue.h"
+
 namespace voicebox {
 
 /**
@@ -38,7 +40,10 @@ protected:
     synchronized_queue queue_;
 
 public:
-    packetizer() = default;
+    packetizer() {
+        queue_.on_ready_read.connect([this] { on_ready_read(); });
+        queue_.on_queue_empty.connect([this] { on_queue_empty(); });
+    }
 
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source
