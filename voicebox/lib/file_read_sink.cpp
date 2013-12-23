@@ -11,7 +11,6 @@ file_read_sink::file_read_sink(std::string const& filename)
 
 void file_read_sink::set_enabled(bool enabling)
 {
-    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled())
     {
         assert(!file_.is_open());
@@ -27,6 +26,7 @@ void file_read_sink::set_enabled(bool enabling)
     {
         super::set_enabled(false);
         file_.close();
+        logger::debug() << "File read sink disabled";
     }
 }
 

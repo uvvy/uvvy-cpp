@@ -28,7 +28,8 @@ void opus_encode_sink::set_enabled(bool enabling)
         framesize = rate / 100; // 10ms
         set_frame_size(framesize);
         set_sample_rate(rate);
-        logger::debug() << "opus_input: frame size " << framesize << " sample rate " << rate;
+        logger::debug() << "opus_encode_sink: frame size " << dec << framesize
+            << " sample rate " << rate;
 
         opus_encoder_ctl(encode_state_, OPUS_SET_VBR(1));
         opus_encoder_ctl(encode_state_, OPUS_SET_BITRATE(OPUS_AUTO));
@@ -61,7 +62,7 @@ void opus_encode_sink::produce_output(byte_array& buffer)
         (unsigned char*)buffer.data(), buffer.size());
     assert(nbytes <= maxbytes);
     buffer.resize(nbytes);
-    logger::debug() << "Encoded frame size: " << nbytes;
+    logger::debug() << "Encoded frame size: " << dec << nbytes;
     logger::file_dump dump(buffer, "encoded opus packet");
 }
 
