@@ -8,6 +8,7 @@
 //
 #include <queue>
 #include <mutex>
+#include <boost/asio/strand.hpp>
 #include "audio_service.h"
 #include "audio_hardware.h"
 #include "plotfile.h"
@@ -16,11 +17,84 @@
 #include "logging.h"
 #include "algorithm.h"
 
+#include "rtaudio_source.h"
+#include "rtaudio_sink.h"
+#include "packet_source.h"
+#include "packet_sink.h"
+#include "packetizer.h"
+#include "jitterbuffer.h"
+#include "opus_encode_sink.h"
+#include "opus_decode_sink.h"
+
 using namespace std;
 using namespace ssu;
+using namespace voicebox;
+using namespace boost::asio;
 
 static const std::string service_name{"streaming"};
 static const std::string protocol_name{"opus"};
+
+struct send_chain
+{
+    // shared_ptr<stream> out_stream_;
+    rtaudio_source hw_in_;
+    packetizer pkt_;
+    opus_encode_sink encoder_;
+    packet_sink sink_; // maintains seqno
+    io_service::strand strand_;
+
+    send_chain(shared_ptr<stream> stream)
+        // : out_stream_(stream)
+        : sink_(stream)
+        , strand_(stream->get_host()->get_io_service())
+    {
+        hw_in_.set_acceptor(&pkt_);
+        sink_.set_producer(&encoder_);
+        encoder_.set_producer(&pkt_);
+
+        pkt_.on_ready_read.connect([this] { strand_.post([this] { sink_.send_packets(); }); });
+    }
+
+    void enable()
+    {
+        sink_.enable();
+        hw_in_.enable();
+    }
+
+    void disable()
+    {
+        hw_in_.disable();
+        sink_.disable();
+    }
+};
+
+struct receive_chain
+{
+    // shared_ptr<stream> in_stream_;
+    packet_source source_; // maintains seqno
+    jitterbuffer jb_;
+    opus_decode_sink decoder_;
+    rtaudio_sink hw_out_;
+
+    receive_chain(shared_ptr<stream> stream)
+        : source_(stream)
+    {
+        source_.set_acceptor(&jb_);
+        hw_out_.set_producer(&decoder_);
+        decoder_.set_producer(&jb_);
+    }
+
+    void enable()
+    {
+        source_.enable();
+    }
+
+    void disable()
+    {
+        source_.disable();
+        hw_out_.disable();
+    }
+};
 
 //=================================================================================================
 // audio_service

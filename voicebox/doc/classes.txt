@@ -87,17 +87,3 @@ rtaudio_source->packetizer->opus_encoder_sink->packet_sink
                      +---------on_ready_read--------+
                               in audio_service which has overview of the whole chain
 
-
-rtaudio_source source;
-packetizer packets;
-opus_encoder_sink opus;
-packet_sink network;
-
-source.set_acceptor(&packets);
-network.set_producer(&opus);
-opus.set_producer(&packets);
-
-packets.on_ready_read.connect([this] { strand_.post([this] { network.send_packets(); })});
-network.enable();
-source.enable();
-
