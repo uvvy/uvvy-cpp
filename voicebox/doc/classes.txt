@@ -79,3 +79,25 @@ and fill in for missing packets in the queue.
 
 Decoders can either be sources or sinks, depending on where decoding is happening - in push or in
 pull threads. It's usually done in pull thread, to decode only what's necessary.
+
+
+                                                   get packets in a loop as long as any available
+rtaudio_source->packetizer->opus_encoder_sink->packet_sink
+                     |                              ^
+                     +---------on_ready_read--------+
+                              in audio_service which has overview of the whole chain
+
+
+rtaudio_source source;
+packetizer packets;
+opus_encoder_sink opus;
+packet_sink network;
+
+source.set_acceptor(&packets);
+network.set_producer(&opus);
+opus.set_producer(&packets);
+
+packets.on_ready_read.connect([this] { strand_.post([this] { network.send_packets(); })});
+network.enable();
+source.enable();
+
