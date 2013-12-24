@@ -19,8 +19,8 @@ namespace voicebox {
 class packet_source : public audio_source
 {
     typedef audio_source super;
+
     std::shared_ptr<ssu::stream> stream_;
-    uint32_t sequence_number_{0};
 
 public:
     packet_source(std::shared_ptr<ssu::stream> stream)

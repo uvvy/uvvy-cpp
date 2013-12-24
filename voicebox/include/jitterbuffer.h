@@ -21,6 +21,7 @@ class jitterbuffer : public audio_source, public audio_sink
 {
 protected:
     synchronized_queue<byte_array> queue_;
+    uint32_t sequence_number_{0};
 
 public:
     jitterbuffer() {
