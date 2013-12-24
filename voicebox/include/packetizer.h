@@ -37,7 +37,7 @@ namespace voicebox {
 class packetizer : public audio_source, public audio_sink
 {
 protected:
-    synchronized_queue queue_;
+    synchronized_queue<byte_array> queue_;
 
 public:
     packetizer() {
@@ -48,8 +48,8 @@ public:
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source
 
-    synchronized_queue::state_signal on_ready_read;
-    synchronized_queue::state_signal on_queue_empty;
+    synchronized_queue<byte_array>::state_signal on_ready_read;
+    synchronized_queue<byte_array>::state_signal on_queue_empty;
 };
 
 }
