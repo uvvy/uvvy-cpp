@@ -36,7 +36,6 @@ static const std::string protocol_name{"opus"};
 
 struct send_chain
 {
-    // shared_ptr<stream> out_stream_;
     rtaudio_source hw_in_;
     packetizer pkt_;
     opus_encode_sink encoder_;
@@ -44,7 +43,6 @@ struct send_chain
     io_service::strand strand_;
 
     send_chain(shared_ptr<stream> stream)
-        // : out_stream_(stream)
         : sink_(stream)
         , strand_(stream->get_host()->get_io_service())
     {
@@ -70,7 +68,6 @@ struct send_chain
 
 struct receive_chain
 {
-    // shared_ptr<stream> in_stream_;
     packet_source source_; // maintains seqno
     jitterbuffer jb_;
     opus_decode_sink decoder_;
