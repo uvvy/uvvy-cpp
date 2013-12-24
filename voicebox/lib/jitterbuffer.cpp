@@ -1,5 +1,7 @@
 #include "jitterbuffer.h"
 
+const int packetized_output::max_skip;
+
 // Packet acceptance into the jitterbuffer:
 // If the packet is older than what is currently playing, simply drop it.
 // If packet should be somewhere in the middle replacing an empty packet, replace.
@@ -11,12 +13,51 @@
 // Packet with the least timestamp is taken from the queue when produce_output() is called.
 // The latest timestamp is then bumped to timestamp of that packet.
 
+// Packets format:
+// [8 bytes] microseconds since epoch (Jan 1, 2010)
+// [4 bytes] sequence number
+// [variable] payload
+// sequence number is coming from where? - see voice.cc:156
 void jitterbuffer::accept_input(byte_array msg)
 {
     log_packet_delay(msg);
 
-    // Jitterbuffer part:
+    uint32_t seq_no = msg.as<big_uint32_t>()[2];
+    uint32_t queue_first_seq_no = queue_.front().as<big_uint32_t>()[2];
+
+    int seqdiff = seq_no - sequence_number_;
+
+    // If packet is out-of-order, see if we still can insert it somewhere.
+    if (seqdiff < 0)
+    {
+        if (seq_no > queue_first_seq_no)
+        {
+            queue_.enqueue(msg);
+            logger::debug(199) << "Jitterbuffer - frame received out of order";
+
+            // if there's a packet with the same sequence number in the queue - replace it
+        }
+        else
+        {
+            logger::warning() << "Out-of-order packet too late - not fitting in JB";
+        }
+    }
+
+    seqdiff = min(seqdiff, max_skip);
+    // @todo When receiving too large a seqdiff, probably set up a full JB reset with
+    // clearing the queue?
+
+// lock_guard<mutex> guard(mutex_); <- need to lock the whole step here
+
+    // Queue up the missed frames, if any.
+    for (int i = 0; i < seqdiff; ++i)
+    {
+        queue_.enqueue(byte_array());
+        logger::debug(199) << "MISSED audio frame " << sequence_number_ + i;
+    }
+
     queue_.enqueue(msg);
+    logger::debug(200) << "Received audio frame " << dec << seq_no;
 
     sort(queue_.begin(), queue_.end(),
     [](byte_array const& a, byte_array const& b)
@@ -36,40 +77,13 @@ void jitterbuffer::accept_input(byte_array msg)
                 << (tsb - tsa) << "ms apart.";
         }
     }
+
+// // Discard frames from the head if we exceed queueMaxSize
+// while (queue_.size() > queue_max) {
+//     queue_.dequeue();
+// }
+
+    // Remember which sequence we expect next
+    sequence_number_ = seq_no + 1;
 }
 
-const int packetized_output::max_skip;
-
-// sequence number is coming from where? - see voice.cc:156
-
-// // Determine how many frames we missed.
-// int seqdiff = seq_no - out_sequence_;
-// if (seqdiff < 0) {
-//     // Out-of-order frame - just drop it for now.
-//     // XXX insert into queue out-of-order if it's still useful
-//     // -- basically should fit between (seqno-queue_max) .. seqno and be still in the queue...
-//     // this implements a very basic jitterbuffer
-//     logger::debug(199) << "packetized_output: frame received out of order";
-//     return;
-// }
-// seqdiff = min(seqdiff, max_skip);
-
-// // lock_guard<mutex> guard(mutex_); <- need to lock the whole step here
-
-// // Queue up the missed frames, if any.
-// for (int i = 0; i < seqdiff; i++) {
-//     out_queue_.enqueue(byte_array());
-//     logger::debug(199) << "MISSED audio frame " << out_sequence_ + i;
-// }
-
-// // Queue up the frame we actually got.
-// out_queue_.enqueue(buf);
-// logger::debug(200) << "Received audio frame" << seq_no;
-
-// // Discard frames from the head if we exceed queueMax
-// while (out_queue_.size() > queue_max) {
-//     out_queue_.dequeue();
-// }
-
-// // Remember which sequence we expect next
-// out_sequence_ = seq_no + 1;
