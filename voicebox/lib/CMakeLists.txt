@@ -1,9 +1,10 @@
 
 add_library(voicebox STATIC
-    jitterbuffer.cpp
     audio_hardware.cpp
     audio_stream.cpp
     audio_service.cpp
+    jitterbuffer.cpp
+    packetizer.cpp
     audio_sink.cpp
     audio_source.cpp
     rtaudio_sink.cpp
@@ -11,4 +12,5 @@ add_library(voicebox STATIC
     opus_encode_sink.cpp
     opus_decode_sink.cpp
     file_read_sink.cpp
-    packet_sink.cpp)
+    packet_sink.cpp
+    packet_source.cpp)

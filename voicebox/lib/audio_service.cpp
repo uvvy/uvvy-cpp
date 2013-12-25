@@ -103,6 +103,8 @@ public:
     std::shared_ptr<ssu::host> host_;
     shared_ptr<stream> stream;
     shared_ptr<server> server;
+    shared_ptr<send_chain> send;
+    shared_ptr<receive_chain> recv;
 
     private_impl(std::shared_ptr<ssu::host> host)
         : host_(host)
@@ -122,14 +124,18 @@ void audio_service::establish_outgoing_session(peer_id const& eid,
     logger::info() << "Connecting to " << eid;
 
     pimpl_->stream = make_shared<ssu::stream>(pimpl_->host_);
-    // pimpl_->hw.streaming(pimpl_->stream);
+
+    pimpl_->send = make_shared<send_chain>(pimpl_->stream);
+
     pimpl_->stream->on_link_up.connect([this] {
         on_session_started();
-        voicebox::audio_hardware::instance()->start_audio();
+        pimpl_->send->enable();
+        // voicebox::audio_hardware::instance()->start_audio();
     });
     pimpl_->stream->on_link_down.connect([this] {
         on_session_finished();
-        voicebox::audio_hardware::instance()->stop_audio();
+        pimpl_->send->disable();
+        // voicebox::audio_hardware::instance()->stop_audio();
     });
     pimpl_->stream->connect_to(eid, service_name, protocol_name);
 
@@ -173,19 +179,22 @@ void audio_service::new_connection(shared_ptr<server> server)
     logger::info() << "New incoming connection from " << stream->remote_host_id();
     // streaming(stream);
 
+    pimpl_->recv = make_shared<receive_chain>(stream);
+
     stream->on_link_up.connect([this] {
         on_session_started();
-        // network_sink.enable();
+        pimpl_->recv->enable();
     });
 
     stream->on_link_down.connect([this] {
-        // network_sink.disable();
+        pimpl_->recv->disable();
         on_session_finished();
     });
 
-    if (stream->is_link_up()) {
+    if (stream->is_link_up())
+    {
         logger::debug() << "Incoming stream is ready, start sending immediately.";
         on_session_started();
-        // network_sink.enable();
+        pimpl_->recv->enable();
     }
 }
