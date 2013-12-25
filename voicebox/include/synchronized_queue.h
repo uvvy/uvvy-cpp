@@ -19,8 +19,14 @@ class synchronized_queue
     mutable std::mutex mutex_;     // Protection for input queue
     std::deque<T> queue_; // Queue of audio input frames
 
+    typedef std::deque<T> base_type;
 public:
     synchronized_queue() = default;
+
+    typename base_type::iterator begin() { return queue_.begin(); }
+    typename base_type::const_iterator begin() const { return queue_.begin(); }
+    typename base_type::iterator end() { return queue_.end(); }
+    typename base_type::const_iterator end() const { return queue_.end(); }
 
     void clear()
     {
@@ -35,6 +41,9 @@ public:
         std::lock_guard<std::mutex> guard(mutex_);
         return queue_.size();
     }
+
+    T operator [](int index) { return queue_[index]; }
+    T& front() { return queue_.front(); }
 
     void enqueue(T data);
     T dequeue();
