@@ -8,6 +8,10 @@
 //
 #pragma once
 
+#include "audio_source.h"
+#include "audio_sink.h"
+#include "synchronized_queue.h"
+
 namespace voicebox {
 
 /**
