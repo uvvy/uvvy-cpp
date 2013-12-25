@@ -2,6 +2,7 @@
 #include <chrono>
 #include "host.h"
 #include "stream.h"
+#include "settings_provider.h"
 #include "file_read_sink.h"
 #include "opus_encode_sink.h"
 #include "packet_sink.h"
@@ -12,8 +13,10 @@ using namespace voicebox;
 
 int main()
 {
-    shared_ptr<host> host(host::create());
+    shared_ptr<host> host(host::create(settings_provider::instance()));
     shared_ptr<stream> stream(make_shared<stream>(host));
+
+    // stream->connect_to(eid, "streaming", "opus");//-- audio_service?
 
     file_read_sink readfile("bnb.s16");
     opus_encode_sink encoder;
@@ -28,7 +31,10 @@ int main()
 
     sink.enable();
 
-    // @todo Need something pulling the sink to send actual packets. Some sort of send timer?
-
-    this_thread::sleep_for(chrono::seconds(300));
+    // Emulate 30 seconds of looped playback
+    for (int i = 0; i < 3000; ++i) {
+        byte_array buf;
+        sink.produce_output(buf);
+        this_thread::sleep_for(chrono::milliseconds(10));
+    }
 }
