@@ -12,6 +12,12 @@ namespace voicebox {
  */
 const int max_skip = 3;
 
+jitterbuffer::jitterbuffer()
+{
+    queue_.on_ready_read.connect([this] { on_ready_read(); });
+    queue_.on_queue_empty.connect([this] { on_queue_empty(); });
+}
+
 // Packet acceptance into the jitterbuffer:
 // If the packet is older than what is currently playing, simply drop it.
 // If packet should be somewhere in the middle replacing an empty packet, replace.
@@ -96,6 +102,13 @@ void jitterbuffer::accept_input(byte_array msg)
     // Remember which sequence we expect next
     sequence_number_ = seq_no + 1;
 }
+
+// Packets format:
+// [8 bytes] microseconds since epoch (Jan 1, 2010)
+// [4 bytes] sequence number
+// [variable] payload
+void jitterbuffer::produce_output(byte_array& buffer)
+{}
 
 } // voicebox namespace
 

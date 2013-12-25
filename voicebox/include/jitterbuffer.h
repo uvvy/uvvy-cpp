@@ -28,10 +28,7 @@ protected:
     uint32_t sequence_number_{0};
 
 public:
-    jitterbuffer() {
-        queue_.on_ready_read.connect([this] { on_ready_read(); });
-        queue_.on_queue_empty.connect([this] { on_queue_empty(); });
-    }
+    jitterbuffer();
 
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source
