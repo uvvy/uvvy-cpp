@@ -23,14 +23,13 @@ class packet_source : public audio_source
     std::shared_ptr<ssu::stream> stream_;
 
 public:
-    packet_source(std::shared_ptr<ssu::stream> stream)
-        : audio_source()
-        , stream_(stream)
-    {}
+    packet_source(std::shared_ptr<ssu::stream> stream);
+    ~packet_source();
 
     void set_enabled(bool enable) override;
 
 private:
+    void on_packet_received();
 };
 
 } // voicebox namespace
