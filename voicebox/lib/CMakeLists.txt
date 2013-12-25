@@ -1,5 +1,6 @@
 
 add_library(voicebox STATIC
+    jitterbuffer.cpp
     audio_hardware.cpp
     audio_stream.cpp
     audio_service.cpp

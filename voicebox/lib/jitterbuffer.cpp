@@ -1,6 +1,16 @@
+#include "logging.h"
 #include "jitterbuffer.h"
+#include "opaque_endian.h"
+#include "audio_service.h" // TRACE_DETAIL
 
-const int packetized_output::max_skip;
+using namespace std;
+
+namespace voicebox {
+
+/**
+ * Maximum number of consecutive frames to skip
+ */
+const int max_skip = 3;
 
 // Packet acceptance into the jitterbuffer:
 // If the packet is older than what is currently playing, simply drop it.
@@ -20,7 +30,7 @@ const int packetized_output::max_skip;
 // sequence number is coming from where? - see voice.cc:156
 void jitterbuffer::accept_input(byte_array msg)
 {
-    log_packet_delay(msg);
+    // log_packet_delay(msg);
 
     uint32_t seq_no = msg.as<big_uint32_t>()[2];
     uint32_t queue_first_seq_no = queue_.front().as<big_uint32_t>()[2];
@@ -86,4 +96,6 @@ void jitterbuffer::accept_input(byte_array msg)
     // Remember which sequence we expect next
     sequence_number_ = seq_no + 1;
 }
+
+} // voicebox namespace
 
