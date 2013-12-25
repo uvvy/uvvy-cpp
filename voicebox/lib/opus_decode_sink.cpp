@@ -42,6 +42,10 @@ void opus_decode_sink::set_enabled(bool enabling)
     }
 }
 
+// Packets format:
+// [8 bytes] microseconds since epoch (Jan 1, 2010)
+// [4 bytes] sequence number
+// [variable] payload
 void opus_decode_sink::produce_output(byte_array& samplebuf)
 {
     // Grab the next buffer from the queue
@@ -60,7 +64,7 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
             bytebuf.size(), samplebuf.as<float>(), frame_size(), /*decodeFEC:*/0);
 
 
-        // int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+8, pkt.size()-8,
+        // int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+12, pkt.size()-12,
         //     decoded_packet, frame_size_, /*decodeFEC:*/0);
 
 
