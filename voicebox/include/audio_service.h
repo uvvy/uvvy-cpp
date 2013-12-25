@@ -36,6 +36,7 @@ public:
     void listen_incoming_session();
     /**
      * Terminate an active session, causing all audio I/O to stop.
+     * Notifies the far end to also terminate session.
      */
     void end_session();
 
