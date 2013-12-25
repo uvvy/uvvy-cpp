@@ -11,8 +11,29 @@
 
 using namespace std;
 using namespace ssu;
+namespace pt = boost::posix_time;
 
 namespace voicebox {
+
+// static const pt::ptime epoch{boost::gregorian::date(2010, boost::gregorian::Jan, 1)};
+
+// audio_sender::~audio_sender()
+// {
+//     if (stream_) {
+//         stream_->shutdown(stream::shutdown_mode::write);
+//     }
+// }
+
+// // Called by rtaudio callback to encode and send packet.
+// void audio_sender::send_packet(float* buffer, size_t nFrames)
+// {
+//     byte_array samplebuf(nFrames*sizeof(float)+8);
+
+//     // Timestamp the packet with our own clock reading. -- put in opus_encode_sink (?)
+//     int64_t ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
+//     samplebuf.as<big_int64_t>()[0] = ts;
+//     // Ideally, an ack packet would contain ts info at the receiving side for this packet.
+// }
 
 /**
  * Somebody needs to pull this method to send the packets,
