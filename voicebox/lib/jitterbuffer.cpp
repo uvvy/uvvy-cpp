@@ -12,6 +12,17 @@ namespace voicebox {
  */
 static const int max_skip = 3;
 
+/**
+ * Minimum number of frames to queue before enabling output
+ */
+static const int queue_min = 10; // 1/5 sec
+
+/**
+ * Maximum number of frames to queue before dropping frames
+ */
+static const int queue_max = 25; // 1/2 sec
+
+
 jitterbuffer::jitterbuffer()
 {
     queue_.on_ready_read.connect([this] { on_ready_read(); });
@@ -94,10 +105,10 @@ void jitterbuffer::accept_input(byte_array msg)
         }
     }
 
-// // Discard frames from the head if we exceed queueMaxSize
-// while (queue_.size() > queue_max) {
-//     queue_.dequeue();
-// }
+    // Discard frames from the head if we exceed max queue size
+    while (queue_.size() > queue_max) {
+        queue_.dequeue();
+    }
 
     // Remember which sequence we expect next
     sequence_number_ = seq_no + 1;
