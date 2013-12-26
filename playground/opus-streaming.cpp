@@ -100,6 +100,7 @@ int main(int argc, char* argv[])
     });
     service.on_session_finished.connect([]{
         logger::info() << "Audio session stopped";
+        // @todo Send termination signal to mainloop
     });
 
     if (connect_out)

@@ -10,7 +10,7 @@ namespace voicebox {
 /**
  * Maximum number of consecutive frames to skip
  */
-const int max_skip = 3;
+static const int max_skip = 3;
 
 jitterbuffer::jitterbuffer()
 {

@@ -168,7 +168,6 @@ void audio_service::listen_incoming_session()
     }
 }
 
-
 void audio_service::new_connection(shared_ptr<server> server)
 {
     auto stream = server->accept();
@@ -177,7 +176,6 @@ void audio_service::new_connection(shared_ptr<server> server)
     }
 
     logger::info() << "New incoming connection from " << stream->remote_host_id();
-    // streaming(stream);
 
     pimpl_->recv = make_shared<receive_chain>(stream);
 
