@@ -196,3 +196,19 @@ void audio_service::new_connection(shared_ptr<server> server)
         pimpl_->recv->enable();
     }
 }
+
+void audio_service::end_session()
+{
+    if (pimpl_->send)
+    {
+        pimpl_->send->disable();
+        pimpl_->send = nullptr;
+    }
+    if (pimpl_->recv)
+    {
+        pimpl_->recv->disable();
+        pimpl_->recv = nullptr;
+    }
+    on_session_finished();
+}
+
