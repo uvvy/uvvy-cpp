@@ -119,7 +119,9 @@ void jitterbuffer::accept_input(byte_array msg)
 // [4 bytes] sequence number
 // [variable] payload
 void jitterbuffer::produce_output(byte_array& buffer)
-{}
+{
+    buffer = queue_.dequeue();
+}
 
 } // voicebox namespace
 
