@@ -9,34 +9,21 @@
 #include "traverse_nat.h"
 #include "logging.h"
 #include "host.h"
-// #include "private/regserver_client.h" // @fixme Testing only.
 
 using namespace std;
 using namespace ssu;
 
-// constexpr uint16_t regserver_port = uia::routing::internal::REGSERVER_DEFAULT_PORT;
-
-static
-bool open_ports(shared_ptr<upnp::UpnpIgdClient> upnp, std::set<uint16_t> ports)
-{
-    bool all_added = true;
-    for (uint16_t port : ports)
-    {
-        all_added &= upnp->AddPortMapping(port, upnp::kTcp);
-        all_added &= upnp->AddPortMapping(port, upnp::kUdp);
-    }
-    return all_added;
-}
-
-shared_ptr<upnp::UpnpIgdClient> traverse_nat(std::shared_ptr<host> host)
+shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
 {
     shared_ptr<upnp::UpnpIgdClient> upnp = make_shared<upnp::UpnpIgdClient>();
 
     logger::info() << "Initialising UPnP";
 
     auto endpoints = host->active_local_endpoints();
-    std::set<uint16_t> ports;
+    set<uint16_t> ports;
+    set<boost::asio::ip::address> ips;
     for (auto& ep : endpoints) {
+        ips.insert(ep.address());
         ports.insert(ep.port());
     }
 
@@ -50,11 +37,57 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(std::shared_ptr<host> host)
         });
     }
 
-    // @todo
-    // Try port->port mapping first
-    // If it fails, try port->0 mapping to set external port automatically
+    bool all_added = true;
 
-    bool all_added = open_ports(upnp, ports);
+    set<boost::asio::ip::udp::endpoint> mapped_endpoints;
+    list<upnp::PortMappingExt> out_mapping;
+    upnp->GetPortMappings(out_mapping);
+
+    map<uint16_t, boost::asio::ip::udp::endpoint> mapping_map;
+
+    set<uint16_t> used_ports;
+    for (auto m : out_mapping)
+    {
+        used_ports.insert(m.external_port);
+
+        endpoint ep(boost::asio::ip::address::from_string(m.internal_host), m.internal_port);
+
+        mapped_endpoints.insert(ep);
+
+        mapping_map.insert(make_pair(m.external_port, ep));
+    }
+
+    auto ports_copy = ports;
+    for (auto port : ports_copy)
+    {
+        bool mapping_exists = false;
+        if (contains(used_ports, port)) {
+            // We have a mapping for this port, is it for the same address as us?
+            auto mapping = mapping_map[port];
+            for (auto& ep : endpoints) {
+                if (ep == mapping) {
+                    // YES: We're good
+                    // remove port from ports
+                    logger::debug() << "NAT found existing port mapping for our endpoint";
+                    ports.erase(port);
+                    mapping_exists = true;
+                    break;
+                }
+            }
+        }
+        // NO: Set up a new mapping on an unused ext_port
+        if (!mapping_exists)
+        {
+            uint16_t ext_port = port;
+            while (contains(used_ports, ext_port)) {
+                ++ext_port;
+            }
+            logger::debug() << "NAT creating port mapping for our endpoint port "
+                << port << "->" << ext_port;
+            all_added &= upnp->AddPortMapping(port, ext_port, upnp::kTcp);
+            all_added &= upnp->AddPortMapping(port, ext_port, upnp::kUdp);
+        }
+    }
 
     if (upnp->IsAsync()) {
         logger::debug() << "Waiting...";
