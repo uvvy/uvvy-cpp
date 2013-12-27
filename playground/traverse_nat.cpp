@@ -27,7 +27,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
         ports.insert(ep.port());
     }
 
-    logger::debug() << "Need to map " << ports.size() << " ports";
+    logger::debug() << "Need to map " << dec << ports.size() << " ports";
 
     upnp->InitControlPoint();
 
@@ -62,20 +62,44 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
     {
         bool mapping_exists = false;
         if (contains(used_ports, port)) {
-            // We have a mapping for this port, is it for the same address as us?
+            // We have a mapping for this port, is it for the same address as us? (1)
             auto mapping = mapping_map[port];
             for (auto& ep : endpoints) {
                 if (ep == mapping) {
-                    // YES: We're good
+                    // YES(1): We're good
                     // remove port from ports
-                    logger::debug() << "NAT found existing port mapping for our endpoint";
+                    logger::debug() << "NAT found existing port mapping for our endpoint - ext port "
+                        << port << "->" << mapping;
                     ports.erase(port);
                     mapping_exists = true;
                     break;
                 }
             }
         }
-        // NO: Set up a new mapping on an unused ext_port
+        // IP based check - do we have a mapping for our local endpoint? (2)
+        // If so, it must map some external port to our internal port.
+        for (auto& ep : endpoints)
+        {
+            if (ep.port() != port) {
+                continue;
+            }
+            for (auto m : mapping_map)
+            {
+                if (m.second == ep) {
+                    // YES(2): We're good
+                    // remove port from ports
+                    logger::debug() << "NAT found existing port mapping for our endpoint - ext port "
+                        << m.first << "->" << m.second;
+                    ports.erase(port);
+                    mapping_exists = true;
+                    break;
+                }
+            }
+            if (mapping_exists) {
+                break;
+            }
+        }
+        // NO(1,2): Set up a new mapping on an unused ext_port
         if (!mapping_exists)
         {
             uint16_t ext_port = port;
@@ -83,7 +107,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
                 ++ext_port;
             }
             logger::debug() << "NAT creating port mapping for our endpoint port "
-                << port << "->" << ext_port;
+                << dec << port << "->" << ext_port;
             all_added &= upnp->AddPortMapping(port, ext_port, upnp::kTcp);
             all_added &= upnp->AddPortMapping(port, ext_port, upnp::kUdp);
         }
