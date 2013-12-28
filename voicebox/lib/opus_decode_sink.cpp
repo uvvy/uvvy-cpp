@@ -28,7 +28,8 @@ void opus_decode_sink::set_enabled(bool enabling)
         framesize = rate / 100; // 10ms
         set_frame_size(framesize);
         set_sample_rate(rate);
-        logger::debug() << "opus_output: frame size " << framesize << " sample rate " << rate;
+        logger::debug() << "opus_decode_sink: frame size "
+            << dec << framesize << " sample rate " << rate;
 
         super::set_enabled(true);
     }
