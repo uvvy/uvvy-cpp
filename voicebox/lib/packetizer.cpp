@@ -18,9 +18,13 @@ packetizer::packetizer()
 }
 
 void packetizer::produce_output(byte_array& buffer)
-{}
+{
+    buffer = queue_.dequeue();
+}
 
 void packetizer::accept_input(byte_array data)
-{}
+{
+    queue_.enqueue(data);
+}
 
 } // voicebox namespace
