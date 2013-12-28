@@ -7,7 +7,7 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include "logging.h"
-#include "opus_encode_sink.h"
+#include "voicebox/opus_encode_sink.h"
 
 using namespace std;
 

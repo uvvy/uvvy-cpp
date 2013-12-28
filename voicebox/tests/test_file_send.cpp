@@ -3,9 +3,9 @@
 #include "host.h"
 #include "stream.h"
 #include "settings_provider.h"
-#include "file_read_sink.h"
-#include "opus_encode_sink.h"
-#include "packet_sink.h"
+#include "voicebox/file_read_sink.h"
+#include "voicebox/opus_encode_sink.h"
+#include "voicebox/packet_sink.h"
 
 using namespace std;
 using namespace ssu;

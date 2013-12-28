@@ -8,9 +8,9 @@
 //
 #include <mutex>
 #include "RtAudio.h"
-#include "audio_hardware.h"
-#include "audio_sink.h"
-#include "audio_source.h"
+#include "voicebox/audio_hardware.h"
+#include "voicebox/audio_sink.h"
+#include "voicebox/audio_source.h"
 
 using namespace std;
 using namespace ssu;

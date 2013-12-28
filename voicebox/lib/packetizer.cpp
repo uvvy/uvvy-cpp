@@ -7,11 +7,7 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include "logging.h"
-#include "packetizer.h"
-
-// using namespace std;
-// using namespace ssu;
-// namespace pt = boost::posix_time;
+#include "voicebox/packetizer.h"
 
 namespace voicebox {
 

@@ -9,7 +9,7 @@
 #define BOOST_TEST_MODULE Test_jitterbuffer
 #include <boost/test/unit_test.hpp>
 
-#include "jitterbuffer.h"
+#include "voicebox/jitterbuffer.h"
 
 using namespace std;
 using namespace voicebox;

@@ -9,22 +9,22 @@
 #include <queue>
 #include <mutex>
 #include <boost/asio/strand.hpp>
-#include "audio_service.h"
-#include "audio_hardware.h"
-#include "plotfile.h"
+#include "voicebox/audio_service.h"
+#include "voicebox/audio_hardware.h"
+#include "voicebox/plotfile.h"
 #include "stream.h"
 #include "server.h"
 #include "logging.h"
 #include "algorithm.h"
 
-#include "rtaudio_source.h"
-#include "rtaudio_sink.h"
-#include "packet_source.h"
-#include "packet_sink.h"
-#include "packetizer.h"
-#include "jitterbuffer.h"
-#include "opus_encode_sink.h"
-#include "opus_decode_sink.h"
+#include "voicebox/rtaudio_source.h"
+#include "voicebox/rtaudio_sink.h"
+#include "voicebox/packet_source.h"
+#include "voicebox/packet_sink.h"
+#include "voicebox/packetizer.h"
+#include "voicebox/jitterbuffer.h"
+#include "voicebox/opus_encode_sink.h"
+#include "voicebox/opus_decode_sink.h"
 
 using namespace std;
 using namespace ssu;

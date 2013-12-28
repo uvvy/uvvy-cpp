@@ -7,7 +7,7 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include "logging.h"
-#include "packet_source.h"
+#include "voicebox/packet_source.h"
 
 using namespace std;
 using namespace ssu;

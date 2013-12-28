@@ -14,7 +14,7 @@
 #include "host.h"
 #include "client_profile.h"
 #include "traverse_nat.h"
-#include "audio_service.h"
+#include "voicebox/audio_service.h"
 
 using namespace std;
 using namespace ssu;

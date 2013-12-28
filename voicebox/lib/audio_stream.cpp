@@ -6,8 +6,8 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "audio_stream.h"
 #include <cassert>
+#include "voicebox/audio_stream.h"
 
 audio_stream::audio_stream(int framesize, double samplerate, int channels)
 {

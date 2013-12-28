@@ -1,7 +1,7 @@
 #include "logging.h"
-#include "jitterbuffer.h"
 #include "opaque_endian.h"
-#include "audio_service.h" // TRACE_DETAIL
+#include "voicebox/jitterbuffer.h"
+#include "voicebox/audio_service.h" // TRACE_DETAIL
 
 using namespace std;
 

@@ -1,7 +1,7 @@
 #include <thread>
 #include <chrono>
-#include "file_read_sink.h"
-#include "rtaudio_sink.h"
+#include "voicebox/file_read_sink.h"
+#include "voicebox/rtaudio_sink.h"
 
 using namespace std;
 using namespace voicebox;

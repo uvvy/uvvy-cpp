@@ -1,5 +1,5 @@
 #include "logging.h"
-#include "file_read_sink.h"
+#include "voicebox/file_read_sink.h"
 
 using namespace std;
 
