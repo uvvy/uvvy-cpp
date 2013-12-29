@@ -24,6 +24,10 @@ packetizer::packetizer(audio_source* from)
 
 void packetizer::produce_output(byte_array& buffer)
 {
+    if (queue_.empty()) {
+        buffer.resize(0);
+        return;
+    }
     buffer = queue_.dequeue();
 }
 

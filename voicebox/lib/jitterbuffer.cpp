@@ -124,6 +124,11 @@ void jitterbuffer::accept_input(byte_array msg)
 // [variable] payload
 void jitterbuffer::produce_output(byte_array& buffer)
 {
+    logger::debug() << __PRETTY_FUNCTION__;
+    if (queue_.empty()) {
+        buffer.resize(0);
+        return;
+    }
     buffer = queue_.dequeue();
 }
 
