@@ -48,6 +48,8 @@ void opus_decode_sink::set_enabled(bool enabling)
 // [8 bytes] microseconds since epoch (Jan 1, 2010)
 // [4 bytes] sequence number
 // [variable] payload
+const int buffer_offset = 12;
+
 void opus_decode_sink::produce_output(byte_array& samplebuf)
 {
     // Grab the next buffer from the queue
@@ -61,14 +63,11 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
     // Decode the frame
     if (!bytebuf.is_empty())
     {
-        logger::debug() << "Decode frame size: " << bytebuf.size();
-        int len = opus_decode_float(decode_state_, (unsigned char*)bytebuf.data(),
-            bytebuf.size(), samplebuf.as<float>(), frame_size(), /*decodeFEC:*/0);
+        assert(bytebuf.size() > buffer_offset);
 
-
-        // int len = opus_decode_float(decode_state_, (unsigned char*)pkt.data()+12, pkt.size()-12,
-        //     decoded_packet, frame_size_, /*decodeFEC:*/0);
-
+        logger::debug() << "Decode frame size: " << bytebuf.size() - buffer_offset;
+        int len = opus_decode_float(decode_state_, (unsigned char*)bytebuf.data() + buffer_offset,
+            bytebuf.size() - buffer_offset, samplebuf.as<float>(), frame_size(), /*decodeFEC:*/0);
 
         if (len < 0) {
             // perform recovery - fill buffer with 0 for example...

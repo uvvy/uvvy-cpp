@@ -48,6 +48,8 @@ void opus_encode_sink::set_enabled(bool enabling)
     }
 }
 
+const int buffer_offset = 12;
+
 void opus_encode_sink::produce_output(byte_array& buffer)
 {
     // Get data from our producer, if any.
@@ -56,15 +58,19 @@ void opus_encode_sink::produce_output(byte_array& buffer)
         producer()->produce_output(samplebuf);
     }
 
-    // Encode the frame and write it into a buffer
-    int maxbytes = 1024;//meh, any opus option to get this?
-    buffer.resize(maxbytes);
-    int nbytes = opus_encode_float(encode_state_, (const float*)samplebuf.data(), frame_size(),
-        (unsigned char*)buffer.data(), buffer.size());
-    assert(nbytes <= maxbytes);
-    buffer.resize(nbytes);
-    logger::debug() << "Encoded frame size: " << dec << nbytes;
-    logger::file_dump dump(buffer, "encoded opus packet");
+    if (!samplebuf.is_empty())
+    {
+        logger::debug() << "Encoding source frame with size: " << dec << samplebuf.size();
+        // Encode the frame and write it into a buffer
+        int maxbytes = 1024;//meh, any opus option to get this?
+        buffer.resize(maxbytes);
+        int nbytes = opus_encode_float(encode_state_, (const float*)samplebuf.data(), frame_size(),
+            (unsigned char*)buffer.data() + buffer_offset, buffer.size() - buffer_offset);
+        assert(nbytes <= maxbytes);
+        buffer.resize(nbytes + buffer_offset);
+        logger::debug() << "Encoded frame size: " << dec << nbytes;
+        logger::file_dump(buffer, "encoded opus packet");
+    }
 }
 
 } // voicebox namespace
