@@ -64,6 +64,7 @@ void packet_source::on_packet_received()
     //     time_difference_ = (pt::microsec_clock::universal_time() - epoch).total_milliseconds()
     //         - msg.as<big_int64_t>()[0];
     // }
+    accept_input(msg);
 }
 
 // void packet_source::log_packet_delay(byte_array const& pkt)
