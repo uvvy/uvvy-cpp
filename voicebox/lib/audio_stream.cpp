@@ -7,6 +7,7 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <cassert>
+#include "logging.h"
 #include "voicebox/audio_stream.h"
 
 audio_stream::audio_stream(int framesize, double samplerate, int channels)
@@ -21,9 +22,10 @@ audio_stream::~audio_stream()
     disable();
 }
 
-void audio_stream::set_enabled(bool enable)
+void audio_stream::set_enabled(bool enabling)
 {
-    enabled_ = enable;
+    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
+    enabled_ = enabling;
 }
 
 void audio_stream::set_frame_size(unsigned int frame_size)

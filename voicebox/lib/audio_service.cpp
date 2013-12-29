@@ -55,12 +55,14 @@ struct send_chain
 
     void enable()
     {
+        logger::debug() << __PRETTY_FUNCTION__;
         sink_.enable();
         hw_in_.enable();
     }
 
     void disable()
     {
+        logger::debug() << __PRETTY_FUNCTION__;
         hw_in_.disable();
         sink_.disable();
     }
@@ -83,11 +85,13 @@ struct receive_chain
 
     void enable()
     {
+        logger::debug() << __PRETTY_FUNCTION__;
         source_.enable();
     }
 
     void disable()
     {
+        logger::debug() << __PRETTY_FUNCTION__;
         source_.disable();
         hw_out_.disable();
     }

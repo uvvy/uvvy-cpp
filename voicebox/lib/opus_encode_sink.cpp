@@ -15,6 +15,7 @@ namespace voicebox {
 
 void opus_encode_sink::set_enabled(bool enabling)
 {
+    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled()) {
         assert(!encode_state_);
         int error = 0;

@@ -31,9 +31,10 @@ packet_source::~packet_source()
     }
 }
 
-void packet_source::set_enabled(bool enable)
+void packet_source::set_enabled(bool enabling)
 {
-    super::set_enabled(enable);
+    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
+    super::set_enabled(enabling);
 }
 
 /* Put received packet into receive queue */

@@ -6,6 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
+#include "logging.h"
 #include "voicebox/audio_source.h"
 
 namespace voicebox {
@@ -17,11 +18,12 @@ void audio_source::accept_input(byte_array buffer)
     }
 }
 
-void audio_source::set_enabled(bool enable)
+void audio_source::set_enabled(bool enabling)
 {
-    super::set_enabled(enable);
+    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
+    super::set_enabled(enabling);
     if (acceptor_) {
-        acceptor_->set_enabled(enable);
+        acceptor_->set_enabled(enabling);
     }
 }
 
