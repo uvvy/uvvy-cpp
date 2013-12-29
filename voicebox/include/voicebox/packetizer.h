@@ -43,6 +43,7 @@ protected:
 
 public:
     packetizer(audio_source* from = nullptr);
+    ~packetizer();
 
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source

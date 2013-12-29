@@ -20,6 +20,11 @@ packetizer::packetizer(audio_source* from)
         from->set_acceptor(this);
     }
 }
+
+packetizer::~packetizer()
+{
+    audio_source::disable();
+    // audio_sink::disable();
 }
 
 void packetizer::produce_output(byte_array& buffer)
