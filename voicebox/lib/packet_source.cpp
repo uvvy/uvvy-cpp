@@ -19,9 +19,8 @@ static const pt::ptime epoch{boost::gregorian::date(2010, boost::gregorian::Jan,
 
 packet_source::packet_source(std::shared_ptr<ssu::stream> stream)
     : audio_source()
-    , stream_(stream)
 {
-    stream_->on_ready_read_datagram.connect([this]{ on_packet_received(); });
+    set_source(stream);
 }
 
 packet_source::~packet_source()
@@ -29,6 +28,12 @@ packet_source::~packet_source()
     if (stream_) {
         stream_->shutdown(stream::shutdown_mode::read);
     }
+}
+
+void packet_source::set_source(std::shared_ptr<ssu::stream> stream)
+{
+    stream_ = stream;
+    stream_->on_ready_read_datagram.connect([this]{ on_packet_received(); });
 }
 
 void packet_source::set_enabled(bool enabling)

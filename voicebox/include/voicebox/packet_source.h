@@ -29,6 +29,8 @@ public:
 
     void set_enabled(bool enable) override;
 
+    void set_source(std::shared_ptr<ssu::stream> stream);
+
 private:
     void on_packet_received();
 };
