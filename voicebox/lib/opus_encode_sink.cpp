@@ -71,6 +71,10 @@ void opus_encode_sink::produce_output(byte_array& buffer)
         logger::debug() << "Encoded frame size: " << dec << nbytes;
         logger::file_dump(buffer, "encoded opus packet");
     }
+    else
+    {
+        buffer.resize(0);
+    }
 }
 
 } // voicebox namespace
