@@ -87,6 +87,7 @@ struct receive_chain
     {
         logger::debug() << __PRETTY_FUNCTION__;
         source_.enable();
+        hw_out_.enable();
     }
 
     void disable()
@@ -130,17 +131,21 @@ void audio_service::establish_outgoing_session(peer_id const& eid,
     pimpl_->stream = make_shared<ssu::stream>(pimpl_->host_);
 
     pimpl_->send = make_shared<send_chain>(pimpl_->stream);
+    if (!pimpl_->recv) {
+        pimpl_->recv = make_shared<receive_chain>(pimpl_->stream);
+    }
 
     pimpl_->stream->on_link_up.connect([this] {
+        logger::debug() << "Link up, starting session and enabling send";
         on_session_started();
         pimpl_->send->enable();
-        // voicebox::audio_hardware::instance()->start_audio();
+        pimpl_->recv->enable();
     });
     pimpl_->stream->on_link_down.connect([this] {
-        on_session_finished();
-        pimpl_->send->disable();
-        // voicebox::audio_hardware::instance()->stop_audio();
+        logger::debug() << "Outgoing link down, stopping session and disabling send";
+        end_session();
     });
+
     pimpl_->stream->connect_to(eid, service_name, protocol_name);
 
     if (!ep_hints.empty())
@@ -182,15 +187,19 @@ void audio_service::new_connection(shared_ptr<server> server)
     logger::info() << "New incoming connection from " << stream->remote_host_id();
 
     pimpl_->recv = make_shared<receive_chain>(stream);
+    if (!pimpl_->send) {
+        pimpl_->send = make_shared<send_chain>(stream);
+    }
 
     stream->on_link_up.connect([this] {
         on_session_started();
         pimpl_->recv->enable();
+        pimpl_->send->enable();
     });
 
     stream->on_link_down.connect([this] {
-        pimpl_->recv->disable();
-        on_session_finished();
+        logger::debug() << "Incoming link down, stopping session and disabling send";
+        end_session();
     });
 
     if (stream->is_link_up())
@@ -198,6 +207,7 @@ void audio_service::new_connection(shared_ptr<server> server)
         logger::debug() << "Incoming stream is ready, start sending immediately.";
         on_session_started();
         pimpl_->recv->enable();
+        pimpl_->send->enable();
     }
 }
 
