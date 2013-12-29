@@ -2,11 +2,6 @@ Topmost 3 tasks:
  ☐ Set protocol specifications and make unit/func tests covering this spec.
    ☐ Working connect/disconnect/reconnect/etc
      ☐ See regress test in SST
- ✔ Select correct UPnP port mapping. @done (13-12-28 14:43)
-   ✔ From the available mappings select ones with the @done (13-12-28 14:43)
-     a) same ext port
-     b) same int IP
-     And check against ours, if matching - we're good, if not - we need to pick another port and make a new mapping.
   ☐ Get rid of plist
     ☐ Implement flurrying boost::any instead.
       ☐ Need a method to write any and a method to read any, that's it, really.
