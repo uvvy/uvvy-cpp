@@ -29,6 +29,7 @@ packetizer::~packetizer()
 
 void packetizer::produce_output(byte_array& buffer)
 {
+    logger::debug() << "packetizer::produce_output";
     if (queue_.empty()) {
         buffer.resize(0);
         return;
@@ -38,6 +39,7 @@ void packetizer::produce_output(byte_array& buffer)
 
 void packetizer::accept_input(byte_array data)
 {
+    logger::debug() << "packetizer::accept_input of " << std::dec << data.size() << " bytes";
     queue_.enqueue(data);
 }
 

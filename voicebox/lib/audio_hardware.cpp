@@ -187,6 +187,8 @@ void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
     // if (receivers(SIGNAL(inputLevelChanged(int))) > 0)
         set_input_level(compute_level(static_cast<float*>(inputBuffer), nFrames));
 
+    logger::debug() << "Capturing to " << instreams.size() << " chains";
+
     // Broadcast the audio input to all listening input streams
     for (auto s : instreams)
     {
@@ -220,6 +222,8 @@ void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
         set_output_level(0);
         return;
     }
+
+    logger::debug() << "Playing to " << outstreams.size() << " chains";
 
     // 1 stream is mixing, just produce_output() into target buffer.
     if (outstreams.size() == 1) {

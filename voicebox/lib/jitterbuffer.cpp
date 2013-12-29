@@ -51,6 +51,7 @@ jitterbuffer::jitterbuffer(audio_source* from)
 // sequence number is coming from where? - see voice.cc:156
 void jitterbuffer::accept_input(byte_array msg)
 {
+    logger::debug() << __PRETTY_FUNCTION__;
     // log_packet_delay(msg);
 
     uint32_t seq_no = msg.as<big_uint32_t>()[2];
