@@ -28,7 +28,7 @@ protected:
     uint32_t sequence_number_{0};
 
 public:
-    jitterbuffer();
+    jitterbuffer(audio_source* from = nullptr);
 
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source

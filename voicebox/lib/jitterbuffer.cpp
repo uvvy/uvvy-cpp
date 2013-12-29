@@ -23,10 +23,14 @@ static const int queue_min = 10; // 1/5 sec
 static const int queue_max = 25; // 1/2 sec
 
 
-jitterbuffer::jitterbuffer()
+jitterbuffer::jitterbuffer(audio_source* from)
 {
     queue_.on_ready_read.connect([this] { on_ready_read(); });
     queue_.on_queue_empty.connect([this] { on_queue_empty(); });
+
+    if (from) {
+        from->set_acceptor(this);
+    }
 }
 
 // Packet acceptance into the jitterbuffer:

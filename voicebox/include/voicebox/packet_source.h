@@ -23,6 +23,7 @@ class packet_source : public audio_source
     std::shared_ptr<ssu::stream> stream_;
 
 public:
+    packet_source() = default;
     packet_source(std::shared_ptr<ssu::stream> stream);
     ~packet_source();
 

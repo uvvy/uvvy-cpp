@@ -29,7 +29,12 @@ protected:
     inline audio_sink* producer() const { return producer_; }
 
 public:
-    audio_sink() = default;
+    audio_sink(audio_sink* producer = nullptr)
+    {
+        if (producer) {
+            set_producer(producer);
+        }
+    }
     audio_sink(int framesize, double samplerate, int channels = 1);
 
     inline void set_producer(audio_sink* as) {

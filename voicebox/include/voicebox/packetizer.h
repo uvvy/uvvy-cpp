@@ -42,7 +42,7 @@ protected:
     synchronized_queue<byte_array> queue_;
 
 public:
-    packetizer();
+    packetizer(audio_source* from = nullptr);
 
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source

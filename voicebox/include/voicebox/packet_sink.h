@@ -24,8 +24,8 @@ class packet_sink : public audio_sink
     uint32_t sequence_number_{0};
 
 public:
-    packet_sink(std::shared_ptr<ssu::stream> stream)
-        : audio_sink()
+    packet_sink(std::shared_ptr<ssu::stream> stream, audio_sink* from = nullptr)
+        : audio_sink(from)
         , stream_(stream)
     {}
 

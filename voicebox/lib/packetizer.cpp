@@ -11,10 +11,15 @@
 
 namespace voicebox {
 
-packetizer::packetizer()
+packetizer::packetizer(audio_source* from)
 {
     queue_.on_ready_read.connect([this] { on_ready_read(); });
     queue_.on_queue_empty.connect([this] { on_queue_empty(); });
+
+    if (from) {
+        from->set_acceptor(this);
+    }
+}
 }
 
 void packetizer::produce_output(byte_array& buffer)

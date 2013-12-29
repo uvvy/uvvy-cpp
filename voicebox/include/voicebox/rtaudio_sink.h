@@ -20,7 +20,7 @@ class rtaudio_sink : public audio_sink
     typedef audio_sink super;
 
 public:
-    rtaudio_sink() = default;
+    rtaudio_sink(audio_sink* from = nullptr) : audio_sink(from) {}
 
     void set_enabled(bool enable) override;
 };
