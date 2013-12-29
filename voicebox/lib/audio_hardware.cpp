@@ -334,6 +334,8 @@ void audio_hardware::close_audio()
         return;
     }
 
+    logger::debug() << "Closing audio";
+
     try {
         lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we close
         audio_inst->closeStream();
@@ -349,11 +351,13 @@ void audio_hardware::close_audio()
 
 void audio_hardware::start_audio()
 {
+    logger::debug() << "Starting audio";
     audio_inst->startStream();
 }
 
 void audio_hardware::stop_audio()
 {
+    logger::debug() << "Stopping audio";
     audio_inst->stopStream();
 }
 
