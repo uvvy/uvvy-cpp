@@ -30,8 +30,10 @@ public:
 
     void clear()
     {
-        std::lock_guard<std::mutex> guard(mutex_);
+        std::unique_lock<std::mutex> guard(mutex_);
         queue_.clear();
+        guard.unlock();
+        on_queue_empty();
     }
 
     inline bool empty() const { return size() == 0; }
