@@ -11,7 +11,6 @@
 #include <boost/asio/strand.hpp>
 #include "voicebox/audio_service.h"
 #include "voicebox/audio_hardware.h"
-#include "voicebox/plotfile.h"
 #include "stream.h"
 #include "server.h"
 #include "logging.h"
@@ -31,8 +30,19 @@ using namespace ssu;
 using namespace voicebox;
 using namespace boost::asio;
 
-static const std::string service_name{"streaming"};
-static const std::string protocol_name{"opus"};
+namespace {
+
+const string service_name{"streaming"};
+const string protocol_name{"opus"};
+const uint32_t cmd_magic = 0x61434d44; // aCMD
+const int cmd_start_session = 1001;
+const int cmd_stop_session = 1002;
+
+} // anonymous namespace
+
+//=================================================================================================
+// send_chain
+//=================================================================================================
 
 struct send_chain
 {
@@ -68,6 +78,10 @@ struct send_chain
     }
 };
 
+//=================================================================================================
+// receive_chain
+//=================================================================================================
+
 struct receive_chain
 {
     packet_source source_; // maintains seqno
@@ -99,54 +113,113 @@ struct receive_chain
 };
 
 //=================================================================================================
-// audio_service
+// audio_service::private_impl
 //=================================================================================================
 
 class audio_service::private_impl
 {
+    audio_service* parent_{0};
+    shared_ptr<host> host_;
+    shared_ptr<stream> stream_;
+    shared_ptr<server> server_;
+    shared_ptr<send_chain> send_;
+    shared_ptr<receive_chain> recv_;
+    bool active_{false};
+
 public:
-    std::shared_ptr<ssu::host> host_;
-    shared_ptr<stream> stream;
-    shared_ptr<server> server;
-    shared_ptr<send_chain> send;
-    shared_ptr<receive_chain> recv;
-
-    private_impl(std::shared_ptr<ssu::host> host)
-        : host_(host)
+    private_impl(audio_service* parent, shared_ptr<ssu::host> host)
+        : parent_(parent)
+        , host_(host)
     {}
-};
 
-audio_service::audio_service(std::shared_ptr<ssu::host> host)
-    : pimpl_(make_shared<private_impl>(host))
-{}
+    inline bool is_active() const { return active_; }
 
-audio_service::~audio_service()
-{}
-
-void audio_service::establish_outgoing_session(peer_id const& eid,
-    std::vector<std::string> ep_hints)
-{
-    logger::info() << "Connecting to " << eid;
-
-    pimpl_->stream = make_shared<ssu::stream>(pimpl_->host_);
-
-    pimpl_->send = make_shared<send_chain>(pimpl_->stream);
-    if (!pimpl_->recv) {
-        pimpl_->recv = make_shared<receive_chain>(pimpl_->stream);
+    void send_command(int cmd)
+    {
+        byte_array msg;
+        {
+            byte_array_owrap<flurry::oarchive> write(msg);
+            write.archive() << cmd_magic << cmd;
+        }
+        stream_->write_record(msg);
     }
 
-    pimpl_->stream->on_link_up.connect([this] {
-        logger::debug() << "Link up, starting session and enabling send";
-        on_session_started();
-        pimpl_->send->enable();
-        pimpl_->recv->enable();
-    });
-    pimpl_->stream->on_link_down.connect([this] {
-        logger::debug() << "Outgoing link down, stopping session and disabling send";
-        end_session();
+    void session_command_handler(byte_array const& msg);
+    void connect_stream(shared_ptr<stream> stream);
+    void new_connection(shared_ptr<server> server);
+
+    void establish_outgoing_session(peer_id const& eid, vector<string> ep_hints);
+    void listen_incoming_session();
+    void end_session();
+};
+
+// When start session command is received, start sending
+// When stop session command is received, stop sending and reply with stop_session (unless stopped)
+void audio_service::private_impl::session_command_handler(byte_array const& msg)
+{
+    uint32_t magic;
+    int cmd;
+    byte_array_iwrap<flurry::iarchive> read(msg);
+    read.archive() >> magic >> cmd;
+
+    switch (cmd)
+    {
+        case cmd_start_session:
+            if (!active_)
+            {
+                logger::debug() << "cmd_start_session, starting audio session";
+                send_->enable();
+                recv_->enable();
+                active_ = true;
+                parent_->on_session_started();
+            }
+            break;
+        case cmd_stop_session:
+            logger::debug() << "cmd_stop_session, stopping audio session";
+            end_session();
+            break;
+        default:
+            break;
+    }
+}
+
+void audio_service::private_impl::connect_stream(shared_ptr<stream> stream)
+{
+    // Handle session commands
+    stream->on_ready_read_record.connect([=] {
+        byte_array msg = stream->read_record();
+        logger::debug() << "Received audio service command: " << msg;
+        session_command_handler(msg);
     });
 
-    pimpl_->stream->connect_to(eid, service_name, protocol_name);
+    stream->on_link_up.connect([this] {
+        logger::debug() << "Link up, sending start session command";
+        send_command(cmd_start_session);
+    });
+
+    stream->on_link_down.connect([this] {
+        logger::debug() << "Link down, stopping session and disabling audio";
+        parent_->end_session();
+    });
+
+    if (stream->is_link_up())
+    {
+        logger::debug() << "Incoming stream is ready, start sending immediately.";
+        send_command(cmd_start_session);
+    }
+}
+
+void audio_service::private_impl::establish_outgoing_session(peer_id const& eid,
+                                                             vector<string> ep_hints)
+{
+    stream_ = make_shared<ssu::stream>(host_);
+
+    send_ = make_shared<send_chain>(stream_);
+    recv_ = make_shared<receive_chain>(stream_);
+
+    connect_stream(stream_);
+
+    stream_->connect_to(eid, service_name, protocol_name);
 
     if (!ep_hints.empty())
     {
@@ -157,72 +230,94 @@ void audio_service::establish_outgoing_session(peer_id const& eid,
             ssu::endpoint ep(boost::asio::ip::address::from_string(epstr),
                 stream_protocol::default_port);
             logger::debug() << "Connecting at location hint " << ep;
-            pimpl_->stream->connect_at(ep);
+            stream_->connect_at(ep);
         }
     }
 }
 
-void audio_service::listen_incoming_session()
+void audio_service::private_impl::new_connection(shared_ptr<server> server)
 {
-    pimpl_->server = make_shared<ssu::server>(pimpl_->host_);
-    pimpl_->server->on_new_connection.connect([this]
+    auto stream = server->accept();
+    if (!stream) {
+        return;
+    }
+    assert(!stream_);
+    stream_ = stream;
+
+    logger::info() << "New incoming connection from " << stream_->remote_host_id();
+
+    recv_ = make_shared<receive_chain>(stream_);
+    if (!send_) {
+        send_ = make_shared<send_chain>(stream_);
+    }
+
+    connect_stream(stream_);
+}
+
+void audio_service::private_impl::listen_incoming_session()
+{
+    server_ = make_shared<ssu::server>(host_);
+    server_->on_new_connection.connect([this]
     {
-        new_connection(pimpl_->server);
+        new_connection(server_);
     });
-    bool listening = pimpl_->server->listen(service_name, "Streaming services",
-                                            protocol_name, "OPUS Audio protocol");
+    bool listening = server_->listen(service_name, "Streaming services",
+                                     protocol_name, "OPUS Audio protocol");
     assert(listening);
     if (!listening) {
         throw runtime_error("Couldn't set up server listening to streaming:opus");
     }
 }
 
-void audio_service::new_connection(shared_ptr<server> server)
+// @todo After ending a session you cannot start it again.
+void audio_service::private_impl::end_session()
 {
-    auto stream = server->accept();
-    if (!stream) {
-        return;
-    }
-
-    logger::info() << "New incoming connection from " << stream->remote_host_id();
-
-    pimpl_->recv = make_shared<receive_chain>(stream);
-    if (!pimpl_->send) {
-        pimpl_->send = make_shared<send_chain>(stream);
-    }
-
-    stream->on_link_up.connect([this] {
-        on_session_started();
-        pimpl_->recv->enable();
-        pimpl_->send->enable();
-    });
-
-    stream->on_link_down.connect([this] {
-        logger::debug() << "Incoming link down, stopping session and disabling send";
-        end_session();
-    });
-
-    if (stream->is_link_up())
+    send_command(cmd_stop_session);
+    if (send_)
     {
-        logger::debug() << "Incoming stream is ready, start sending immediately.";
-        on_session_started();
-        pimpl_->recv->enable();
-        pimpl_->send->enable();
+        send_->disable();
+        send_ = nullptr;
     }
+    if (recv_)
+    {
+        recv_->disable();
+        recv_ = nullptr;
+    }
+    active_ = false;
+    parent_->on_session_finished();
 }
 
+//=================================================================================================
+// audio_service
+//=================================================================================================
+
+audio_service::audio_service(shared_ptr<ssu::host> host)
+    : pimpl_(make_shared<private_impl>(this, host))
+{}
+
+audio_service::~audio_service()
+{}
+
+bool audio_service::is_active() const
+{
+    return pimpl_->is_active();
+}
+
+void audio_service::establish_outgoing_session(peer_id const& eid,
+                                               vector<string> ep_hints)
+{
+    logger::info() << "Connecting to " << eid;
+    pimpl_->establish_outgoing_session(eid, ep_hints);
+}
+
+void audio_service::listen_incoming_session()
+{
+    pimpl_->listen_incoming_session();
+}
+
+// Disconnected or "STOP SESSION" command received.
 void audio_service::end_session()
 {
-    if (pimpl_->send)
-    {
-        pimpl_->send->disable();
-        pimpl_->send = nullptr;
-    }
-    if (pimpl_->recv)
-    {
-        pimpl_->recv->disable();
-        pimpl_->recv = nullptr;
-    }
-    on_session_finished();
+    pimpl_->end_session();
 }
 

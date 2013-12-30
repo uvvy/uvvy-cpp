@@ -40,8 +40,6 @@ public:
      */
     void end_session();
 
-    void new_connection(std::shared_ptr<ssu::server> server);
-
     // Voice service media signals
     typedef boost::signals2::signal<void (void)> session_signal;
     session_signal on_session_started;
