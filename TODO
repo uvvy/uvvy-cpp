@@ -1,7 +1,16 @@
 Topmost 3 tasks:
+ ☐ Change audio_session protocol to first send some negotiation and command packets to start a session instead
+   of starting packet bombardment right away - the channel layer cannot keep up and gets stuck in tx_attach phase.
+ ☐ Add higher-priority RTCP stream in opus-streaming.
+   add to audio_service
+   rename audio_service to voice_service... like in netsteria
  ☐ Set protocol specifications and make unit/func tests covering this spec.
    ☐ Working connect/disconnect/reconnect/etc
      ☐ See regress test in SST
+
+ ☐ unit tests, unit tests, unit tests
+
+Support:
   ☐ Get rid of plist
     ☐ Implement flurrying boost::any instead.
       ☐ Need a method to write any and a method to read any, that's it, really.
@@ -17,9 +26,6 @@ UI:
  ☐ how to perform search? an ESC-interface sounds intriguing
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
- ☐ Add higher-priority RTCP stream in opus-streaming.
-   add to audio_service
-   rename audio_service to voice_service... like in netsteria
  ✔ Build static regserver for linux. @done (13-11-04 01:02)
 
  ✔ Add PeerPicker to select an EID from regserver before attempting connection. @done (13-11-23 23:25)
@@ -126,7 +132,9 @@ Routing:
 Structured Streams:
  ☐ tx_reset implementation - test
  ☐ implement rx_reset_packet
- ☐ Congestion Control
+ ✔ Congestion Control @done (13-12-30 16:48)
+   ☐ Split into per-strategy subclasses for CC
+ ☐ Read up on Multipath TCP
 
  ✔ BUG: Assertion failed: (transmit_sids_.empty()), function detach_all, file ../ssu/lib/stream_channel.cpp, line 195. @done (13-12-07 09:46)
    happens after a while on opus-streaming receiving side
@@ -144,6 +152,8 @@ encryption/compression negotiation
  ☐ czlib                = 'c'ompression
  ☐ hmacsha512256        = 'a'uthentication
 
+ ☐ public key system in use? prsa160, pdsa160, pEcdsasomething
+
   can be multiple keys with all prefixes, in order of priority, other side picks best supported and responds.
   symmetric encryption and authentication are mandatory, compression is optional.
 
@@ -160,14 +170,13 @@ Later
  ☐ Drop OPENSSL_LIBRARIES - once nacl supports whatever needed.
  ☐ Change krypto to use cryptobox_*
 
- ☐ unit tests, unit tests, unit tests
  ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
  ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
  ☐ run opus-streaming test in the simulation environment (file-to-file using arbitrary loss percentage)
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
-   ☐ blog post on using libssu streams - in progress
+   ✔ blog post on using libssu streams - in progress @done (13-12-30 16:52)
  ☐ Automatic launching on host OS login
  ☐ Public/friends-only choices on profile items
  ☐ Profile picture
