@@ -55,7 +55,10 @@ void jitterbuffer::accept_input(byte_array msg)
     // log_packet_delay(msg);
 
     uint32_t seq_no = msg.as<big_uint32_t>()[2];
-    uint32_t queue_first_seq_no = queue_.front().as<big_uint32_t>()[2];
+    uint32_t queue_first_seq_no = 0;
+    if (!queue_.empty()) {
+        queue_first_seq_no = queue_.front().as<big_uint32_t>()[2];
+    }
 
     int seqdiff = seq_no - sequence_number_;
 
