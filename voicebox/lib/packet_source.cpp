@@ -55,17 +55,18 @@ void packet_source::on_packet_received()
 {
     // extract payload
     byte_array msg = stream_->read_datagram();
-    //if (is_enabled()) accept_input(msg); return;
 
 #if REALTIME_CRIME
-    logger::debug(TRACE_ENTRY) << "received packet of size " << msg.size();
+    logger::debug(TRACE_ENTRY) << "Received packet of size " << msg.size();
 #endif
 
     // if (!time_difference_) {
     //     time_difference_ = (pt::microsec_clock::universal_time() - epoch).total_milliseconds()
     //         - msg.as<big_int64_t>()[0];
     // }
-    accept_input(msg);
+    if (is_enabled()) {
+        accept_input(msg);
+    }
 }
 
 // void packet_source::log_packet_delay(byte_array const& pkt)
