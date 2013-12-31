@@ -8,12 +8,13 @@
 //
 #include "voicebox/rtaudio_sink.h"
 #include "voicebox/audio_hardware.h"
+#include "voicebox/audio_service.h"
 
 namespace voicebox {
 
 void rtaudio_sink::set_enabled(bool enabling)
 {
-    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
+    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled())
     {
         if (frame_size() <= 0 or sample_rate() <= 0.0)

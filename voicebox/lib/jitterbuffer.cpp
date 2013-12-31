@@ -51,7 +51,9 @@ jitterbuffer::jitterbuffer(audio_source* from)
 // sequence number is coming from where? - see voice.cc:156
 void jitterbuffer::accept_input(byte_array msg)
 {
-    logger::debug() << __PRETTY_FUNCTION__;
+#if REALTIME_CRIME
+    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
+#endif
     // log_packet_delay(msg);
 
     uint32_t seq_no = msg.as<big_uint32_t>()[2];
@@ -68,7 +70,7 @@ void jitterbuffer::accept_input(byte_array msg)
         if (seq_no > queue_first_seq_no)
         {
             queue_.enqueue(msg);
-            logger::debug(199) << "Jitterbuffer - frame received out of order";
+            logger::debug(TRACE_RARE) << "Jitterbuffer - frame received out of order";
 
             // if there's a packet with the same sequence number in the queue - replace it
         }
@@ -88,11 +90,13 @@ void jitterbuffer::accept_input(byte_array msg)
     for (int i = 0; i < seqdiff; ++i)
     {
         queue_.enqueue(byte_array());
-        logger::debug(199) << "MISSED audio frame " << sequence_number_ + i;
+        logger::debug(TRACE_RARE) << "MISSED audio frame " << sequence_number_ + i;
     }
 
     queue_.enqueue(msg);
-    logger::debug(200) << "Received audio frame " << dec << seq_no;
+#if REALTIME_CRIME
+    logger::debug(TRACE_DETAIL) << "Received audio frame " << dec << seq_no;
+#endif
 
     sort(queue_.begin(), queue_.end(),
     [](byte_array const& a, byte_array const& b)
@@ -128,7 +132,9 @@ void jitterbuffer::accept_input(byte_array msg)
 // [variable] payload
 void jitterbuffer::produce_output(byte_array& buffer)
 {
-    logger::debug() << __PRETTY_FUNCTION__;
+#if REALTIME_CRIME
+    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
+#endif
     if (queue_.empty()) {
         buffer.resize(0);
         return;

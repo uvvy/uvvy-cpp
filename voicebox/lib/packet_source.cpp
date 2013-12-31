@@ -8,6 +8,7 @@
 //
 #include "logging.h"
 #include "voicebox/packet_source.h"
+#include "voicebox/audio_service.h"
 
 using namespace std;
 using namespace ssu;
@@ -38,7 +39,7 @@ void packet_source::set_source(std::shared_ptr<ssu::stream> stream)
 
 void packet_source::set_enabled(bool enabling)
 {
-    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
+    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__ << " " << enabling;
     super::set_enabled(enabling);
 }
 

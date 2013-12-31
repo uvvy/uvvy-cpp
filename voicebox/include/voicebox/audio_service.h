@@ -14,6 +14,7 @@
 // Set to 1 if you want to console-log in realtime thread.
 #define REALTIME_CRIME 0
 
+#define TRACE_RARE 199
 #define TRACE_ENTRY 250
 #define TRACE_DETAIL 251
 

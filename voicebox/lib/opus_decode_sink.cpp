@@ -8,6 +8,7 @@
 //
 #include "logging.h"
 #include "voicebox/opus_decode_sink.h"
+#include "voicebox/audio_service.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ namespace voicebox {
 
 void opus_decode_sink::set_enabled(bool enabling)
 {
-    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
+    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled())
     {
         assert(!decode_state_);
@@ -29,7 +30,7 @@ void opus_decode_sink::set_enabled(bool enabling)
         framesize = rate / 100; // 10ms
         set_frame_size(framesize);
         set_sample_rate(rate);
-        logger::debug() << "opus_decode_sink: frame size "
+        logger::debug(TRACE_DETAIL) << "opus_decode_sink: frame size "
             << dec << framesize << " sample rate " << rate;
 
         super::set_enabled(true);
@@ -65,7 +66,9 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
     {
         assert(bytebuf.size() > buffer_offset);
 
-        logger::debug() << "Decode frame size: " << bytebuf.size() - buffer_offset;
+#if REALTIME_CRIME
+        logger::debug(TRACE_DETAIL) << "Decode frame size: " << bytebuf.size() - buffer_offset;
+#endif
         int len = opus_decode_float(decode_state_, (unsigned char*)bytebuf.data() + buffer_offset,
             bytebuf.size() - buffer_offset, samplebuf.as<float>(), frame_size(), /*decodeFEC:*/0);
 

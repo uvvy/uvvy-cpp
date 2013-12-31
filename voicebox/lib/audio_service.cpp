@@ -65,14 +65,14 @@ struct send_chain
 
     void enable()
     {
-        logger::debug() << __PRETTY_FUNCTION__;
+        logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
         sink_.enable();
         hw_in_.enable();
     }
 
     void disable()
     {
-        logger::debug() << __PRETTY_FUNCTION__;
+        logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
         hw_in_.disable();
         sink_.disable();
     }
@@ -99,14 +99,14 @@ struct receive_chain
 
     void enable()
     {
-        logger::debug() << __PRETTY_FUNCTION__;
+        logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
         source_.enable();
         hw_out_.enable();
     }
 
     void disable()
     {
-        logger::debug() << __PRETTY_FUNCTION__;
+        logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
         source_.disable();
         hw_out_.disable();
     }
@@ -167,7 +167,7 @@ void audio_service::private_impl::session_command_handler(byte_array const& msg)
         case cmd_start_session:
             if (!active_)
             {
-                logger::debug() << "cmd_start_session, starting audio session";
+                logger::debug(TRACE_DETAIL) << "cmd_start_session, starting audio session";
                 send_->enable();
                 recv_->enable();
                 active_ = true;
@@ -175,7 +175,7 @@ void audio_service::private_impl::session_command_handler(byte_array const& msg)
             }
             break;
         case cmd_stop_session:
-            logger::debug() << "cmd_stop_session, stopping audio session";
+            logger::debug(TRACE_DETAIL) << "cmd_stop_session, stopping audio session";
             end_session();
             break;
         default:
@@ -188,23 +188,23 @@ void audio_service::private_impl::connect_stream(shared_ptr<stream> stream)
     // Handle session commands
     stream->on_ready_read_record.connect([=] {
         byte_array msg = stream->read_record();
-        logger::debug() << "Received audio service command: " << msg;
+        logger::debug(TRACE_DETAIL) << "Received audio service command: " << msg;
         session_command_handler(msg);
     });
 
     stream->on_link_up.connect([this] {
-        logger::debug() << "Link up, sending start session command";
+        logger::debug(TRACE_DETAIL) << "Link up, sending start session command";
         send_command(cmd_start_session);
     });
 
     stream->on_link_down.connect([this] {
-        logger::debug() << "Link down, stopping session and disabling audio";
+        logger::debug(TRACE_DETAIL) << "Link down, stopping session and disabling audio";
         parent_->end_session();
     });
 
     if (stream->is_link_up())
     {
-        logger::debug() << "Incoming stream is ready, start sending immediately.";
+        logger::debug(TRACE_DETAIL) << "Incoming stream is ready, start sending immediately.";
         send_command(cmd_start_session);
     }
 }
@@ -229,7 +229,7 @@ void audio_service::private_impl::establish_outgoing_session(peer_id const& eid,
             // @todo Allow specifying a DNS name for endpoint.
             ssu::endpoint ep(boost::asio::ip::address::from_string(epstr),
                 stream_protocol::default_port);
-            logger::debug() << "Connecting at location hint " << ep;
+            logger::debug(TRACE_DETAIL) << "Connecting at location hint " << ep;
             stream_->connect_at(ep);
         }
     }

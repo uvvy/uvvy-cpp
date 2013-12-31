@@ -8,6 +8,7 @@
 //
 #include "logging.h"
 #include "voicebox/packetizer.h"
+#include "voicebox/audio_service.h"
 
 namespace voicebox {
 
@@ -29,7 +30,9 @@ packetizer::~packetizer()
 
 void packetizer::produce_output(byte_array& buffer)
 {
-    logger::debug() << "packetizer::produce_output";
+#if REALTIME_CRIME
+    logger::debug(TRACE_ENTRY) << "packetizer::produce_output";
+#endif
     if (queue_.empty()) {
         buffer.resize(0);
         return;
@@ -39,7 +42,10 @@ void packetizer::produce_output(byte_array& buffer)
 
 void packetizer::accept_input(byte_array data)
 {
-    logger::debug() << "packetizer::accept_input of " << std::dec << data.size() << " bytes";
+#if REALTIME_CRIME
+    logger::debug(TRACE_ENTRY) << "packetizer::accept_input of "
+        << std::dec << data.size() << " bytes";
+#endif
     queue_.enqueue(data);
 }
 

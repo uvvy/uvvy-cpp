@@ -11,6 +11,7 @@
 #include "voicebox/audio_hardware.h"
 #include "voicebox/audio_sink.h"
 #include "voicebox/audio_source.h"
+#include "voicebox/audio_service.h"
 
 using namespace std;
 using namespace ssu;
@@ -187,7 +188,9 @@ void audio_hardware::capture(void* inputBuffer, unsigned int nFrames)
     // if (receivers(SIGNAL(inputLevelChanged(int))) > 0)
         set_input_level(compute_level(static_cast<float*>(inputBuffer), nFrames));
 
-    logger::debug() << "Capturing to " << instreams.size() << " chains";
+#if REALTIME_CRIME
+    logger::debug(TRACE_DETAIL) << "Capturing to " << instreams.size() << " chains";
+#endif
 
     // Broadcast the audio input to all listening input streams
     for (auto s : instreams)
@@ -223,7 +226,9 @@ void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
         return;
     }
 
-    logger::debug() << "Playing to " << outstreams.size() << " chains";
+#if REALTIME_CRIME
+    logger::debug(TRACE_DETAIL) << "Playing to " << outstreams.size() << " chains";
+#endif
 
     // 1 stream is mixing, just produce_output() into target buffer.
     if (outstreams.size() == 1) {
@@ -306,7 +311,7 @@ void audio_hardware::open_audio()
     outparam.deviceId = output_device;
     outparam.nChannels = max_out_channels;
 
-    logger::debug() << "Open audio: rate " << max_rate << ", frame " << min_frame_size
+    logger::debug(TRACE_DETAIL) << "Open audio: rate " << max_rate << ", frame " << min_frame_size
         << (enable_capture ? ", " : ", NO ") << "CAPTURE, device "
         << input_device << ", channels " << max_in_channels
         << (enable_playback ? "; " : "; NO ") << "PLAYBACK, device "
@@ -338,7 +343,7 @@ void audio_hardware::close_audio()
         return;
     }
 
-    logger::debug() << "Closing audio";
+    logger::debug(TRACE_ENTRY) << "Closing audio";
 
     try {
         lock_guard<mutex> guard(stream_mutex_); // Don't let fiddle with streams while we close
@@ -355,13 +360,13 @@ void audio_hardware::close_audio()
 
 void audio_hardware::start_audio()
 {
-    logger::debug() << "Starting audio";
+    logger::debug(TRACE_ENTRY) << "Starting audio";
     audio_inst->startStream();
 }
 
 void audio_hardware::stop_audio()
 {
-    logger::debug() << "Stopping audio";
+    logger::debug(TRACE_ENTRY) << "Stopping audio";
     audio_inst->stopStream();
 }
 
