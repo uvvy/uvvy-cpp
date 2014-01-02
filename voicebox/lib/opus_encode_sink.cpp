@@ -49,6 +49,8 @@ void opus_encode_sink::set_enabled(bool enabling)
     }
 }
 
+const int ts_size = 8;
+const int ts_floats = ts_size / sizeof(float); // Timestamp size in floats, due to cast.
 const int buffer_offset = 12;
 
 void opus_encode_sink::produce_output(byte_array& buffer)
@@ -63,21 +65,23 @@ void opus_encode_sink::produce_output(byte_array& buffer)
     {
 #if REALTIME_CRIME
         logger::debug(TRACE_DETAIL) << "Encoding source frame with size: "
-            << dec << samplebuf.size();
+            << dec << samplebuf.size() - ts_size;
 #endif
         // Encode the frame and write it into a buffer
         int maxbytes = 1024;//meh, any opus option to get this?
         buffer.resize(maxbytes);
-        int nbytes = opus_encode_float(encode_state_, (const float*)samplebuf.data(), frame_size(),
-            (unsigned char*)buffer.data() + buffer_offset, buffer.size() - buffer_offset);
+        int nbytes = opus_encode_float(encode_state_, samplebuf.as<const float>() + ts_floats,
+            frame_size(),
+            buffer.as<unsigned char>() + buffer_offset, buffer.size() - buffer_offset);
         assert(nbytes <= maxbytes);
         buffer.resize(nbytes + buffer_offset);
+        buffer.as<big_int64_t>()[0] = samplebuf.as<big_int64_t>()[0]; // Copy timestamp
 #if REALTIME_CRIME
         logger::debug(TRACE_DETAIL) << "Encoded frame size: " << dec << nbytes;
         logger::file_dump(buffer, "encoded opus packet");
 #endif
     }
-    else
+    else // packetizer may return empty buffer if queue is empty.
     {
         buffer.resize(0);
     }
