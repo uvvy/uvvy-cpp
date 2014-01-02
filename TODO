@@ -1,9 +1,8 @@
 Topmost 3 tasks:
- ☐ Change audio_session protocol to first send some negotiation and command packets to start a session instead
+ ✔ Change audio_session protocol to first send some negotiation and command packets to start a session instead @done (14-01-02 13:36)
    of starting packet bombardment right away - the channel layer cannot keep up and gets stuck in tx_attach phase.
  ☐ Add higher-priority RTCP stream in opus-streaming.
-   add to audio_service
-   rename audio_service to voice_service... like in netsteria
+   add to audio_service - there's a primary command stream that should spawn an RTCP substream
  ☐ Set protocol specifications and make unit/func tests covering this spec.
    ☐ Working connect/disconnect/reconnect/etc
      ☐ See regress test in SST
@@ -26,14 +25,8 @@ UI:
  ☐ how to perform search? an ESC-interface sounds intriguing
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
- ✔ Build static regserver for linux. @done (13-11-04 01:02)
-
- ✔ Add PeerPicker to select an EID from regserver before attempting connection. @done (13-11-23 23:25)
-   Should simplify work with opus-streaming etc.
-   see playground/PeerPicker
 
 Comms (voice/video/chat):
- ✔ opus does not build on linux - some configs missing? @done (13-11-04 01:02)
  ☐ Sync history between instances
      Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
      non-existant entries once activated. How to track joins/leaves (+ history available to new joiners)?
@@ -48,14 +41,11 @@ Comms (voice/video/chat):
  ☐ Chat join urls like metta:chat?authblob
  ☐ Event bells/notifications: friend online, chat/talk started, etc.
  ☐ Chat happens in chat room.
- ☐ Rooms may be arbitrarily nested forming chat labyrinth.
+ ☐ Rooms may be arbitrarily nested forming chat labyrinth. (@sa closedcircles)
  ☐ Screencasting client
    ☐ Capture screen and encode to video stream? libvpx or something like that. Run experiments.
     ☐ Or, subtract one screen from another and lossless-encode the difference.
 
- ✔ Clean up libvoicebox internals @done (13-12-26 14:46)
-   ✔ Merge jitterbuffer functionality between packetized_input, opus_input and audio_receiver @done (13-12-26 14:46)
-   ✔ Same for packetized_output, opus_output and audio_sender @done (13-12-26 14:46)
  ☐ Separate libvoicebox into a separate repo (not yet?)
 
 Storage (grabber/file sync/versioning):
@@ -74,12 +64,12 @@ Storage (grabber/file sync/versioning):
      Try git model approach - files are in trees, trees are hashed and upon change a Change of tree is recorded with the link to previous (parent)
      tree(s). Files are like git blobs but assembled of multiple chunks.
 
-* Synchronized objects - some blobs with associated metadata. Blob structure is not defined and is not interesting to the synchronization layer. Metadata is a key-value store, with fine-grained synchronization.
-* Grab files from a specified directory a-la Dropbox.
-* If metadata points to a blob not in the local store, system tries to find the blob on other devices and synchronise it.
-* For the first version storage area can be limited to devices within the cluster. in general, blobs could be redundantly and securely stored on any nodes across the network.
-* monitor Files folder for stuff to sync.
-* metadata assignments - how? extract as much as possible automatically.
+☐ Synchronized objects - some blobs with associated metadata. Blob structure is not defined and is not interesting to the synchronization layer. Metadata is a key-value store, with fine-grained synchronization.
+☐ Grab files from a specified directory a-la Dropbox.
+☐ If metadata points to a blob not in the local store, system tries to find the blob on other devices and synchronise it.
+☐ For the first version storage area can be limited to devices within the cluster. in general, blobs could be redundantly and securely stored on any nodes across the network.
+☐ monitor Files folder for stuff to sync.
+☐ metadata assignments - how? extract as much as possible automatically.
  ☐ synchronize arbitrary file chunks and their metadata between devices in the cluster (hardcoded for start).
  ☐ sync git-like file trees and chunk blobs
    ☐ split a file into a number of fixed-size blocks (plus a smaller trailing block if necessary)
@@ -112,15 +102,11 @@ Personal Cluster Management:
  ☐ search between devices is performed in metadata index, which devices try to synchronise with priority to other objects.
 
 Routing:
- ✔ Port routing using rendezvous server from Netsteria. @done (13-10-24 22:07)
-   ✔ Needs bugfixes and polishing up. @done (13-11-21 23:35)
-   ✔ Do the regserver_client part. @done (13-10-27 12:56)
  ☐ Connect devices to each other, overlay routing lets device find another device and set up connection.
  ☐ LAN/Bonjour node discovery.
  ☐ Regserver deregistration on logout is added - should notify active connections somehow too?
 
  ☐ BUG: Crashes on access to client_profile.endpoints() if no endpoints was provided by the client.
- ✔ Regserver crash on client re-register (see collect.logs/linux64-reregister-fault.txt) @done (13-11-21 23:35)
 
  ☐ Regserver uses unencrypted network traffic.
    ☐ a) switch regserver to use regular ssu streams
@@ -135,9 +121,6 @@ Structured Streams:
  ✔ Congestion Control @done (13-12-30 16:48)
    ☐ Split into per-strategy subclasses for CC
  ☐ Read up on Multipath TCP
-
- ✔ BUG: Assertion failed: (transmit_sids_.empty()), function detach_all, file ../ssu/lib/stream_channel.cpp, line 195. @done (13-12-07 09:46)
-   happens after a while on opus-streaming receiving side
 
 zlib_armor
  ☐ using boost.iostreams?
@@ -166,7 +149,6 @@ public API
 
 Later
  ☐ add support for nacl - anticipating openssl primitives support in nacl soon
- ✔ FindNaCl.cmake? @done (13-10-27 12:42)
  ☐ Drop OPENSSL_LIBRARIES - once nacl supports whatever needed.
  ☐ Change krypto to use cryptobox_*
 
@@ -176,7 +158,6 @@ Later
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
-   ✔ blog post on using libssu streams - in progress @done (13-12-30 16:52)
  ☐ Automatic launching on host OS login
  ☐ Public/friends-only choices on profile items
  ☐ Profile picture
@@ -191,10 +172,13 @@ Most immediate usability necessities:
    ☐ stream attachment and detachment
    ☐ proper stream ID allocation & assignment
    ☐ implement and use sequencing barriers properly (spec 3.4.1)
-   ✔ txReset @done (13-12-08 21:02)
  ☐ specify and fix negotiation protocol format
 
  ☐ give priority to local-network Endpoint addresses first (need to match network against available interfaces' IPs)
+   ☐ match received endpoints against known local endpoint addresses (not external endpoint)
+     ☐ longest matches get priority
+     ☐ after all are matched, match on external endpoint address, this way EIDs sitting on the same
+       external endpoint are supposed to connect directly through the NATs routing table.
  ✔ possible DOS if localhost is specified in Endpoints? yep, tested and true, fix. @done (13-11-04 01:14)
    ☐ first, never ever include loopback addresses in endpoints list
    ✔ second, if ever encountered, just ignore those @done (13-11-04 01:14)
@@ -231,14 +215,9 @@ NAT and UPnP:
        ✔ call infonet about it @done (13-03-11 23:57)
            infonet claim there is no UDP filtering whatsoever, can it be motoko's local portsentry or sth like that? check the services/ipfw settings.
   ☐ Integrate UPnP into SST::Host.
- ✔ Download router XML file using QNetworkAccessManager/QNetworkReply @done (12-11-18 16:24)
- ✔ Punching TCP holes via UPnP works, but UDP doesn't (apparently, Skype can do it!) - figure out why, find a workaround. @done (12-11-24 10:45)
-   ✔ miniupnpc could punch a hole when specifying a lease duration @done (12-11-23 19:24)
-   ✔ try TCP before UDP (cplx @easy) - didn't help @done (12-11-24 10:45)
-   ✔ try with lease duration using upnp lib - this worked! @done (12-11-24 10:44)
-   ✔ wireshark requests from utorrent/skype - was not necessary @done (12-11-24 10:46)
  ☐ Assign a new Endpoint with public IP and UPnP-assigned port number.
    ☐ Use it to register on regserver as primary.
+     Right now regserver gives us this external IP address.
  ☐ Integrate hole punching machinery with SST::Host.
  ☐ UPnP event variables that need to be checked:
      NATEnabled - if not, portmapping setting will fail.
@@ -257,3 +236,4 @@ Metta:
 
     UI: "Advertise my membership in room [#osdev] to [Nobody [v]"
     -Wthread-safety
+
