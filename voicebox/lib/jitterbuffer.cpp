@@ -48,15 +48,15 @@ jitterbuffer::jitterbuffer(audio_source* from)
 // if yes, insert a number of intermediate empty "missed" packets and then the new one.
 // If queue size is too big, drop some of the older packets, playing catch up with the
 // remote stream.
-
+//
 // Packet with the least timestamp is taken from the queue when produce_output() is called.
 // The latest timestamp is then bumped to timestamp of that packet.
-
+//
 // Packets format:
 // [8 bytes] microseconds since epoch (Jan 1, 2010)
 // [4 bytes] sequence number
 // [variable] payload
-// sequence number is coming from where? - see voice.cc:156
+//
 void jitterbuffer::accept_input(byte_array msg)
 {
 #if REALTIME_CRIME
@@ -82,9 +82,11 @@ void jitterbuffer::accept_input(byte_array msg)
 
             // if there's a packet with the same sequence number in the queue - replace it
         }
-        else
+        else // @todo: If the seq_no is directly before queue_first_seq_no or fits before with a gap
+             // that's still within allowed queue size, prepend it to the JB queue!
         {
-            logger::warning() << "Out-of-order packet too late - not fitting in JB";
+            logger::warning() << "Out-of-order packet too late - not fitting in JB; seq "
+                << seq_no << ", expected seq " << sequence_number_;
         }
     }
 
