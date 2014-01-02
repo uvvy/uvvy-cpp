@@ -26,6 +26,8 @@ public:
     rtaudio_source() = default;
 
     void set_enabled(bool enable) override;
+
+    void accept_input(byte_array data) override;
 };
 
 } // voicebox namespace

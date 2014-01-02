@@ -10,7 +10,11 @@
 #include "voicebox/audio_hardware.h"
 #include "voicebox/audio_service.h"
 
+namespace pt = boost::posix_time;
+
 namespace voicebox {
+
+static const pt::ptime epoch{boost::gregorian::date(2010, boost::gregorian::Jan, 1)};
 
 void rtaudio_source::set_enabled(bool enabling)
 {
@@ -38,6 +42,21 @@ void rtaudio_source::set_enabled(bool enabling)
             audio_hardware::reopen(); // close or reopen without input
         }
     }
+}
+
+void rtaudio_source::accept_input(byte_array data)
+{
+    if (!data.is_empty())
+    {
+        byte_array buf;
+        buf.resize(8); // Reserve space for timestamp
+        buf.append(data);
+        // Timestamp the packet with our own clock reading.
+        int64_t ts = (pt::microsec_clock::universal_time() - epoch).total_milliseconds();
+        buf.as<big_int64_t>()[0] = ts;
+        super::accept_input(buf);
+    }
+    // Totally ignore empty capture packets - shouldn't happen.
 }
 
 } // voicebox namespace
