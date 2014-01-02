@@ -33,7 +33,6 @@
 #include "cli.h"
 #include "srv.h"
 #include "sim.h"
-#include "dgram.h"
 #include "migrate.h"
 #include "seg.h"
 
@@ -53,7 +52,6 @@ struct RegressionTest {
 	const char *descr;
 } tests[] = {
 	{BasicClient::run, "basic", "Basic stream-oriented data transfer"},
-	{DatagramTest::run, "dgram", "Best-effort datagram data transfer"},
 	{MigrateTest::run, "migrate", "Endpoint migration test"},
 	{SegTest::run, "seg", "Segmented path test"},
 };
