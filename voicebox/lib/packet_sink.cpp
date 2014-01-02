@@ -26,6 +26,7 @@ void packet_sink::produce_output(byte_array& buffer)
     }
 
     if (!buffer.is_empty()) {
+        buffer.as<big_uint32_t>()[2] = sequence_number_++;
         stream_->write_datagram(buffer, stream::datagram_type::non_reliable);
     }
 }
