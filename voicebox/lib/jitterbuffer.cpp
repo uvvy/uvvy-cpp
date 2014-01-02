@@ -99,7 +99,9 @@ void jitterbuffer::accept_input(byte_array msg)
     // Queue up the missed frames, if any.
     for (int i = 0; i < seqdiff; ++i)
     {
-        queue_.enqueue(byte_array());
+        byte_array dummy;
+        dummy.resize(12);
+        queue_.enqueue(dummy);
         logger::debug(TRACE_RARE) << "MISSED audio frame " << sequence_number_ + i;
     }
 
