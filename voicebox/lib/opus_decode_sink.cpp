@@ -62,18 +62,18 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
     samplebuf.resize(frame_bytes());
 
     // Decode the frame
-    if (!bytebuf.is_empty())
+    if (bytebuf.size() > buffer_offset)
     {
-        assert(bytebuf.size() > buffer_offset);
-
 #if REALTIME_CRIME
         logger::debug(TRACE_DETAIL) << "Decode frame size: " << bytebuf.size() - buffer_offset;
 #endif
-        int len = opus_decode_float(decode_state_, (unsigned char*)bytebuf.data() + buffer_offset,
+        int len = opus_decode_float(decode_state_, bytebuf.as<unsigned char>() + buffer_offset,
             bytebuf.size() - buffer_offset, samplebuf.as<float>(), frame_size(), /*decodeFEC:*/0);
 
         if (len < 0) {
             // perform recovery - fill buffer with 0 for example...
+            // fill_n(samplebuf.as<char>(), frame_bytes(), 0);
+            // len = frame_size();
         }
         assert(len == (int)frame_size());
     }
