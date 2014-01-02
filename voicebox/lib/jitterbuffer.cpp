@@ -30,17 +30,22 @@ static const int queue_min = 10; // 1/5 sec
  */
 static const int queue_max = 25; // 1/2 sec
 
-
-jitterbuffer::jitterbuffer(audio_source* from)
+/**
+ * Called with mutex locked.
+ */
+void jitterbuffer::enqueue(byte_array data)
 {
-    queue_.on_ready_read.connect([this] { on_ready_read(); });
-    queue_.on_queue_empty.connect([this] { on_queue_empty(); });
+    bool wasempty = queue_.empty();
+    queue_.emplace_back(data);
+    // guard.unlock(); -- behavior change: on_ready_read() called with mutex held XXX @fixme
 
-    if (from) {
-        from->set_acceptor(this);
+    // Notify reader if appropriate
+    if (wasempty) {
+        on_ready_read();
     }
 }
 
+//
 // Packet acceptance into the jitterbuffer:
 // If the packet is older than what is currently playing, simply drop it.
 // If packet should be somewhere in the middle replacing an empty packet, replace.
@@ -66,6 +71,9 @@ void jitterbuffer::accept_input(byte_array msg)
 
     uint32_t seq_no = msg.as<big_uint32_t>()[2];
     uint32_t queue_first_seq_no = 0;
+
+    unique_lock<mutex> guard(mutex_); // Need to lock the whole step here
+
     if (!queue_.empty()) {
         queue_first_seq_no = queue_.front().as<big_uint32_t>()[2];
     }
@@ -77,7 +85,7 @@ void jitterbuffer::accept_input(byte_array msg)
     {
         if (seq_no > queue_first_seq_no)
         {
-            queue_.enqueue(msg);
+            enqueue(msg);
             logger::debug(TRACE_RARE) << "Jitterbuffer - frame received out of order";
 
             // if there's a packet with the same sequence number in the queue - replace it
@@ -94,18 +102,16 @@ void jitterbuffer::accept_input(byte_array msg)
     // @todo When receiving too large a seqdiff, probably set up a full JB reset with
     // clearing the queue?
 
-// lock_guard<mutex> guard(mutex_); <- need to lock the whole step here
-
     // Queue up the missed frames, if any.
     for (int i = 0; i < seqdiff; ++i)
     {
         byte_array dummy;
         dummy.resize(12);
-        queue_.enqueue(dummy);
+        enqueue(dummy);
         logger::debug(TRACE_RARE) << "MISSED audio frame " << sequence_number_ + i;
     }
 
-    queue_.enqueue(msg);
+    enqueue(msg);
 #if REALTIME_CRIME
     logger::debug(TRACE_DETAIL) << "Received audio frame " << dec << seq_no;
 #endif
@@ -131,11 +137,17 @@ void jitterbuffer::accept_input(byte_array msg)
 
     // Discard frames from the head if we exceed max queue size
     while (queue_.size() > queue_max) {
-        queue_.dequeue();
+        queue_.pop_front();
     }
+    bool emptied = queue_.empty();
+    guard.unlock();
 
     // Remember which sequence we expect next
     sequence_number_ = seq_no + 1;
+
+    if (emptied) {
+        on_queue_empty();
+    }
 }
 
 // Packets format:
@@ -147,11 +159,20 @@ void jitterbuffer::produce_output(byte_array& buffer)
 #if REALTIME_CRIME
     logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
 #endif
+    unique_lock<mutex> guard(mutex_);
     if (queue_.empty()) {
+        guard.unlock();
         buffer.resize(0);
         return;
     }
-    buffer = queue_.dequeue();
+    buffer = queue_.front();
+    queue_.pop_front();
+    bool emptied = queue_.empty();
+    guard.unlock();
+
+    if (emptied) {
+        on_queue_empty();
+    }
 }
 
 } // voicebox namespace

@@ -8,9 +8,11 @@
 //
 #pragma once
 
+#include <mutex>
+#include <deque>
+#include <boost/signals2/signal.hpp>
 #include "audio_source.h"
 #include "audio_sink.h"
-#include "synchronized_queue.h"
 
 namespace voicebox {
 
@@ -24,17 +26,26 @@ namespace voicebox {
 class jitterbuffer : public audio_source, public audio_sink
 {
 protected:
-    synchronized_queue<byte_array> queue_;
+    std::mutex mutex_;
+    std::deque<byte_array> queue_;
     uint32_t sequence_number_{0};
 
+    void enqueue(byte_array a);
+
 public:
-    jitterbuffer(audio_source* from = nullptr);
+    jitterbuffer(audio_source* from = nullptr)
+    {
+        if (from) {
+            from->set_acceptor(this);
+        }
+    }
 
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source
 
-    synchronized_queue<byte_array>::state_signal on_ready_read;
-    synchronized_queue<byte_array>::state_signal on_queue_empty;
+    typedef boost::signals2::signal<void (void)> state_signal;
+    state_signal on_ready_read;
+    state_signal on_queue_empty;
 };
 
 }
