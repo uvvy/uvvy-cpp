@@ -96,6 +96,10 @@ flurry::iarchive& operator >> (flurry::iarchive& in, Peer& peer)
     return in;
 }
 
+//=================================================================================================
+// PeerTableModel private implementation
+//=================================================================================================
+
 class PeerTableModel::Private
 {
 public:
