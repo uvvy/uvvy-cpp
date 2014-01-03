@@ -53,18 +53,18 @@ void packet_source::set_enabled(bool enabling)
 
 void packet_source::on_packet_received()
 {
-    // extract payload
-    byte_array msg = stream_->read_datagram();
+    if (is_enabled()) {
+        byte_array msg = stream_->read_datagram();
 
 #if REALTIME_CRIME
-    logger::debug(TRACE_ENTRY) << "Received packet of size " << msg.size();
+        logger::debug(TRACE_ENTRY) << "Received packet of size " << msg.size();
 #endif
 
+    // See JB: it sets time_difference_ based on first received remove packet timestamp
     // if (!time_difference_) {
     //     time_difference_ = (pt::microsec_clock::universal_time() - epoch).total_milliseconds()
     //         - msg.as<big_int64_t>()[0];
     // }
-    if (is_enabled()) {
         accept_input(msg);
     }
 }
