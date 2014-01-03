@@ -22,19 +22,19 @@ using namespace ssu;
 class PeerPicker::Private
 {
 public:
-    shared_ptr<settings_provider> settings;
-    shared_ptr<host> host;
-    shared_ptr<upnp::UpnpIgdClient> nat;
-    std::thread runner;
     std::thread gone_natty;
+    shared_ptr<settings_provider> settings_;
+    shared_ptr<host> host_;
+    shared_ptr<upnp::UpnpIgdClient> nat_;
+    std::thread runner_;
     audio_service audioclient_;
 
     Private()
-        : settings(settings_provider::instance())
-        , host(host::create(settings))
-        , runner([this] { host->run_io_service(); })
         , gone_natty([this] { nat = traverse_nat(host); })
-        , audioclient_(host)
+        : settings_(settings_provider::instance())
+        , host_(host::create(settings_))
+        , runner_([this] { host_->run_io_service(); })
+        , audioclient_(host_)
     {
         audioclient_.listen_incoming_session();
     }
@@ -49,7 +49,7 @@ PeerPicker::PeerPicker(QWidget *parent)
     peersTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     peersTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    PeerTableModel* peers = new PeerTableModel(m_pimpl->host, m_pimpl->settings, this);
+    PeerTableModel* peers = new PeerTableModel(m_pimpl->host_, m_pimpl->settings_, this);
     peersTableView->setModel(peers);
 
     m_pimpl->audioclient_.on_session_started.connect([this] {
