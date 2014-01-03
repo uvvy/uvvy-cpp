@@ -22,7 +22,6 @@ using namespace ssu;
 class PeerPicker::Private
 {
 public:
-    std::thread gone_natty;
     shared_ptr<settings_provider> settings_;
     shared_ptr<host> host_;
     shared_ptr<upnp::UpnpIgdClient> nat_;
@@ -30,12 +29,12 @@ public:
     audio_service audioclient_;
 
     Private()
-        , gone_natty([this] { nat = traverse_nat(host); })
         : settings_(settings_provider::instance())
         , host_(host::create(settings_))
         , runner_([this] { host_->run_io_service(); })
         , audioclient_(host_)
     {
+        nat_ = traverse_nat(host_);
         audioclient_.listen_incoming_session();
     }
 };
