@@ -11,6 +11,14 @@
 #include "voicebox/jitterbuffer.h"
 #include "voicebox/audio_service.h" // TRACE_DETAIL
 
+/// @todo
+/// [ ] Run set_enabled() all the way from the left side of pipeline to the right
+/// This way jitterbuffer may delay enabling subsequent nodes until queue_min frames
+/// has been received.
+/// This means sinks also need to have a rightward pointer.
+/// The only reason sinks work to the left is because rtaudio_sink is driven by the hw.
+/// In all other cases some kind of cross-thread signal may be used to drive the whole chain.
+
 using namespace std;
 
 namespace voicebox {
@@ -140,6 +148,12 @@ void jitterbuffer::accept_input(byte_array msg)
         queue_.pop_front();
     }
     bool emptied = queue_.empty();
+
+    // Kick off further processing.
+    // if (queue_.size() > queue_min) {
+    //     acceptor->set_enabled(true);
+    // }
+
     guard.unlock();
 
     // Remember which sequence we expect next
