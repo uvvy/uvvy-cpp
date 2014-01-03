@@ -285,6 +285,7 @@ void audio_service::private_impl::end_session()
     }
     active_ = false;
     parent_->on_session_finished();
+    stream_ = nullptr;
 }
 
 //=================================================================================================
