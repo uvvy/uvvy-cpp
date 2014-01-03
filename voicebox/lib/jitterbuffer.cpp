@@ -31,7 +31,10 @@ static const int max_skip = 3;
 /**
  * Minimum number of frames to queue before enabling output
  */
-static const int queue_min = 10; // 1/5 sec
+static const int queue_min = 10; // 1/5 sec  
+
+// ^-- these are hardcoded for 50 packets per second (20ms packets)
+// use min/max buffer latency in milliseconds instead.
 
 /**
  * Maximum number of frames to queue before dropping frames
