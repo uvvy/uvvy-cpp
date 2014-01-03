@@ -52,8 +52,17 @@ PeerPicker::PeerPicker(QWidget *parent)
     peersTableView->setModel(peers);
 
     m_pimpl->audioclient_.on_session_started.connect([this] {
-        selectedPeerText->appendPlainText("Call started");
+        // Less detailed logging while in real-time
+        logger::set_verbosity(logger::verbosity::warnings);
+        selectedPeerText->appendPlainText("Call started\n");
         buttonCall->setText("Hang up");
+    });
+
+    m_pimpl->audioclient_.on_session_finished.connect([this] {
+        // More detailed logging while not in real-time
+        logger::set_verbosity(logger::verbosity::debug);
+        selectedPeerText->appendPlainText("Call finished\n");
+        buttonCall->setText("Call");
     });
 
     connect(actionCall, SIGNAL(triggered()), this, SLOT(call()));
@@ -69,15 +78,21 @@ void PeerPicker::addToFavorites()
 
 void PeerPicker::call()
 {
-    //get the text of the selected item
-    const QModelIndex index = peersTableView->selectionModel()->currentIndex();
-    const QModelIndex index2 = index.model()->index(index.row(), 1);
-    QString selectedText = index2.data(Qt::DisplayRole).toString();
+    if (m_pimpl->audioclient_.is_active()) {
+        m_pimpl->audioclient_.end_session();
+    }
+    else
+    {
+        //get the text of the selected item
+        const QModelIndex index = peersTableView->selectionModel()->currentIndex();
+        const QModelIndex index2 = index.model()->index(index.row(), 1);
+        QString selectedText = index2.data(Qt::DisplayRole).toString();
 
-    logger::set_verbosity(logger::verbosity::info);
+        buttonCall->setText("Calling...");
 
-    m_pimpl->audioclient_.establish_outgoing_session(
-        string(selectedText.toUtf8().constData()), vector<string>());
+        m_pimpl->audioclient_.establish_outgoing_session(
+            string(selectedText.toUtf8().constData()), vector<string>());
+    }
 }
 
 void PeerPicker::chat()
