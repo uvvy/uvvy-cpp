@@ -42,7 +42,8 @@ static const int queue_min = 10; // 1/5 sec
 static const int queue_max = 25; // 1/2 sec
 
 /**
- * Called with mutex locked.
+ * Insert a packet into JB queue, signaling if queue was previously empty.
+ * Called with mutex_ locked.
  */
 void jitterbuffer::enqueue(byte_array data)
 {

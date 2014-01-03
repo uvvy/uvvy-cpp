@@ -27,7 +27,7 @@ packet_source::packet_source(std::shared_ptr<ssu::stream> stream)
 packet_source::~packet_source()
 {
     if (stream_) {
-        stream_->shutdown(stream::shutdown_mode::read);
+        stream_->shutdown(stream::shutdown_mode::read); // @todo Maybe do this in set_enabled(false)?
     }
 }
 
