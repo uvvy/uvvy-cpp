@@ -1,6 +1,22 @@
 Topmost 3 tasks:
- ✔ Change audio_session protocol to first send some negotiation and command packets to start a session instead @done (14-01-02 13:36)
-   of starting packet bombardment right away - the channel layer cannot keep up and gets stuck in tx_attach phase.
+Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
+ ☐ Above happens on second call attempt on one of the clients (far side?)
+
+Process 29717 stopped
+* thread #6: tid = 0x743e5, 0x00000001002278b4 PeerPicker`ssu::stream::read_datagram(this=0xf000000000000000, max_size=1073741824) + 52 at stream.cpp:306, stop reason = EXC_BAD_ACCESS (code=EXC_I386_GPFLT)
+    frame #0: 0x00000001002278b4 PeerPicker`ssu::stream::read_datagram(this=0xf000000000000000, max_size=1073741824) + 52 at stream.cpp:306
+   303
+   304   byte_array stream::read_datagram(ssize_t max_size)
+   305   {
+-> 306       if (!stream_) {
+   307           set_error("Stream not connected");
+   308           return byte_array();
+   309       }
+ ☐ The above happens after hangup when a stray on_ready_read_datagram() signal fires and attempts to 
+   read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
+
+ ☐ Move PeerPicker to ui and start building the UI thingie on it.
+
  ☐ Add higher-priority RTCP stream in opus-streaming.
    add to audio_service - there's a primary command stream that should spawn an RTCP substream
  ☐ Set protocol specifications and make unit/func tests covering this spec.
