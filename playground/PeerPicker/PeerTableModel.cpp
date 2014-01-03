@@ -61,7 +61,7 @@ struct Peer
         for (auto& f : flags_) {
             f = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
         }
-        flags_[0] = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+        flags_[0] |= Qt::ItemIsEditable;
     }
 };
 
