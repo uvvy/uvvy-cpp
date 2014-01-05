@@ -41,16 +41,16 @@ add_executable(MettaNode ${GUI_TYPE}
     ${mettanode_RESOURCES_RCC}
     ${mettanode_FORMS_HEADERS}
     ${APPLE_BUNDLE_SRC})
-target_link_libraries(PeerPicker krypto rclient routing ssu plist support natclient nat upnpc
+target_link_libraries(MettaNode krypto rclient routing ssu plist support natclient nat upnpc
     ${VOICEBOX_LIBS} opus
     ${Boost_LIBRARIES} ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
-install(TARGETS PeerPicker
+install(TARGETS MettaNode
     RUNTIME DESTINATION tools
     BUNDLE DESTINATION tools
     LIBRARY DESTINATION tools/lib
     ARCHIVE DESTINATION tools/lib)
 
 if (APPLE)
-    set_target_properties(PeerPicker PROPERTIES
-        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/PeerPicker-Info.plist)
+    set_target_properties(MettaNode PROPERTIES
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/OSXInfo.plist)
 endif()
