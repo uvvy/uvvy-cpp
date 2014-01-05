@@ -18,10 +18,10 @@ set(QT_USE_QTNETWORK TRUE)
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 
-set(peer_picker_SOURCES main.cpp PeerTableModel.cpp PeerPicker.cpp)
-set(peer_picker_HEADERS PeerTableModel.h PeerPicker.h)
-set(peer_picker_FORMS PeerPickerWindow.ui)
-#set(peer_picker_RESOURCES gui.qrc)
+set(mettanode_SOURCES main.cpp PeerTableModel.cpp PeerPicker.cpp)
+set(mettanode_HEADERS PeerTableModel.h PeerPicker.h)
+set(mettanode_FORMS PeerPickerWindow.ui)
+set(mettanode_RESOURCES ui.qrc)
 
 if (APPLE)
     #set(MACOSX_BUNDLE_ICON_FILE "ProfileEditor.icns")
@@ -30,16 +30,16 @@ if (APPLE)
     #set(APPLE_BUNDLE_SRC "img/${MACOSX_BUNDLE_ICON_FILE}")
 endif (APPLE)
 
-qt4_wrap_cpp(peer_picker_HEADERS_MOC ${peer_picker_HEADERS})
-qt4_wrap_ui(peer_picker_FORMS_HEADERS ${peer_picker_FORMS})
-#qt4_add_resources(peer_picker_RESOURCES_RCC ${ppeer_picker_RESOURCES})
+qt4_wrap_cpp(mettanode_HEADERS_MOC ${mettanode_HEADERS})
+qt4_wrap_ui(mettanode_FORMS_HEADERS ${mettanode_FORMS})
+#qt4_add_resources(mettanode_RESOURCES_RCC ${pmettanode_RESOURCES})
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-add_executable(PeerPicker ${GUI_TYPE}
-    ${peer_picker_SOURCES}
-    ${peer_picker_HEADERS_MOC}
-    ${peer_picker_RESOURCES_RCC}
-    ${peer_picker_FORMS_HEADERS}
+add_executable(MettaNode ${GUI_TYPE}
+    ${mettanode_SOURCES}
+    ${mettanode_HEADERS_MOC}
+    ${mettanode_RESOURCES_RCC}
+    ${mettanode_FORMS_HEADERS}
     ${APPLE_BUNDLE_SRC})
 target_link_libraries(PeerPicker krypto rclient routing ssu plist support natclient nat upnpc
     ${VOICEBOX_LIBS} opus
