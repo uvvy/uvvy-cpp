@@ -68,7 +68,8 @@ Storage (grabber/file sync/versioning):
  ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
  ☐ Show file transfer progress on both sending and receiving sides. Also inside chat.
  ☐ Make ongoing downloads automatically persist across restarts
- ✔ Watch Files directory for new files and file changes (QFileSystemWatcher) @done (12-11-05 23:49)
+ ☐ Watch Files directory for new files and file changes
+   ☐ See boost.asio based dir_watcher code and adopt for mac (based on kqeueue impl from Poco)
  ☐ Initiate file resync operation when change is detected.
      Should work pretty much like file transfer, just the file save locations are predefined.
      Different changes cause different synchronization commands to be sent.
@@ -89,6 +90,7 @@ Storage (grabber/file sync/versioning):
  ☐ synchronize arbitrary file chunks and their metadata between devices in the cluster (hardcoded for start).
  ☐ sync git-like file trees and chunk blobs
    ☐ split a file into a number of fixed-size blocks (plus a smaller trailing block if necessary)
+     ☐ Split files into C*log2(size) chunks?
    ☐ record each block hash into a file record 
    ☐ record metadata block(s), HMAC it/them - should it be fixed size or some more manageable chunks?
    ☐ add metadata block(s) hash(es) into a file record and then HMAC the entire record
