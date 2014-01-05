@@ -19,11 +19,12 @@ include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 
 set(mettanode_SOURCES main.cpp PeerTableModel.cpp PeerPicker.cpp)
-set(mettanode_HEADERS PeerTableModel.h PeerPicker.h)
+set(mettanode_HEADERS PeerTableModel.h PeerPicker.h macsupport.h)
 set(mettanode_FORMS PeerPickerWindow.ui)
 set(mettanode_RESOURCES ui.qrc)
 
 if (APPLE)
+    list(APPEND mettanode_SOURCES macosx.mm)
     #set(MACOSX_BUNDLE_ICON_FILE "ProfileEditor.icns")
     #set_source_files_properties("img/${MACOSX_BUNDLE_ICON_FILE}" PROPERTIES
     #   MACOSX_PACKAGE_LOCATION Resources)
