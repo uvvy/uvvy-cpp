@@ -20,26 +20,22 @@ void regclient_set_profile(settings_provider* settings,
     ssu::host* host)
 {
     // Pull client profile from settings.
-    boost::any s_client = settings->get("profile");
-    uia::routing::client_profile client;
-    if (!s_client.empty()) {
-        uia::routing::client_profile client2(boost::any_cast<std::vector<char>>(s_client));
-        client = client2;
-    }
+    byte_array s_client = settings->get_byte_array("profile");
+    uia::routing::client_profile client(s_client);
     client.set_endpoints(set_to_vector(host->active_local_endpoints()));
-    // for (auto kw : client.keywords()) {
-    //     logger::debug() << "Keyword: " << kw;
-    // }
+    for (auto kw : client.keywords()) {
+        logger::debug() << "Keyword: " << kw;
+    }
     regclient.set_profile(client);
 }
 
 void regclient_connect_regservers(settings_provider* settings,
     uia::routing::internal::regserver_client& regclient)
 {
-    boost::any s_rs = settings->get("regservers");
-    if (!s_rs.empty())
+    byte_array s_rs = settings->get_byte_array("regservers");
+    if (!s_rs.is_empty())
     {
-        byte_array rs_ba(boost::any_cast<vector<char>>(s_rs));
+        byte_array rs_ba(s_rs);
         byte_array_iwrap<flurry::iarchive> read(rs_ba);
         vector<string> regservers;
         read.archive() >> regservers;

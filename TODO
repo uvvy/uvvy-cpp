@@ -1,4 +1,7 @@
 Topmost 3 tasks:
+ ✔ Settings migrator from plist to flurry? @done (14-01-06 01:58)
+    Maybe just read from XML plist? Separate util based on PlistCpp and libsupport may help.
+
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
  ☐ Above happens on second call attempt on one of the clients (far side?)
 
@@ -16,6 +19,7 @@ Process 29717 stopped
    read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
 
  ✔ Move PeerPicker to ui and start building the UI thingie on it. @done (14-01-05 14:07)
+ ☐ Add ProfileEditor to the app.
 
  ☐ Add higher-priority RTCP stream in opus-streaming.
    add to audio_service - there's a primary command stream that should spawn an RTCP substream
@@ -28,8 +32,8 @@ Process 29717 stopped
 Support:
   ✔ Get rid of plist @done (14-01-03 22:21)
     ✔ Implement flurrying boost::any instead. @done (14-01-03 22:21)
-      ☐ Need a method to write any and a method to read any, that's it, really.
- ☐ Un/Flurry map<string, boost::any> for settings storage.
+      ✔ Need a method to write any and a method to read any, that's it, really. @done (14-01-06 02:01)
+ ✔ Un/Flurry map<string, boost::any> for settings storage. @done (14-01-06 02:01)
 
 UI:
  ☐ Maintain partial discoloration for online icon based on "stall count"
