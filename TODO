@@ -1,4 +1,8 @@
 Topmost 3 tasks:
+ ✔ Make dir_monitor into its own repository, @done (14-01-06 12:49)
+   ☐ add OSX/fbsd support,
+   ☐ and pull in into 3rdparty/dir_monitor.
+ ☐ Add ProfileEditor to the app.
 
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
  ☐ Above happens on second call attempt on one of the clients (far side?)
@@ -16,9 +20,6 @@ Process 29717 stopped
  ☐ The above happens after hangup when a stray on_ready_read_datagram() signal fires and attempts to 
    read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
 
- ✔ Move PeerPicker to ui and start building the UI thingie on it. @done (14-01-05 14:07)
- ☐ Add ProfileEditor to the app.
-
  ☐ Add higher-priority RTCP stream in opus-streaming.
    add to audio_service - there's a primary command stream that should spawn an RTCP substream
  ☐ Set protocol specifications and make unit/func tests covering this spec.
@@ -31,8 +32,6 @@ UI:
  ☐ Maintain partial discoloration for online icon based on "stall count"
    e.g. second stall online icon is 2/3 colored, third stall icon is 1/3 colored, then offline (online-66%, online-33%)
    first stall is ignored as possibly temporary glitch
- ✔ Ubuntu 32/64 bit binaries repo for Matti. @done (13-11-11 19:00)
-    ✔ ubuntu 64 bits binaries on github, make a .deb? @done (12-12-09 16:26)
  ☐ Deploy nshd to motoko?
  ☐ how to perform search? an ESC-interface sounds intriguing
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
