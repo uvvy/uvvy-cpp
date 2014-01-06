@@ -19,7 +19,7 @@ include_directories(../ui) # For traverse_nat.h
 
 
 add_executable(opus-streaming opus-streaming.cpp)
-target_link_libraries(opus-streaming ssu support ${VOICEBOX_LIBS} opus plist rclient routing
+target_link_libraries(opus-streaming ssu support ${VOICEBOX_LIBS} opus rclient routing
     natclient nat upnpc krypto ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS opus-streaming
     RUNTIME DESTINATION tools)

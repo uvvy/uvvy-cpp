@@ -26,7 +26,7 @@ add_executable(ProfileEditor ${GUI_TYPE}
     ${profile_editor_RESOURCES_RCC}
     ${profile_editor_FORMS_HEADERS}
     ${APPLE_BUNDLE_SRC})
-target_link_libraries(ProfileEditor krypto routing ssu plist support
+target_link_libraries(ProfileEditor krypto routing ssu support
     ${Boost_LIBRARIES} ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 install(TARGETS ProfileEditor
     RUNTIME DESTINATION tools
