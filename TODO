@@ -1,7 +1,7 @@
 Topmost 3 tasks:
  ✔ Make dir_monitor into its own repository, @done (14-01-06 12:49)
-   ☐ add OSX/fbsd support,
-   ☐ and pull in into 3rdparty/dir_monitor.
+   ✔ add OSX/fbsd support, @done (14-01-08 17:02)
+   ✔ and pull in into 3rdparty/dir_monitor. @done (14-01-08 17:06)
  ☐ Add ProfileEditor to the app.
 
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
@@ -17,7 +17,7 @@ Process 29717 stopped
    307           set_error("Stream not connected");
    308           return byte_array();
    309       }
- ☐ The above happens after hangup when a stray on_ready_read_datagram() signal fires and attempts to 
+ ☐ The above happens after hangup when a stray on_ready_read_datagram() signal fires and attempts to
    read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
 
  ☐ Add higher-priority RTCP stream in opus-streaming.
@@ -63,14 +63,14 @@ Storage (grabber/file sync/versioning):
  ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
  ☐ Show file transfer progress on both sending and receiving sides. Also inside chat.
  ☐ Make ongoing downloads automatically persist across restarts
- ☐ Watch Files directory for new files and file changes
-   ☐ See boost.asio based dir_watcher code and adopt for mac (based on kqeueue impl from Poco)
+ ✔ Watch Files directory for new files and file changes @done (14-01-08 17:02)
+   ✔ See boost.asio based dir_watcher code and adopt for mac (based on kqeueue impl from Poco) @done (14-01-08 17:02)
  ☐ Initiate file resync operation when change is detected.
      Should work pretty much like file transfer, just the file save locations are predefined.
      Different changes cause different synchronization commands to be sent.
      E.g. moving a file issues RENAME, while deleting it issues REMOVE and changing it issues UPDATE_SYNC.
      What to do with conflicting changes? One node sends rename, one remove and one modify?
-     Something like full-fledged git might be needed. At the very least a key-value like store, that resolves modifications using full file path 
+     Something like full-fledged git might be needed. At the very least a key-value like store, that resolves modifications using full file path
      as just another attribute (change in FILE_PATH attribute might cause a rename, for example).
 
      Try git model approach - files are in trees, trees are hashed and upon change a Change of tree is recorded with the link to previous (parent)
@@ -86,7 +86,7 @@ Storage (grabber/file sync/versioning):
  ☐ sync git-like file trees and chunk blobs
    ☐ split a file into a number of fixed-size blocks (plus a smaller trailing block if necessary)
      ☐ Split files into C*log2(size) chunks?
-   ☐ record each block hash into a file record 
+   ☐ record each block hash into a file record
    ☐ record metadata block(s), HMAC it/them - should it be fixed size or some more manageable chunks?
    ☐ add metadata block(s) hash(es) into a file record and then HMAC the entire record
    ☐ record each file record into a tree object and HMAC it
@@ -224,7 +224,7 @@ NAT and UPnP:
     (second client to register disconnects first). The problem appears to be more serious and is related to insufficient NAT handling.
   ✔ hmm, even with UPnP succeeding the pings never get back?? wtf @done (12-12-07 13:23)
     ✔ can it be motoko traffic filtered? try with a different server, e.g. amazon t1.micro instance. @done (12-12-07 13:23)
-       and it was motoko firewalls indeed, 
+       and it was motoko firewalls indeed,
        ✔ call infonet about it @done (13-03-11 23:57)
            infonet claim there is no UDP filtering whatsoever, can it be motoko's local portsentry or sth like that? check the services/ipfw settings.
   ☐ Integrate UPnP into SST::Host.
@@ -244,7 +244,7 @@ Metta:
     "Kami" (paper) origami.
     Origami - аллегория восприятия. Что мы увидели и почувствовали, без навешивания ярлыков.
     Задача в том чтобы легче получать и доставлять впечатления.
-    
+
     Just-in-time концептуализация.
 
     UI: "Advertise my membership in room [#osdev] to [Nobody [v]"
