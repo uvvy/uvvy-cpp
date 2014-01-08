@@ -25,3 +25,6 @@
 [submodule "ssu-qt4"]
 	path = ssu-qt4
 	url = https://berkus@github.com/berkus/libssu-qt4.git
+[submodule "filesyncbox/3rdparty/dir_monitor"]
+	path = filesyncbox/3rdparty/dir_monitor
+	url = https://berkus@github.com/berkus/dir_monitor.git
