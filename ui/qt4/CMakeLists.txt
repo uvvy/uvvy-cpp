@@ -22,8 +22,8 @@ add_definitions(${QT_DEFINITIONS})
 #include_directories(../lib ../../sst/lib ../../routing/lib ../3rdparty/opus-1.0.1/include ../3rdparty/rtaudio-4.0.11)
 #include_directories(../3rdparty/metakit-2.4.9.7/include ../../nat)
 
-set(mettanode_SOURCES main.cpp PeerTableModel.cpp PeerPicker.cpp)
-set(mettanode_HEADERS PeerTableModel.h PeerPicker.h)
+set(mettanode_SOURCES main.cpp MainWindow.cpp PeerTableModel.cpp PeerPicker.cpp)
+set(mettanode_HEADERS MainWindow.h PeerTableModel.h PeerPicker.h)
 set(mettanode_FORMS PeerPickerWindow.ui)
 set(mettanode_RESOURCES ui.qrc)
 
