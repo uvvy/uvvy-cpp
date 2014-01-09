@@ -1,8 +1,6 @@
 Topmost 3 tasks:
- ✔ Make dir_monitor into its own repository, @done (14-01-06 12:49)
-   ✔ add OSX/fbsd support, @done (14-01-08 17:02)
-   ✔ and pull in into 3rdparty/dir_monitor. @done (14-01-08 17:06)
  ☐ Add ProfileEditor to the app.
+ ☐ Handle empty settings_provider config gracefully!
 
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
  ☐ Above happens on second call attempt on one of the clients (far side?)
@@ -38,6 +36,9 @@ UI:
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
 
 Comms (voice/video/chat):
+ ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
+   hangup signal didn't go through before that - really need high-prio session control chan.
+
  ☐ Sync history between instances
      Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
      non-existant entries once activated. How to track joins/leaves (+ history available to new joiners)?
