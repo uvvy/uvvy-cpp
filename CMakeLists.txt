@@ -96,6 +96,7 @@ include_directories(voicebox/include)
 add_subdirectory(support)
 add_subdirectory(krypto)
 add_subdirectory(voicebox)
+add_subdirectory(filesyncbox)
 
 add_subdirectory(ssu)
 add_subdirectory(routing)
