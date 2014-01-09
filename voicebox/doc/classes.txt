@@ -7,12 +7,10 @@ audio_service                  <-- audio session establishment/termination/state
 Internal classes:
 
 audio_hardware                 <-- audio hardware I/O using RtAudio API
-audio_receiver                 <-- ssu stream layer for receiving packets from remote
-audio_sender                   <-- ssu stream layer for sending packets to remote
 audio_stream                   <-- base class for audio data packets
 +--audio_source                <-- base class for audio source chain
 |  +--file_source              <-- receive blocks of data from a file stream
-|  +--packet_source (network)  <-- receive datagram packets from ssu::stream
+|  +--packet_source            <-- receive datagram packets from ssu::stream
 |  +--rtaudio_source           <-- capture audio from audio_hardware (as instream)
 |  +--jitterbuffer
 |  +--packetizer
