@@ -15,14 +15,16 @@ int main(int argc, char **argv)
     // if (!verbose_debug) {
         // logger::set_verbosity(logger::verbosity::info);
     // }
+
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
     std::shared_ptr<ssu::host> host =
         ssu::host::create(settings_provider::instance());
     PeerTableModel* model = new PeerTableModel(host);
-    MainWindow* mainWin = new MainWindow(model);
 
+    MainWindow* mainWin = new MainWindow(model);
     mainWin->show();
     return app.exec();
 }
+

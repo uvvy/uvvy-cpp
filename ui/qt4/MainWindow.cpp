@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <QCloseEvent>
 #include <QTableView>
 #include <QHeaderView>
@@ -21,7 +22,7 @@ MainWindow::MainWindow(PeerTableModel* model)
 {
     QIcon appicon(":/img/mettanode.png");
 
-    setWindowTitle(tr("Metta node"));
+    setWindowTitle(tr("MettaNode"));
     setWindowIcon(appicon);
 
     // Create a ListView onto our friends list, as the central widget
@@ -252,25 +253,18 @@ void MainWindow::friendsClicked(const QModelIndex &index)
 //     SettingsDialog::openProfile();
 // }
 
-// void MainWindow::openHelp()
-// {
-// }
-
-// void MainWindow::openWeb()
-// {
-// }
-
-// void MainWindow::openAbout()
-// {
-//     QMessageBox *mbox = new QMessageBox(tr("About MettaNode"),
-//                 tr("Based on Netsteria version 0.01\n"
-//                    "by Bryan Ford, © 2006"),
-//                 QMessageBox::Information,
-//                 QMessageBox::Ok, QMessageBox::NoButton,
-//                 QMessageBox::NoButton, this);
-//     mbox->show();
-//     //mbox->setAttribute(Qt::WA_DeleteOnClose, true);
-// }
+void MainWindow::openAbout()
+{
+    QMessageBox *mbox = new QMessageBox(tr("About MettaNode"),
+                tr("MettaNode 1.0\n"
+                   "Decentralised internets client.\n"
+                   "by Berkus © 2014"),
+                QMessageBox::Information,
+                QMessageBox::Ok, QMessageBox::NoButton,
+                QMessageBox::NoButton, this);
+    mbox->show();
+    mbox->setAttribute(Qt::WA_DeleteOnClose, true);
+}
 
 // void MainWindow::renameFriend()
 // {

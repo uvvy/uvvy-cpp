@@ -26,6 +26,7 @@ private:
     int selectedFriend();
 
 private slots:
+    void openAbout();
     void exitApp();
     void updateMenus();
     void friendsClicked(const QModelIndex &index);
