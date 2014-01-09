@@ -8,7 +8,9 @@
 //
 #pragma once
 
-#include "synchronized_queue.h"
+#include <deque>
+#include <mutex>
+#include <boost/signals2/signal.hpp>
 #include "audio_source.h"
 #include "audio_sink.h"
 
@@ -39,17 +41,25 @@ namespace voicebox {
 class packetizer : public audio_source, public audio_sink
 {
 protected:
-    synchronized_queue<byte_array> queue_;
+    std::mutex mutex_;
+    std::deque<byte_array> queue_;
 
 public:
-    packetizer(audio_source* from = nullptr);
+    inline packetizer(audio_source* from = nullptr)
+    {
+        if (from) {
+            from->set_acceptor(this);
+        }
+    }
+
     ~packetizer();
 
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source
 
-    synchronized_queue<byte_array>::state_signal on_ready_read;
-    synchronized_queue<byte_array>::state_signal on_queue_empty;
+    typedef boost::signals2::signal<void (void)> state_signal;
+    state_signal on_ready_read;
+    state_signal on_queue_empty;
 };
 
 }

@@ -33,7 +33,7 @@ protected:
     void enqueue(byte_array a);
 
 public:
-    jitterbuffer(audio_source* from = nullptr)
+    inline jitterbuffer(audio_source* from = nullptr)
     {
         if (from) {
             from->set_acceptor(this);

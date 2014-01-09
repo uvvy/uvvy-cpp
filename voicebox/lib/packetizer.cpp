@@ -12,16 +12,6 @@
 
 namespace voicebox {
 
-packetizer::packetizer(audio_source* from)
-{
-    queue_.on_ready_read.connect([this] { on_ready_read(); });
-    queue_.on_queue_empty.connect([this] { on_queue_empty(); });
-
-    if (from) {
-        from->set_acceptor(this);
-    }
-}
-
 packetizer::~packetizer()
 {
     audio_source::disable();
@@ -33,11 +23,20 @@ void packetizer::produce_output(byte_array& buffer)
 #if REALTIME_CRIME
     logger::debug(TRACE_ENTRY) << "packetizer::produce_output";
 #endif
+    std::unique_lock<std::mutex> guard(mutex_);
     if (queue_.empty()) {
         buffer.resize(0);
         return;
     }
-    buffer = queue_.dequeue();
+
+    buffer = queue_.front();
+    queue_.pop_front();
+    bool emptied = queue_.empty();
+    guard.unlock();
+
+    if (emptied) {
+        on_queue_empty();
+    }
 }
 
 void packetizer::accept_input(byte_array data)
@@ -46,7 +45,15 @@ void packetizer::accept_input(byte_array data)
     logger::debug(TRACE_ENTRY) << "packetizer::accept_input of "
         << std::dec << data.size() << " bytes";
 #endif
-    queue_.enqueue(data);
+    std::unique_lock<std::mutex> guard(mutex_);
+    bool wasempty = queue_.empty();
+    queue_.emplace_back(data);
+    guard.unlock();
+
+    // Notify reader if appropriate
+    if (wasempty) {
+        on_ready_read();
+    }
 }
 
 } // voicebox namespace
