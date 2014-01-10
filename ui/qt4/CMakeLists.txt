@@ -24,7 +24,7 @@ add_definitions(${QT_DEFINITIONS})
 
 set(mettanode_SOURCES main.cpp MainWindow.cpp PeerTableModel.cpp PeerPicker.cpp)
 set(mettanode_HEADERS MainWindow.h PeerTableModel.h PeerPicker.h)
-set(mettanode_FORMS PeerPickerWindow.ui)
+set(mettanode_FORMS MainWindow.ui PeerPickerWindow.ui)
 set(mettanode_RESOURCES ui.qrc)
 
 if (APPLE)

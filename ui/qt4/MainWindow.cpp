@@ -18,8 +18,11 @@
 #define COL_TALK    4
 #define COL_LISTEN  5
 
-MainWindow::MainWindow(PeerTableModel* model)
+MainWindow::MainWindow(PeerTableModel* model, QWidget* parent)
+    : QMainWindow(parent)
 {
+    setupUi(this); // this sets up GUI
+
     QIcon appicon(":/img/mettanode.png");
 
     setWindowTitle(tr("MettaNode"));

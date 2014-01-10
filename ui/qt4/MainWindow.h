@@ -3,18 +3,19 @@
 #include <QMainWindow>
 #include <QModelIndex>
 #include <QSystemTrayIcon>
+#include "ui_MainWindow.h"
 
 class QTableView;
 class PeerTableModel;
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, private Ui::MainWindow
 {
     Q_OBJECT
 
     QTableView *peerlist;
 
 public:
-    MainWindow(PeerTableModel* model);
+    MainWindow(PeerTableModel* model, QWidget* parent = nullptr);
     ~MainWindow();
 
 protected:
