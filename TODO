@@ -38,6 +38,9 @@ UI:
 Comms (voice/video/chat):
  ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
    hangup signal didn't go through before that - really need high-prio session control chan.
+ ☐ Establish clock skew estimation and use it to drive jitterbuffer. (Adjust received packets time
+   to local machine time, drop too old packets immediately.)
+   See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
 
  ☐ Sync history between instances
      Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
@@ -59,6 +62,9 @@ Comms (voice/video/chat):
     ☐ Or, subtract one screen from another and lossless-encode the difference.
 
  ☐ Separate libvoicebox into a separate repo (not yet?)
+ ☐ Separate libfilesyncbox into a separate repo (not yet?)
+
+  UI: "Advertise my membership in room [#osdev] to [Nobody [v]"
 
 Storage (grabber/file sync/versioning):
  ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
@@ -221,33 +227,22 @@ flow control
  ☐ inherited versus independent receive windows
 
 NAT and UPnP:
- ☐ Registration server proper handling of registrations from the same LAN.
+ ✔ Registration server proper handling of registrations from the same LAN. @done (14-01-10 03:22)
     (second client to register disconnects first). The problem appears to be more serious and is related to insufficient NAT handling.
   ✔ hmm, even with UPnP succeeding the pings never get back?? wtf @done (12-12-07 13:23)
     ✔ can it be motoko traffic filtered? try with a different server, e.g. amazon t1.micro instance. @done (12-12-07 13:23)
        and it was motoko firewalls indeed,
        ✔ call infonet about it @done (13-03-11 23:57)
            infonet claim there is no UDP filtering whatsoever, can it be motoko's local portsentry or sth like that? check the services/ipfw settings.
-  ☐ Integrate UPnP into SST::Host.
+ ☐ Integrate UPnP into SST::Host.
+ ☐ Integrate hole punching machinery with SST::Host.
  ☐ Assign a new Endpoint with public IP and UPnP-assigned port number.
    ☐ Use it to register on regserver as primary.
      Right now regserver gives us this external IP address.
- ☐ Integrate hole punching machinery with SST::Host.
  ☐ UPnP event variables that need to be checked:
      NATEnabled - if not, portmapping setting will fail.
      ConnectionStatus - if not connected, setting forwarding is useless.
      PortMappingNumberOfEntries - if changed, might need to re-read the actual mapping information.
      PortMappingLeaseDuration - is decremented and needs to be checked regularly, some seconds before the lease time out the lease must be extended for our port forwardings.
      Therefore, we need to maintain the status of UPnPRouter endpoint.
-
-Metta:
-  Kuso new internet:
-    "Kami" (paper) origami.
-    Origami - аллегория восприятия. Что мы увидели и почувствовали, без навешивания ярлыков.
-    Задача в том чтобы легче получать и доставлять впечатления.
-
-    Just-in-time концептуализация.
-
-    UI: "Advertise my membership in room [#osdev] to [Nobody [v]"
-    -Wthread-safety
 
