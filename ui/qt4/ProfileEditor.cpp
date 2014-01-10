@@ -41,14 +41,14 @@ void MainWindow::load()
     qDebug() << "Loading settings";
     auto s_port = m_pimpl->settings->get("port");
     if (!s_port.empty()) {
-        portSpinBox->setValue(boost::any_cast<long long>(s_port));
+        portSpinBox->setValue(any_int_cast<uint16_t>(s_port));
     } else {
         portSpinBox->setValue(stream_protocol::default_port);
     }
 
     auto s_client = m_pimpl->settings->get("profile");
     if (!s_client.empty()) {
-        uia::routing::client_profile client(boost::any_cast<vector<char>>(s_client));
+        uia::routing::client_profile client(boost::any_cast<byte_array>(s_client));
         firstNameLineEdit->setText(client.owner_firstname().c_str());
         lastNameLineEdit->setText(client.owner_lastname().c_str());
         nicknameLineEdit->setText(client.owner_nickname().c_str());
@@ -60,7 +60,7 @@ void MainWindow::load()
     boost::any s_rs = m_pimpl->settings->get("regservers");
     if (!s_rs.empty())
     {
-        byte_array rs_ba(boost::any_cast<vector<char>>(s_rs));
+        byte_array rs_ba(boost::any_cast<byte_array>(s_rs));
         byte_array_iwrap<flurry::iarchive> read(rs_ba);
         vector<string> regservers;
         read.archive() >> regservers;
@@ -88,7 +88,7 @@ void MainWindow::load()
     m_pimpl->ident = identity::generate();
 
     hostEIDLineEdit->setText(peer_id(m_pimpl->ident.id().id()).to_string().c_str());
-    setStatus("New host EID generated");
+    setStatus("New host EID generated, save to keep it");
 }
 
 void MainWindow::setStatus(QString const& text)
@@ -105,10 +105,10 @@ void MainWindow::clearStatus()
 void MainWindow::save()
 {
     qDebug() << "Saving settings";
-    m_pimpl->settings->set("id", m_pimpl->ident.id().id().as_vector());
-    m_pimpl->settings->set("key", m_pimpl->ident.private_key().as_vector());
+    m_pimpl->settings->set("id", m_pimpl->ident.id().id());
+    m_pimpl->settings->set("key", m_pimpl->ident.private_key());
 
-    m_pimpl->settings->set("port", (long long)portSpinBox->value());
+    m_pimpl->settings->set("port", portSpinBox->value());
     uia::routing::client_profile client;
     client.set_host_name(QHostInfo::localHostName().toUtf8().constData());
     client.set_owner_firstname(firstNameLineEdit->text().toUtf8().constData());
@@ -133,13 +133,6 @@ void MainWindow::save()
 
     m_pimpl->settings->sync();
     setStatus("Profile saved");
-}
-
-void MainWindow::quit()
-{
-    // @todo Check if need to save
-    qDebug() << "Quitting";
-    QApplication::quit();
 }
 
 void MainWindow::generateNewEid()
