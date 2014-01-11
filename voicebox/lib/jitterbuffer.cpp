@@ -117,9 +117,14 @@ void jitterbuffer::accept_input(byte_array msg)
         }
     }
 
+    // When receiving too large a seqdiff, do a full JB reset with clearing the queue.
+    if (seqdiff > max_skip)
+    {
+        reset();
+        seqdiff = 0;
+    }
+
     seqdiff = min(seqdiff, max_skip);
-    // @todo When receiving too large a seqdiff, probably set up a full JB reset with
-    // clearing the queue?
 
     // Queue up the missed frames, if any.
     for (int i = 0; i < seqdiff; ++i)
@@ -177,6 +182,16 @@ void jitterbuffer::accept_input(byte_array msg)
     if (emptied) {
         on_queue_empty();
     }
+}
+
+/**
+ * Called with mutex held.
+ */
+void jitterbuffer::reset()
+{
+    sequence_number_ = 0;
+    time_skew_ = 0;
+    queue_.clear();
 }
 
 // Packets format:

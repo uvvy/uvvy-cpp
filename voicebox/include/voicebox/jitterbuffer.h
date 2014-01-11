@@ -31,6 +31,7 @@ protected:
     uint32_t sequence_number_{0};
     int64_t time_skew_{0};
 
+    void reset();
     void enqueue(byte_array a);
 
 public:
