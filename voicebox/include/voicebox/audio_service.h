@@ -18,6 +18,8 @@
 #define TRACE_ENTRY 250
 #define TRACE_DETAIL 251
 
+namespace voicebox {
+
 /**
  * Audio service creates several streams for sending and receiving packetized audio data
  * as well as a special high-priority stream for controlling the session establishment
@@ -46,3 +48,6 @@ public:
     session_signal on_session_started;
     session_signal on_session_finished;
 };
+
+} // voicebox namespace
+

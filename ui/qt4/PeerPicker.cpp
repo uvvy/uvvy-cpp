@@ -26,7 +26,7 @@ public:
     shared_ptr<host> host_;
     shared_ptr<upnp::UpnpIgdClient> nat_;
     std::thread runner_;
-    audio_service audioclient_;
+    voicebox::audio_service audioclient_;
 
     Private()
         : settings_(settings_provider::instance())

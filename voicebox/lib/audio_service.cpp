@@ -38,8 +38,6 @@ const uint32_t cmd_magic = 0x61434d44; // aCMD
 const int cmd_start_session = 1001;
 const int cmd_stop_session = 1002;
 
-} // anonymous namespace
-
 //=================================================================================================
 // send_chain
 //=================================================================================================
@@ -112,9 +110,13 @@ struct receive_chain
     }
 };
 
+} // anonymous namespace
+
 //=================================================================================================
 // audio_service::private_impl
 //=================================================================================================
+
+namespace voicebox {
 
 class audio_service::private_impl
 {
@@ -321,4 +323,6 @@ void audio_service::end_session()
 {
     pimpl_->end_session();
 }
+
+} // voicebox namespace
 

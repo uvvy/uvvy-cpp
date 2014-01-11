@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
     regclient_set_profile(settings.get(), regclient, host.get());
     regclient_connect_regservers(settings.get(), regclient);
 
-    audio_service service(host);
+    voicebox::audio_service service(host);
     service.on_session_started.connect([]{
         logger::info() << "Audio session started";
     });
