@@ -29,6 +29,7 @@ protected:
     std::mutex mutex_;
     std::deque<byte_array> queue_;
     uint32_t sequence_number_{0};
+    int64_t time_skew_{0};
 
     void enqueue(byte_array a);
 

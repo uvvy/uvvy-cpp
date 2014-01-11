@@ -20,6 +20,7 @@
 /// In all other cases some kind of cross-thread signal may be used to drive the whole chain.
 
 using namespace std;
+namespace pt = boost::posix_time;
 
 namespace voicebox {
 
@@ -84,6 +85,12 @@ void jitterbuffer::accept_input(byte_array msg)
     uint32_t seq_no = msg.as<big_uint32_t>()[2];
     uint32_t queue_first_seq_no = 0;
 
+    // Set time difference based on first received remove packet timestamp.
+    // While the stream is running skew estimation may adjust.
+    if (!time_skew_) {
+        time_skew_ = (pt::microsec_clock::universal_time() - epoch).total_milliseconds() - msg.as<big_int64_t>()[0];
+    }
+
     unique_lock<mutex> guard(mutex_); // Need to lock the whole step here
 
     if (!queue_.empty()) {
@@ -122,6 +129,10 @@ void jitterbuffer::accept_input(byte_array msg)
         enqueue(dummy);
         logger::debug(TRACE_RARE) << "MISSED audio frame " << sequence_number_ + i;
     }
+
+    // Convert remote timestamp to local time
+    // @todo Override +=
+    msg.as<big_int64_t>()[0] = msg.as<big_int64_t>()[0] + time_skew_;
 
     enqueue(msg);
 #if REALTIME_CRIME
