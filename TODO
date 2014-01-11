@@ -1,5 +1,11 @@
 Topmost 3 tasks:
- ☐ Add ProfileEditor to the app.
+ ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
+   hangup signal didn't go through before that - really need high-prio session control chan.
+ ✔ Establish clock skew estimation and use it to drive jitterbuffer.
+   ☐ (Adjust received packets time to local machine time, drop too old packets immediately.)
+      See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
+
+ ✔ Add ProfileEditor to the app. @done (14-01-11 01:49)
  ☐ Handle empty settings_provider config gracefully!
 
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
@@ -17,6 +23,7 @@ Process 29717 stopped
    309       }
  ☐ The above happens after hangup when a stray on_ready_read_datagram() signal fires and attempts to
    read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
+   ☐ maybe just disconnect those signals on hangup?
 
  ☐ Add higher-priority RTCP stream in opus-streaming.
    add to audio_service - there's a primary command stream that should spawn an RTCP substream
@@ -36,12 +43,6 @@ UI:
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
 
 Comms (voice/video/chat):
- ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
-   hangup signal didn't go through before that - really need high-prio session control chan.
- ☐ Establish clock skew estimation and use it to drive jitterbuffer. (Adjust received packets time
-   to local machine time, drop too old packets immediately.)
-   See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
-
  ☐ Sync history between instances
      Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
      non-existant entries once activated. How to track joins/leaves (+ history available to new joiners)?
