@@ -21,6 +21,11 @@
 namespace voicebox {
 
 /**
+ * Clock reference base.
+ */
+static const boost::posix_time::ptime epoch{boost::gregorian::date(2010, boost::gregorian::Jan, 1)};
+
+/**
  * Audio service creates several streams for sending and receiving packetized audio data
  * as well as a special high-priority stream for controlling the session establishment
  * and sending audio session control commands.

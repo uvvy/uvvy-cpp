@@ -16,8 +16,6 @@ namespace pt = boost::posix_time;
 
 namespace voicebox {
 
-static const pt::ptime epoch{boost::gregorian::date(2010, boost::gregorian::Jan, 1)};
-
 packet_source::packet_source(std::shared_ptr<ssu::stream> stream)
     : audio_source()
 {
