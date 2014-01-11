@@ -19,17 +19,6 @@ class SearchDialog;
 class ChatDialog;
 class PeerTable;
 
-// Columns in PeerTable
-#define NCOLS		6
-// default ones
-#define COL_NAME    0
-#define COL_EID     1
-// custom
-#define COL_ONLINE  2
-#define COL_FILES   3
-#define COL_TALK	4
-#define COL_LISTEN	5
-
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT

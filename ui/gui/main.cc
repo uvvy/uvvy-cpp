@@ -158,7 +158,7 @@ MainWindow::MainWindow()
     maMessage = friendsmenu->addAction(tr("&Message"),
                 this, SLOT(openChat()),
                 tr("Ctrl+M", "Friends|Message"));
-    maTalk = friendsmenu->addAction(tr("&Talk"), this, SLOT(startTalk()),   
+    maTalk = friendsmenu->addAction(tr("&Talk"), this, SLOT(startTalk()),
                 tr("Ctrl+T", "Friends|Talk"));
     friendsmenu->addSeparator();
     friendsmenu->addAction(tr("&Find Friends"), this, SLOT(openSearch()),
@@ -482,12 +482,6 @@ static void usage()
 
 int main(int argc, char **argv)
 {
-    QApplication app(argc, argv);
-    app.setOrganizationName("Exquance.com");
-    app.setOrganizationDomain("exquance.com"); // for OSX
-    app.setApplicationName("MettaNode");
-    app.setQuitOnLastWindowClosed(false);
-
     while (argc > 1 && argv[1][0] == '-') {
         switch (argv[1][1]) {
         case 'd':
