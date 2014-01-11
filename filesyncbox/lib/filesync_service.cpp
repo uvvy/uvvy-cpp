@@ -10,6 +10,7 @@
 #include <mutex>
 #include <boost/asio/strand.hpp>
 #include "filesyncbox/filesync_service.h"
+#include "filesyncbox/chunk.h"
 #include "stream.h"
 #include "server.h"
 #include "logging.h"
@@ -32,11 +33,30 @@ namespace filesyncbox {
 // filesync_service::private_impl
 //=================================================================================================
 
+class peer_sync
+{
+public:
+    shared_ptr<stream> stream_;
+    boost::signals2::connection ready_read_conn;
+    boost::signals2::connection link_up_conn;
+    boost::signals2::connection link_down_conn;
+
+    /// Chunks remaining to sync from my tree to this peer.
+    unordered_set<chunk> chunks_to_sync_;
+
+public:
+    peer_sync(shared_ptr<stream> stream)
+        : stream_(stream)
+    {}
+};
+
 class filesync_service::private_impl
 {
     filesync_service* parent_{0};
     shared_ptr<host> host_;
-    shared_ptr<stream> stream_;
+    /// All peers we have active syncs with.
+    unordered_map<peer_id, shared_ptr<peer_sync>> sync_peers_;
+    // Server responds to filesync requests from other peers.
     shared_ptr<server> server_;
     bool active_{false};
 
@@ -52,6 +72,9 @@ public:
     void connect_stream(shared_ptr<stream> stream);
     void new_connection(shared_ptr<server> server);
     void listen_incoming_session();
+
+    void start_session_with(shared_ptr<peer_sync>& peer);
+    void end_session_with(shared_ptr<peer_sync>& peer);
 };
 
 void filesync_service::private_impl::session_command_handler(byte_array const& msg)
@@ -68,19 +91,21 @@ void filesync_service::private_impl::session_command_handler(byte_array const& m
 
 void filesync_service::private_impl::connect_stream(shared_ptr<stream> stream)
 {
+    auto peer = sync_peers_[stream->remote_host_id()];
+
     // Handle session commands
-    stream->on_ready_read_record.connect([=] {
+    peer->ready_read_conn = stream->on_ready_read_record.connect([=] {
         byte_array msg = stream->read_record();
         logger::debug() << "Received filesync service command: " << msg;
         session_command_handler(msg);
     });
 
-    stream->on_link_up.connect([this] {
+    peer->link_up_conn = stream->on_link_up.connect([this] {
         logger::debug() << "Link up, sending start session command";
         // send_command(cmd_start_session);
     });
 
-    stream->on_link_down.connect([this] {
+    peer->link_down_conn = stream->on_link_down.connect([this] {
         logger::debug() << "Link down, stopping session and disabling filesync";
         // end_session();
     });
@@ -98,11 +123,36 @@ void filesync_service::private_impl::new_connection(shared_ptr<server> server)
     if (!stream) {
         return;
     }
-    assert(!stream_);
-    stream_ = stream;
 
-    logger::info() << "New incoming connection from " << stream_->remote_host_id();
-    connect_stream(stream_);
+    if (contains(sync_peers_, stream->remote_host_id()))
+    {
+        auto peer = sync_peers_[stream->remote_host_id()];
+        end_session_with(peer);
+        logger::info() << "Repeated incoming connection from " << stream->remote_host_id();
+        assert(!peer->stream_);
+        peer->stream_ = stream;
+        connect_stream(peer->stream_);
+    }
+    else
+    {
+        logger::info() << "New incoming connection from " << stream->remote_host_id();
+        auto peer = make_shared<peer_sync>(stream);
+        start_session_with(peer);//inserts new peer into the table
+        connect_stream(peer->stream_);
+    }
+}
+
+void filesync_service::private_impl::start_session_with(shared_ptr<peer_sync>& peer)
+{
+    sync_peers_.insert(make_pair(peer->stream_->remote_host_id(), peer));
+}
+
+void filesync_service::private_impl::end_session_with(shared_ptr<peer_sync>& peer)
+{
+    peer->ready_read_conn.disconnect();
+    peer->link_up_conn.disconnect();
+    peer->link_down_conn.disconnect();
+    peer->stream_.reset();
 }
 
 void filesync_service::private_impl::listen_incoming_session()
