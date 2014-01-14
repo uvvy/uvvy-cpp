@@ -6,8 +6,6 @@ include(${QT_USE_FILE})
 include_directories(../nat/include ../ssu/include ../support/include)
 include_directories(../ui/3rdparty/opus-1.0.1/include) # For unlogger
 
-include_directories(../ui) # For traverse_nat.h
-
 #set(udpsender_SOURCES udpsend.cpp main.cpp)
 #set(udpsender_HEADERS udpsend.h)
 #qt4_wrap_cpp(udpsender_HEADERS_MOC ${udpsender_HEADERS})
@@ -17,12 +15,6 @@ include_directories(../ui) # For traverse_nat.h
 #install(TARGETS udpsender
 #	RUNTIME DESTINATION tools)
 
-
-add_executable(opus-streaming opus-streaming.cpp)
-target_link_libraries(opus-streaming ssu support ${VOICEBOX_LIBS} opus rclient routing
-    natclient nat upnpc krypto ${Boost_LIBRARIES} ${OPENSSL_LIBRARIES})
-install(TARGETS opus-streaming
-    RUNTIME DESTINATION tools)
 
 add_executable(unlogger unlogger.cpp)
 target_link_libraries(unlogger support opus ${Boost_LIBRARIES})

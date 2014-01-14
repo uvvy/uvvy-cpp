@@ -104,4 +104,5 @@ add_subdirectory(naming)
 add_subdirectory(nat)
 add_subdirectory(ui)
 
+add_subdirectory(demos)
 add_subdirectory(playground)
