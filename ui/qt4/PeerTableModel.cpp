@@ -9,8 +9,8 @@
 #include <QVector>
 #include <QDebug>
 #include "PeerTableModel.h"
-#include "private/regserver_client.h"
-#include "client_profile.h"
+#include "routing/private/regserver_client.h"
+#include "routing/client_profile.h"
 #include "client_utils.h"
 #include "settings_provider.h"
 #include "logging.h"

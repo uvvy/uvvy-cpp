@@ -17,7 +17,7 @@
 #include "traverse_nat.h"
 #include "client_utils.h"
 #include "voicebox/audio_service.h"
-#include "private/regserver_client.h" // @fixme Testing only.
+#include "routing/private/regserver_client.h" // @fixme Testing only.
 
 namespace po = boost::program_options;
 using namespace std;

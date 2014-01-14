@@ -9,9 +9,9 @@
 #include <boost/any.hpp>
 #include "settings_provider.h"
 #include "ssu/host.h"
-#include "client_profile.h"
+#include "routing/client_profile.h"
 #include "client_utils.h"
-#include "private/regserver_client.h"
+#include "routing/private/regserver_client.h"
 
 using namespace std;
 
