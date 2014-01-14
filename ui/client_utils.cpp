@@ -8,7 +8,7 @@
 //
 #include <boost/any.hpp>
 #include "settings_provider.h"
-#include "host.h"
+#include "ssu/host.h"
 #include "client_profile.h"
 #include "client_utils.h"
 #include "private/regserver_client.h"

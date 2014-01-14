@@ -11,7 +11,7 @@
 #include "PeerPicker.h"
 #include "PeerTableModel.h"
 #include "settings_provider.h"
-#include "host.h"
+#include "ssu/host.h"
 #include "client_profile.h"
 #include "traverse_nat.h"
 #include "voicebox/audio_service.h"

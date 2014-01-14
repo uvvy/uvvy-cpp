@@ -1,7 +1,7 @@
 #include <QHostInfo>
 #include "profile_editor.h"
 #include "settings_provider.h"
-#include "identity.h"
+#include "ssu/identity.h"
 #include "client_profile.h"
 
 using namespace std;

@@ -11,8 +11,8 @@
 #include <boost/asio/strand.hpp>
 #include "voicebox/audio_service.h"
 #include "voicebox/audio_hardware.h"
-#include "stream.h"
-#include "server.h"
+#include "ssu/stream.h"
+#include "ssu/server.h"
 #include "logging.h"
 #include "algorithm.h"
 

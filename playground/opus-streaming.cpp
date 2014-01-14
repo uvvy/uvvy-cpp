@@ -11,7 +11,7 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/positional_options.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "host.h"
+#include "ssu/host.h"
 #include "logging.h"
 #include "settings_provider.h"
 #include "traverse_nat.h"

@@ -10,8 +10,8 @@
 
 #include <memory>
 #include <functional>
-#include "server.h"
-#include "stream.h"
+#include "ssu/server.h"
+#include "ssu/stream.h"
 
 class RtAudio;
 

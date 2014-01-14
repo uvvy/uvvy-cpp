@@ -9,7 +9,7 @@
 #pragma once
 
 #include <boost/signals2/signal.hpp>
-#include "host.h"
+#include "ssu/host.h"
 
 // Set to 1 if you want to console-log in realtime thread.
 #define REALTIME_CRIME 0

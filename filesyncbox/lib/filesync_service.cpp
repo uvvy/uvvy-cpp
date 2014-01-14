@@ -11,8 +11,8 @@
 #include <boost/asio/strand.hpp>
 #include "filesyncbox/filesync_service.h"
 #include "filesyncbox/chunk.h"
-#include "stream.h"
-#include "server.h"
+#include "ssu/stream.h"
+#include "ssu/server.h"
 #include "logging.h"
 
 using namespace std;

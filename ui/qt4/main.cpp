@@ -2,7 +2,7 @@
 #include "MainWindow.h"
 #include "PeerTableModel.h"
 #include "logging.h"
-#include "host.h"
+#include "ssu/host.h"
 #include "settings_provider.h"
 
 //

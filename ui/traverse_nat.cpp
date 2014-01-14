@@ -8,7 +8,7 @@
 //
 #include "traverse_nat.h"
 #include "logging.h"
-#include "host.h"
+#include "ssu/host.h"
 
 using namespace std;
 using namespace ssu;
