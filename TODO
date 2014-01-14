@@ -62,6 +62,10 @@ Comms (voice/video/chat):
    ☐ Capture screen and encode to video stream? libvpx or something like that. Run experiments.
     ☐ Or, subtract one screen from another and lossless-encode the difference.
 
+ ☐ History features:
+    Навигация по времени, возможности просматривать лог как лог (сплошную ленту), а не отдельные сообщения, в идеале возможность отмечать куски лога как важные. - Юдж
+    еще экспорт и копипаста в читаемом виде. - Юдж
+
  ☐ Separate libvoicebox into a separate repo (not yet?)
  ☐ Separate libfilesyncbox into a separate repo (not yet?)
 
