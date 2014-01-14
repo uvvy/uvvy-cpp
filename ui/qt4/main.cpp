@@ -1,9 +1,9 @@
-#include <QApplication>
-#include "MainWindow.h"
-#include "PeerTableModel.h"
 #include "logging.h"
 #include "ssu/host.h"
 #include "settings_provider.h"
+#include "MainWindow.h"
+#include "PeerTableModel.h"
+#include <QApplication>
 
 //
 // Main application entrypoint
