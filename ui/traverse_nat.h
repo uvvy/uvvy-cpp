@@ -9,7 +9,7 @@
 #pragma once
 
 #include <memory>
-#include "upnpclient.h"
+#include "nat/upnpclient.h"
 
 namespace ssu { class host; }
 
