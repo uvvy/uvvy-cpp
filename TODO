@@ -5,6 +5,8 @@ Topmost 3 tasks:
    ☐ (Adjust received packets time to local machine time, drop too old packets immediately.)
       See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
 
+ ✔ Rename libsupport to libarsenal @done (14-01-15 13:39)
+
  ✔ Add ProfileEditor to the app. @done (14-01-11 01:49)
  ☐ Handle empty settings_provider config gracefully!
 

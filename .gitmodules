@@ -7,9 +7,6 @@
 [submodule "cmake"]
 	path = cmake
 	url = https://berkus@github.com/berkus/cmake-setup.git
-[submodule "support"]
-	path = support
-	url = https://berkus@github.com/berkus/libsupport.git
 [submodule "travis-ci"]
 	path = travis-ci
 	url = https://berkus@github.com/berkus/travis-scripts.git
@@ -28,3 +25,6 @@
 [submodule "filesyncbox/3rdparty/dir_monitor"]
 	path = filesyncbox/3rdparty/dir_monitor
 	url = https://berkus@github.com/berkus/dir_monitor.git
+[submodule "arsenal"]
+	path = arsenal
+	url = https://berkus@github.com/berkus/libarsenal.git

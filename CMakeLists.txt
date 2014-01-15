@@ -87,13 +87,13 @@ endif (APPLE)
 
 include_directories(3rdparty/endian) # Additional unofficial boost libraries
 
-include_directories(support/include) # For routing access to ssu host and link_receiver
+include_directories(arsenal/include) # For routing access to ssu host and link_receiver
 include_directories(krypto/include) # For cryptographic primitives
 include_directories(ssu/include) # For routing access to ssu host and link_receiver
 include_directories(routing/include) # For ssu access to routing client
 include_directories(voicebox/include)
 
-add_subdirectory(support)
+add_subdirectory(arsenal)
 add_subdirectory(krypto)
 add_subdirectory(voicebox)
 add_subdirectory(filesyncbox)

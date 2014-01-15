@@ -3,7 +3,7 @@ set(QT_USE_QTNETWORK TRUE)
 set(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
 
-include_directories(../nat/include ../ssu/include ../support/include)
+include_directories(../nat/include ../ssu/include ../arsenal/include)
 include_directories(../ui/3rdparty/opus-1.0.1/include) # For unlogger
 
 #set(udpsender_SOURCES udpsend.cpp main.cpp)
@@ -17,7 +17,7 @@ include_directories(../ui/3rdparty/opus-1.0.1/include) # For unlogger
 
 
 add_executable(unlogger unlogger.cpp)
-target_link_libraries(unlogger support opus ${Boost_LIBRARIES})
+target_link_libraries(unlogger arsenal opus ${Boost_LIBRARIES})
 install(TARGETS unlogger
     RUNTIME DESTINATION tools)
 
