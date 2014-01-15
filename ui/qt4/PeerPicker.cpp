@@ -10,7 +10,7 @@
 #include <thread>
 #include "PeerPicker.h"
 #include "PeerTableModel.h"
-#include "settings_provider.h"
+#include "arsenal/settings_provider.h"
 #include "ssu/host.h"
 #include "routing/client_profile.h"
 #include "traverse_nat.h"

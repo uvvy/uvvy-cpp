@@ -13,8 +13,8 @@
 #include "voicebox/audio_hardware.h"
 #include "ssu/stream.h"
 #include "ssu/server.h"
-#include "logging.h"
-#include "algorithm.h"
+#include "arsenal/logging.h"
+#include "arsenal/algorithm.h"
 
 #include "voicebox/rtaudio_source.h"
 #include "voicebox/rtaudio_sink.h"

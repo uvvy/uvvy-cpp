@@ -1,4 +1,4 @@
-#include "logging.h"
+#include "arsenal/logging.h"
 #include "voicebox/file_read_sink.h"
 
 using namespace std;

@@ -13,7 +13,7 @@
 #include "filesyncbox/chunk.h"
 #include "ssu/stream.h"
 #include "ssu/server.h"
-#include "logging.h"
+#include "arsenal/logging.h"
 
 using namespace std;
 using namespace ssu;

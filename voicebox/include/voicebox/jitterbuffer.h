@@ -11,8 +11,8 @@
 #include <mutex>
 #include <deque>
 #include <boost/signals2/signal.hpp>
-#include "audio_source.h"
-#include "audio_sink.h"
+#include "voicebox/audio_source.h"
+#include "voicebox/audio_sink.h"
 
 namespace voicebox {
 

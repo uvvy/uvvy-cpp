@@ -7,7 +7,7 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <cassert>
-#include "logging.h"
+#include "arsenal/logging.h"
 #include "voicebox/audio_stream.h"
 
 audio_stream::audio_stream(int framesize, double samplerate, int channels)

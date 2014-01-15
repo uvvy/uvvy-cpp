@@ -12,8 +12,8 @@
 #include <boost/program_options/positional_options.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "ssu/host.h"
-#include "logging.h"
-#include "settings_provider.h"
+#include "arsenal/logging.h"
+#include "arsenal/settings_provider.h"
 #include "traverse_nat.h"
 #include "client_utils.h"
 #include "voicebox/audio_service.h"

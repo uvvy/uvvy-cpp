@@ -12,8 +12,8 @@
 #include "routing/private/regserver_client.h"
 #include "routing/client_profile.h"
 #include "client_utils.h"
-#include "settings_provider.h"
-#include "logging.h"
+#include "arsenal/settings_provider.h"
+#include "arsenal/logging.h"
 
 using namespace std;
 using namespace ssu;

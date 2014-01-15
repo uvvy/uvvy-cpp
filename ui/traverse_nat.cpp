@@ -7,7 +7,7 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include "traverse_nat.h"
-#include "logging.h"
+#include "arsenal/logging.h"
 #include "ssu/host.h"
 
 using namespace std;

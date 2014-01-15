@@ -1,7 +1,7 @@
 #pragma once
 
 #include <fstream>
-#include "audio_sink.h"
+#include "voicebox/audio_sink.h"
 
 namespace voicebox {
 

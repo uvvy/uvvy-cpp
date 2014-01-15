@@ -2,7 +2,7 @@
 #include <chrono>
 #include "ssu/host.h"
 #include "ssu/stream.h"
-#include "settings_provider.h"
+#include "arsenal/settings_provider.h"
 #include "voicebox/file_read_sink.h"
 #include "voicebox/opus_encode_sink.h"
 #include "voicebox/packet_sink.h"

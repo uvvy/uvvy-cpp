@@ -6,8 +6,8 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "logging.h"
-#include "opaque_endian.h"
+#include "arsenal/logging.h"
+#include "arsenal/opaque_endian.h"
 #include "voicebox/jitterbuffer.h"
 #include "voicebox/audio_service.h" // TRACE_DETAIL
 

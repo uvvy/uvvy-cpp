@@ -8,7 +8,7 @@
 //
 #pragma once
 
-#include "audio_source.h"
+#include "voicebox/audio_source.h"
 
 namespace voicebox {
 

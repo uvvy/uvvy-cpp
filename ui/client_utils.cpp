@@ -7,7 +7,7 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <boost/any.hpp>
-#include "settings_provider.h"
+#include "arsenal/settings_provider.h"
 #include "ssu/host.h"
 #include "routing/client_profile.h"
 #include "client_utils.h"
