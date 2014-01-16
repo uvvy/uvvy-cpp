@@ -14,6 +14,7 @@
 #include "ssu/host.h"
 #include "arsenal/logging.h"
 #include "arsenal/settings_provider.h"
+#include "arsenal/any_int_cast.h"
 #include "traverse_nat.h"
 #include "client_utils.h"
 #include "voicebox/audio_service.h"
@@ -69,7 +70,7 @@ int main(int argc, char* argv[])
 
     auto s_port = settings->get("port");
     if (!s_port.empty()) {
-        port = boost::any_cast<int64_t>(s_port);
+        port = any_int_cast<uint16_t>(s_port);
     }
 
     if (vm.count("port"))
@@ -83,7 +84,7 @@ int main(int argc, char* argv[])
         connect_out = true;
     }
 
-    settings->set("port", static_cast<int64_t>(port));
+    settings->set("port", port);
     settings->sync();
 
     // Shared ptr ensures nat is destroyed on exit...
