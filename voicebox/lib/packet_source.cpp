@@ -24,6 +24,7 @@ packet_source::packet_source(std::shared_ptr<ssu::stream> stream)
 
 packet_source::~packet_source()
 {
+    ready_read_conn.disconnect();
     if (stream_) {
         stream_->shutdown(stream::shutdown_mode::read); // @todo Maybe do this in set_enabled(false)?
     }
@@ -32,7 +33,7 @@ packet_source::~packet_source()
 void packet_source::set_source(std::shared_ptr<ssu::stream> stream)
 {
     stream_ = stream;
-    stream_->on_ready_read_datagram.connect([this]{ on_packet_received(); });
+    ready_read_conn = stream_->on_ready_read_datagram.connect([this]{ on_packet_received(); });
 }
 
 void packet_source::set_enabled(bool enabling)

@@ -21,6 +21,7 @@ class packet_source : public audio_source
     typedef audio_source super;
 
     std::shared_ptr<ssu::stream> stream_;
+    boost::signals2::connection ready_read_conn;
 
 public:
     packet_source() = default;
