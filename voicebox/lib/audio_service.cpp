@@ -122,11 +122,16 @@ class audio_service::private_impl
 {
     audio_service* parent_{0};
     shared_ptr<host> host_;
-    shared_ptr<stream> stream_;
+    shared_ptr<stream> control_stream_;
+    shared_ptr<stream> data_stream_;
     shared_ptr<server> server_;
     shared_ptr<send_chain> send_;
     shared_ptr<receive_chain> recv_;
     bool active_{false};
+
+    boost::signals2::connection ready_read_conn;
+    boost::signals2::connection link_up_conn;
+    boost::signals2::connection link_down_conn;
 
 public:
     private_impl(audio_service* parent, shared_ptr<ssu::host> host)
@@ -143,12 +148,13 @@ public:
             byte_array_owrap<flurry::oarchive> write(msg);
             write.archive() << cmd_magic << cmd;
         }
-        stream_->write_record(msg);
+        control_stream_->write_record(msg);
     }
 
     void session_command_handler(byte_array const& msg);
-    void connect_stream(shared_ptr<stream> stream);
+    void connect_stream();
     void new_connection(shared_ptr<server> server);
+    void new_substream();
 
     void establish_outgoing_session(peer_id const& eid, vector<string> ep_hints);
     void listen_incoming_session();
@@ -185,43 +191,42 @@ void audio_service::private_impl::session_command_handler(byte_array const& msg)
     }
 }
 
-void audio_service::private_impl::connect_stream(shared_ptr<stream> stream)
+void audio_service::private_impl::connect_stream()
 {
     // Handle session commands
-    stream->on_ready_read_record.connect([=] {
-        byte_array msg = stream->read_record();
+    ready_read_conn = control_stream_->on_ready_read_record.connect([=] {
+        byte_array msg = control_stream_->read_record();
         logger::debug(TRACE_DETAIL) << "Received audio service command: " << msg;
         session_command_handler(msg);
     });
 
-    stream->on_link_up.connect([this] {
+    link_up_conn = control_stream_->on_link_up.connect([this] {
         logger::debug(TRACE_DETAIL) << "Link up, sending start session command";
         send_command(cmd_start_session);
     });
 
-    stream->on_link_down.connect([this] {
+    link_down_conn = control_stream_->on_link_down.connect([this] {
         logger::debug(TRACE_DETAIL) << "Link down, stopping session and disabling audio";
         parent_->end_session();
     });
 
-    if (stream->is_link_up())
-    {
-        logger::debug(TRACE_DETAIL) << "Incoming stream is ready, start sending immediately.";
-        send_command(cmd_start_session);
-    }
+    send_command(cmd_start_session);
 }
 
 void audio_service::private_impl::establish_outgoing_session(peer_id const& eid,
                                                              vector<string> ep_hints)
 {
-    stream_ = make_shared<ssu::stream>(host_);
+    data_stream_ = make_shared<ssu::stream>(host_);
+    send_ = make_shared<send_chain>(data_stream_);
+    recv_ = make_shared<receive_chain>(data_stream_);
 
-    send_ = make_shared<send_chain>(stream_);
-    recv_ = make_shared<receive_chain>(stream_);
+    data_stream_->connect_to(eid, service_name, protocol_name);
 
-    connect_stream(stream_);
+    // Substreams can only be created after connect_to() is called. @todo Fix?
+    control_stream_ = data_stream_->open_substream();
+    control_stream_->set_priority(100);
 
-    stream_->connect_to(eid, service_name, protocol_name);
+    connect_stream();
 
     if (!ep_hints.empty())
     {
@@ -232,7 +237,7 @@ void audio_service::private_impl::establish_outgoing_session(peer_id const& eid,
             ssu::endpoint ep(boost::asio::ip::address::from_string(epstr),
                 stream_protocol::default_port);
             logger::debug(TRACE_DETAIL) << "Connecting at location hint " << ep;
-            stream_->connect_at(ep);
+            data_stream_->connect_at(ep);
         }
     }
 }
@@ -243,17 +248,32 @@ void audio_service::private_impl::new_connection(shared_ptr<server> server)
     if (!stream) {
         return;
     }
-    assert(!stream_);
-    stream_ = stream;
+    assert(!data_stream_);
+    data_stream_ = stream;
 
-    logger::info() << "New incoming connection from " << stream_->remote_host_id();
+    data_stream_->on_new_substream.connect([this] { new_substream(); });
+    data_stream_->listen(stream::buffer_limit);
 
-    recv_ = make_shared<receive_chain>(stream_);
+    logger::info() << "New incoming connection from " << data_stream_->remote_host_id();
+
+    recv_ = make_shared<receive_chain>(data_stream_);
     if (!send_) {
-        send_ = make_shared<send_chain>(stream_);
+        send_ = make_shared<send_chain>(data_stream_);
+    }
+}
+
+void audio_service::private_impl::new_substream()
+{
+    logger::info() << "New incoming substream (must be control stream)";
+
+    // Should already have incoming stream.
+    control_stream_ = data_stream_->accept_substream();
+
+    if (!control_stream_) {
+        logger::fatal() << data_stream_->error();
     }
 
-    connect_stream(stream_);
+    connect_stream();
 }
 
 void audio_service::private_impl::listen_incoming_session()
@@ -267,7 +287,9 @@ void audio_service::private_impl::listen_incoming_session()
                                      protocol_name, "OPUS Audio protocol");
     assert(listening);
     if (!listening) {
-        throw runtime_error("Couldn't set up server listening to streaming:opus");
+        ostringstream oss;
+        oss << "Couldn't set up server listening to " << service_name << ":" << protocol_name;
+        throw runtime_error(oss.str());
     }
 }
 
@@ -287,8 +309,13 @@ void audio_service::private_impl::end_session()
     }
     active_ = false;
     parent_->on_session_finished();
-    //disconnect stream here
-    stream_ = nullptr;
+
+    ready_read_conn.disconnect();
+    link_up_conn.disconnect();
+    link_down_conn.disconnect();
+
+    control_stream_ = nullptr;
+    data_stream_ = nullptr;
 }
 
 //=================================================================================================
