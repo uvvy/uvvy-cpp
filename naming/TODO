@@ -1,14 +1,42 @@
+Principal (me)
++--Identities
+   +--Primary
+   +--Corporate
+   +--Pseudonymous1
+   +--Pseudonymous2
++--Devices
+   +--My Personal devices
+      +--My mac
+      +--My iPhone
+      +--My TV
+      +--My Nest controller
+   +--Third party devices
+      +--Wife's phone
+      +--Friend's TV
+      +--Colleague's Tablet
+
+You have full control over devices in My Personal devices, and only partial access control over Third party devices.
+Principal is your master identity, it is never exposed or shared to anyone, you contact with peers using one of
+the identities you create.
+Master identity allows you to control other identities and devices, so it has to be well protected.
+
+
+
 Peering:
  ☐ "Peer" is a remote contact.
    Peer can have a profile, a set of EIDs, various access rights into our cluster(s).
+   EIDs correspond to peers' devices and/or identities. Not all peers see the same set of EIDs - some may know more
+   than the other. Peer profile serves as a public peer's principal ID, it is not associated with Master Identity
+   of this peer in any way. This profile can be exposed or traded by third parties, reducing anonymity.
 
-  peers are concepts in uia::naming namespace.
 
+
+Peers are concepts in uia::naming namespace:
 
 Peer ::- list of EIDs, profile, list of peers (almost recursively - we don't know their lists of peers)
        ::- with EIDs also list of last known endpoints for those EIDs
 
-This EIDs and endpoints information is also used by the uia::routing layer for DHT.
+These EIDs and endpoints information is also used by the uia::routing layer for DHT.
 
 
 
@@ -32,6 +60,6 @@ Urbit:
  of your profile. The notes they keep and whatever you update never overwrite each other, so it's possible to
  collect information you see relevant.
 
-Plist representation:
+Config storage representation:
   vector<uid> peers; => "peers"
   peer.<uid>.[fields]
