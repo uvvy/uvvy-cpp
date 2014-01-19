@@ -1,11 +1,13 @@
 Topmost 3 tasks:
+ ☐ add to audio_service - there's a primary command stream that should spawn an RTCP substream
+   this substream doesn't yet work properly
  ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
-   hangup signal didn't go through before that - really need high-prio session control chan.
+   hangup signal didn't go through before that - really need high-prio session control chan (above)
  ✔ Establish clock skew estimation and use it to drive jitterbuffer.
    ☐ (Adjust received packets time to local machine time, drop too old packets immediately.)
       See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
 
- ✔ Add ProfileEditor to the app. @done (14-01-11 01:49)
+ ☐ Add ProfileEditor to the app.
  ☐ Handle empty settings_provider config gracefully!
 
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
@@ -23,10 +25,9 @@ Process 29717 stopped
    309       }
  ☐ The above happens after hangup when a stray on_ready_read_datagram() signal fires and attempts to
    read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
-   ☐ maybe just disconnect those signals on hangup?
+   ✔ maybe just disconnect those signals on hangup? @done (14-01-16 21:59)
 
- ☐ Add higher-priority RTCP stream in opus-streaming.
-   add to audio_service - there's a primary command stream that should spawn an RTCP substream
+ ✔ Add higher-priority RTCP stream in opus-streaming. @done (14-01-16 18:49)
  ☐ Set protocol specifications and make unit/func tests covering this spec.
    ☐ Working connect/disconnect/reconnect/etc
      ☐ See regress test in SST
@@ -34,6 +35,10 @@ Process 29717 stopped
  ☐ unit tests, unit tests, unit tests
 
  ☐ Extract ssu::link and other low-level communication helpers into libcomm or liblink. (better name?)
+   ☐ ssu::link
+   list other classes to move
+   ☐ getting local interface addresses for example
+   ☐ need to remove references to ssu::host
 
 UI:
  ☐ Maintain partial discoloration for online icon based on "stall count"
