@@ -11,14 +11,14 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/positional_options.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "ssu/host.h"
 #include "arsenal/logging.h"
 #include "arsenal/settings_provider.h"
 #include "arsenal/any_int_cast.h"
-#include "traverse_nat.h"
-#include "client_utils.h"
+#include "ssu/host.h"
 #include "voicebox/audio_service.h"
 #include "routing/private/regserver_client.h" // @fixme Testing only.
+#include "traverse_nat.h"
+#include "client_utils.h"
 
 namespace po = boost::program_options;
 using namespace std;

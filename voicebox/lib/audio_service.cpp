@@ -9,12 +9,12 @@
 #include <queue>
 #include <mutex>
 #include <boost/asio/strand.hpp>
-#include "voicebox/audio_service.h"
-#include "voicebox/audio_hardware.h"
-#include "ssu/stream.h"
-#include "ssu/server.h"
 #include "arsenal/logging.h"
 #include "arsenal/algorithm.h"
+#include "ssu/stream.h"
+#include "ssu/server.h"
+#include "voicebox/audio_service.h"
+#include "voicebox/audio_hardware.h"
 
 #include "voicebox/rtaudio_source.h"
 #include "voicebox/rtaudio_sink.h"
