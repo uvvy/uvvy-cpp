@@ -2,7 +2,6 @@ Topmost 3 tasks:
  ☐ Clean up UI in designer.
  ☐ Draw UI sketches for contacts list, chat, audio/video call window, file transfers, folder sync,
    bandwidth utilisation/packet throughput graph window (like in Source).
- ✔ add to audio_service - there's a primary command stream that should spawn an RTCP substream @done (14-01-22 11:35)
  ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
    hangup signal didn't go through before that - really need high-prio session control chan (above)
    - need a test for command side-channel testing while non-reliable packets are transmitted.
@@ -32,7 +31,6 @@ Process 29717 stopped
    read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
    ✔ maybe just disconnect those signals on hangup? @done (14-01-16 21:59)
 
- ✔ Add higher-priority RTCP stream in opus-streaming. @done (14-01-16 18:49)
  ☐ Set protocol specifications and make unit/func tests covering this spec.
    ☐ Working connect/disconnect/reconnect/etc
      ☐ See regress test in SST
@@ -87,8 +85,6 @@ Storage (grabber/file sync/versioning):
  ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
  ☐ Show file transfer progress on both sending and receiving sides. Also inside chat.
  ☐ Make ongoing downloads automatically persist across restarts
- ✔ Watch Files directory for new files and file changes @done (14-01-08 17:02)
-   ✔ See boost.asio based dir_watcher code and adopt for mac (based on kqeueue impl from Poco) @done (14-01-08 17:02)
  ☐ Initiate file resync operation when change is detected.
      Should work pretty much like file transfer, just the file save locations are predefined.
      Different changes cause different synchronization commands to be sent.
@@ -155,8 +151,7 @@ Routing:
 Structured Streams:
  ☐ tx_reset implementation - test
  ☐ implement rx_reset_packet
- ✔ Congestion Control @done (13-12-30 16:48)
-   ☐ Split into per-strategy subclasses for CC
+ ☐ Split CC into per-strategy subclasses for CC
  ☐ Read up on Multipath TCP
 
 zlib_armor
@@ -244,13 +239,6 @@ flow control
  ☐ inherited versus independent receive windows
 
 NAT and UPnP:
- ✔ Registration server proper handling of registrations from the same LAN. @done (14-01-10 03:22)
-    (second client to register disconnects first). The problem appears to be more serious and is related to insufficient NAT handling.
-  ✔ hmm, even with UPnP succeeding the pings never get back?? wtf @done (12-12-07 13:23)
-    ✔ can it be motoko traffic filtered? try with a different server, e.g. amazon t1.micro instance. @done (12-12-07 13:23)
-       and it was motoko firewalls indeed,
-       ✔ call infonet about it @done (13-03-11 23:57)
-           infonet claim there is no UDP filtering whatsoever, can it be motoko's local portsentry or sth like that? check the services/ipfw settings.
  ☐ Integrate UPnP into SST::Host.
  ☐ Integrate hole punching machinery with SST::Host.
  ☐ Assign a new Endpoint with public IP and UPnP-assigned port number.
