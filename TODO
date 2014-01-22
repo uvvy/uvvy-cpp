@@ -2,20 +2,15 @@ Topmost 3 tasks:
  ☐ Clean up UI in designer.
  ☐ Draw UI sketches for contacts list, chat, audio/video call window, file transfers, folder sync,
    bandwidth utilisation/packet throughput graph window (like in Source).
- ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
-   hangup signal didn't go through before that - really need high-prio session control chan (above)
-   - need a test for command side-channel testing while non-reliable packets are transmitted.
-     ☐ spam a lot of datagrams, while still receiving send abort command, observe that no more than
-       some % of packets is received by the time command goes through.
- ✔ Establish clock skew estimation and use it to drive jitterbuffer.
-   ☐ (Adjust received packets time to local machine time, drop too old packets immediately.)
-      See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
+ ☐ opus-streaming crashes somewhere now.
 
- ☐ Add ProfileEditor to the app.
- ☐ Handle empty settings_provider config gracefully!
-
+Crashes:
+ ☐ This happens on second call attempt on one of the clients (far side?)
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
- ☐ Above happens on second call attempt on one of the clients (far side?)
+
+ ☐ This happens after hangup when a stray on_ready_read_datagram() signal fires and attempts to
+   read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
+   ✔ maybe just disconnect those signals on hangup? @done (14-01-16 21:59)
 
 Process 29717 stopped
 * thread #6: tid = 0x743e5, 0x00000001002278b4 PeerPicker`ssu::stream::read_datagram(this=0xf000000000000000, max_size=1073741824) + 52 at stream.cpp:306, stop reason = EXC_BAD_ACCESS (code=EXC_I386_GPFLT)
@@ -27,23 +22,20 @@ Process 29717 stopped
    307           set_error("Stream not connected");
    308           return byte_array();
    309       }
- ☐ The above happens after hangup when a stray on_ready_read_datagram() signal fires and attempts to
-   read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
-   ✔ maybe just disconnect those signals on hangup? @done (14-01-16 21:59)
 
- ☐ Set protocol specifications and make unit/func tests covering this spec.
-   ☐ Working connect/disconnect/reconnect/etc
-     ☐ See regress test in SST
-
- ☐ unit tests, unit tests, unit tests
-
- ☐ Extract ssu::link and other low-level communication helpers into libcomm or liblink. (better name?)
-   ☐ ssu::link
-   list other classes to move
-   ☐ getting local interface addresses for example
-   ☐ need to remove references to ssu::host
+Structure:
+  ☐ Submodularize opus (create repo), RtAudio (create repo) and metakit (berkus/metakit - check/merge changes?)
+  ☐ Separate libvoicebox into a separate repo (not yet?)
+  ☐ Separate libfilesyncbox into a separate repo (not yet?)
+  ☐ Extract ssu::link and other low-level communication helpers into libcomm or liblink. (better name?)
+     ☐ ssu::link
+     list other classes to move
+     ☐ getting local interface addresses for example
+     ☐ need to remove references to ssu::host
 
 UI:
+ ☐ Add ProfileEditor to the app.
+ ☐ Handle empty settings_provider config gracefully!
  ☐ Maintain partial discoloration for online icon based on "stall count"
    e.g. second stall online icon is 2/3 colored, third stall icon is 1/3 colored, then offline (online-66%, online-33%)
    first stall is ignored as possibly temporary glitch
@@ -52,7 +44,18 @@ UI:
  ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
     Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
 
-Comms (voice/video/chat):
+Voice calls:
+ ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
+   hangup signal didn't go through before that - really need high-prio session control chan (above)
+   - need a test for command side-channel testing while non-reliable packets are transmitted.
+     ☐ spam a lot of datagrams, while still receiving send abort command, observe that no more than
+       some % of packets is received by the time command goes through.
+ ✔ Establish clock skew estimation and use it to drive jitterbuffer.
+   ☐ (Adjust received packets time to local machine time, drop too old packets immediately.)
+      See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
+
+
+Chats:
  ☐ Sync history between instances
      Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
      non-existant entries once activated. How to track joins/leaves (+ history available to new joiners)?
@@ -68,18 +71,16 @@ Comms (voice/video/chat):
  ☐ Event bells/notifications: friend online, chat/talk started, etc.
  ☐ Chat happens in chat room.
  ☐ Rooms may be arbitrarily nested forming chat labyrinth. (@sa closedcircles)
- ☐ Screencasting client
-   ☐ Capture screen and encode to video stream? libvpx or something like that. Run experiments.
-    ☐ Or, subtract one screen from another and lossless-encode the difference.
-
  ☐ History features:
     Навигация по времени, возможности просматривать лог как лог (сплошную ленту), а не отдельные сообщения, в идеале возможность отмечать куски лога как важные. - Юдж
     еще экспорт и копипаста в читаемом виде. - Юдж
 
- ☐ Separate libvoicebox into a separate repo (not yet?)
- ☐ Separate libfilesyncbox into a separate repo (not yet?)
-
   UI: "Advertise my membership in room [#osdev] to [Nobody [v]"
+
+Screencasting/screensharing:
+ ☐ Screencasting client
+   ☐ Capture screen and encode to video stream? libvpx or something like that. Run experiments.
+    ☐ Or, subtract one screen from another and lossless-encode the difference.
 
 Storage (grabber/file sync/versioning):
  ☐ Bandwidth indicator during downloads - see how win8 copy dialog looks like.
@@ -221,7 +222,13 @@ sst/shell:
  ☐ unlock console fds once the shell connection ceases
  ☐ after some waiting time the streams disconnect and mix up
 
-sst/test/regress Regression tests needed:
+Testing:
+
+ ☐ Set protocol specifications and make unit/func tests covering this spec.
+   ☐ Working connect/disconnect/reconnect/etc
+     ☐ See regress test in SST
+
+ ☐ unit tests, unit tests, unit tests
 
 substreams
  ☐ create a lot of substreams rapidly, hold onto them, use them once in a while
