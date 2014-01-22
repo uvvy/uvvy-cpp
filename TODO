@@ -1,8 +1,13 @@
 Topmost 3 tasks:
- ☐ add to audio_service - there's a primary command stream that should spawn an RTCP substream
-   this substream doesn't yet work properly
+ ☐ Clean up UI in designer.
+ ☐ Draw UI sketches for contacts list, chat, audio/video call window, file transfers, folder sync,
+   bandwidth utilisation/packet throughput graph window (like in Source).
+ ✔ add to audio_service - there's a primary command stream that should spawn an RTCP substream @done (14-01-22 11:35)
  ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
    hangup signal didn't go through before that - really need high-prio session control chan (above)
+   - need a test for command side-channel testing while non-reliable packets are transmitted.
+     ☐ spam a lot of datagrams, while still receiving send abort command, observe that no more than
+       some % of packets is received by the time command goes through.
  ✔ Establish clock skew estimation and use it to drive jitterbuffer.
    ☐ (Adjust received packets time to local machine time, drop too old packets immediately.)
       See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
