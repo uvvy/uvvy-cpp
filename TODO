@@ -161,7 +161,7 @@ zlib_armor
 
 encryption/compression negotiation
 
-  vector<string> s = {"saes128ctr", "sxsalsa20", "ahmacsha512256", "czlib"};
+  vector<string> s = {"saes128ctr", "sxsalsa20", "snone", "ahmacsha512256", "czlib"};
 
  ☐ saes256ctr  = 's'ymmetric key encryption
  ☐ czlib                = 'c'ompression
@@ -231,7 +231,8 @@ substreams
 datagrams
  ☐ send a stream of datagrams of widely varying size
  ☐ send a mix of datagram substreams and real two-way substreams
-
+ ☐ send datagrams with a control side-channel which manages the datagram sending, confirm
+   that side-channel has priority.
 flow control
  ☐ flow control for byte streams
  ☐ receive window borrowing
@@ -239,9 +240,9 @@ flow control
  ☐ inherited versus independent receive windows
 
 NAT and UPnP:
- ☐ Integrate UPnP into SST::Host.
- ☐ Integrate hole punching machinery with SST::Host.
- ☐ Assign a new Endpoint with public IP and UPnP-assigned port number.
+ ☐ Integrate UPnP into ssu::host.
+ ☐ Integrate hole punching machinery with ssu::host.
+ ☐ Assign a new `endpoint` with public IP and UPnP-assigned port number.
    ☐ Use it to register on regserver as primary.
      Right now regserver gives us this external IP address.
  ☐ UPnP event variables that need to be checked:
