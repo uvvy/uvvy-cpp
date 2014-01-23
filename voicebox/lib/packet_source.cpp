@@ -57,7 +57,9 @@ void packet_source::on_packet_received()
 #if REALTIME_CRIME
         logger::debug(TRACE_ENTRY) << "Received packet of size " << msg.size();
 #endif
-        accept_input(msg);
+        if (msg.size() > 12) { // @todo Magic number - amount of header data
+            accept_input(msg);
+        }
     }
 }
 
