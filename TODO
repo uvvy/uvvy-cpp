@@ -150,6 +150,17 @@ Routing:
    ☐ e) regserver will become a part of p2p directory when DHT is implemented
 
 Structured Streams:
+ ☐ Need to differentiate between substreams received as result of user actions
+   and substreams received as means to deliver datagrams.
+   Might not be that easy, but possibly streams that are already closed for writing by peer can be
+   treated as datagrams, while still open streams ... or we can just send a flag for it?
+
+   Problem with audio_service is that some unreliable data packets (?) are being sent as
+   datagram_substreams and are accepted as control stream instead. This confuses the hell out
+   of audio_service.
+
+   It may be that in SST this was also the cause for multiple substreams just mixing up?
+
  ☐ tx_reset implementation - test
  ☐ implement rx_reset_packet
  ✔ Split CC into per-strategy subclasses for CC @done (14-01-23 16:03)
