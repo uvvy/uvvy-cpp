@@ -152,7 +152,7 @@ Routing:
 Structured Streams:
  ☐ tx_reset implementation - test
  ☐ implement rx_reset_packet
- ☐ Split CC into per-strategy subclasses for CC
+ ✔ Split CC into per-strategy subclasses for CC @done (14-01-23 16:03)
  ☐ Read up on Multipath TCP
 
 zlib_armor
