@@ -196,17 +196,17 @@ void audio_service::private_impl::connect_stream()
     // Handle session commands
     ready_read_conn = control_stream_->on_ready_read_record.connect([=] {
         byte_array msg = control_stream_->read_record();
-        logger::debug(TRACE_DETAIL) << "Received audio service command: " << msg;
+        logger::debug() << "Received audio service command: " << msg;
         session_command_handler(msg);
     });
 
     link_up_conn = control_stream_->on_link_up.connect([this] {
-        logger::debug(TRACE_DETAIL) << "Link up, sending start session command";
+        logger::debug() << "Link up, sending start session command";
         send_command(cmd_start_session);
     });
 
     link_down_conn = control_stream_->on_link_down.connect([this] {
-        logger::debug(TRACE_DETAIL) << "Link down, stopping session and disabling audio";
+        logger::debug() << "Link down, stopping session and disabling audio";
         parent_->end_session();
     });
 
