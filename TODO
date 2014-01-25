@@ -2,26 +2,11 @@ Topmost 3 tasks:
  ☐ Clean up UI in designer.
  ☐ Draw UI sketches for contacts list, chat, audio/video call window, file transfers, folder sync,
    bandwidth utilisation/packet throughput graph window (like in Source).
- ☐ opus-streaming crashes somewhere now.
+ ✔ opus-streaming crashes somewhere now. @done (14-01-25 16:23)
 
 Crashes:
  ☐ This happens on second call attempt on one of the clients (far side?)
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
-
- ☐ This happens after hangup when a stray on_ready_read_datagram() signal fires and attempts to
-   read the datagram in packet_source.cpp - stream is destroyed prematurely? or some check missing?
-   ✔ maybe just disconnect those signals on hangup? @done (14-01-16 21:59)
-
-Process 29717 stopped
-* thread #6: tid = 0x743e5, 0x00000001002278b4 PeerPicker`ssu::stream::read_datagram(this=0xf000000000000000, max_size=1073741824) + 52 at stream.cpp:306, stop reason = EXC_BAD_ACCESS (code=EXC_I386_GPFLT)
-    frame #0: 0x00000001002278b4 PeerPicker`ssu::stream::read_datagram(this=0xf000000000000000, max_size=1073741824) + 52 at stream.cpp:306
-   303
-   304   byte_array stream::read_datagram(ssize_t max_size)
-   305   {
--> 306       if (!stream_) {
-   307           set_error("Stream not connected");
-   308           return byte_array();
-   309       }
 
 Structure:
   ☐ Submodularize opus (create repo), RtAudio (create repo) and metakit (berkus/metakit - check/merge changes?)
