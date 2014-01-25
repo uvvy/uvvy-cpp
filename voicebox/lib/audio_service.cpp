@@ -165,6 +165,11 @@ public:
 // When stop session command is received, stop sending and reply with stop_session (unless stopped)
 void audio_service::private_impl::session_command_handler(byte_array const& msg)
 {
+    if (msg.is_empty()) {
+        logger::warning() << "Empty session command received - investigate!";
+        return;
+    }
+
     uint32_t magic;
     int cmd;
     byte_array_iwrap<flurry::iarchive> read(msg);

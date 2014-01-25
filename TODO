@@ -161,6 +161,9 @@ Structured Streams:
 
    It may be that in SST this was also the cause for multiple substreams just mixing up?
 
+   - we actually receive a datagram packet from the other side if it's a datagram, not a substream
+     so simply stuff it into a separate datagram queue?
+
  ☐ tx_reset implementation - test
  ☐ implement rx_reset_packet
  ✔ Split CC into per-strategy subclasses for CC @done (14-01-23 16:03)
