@@ -13,11 +13,13 @@ Structure:
   ☐ Submodularize opus (create repo), RtAudio (create repo) and metakit (berkus/metakit - check/merge changes?)
   ☐ Separate libvoicebox into a separate repo (not yet?)
   ☐ Separate libfilesyncbox into a separate repo (not yet?)
-  ☐ Extract ssu::link and other low-level communication helpers into libcomm or liblink. (better name?)
+  ☐ Extract ssu::link and other low-level communication helpers into libcomm. (better name?)
      ☐ ssu::link
      list other classes to move
      ☐ getting local interface addresses for example
      ☐ need to remove references to ssu::host
+       ☐ replace with some kind of template maybe? need to implement an api for registering the link
+         and unregistering the link.
 
 UI:
  ✔ Add ProfileEditor to the app. @done (14-01-28 19:19)
@@ -147,8 +149,8 @@ Structured Streams:
 
    It may be that in SST this was also the cause for multiple substreams just mixing up?
 
-   - we actually receive a datagram packet from the other side if it's a datagram, not a substream
-     so simply stuff it into a separate datagram queue?
+  ✔ we actually receive a datagram packet from the other side if it's a datagram, not a substream so simply stuff it into a separate datagram queue? @done (14-01-28 07:43)
+    Done this for now, need to investigate setting up reliable or too big datagrams as substreams still, write a test.
 
  ☐ tx_reset implementation - test
  ☐ implement rx_reset_packet
@@ -162,13 +164,17 @@ zlib_armor
 
 encryption/compression negotiation
 
-  vector<string> s = {"saes128ctr", "sxsalsa20", "snone", "ahmacsha512256", "czlib"};
+  vector<string> s = {"saes128ctr", "sxsalsa20", "snone", "ahmacsha512256", "czlib", "cnone"};
 
  ☐ saes256ctr  = 's'ymmetric key encryption
  ☐ czlib                = 'c'ompression
  ☐ hmacsha512256        = 'a'uthentication
+ ☐ = 'o' options, anything extra - may be protocol specific
 
  ☐ public key system in use? prsa160, pdsa160, pEcdsasomething
+
+ ☐ 'none' is always a flag indicating no feature used, can be missing from negotiation params in case
+   some feature is always required.
 
   can be multiple keys with all prefixes, in order of priority, other side picks best supported and responds.
   symmetric encryption and authentication are mandatory, compression is optional.
@@ -187,7 +193,6 @@ Later
 
  ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
  ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
- ☐ run opus-streaming test in the simulation environment (file-to-file using arbitrary loss percentage)
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
