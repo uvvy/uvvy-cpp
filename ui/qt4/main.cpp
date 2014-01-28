@@ -3,7 +3,7 @@
 #include "arsenal/settings_provider.h"
 #include "MainWindow.h"
 #include "PeerTableModel.h"
-#include <QApplication>
+#include "XcpApplication.h"
 
 //
 // Main application entrypoint
@@ -16,7 +16,7 @@ int main(int argc, char **argv)
         // logger::set_verbosity(logger::verbosity::info);
     // }
 
-    QApplication app(argc, argv);
+    XcpApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
     std::shared_ptr<ssu::host> host =
