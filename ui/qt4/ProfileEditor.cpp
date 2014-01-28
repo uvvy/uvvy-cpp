@@ -19,10 +19,6 @@ public:
     {}
 };
 
-// Simple client_profile editor.
-// Open settings_provider with default settings (or a specified settings file),
-// display current data and allow editing profile fields using Qt4 gui.
-// Save profile back.
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_pimpl(make_shared<Private>())
