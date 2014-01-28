@@ -1,13 +1,14 @@
 #include <QHostInfo>
-#include "profile_editor.h"
-#include "settings_provider.h"
+#include "ProfileEditor.h"
+#include "arsenal/settings_provider.h"
+#include "arsenal/any_int_cast.h"
 #include "ssu/identity.h"
-#include "client_profile.h"
+#include "routing/client_profile.h"
 
 using namespace std;
 using namespace ssu;
 
-class MainWindow::Private
+class ProfileEditor::Private
 {
 public:
     shared_ptr<settings_provider> settings;
@@ -19,8 +20,8 @@ public:
     {}
 };
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+ProfileEditor::ProfileEditor(QWidget *parent)
+    : QWidget(nullptr)
     , m_pimpl(make_shared<Private>())
 {
     setupUi(this); // this sets up GUI
@@ -28,11 +29,11 @@ MainWindow::MainWindow(QWidget *parent)
     load();
 
     connect(actionSave, SIGNAL(triggered()), this, SLOT(save()));
-    connect(actionQuit, SIGNAL(triggered()), this, SLOT(quit()));
+    connect(actionClose, SIGNAL(triggered()), this, SLOT(close()));
     connect(actionGenerate_new_host_ID, SIGNAL(triggered()), this, SLOT(generateNewEid()));
 }
 
-void MainWindow::load()
+void ProfileEditor::load()
 {
     qDebug() << "Loading settings";
     auto s_port = m_pimpl->settings->get("port");
@@ -53,10 +54,10 @@ void MainWindow::load()
         countryLineEdit->setText(client.country().c_str());
     }
 
-    boost::any s_rs = m_pimpl->settings->get("regservers");
-    if (!s_rs.empty())
+    byte_array s_rs = m_pimpl->settings->get_byte_array("regservers");
+    if (!s_rs.is_empty())
     {
-        byte_array rs_ba(boost::any_cast<byte_array>(s_rs));
+        byte_array rs_ba(s_rs);
         byte_array_iwrap<flurry::iarchive> read(rs_ba);
         vector<string> regservers;
         read.archive() >> regservers;
@@ -87,18 +88,18 @@ void MainWindow::load()
     setStatus("New host EID generated, save to keep it");
 }
 
-void MainWindow::setStatus(QString const& text)
+void ProfileEditor::setStatus(QString const& text)
 {
     statusLabel->setText(text);
     QTimer::singleShot(5000/*msec*/, this, SLOT(clearStatus()));
 }
 
-void MainWindow::clearStatus()
+void ProfileEditor::clearStatus()
 {
     statusLabel->clear();
 }
 
-void MainWindow::save()
+void ProfileEditor::save()
 {
     qDebug() << "Saving settings";
     m_pimpl->settings->set("id", m_pimpl->ident.id().id());
@@ -129,14 +130,15 @@ void MainWindow::save()
 
     m_pimpl->settings->sync();
     setStatus("Profile saved");
+    emit profileChanged();
 }
 
-void MainWindow::generateNewEid()
+void ProfileEditor::generateNewEid()
 {
     qDebug() << "Generating new host EID";
 
     QMessageBox msgBox;
-    msgBox.setText("Generate new host EID");
+    msgBox.setText("### DANGER ###");
     msgBox.setInformativeText("Generating new EID will change your private key. You will lose your old private key and host EID. Do you want to create a new private key?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
     msgBox.setDefaultButton(QMessageBox::Cancel);
@@ -147,5 +149,5 @@ void MainWindow::generateNewEid()
 
     m_pimpl->ident = identity::generate();
     hostEIDLineEdit->setText(peer_id(m_pimpl->ident.id().id()).to_string().c_str());
-    setStatus("New EID generated");
+    setStatus("New host EID generated, save to keep it");
 }

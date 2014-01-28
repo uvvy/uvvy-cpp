@@ -20,7 +20,7 @@ Structure:
      ☐ need to remove references to ssu::host
 
 UI:
- ☐ Add ProfileEditor to the app.
+ ✔ Add ProfileEditor to the app. @done (14-01-28 19:19)
  ☐ Handle empty settings_provider config gracefully!
  ☐ Maintain partial discoloration for online icon based on "stall count"
    e.g. second stall online icon is 2/3 colored, third stall icon is 1/3 colored, then offline (online-66%, online-33%)

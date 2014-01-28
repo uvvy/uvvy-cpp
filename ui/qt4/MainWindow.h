@@ -32,5 +32,8 @@ private slots:
     void updateMenus();
     void friendsClicked(const QModelIndex &index);
     void trayActivate(QSystemTrayIcon::ActivationReason);
+
+    void openProfile();
+    void reloadProfile();
 };
 

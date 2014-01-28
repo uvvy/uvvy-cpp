@@ -4,6 +4,7 @@
 #include <QHeaderView>
 #include <QApplication>
 #include "MainWindow.h"
+#include "ProfileEditor.h"
 #include "PeerTableModel.h"
 #include "macsupport.h"
 
@@ -44,6 +45,8 @@ MainWindow::MainWindow(PeerTableModel* model, QWidget* parent)
         SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
         this, SLOT(updateMenus()));
     setCentralWidget(peerlist);
+
+    connect(actionProfile, SIGNAL(triggered()), this, SLOT(openProfile()));
 
     // Create a "Friends" toolbar providing friends list controls
     // XX need icons
@@ -251,10 +254,17 @@ void MainWindow::friendsClicked(const QModelIndex &index)
 //     SettingsDialog::openSettings();
 // }
 
-// void MainWindow::openProfile()
-// {
-//     SettingsDialog::openProfile();
-// }
+void MainWindow::openProfile()
+{
+    ProfileEditor* edit = new ProfileEditor(this);
+    connect(edit, SIGNAL(profileChanged()), this, SLOT(reloadProfile()));
+    edit->show();
+    // SettingsDialog::openProfile();
+}
+
+void MainWindow::reloadProfile()
+{
+}
 
 void MainWindow::openAbout()
 {

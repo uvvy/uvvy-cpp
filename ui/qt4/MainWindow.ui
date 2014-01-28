@@ -79,6 +79,7 @@
     <addaction name="actionSearch"/>
     <addaction name="actionDownloads"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionProfile"/>
     <addaction name="separator"/>
     <addaction name="actionLog_Window"/>
     <addaction name="separator"/>
