@@ -23,8 +23,10 @@ add_definitions(${QT_DEFINITIONS})
 #include_directories(../3rdparty/metakit-2.4.9.7/include ../../nat)
 
 set(mettanode_SOURCES main.cpp MainWindow.cpp ProfileEditor.cpp PeerTableModel.cpp
-    PeerPicker.cpp XcpApplication.cpp)
-set(mettanode_HEADERS MainWindow.h ProfileEditor.h PeerTableModel.h PeerPicker.h XcpApplication.h)
+    PeerPicker.cpp XcpApplication.cpp Meter.cpp)
+set(mettanode_HEADERS
+    MainWindow.h ProfileEditor.h PeerTableModel.h PeerPicker.h XcpApplication.h
+    Meter.h)
 set(mettanode_FORMS MainWindow.ui ProfileEditor.ui PeerPickerWindow.ui)
 set(mettanode_RESOURCES ui.qrc)
 
