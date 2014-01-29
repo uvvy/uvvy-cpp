@@ -1,9 +1,6 @@
 Topmost 3 tasks:
  ✔ Clean up UI in designer. @done (14-01-27 01:34)
    ☐ Render UserCards in peerlist, using QDataWidgetMapper http://doc.qt.digia.com/qq/qq21-datawidgetmapper.html
- ☐ Draw UI sketches for contacts list, chat, audio/video call window, file transfers, folder sync,
-   bandwidth utilisation/packet throughput graph window (like in Source).
- ✔ opus-streaming crashes somewhere now. @done (14-01-25 16:23)
 
 Crashes:
  ☐ This happens on second call attempt on one of the clients (far side?)
@@ -22,6 +19,12 @@ Structure:
          and unregistering the link.
 
 UI:
+ ☐ Draw UI sketches for contacts list,
+ ☐ chat,
+ ☐ audio/video call window,
+ ☐ file transfers,
+ ☐ folder sync,
+ ☐ bandwidth utilisation/packet throughput graph window (like in Source).
  ✔ Add ProfileEditor to the app. @done (14-01-28 19:19)
  ☐ Handle empty settings_provider config gracefully!
  ☐ Maintain partial discoloration for online icon based on "stall count"
