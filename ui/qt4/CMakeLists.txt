@@ -18,16 +18,30 @@ set(QT_USE_QTNETWORK TRUE)
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 
-# Old UI includes:
-#include_directories(../lib ../../sst/lib ../../routing/lib ../3rdparty/opus-1.0.1/include ../3rdparty/rtaudio-4.0.11)
-#include_directories(../3rdparty/metakit-2.4.9.7/include ../../nat)
-
-set(mettanode_SOURCES main.cpp MainWindow.cpp ProfileEditor.cpp PeerTableModel.cpp
-    PeerPicker.cpp XcpApplication.cpp Meter.cpp)
+set(mettanode_SOURCES
+    main.cpp
+    MainWindow.cpp
+    ProfileEditor.cpp
+    PeerTableModel.cpp
+    PeerPicker.cpp
+    XcpApplication.cpp
+    UserCard.cpp
+    Meter.cpp)
 set(mettanode_HEADERS
-    MainWindow.h ProfileEditor.h PeerTableModel.h PeerPicker.h XcpApplication.h
+    MainWindow.h
+    ProfileEditor.h
+    PeerTableModel.h
+    PeerPicker.h
+    XcpApplication.h
+    UserCard.h
     Meter.h)
-set(mettanode_FORMS MainWindow.ui ProfileEditor.ui PeerPickerWindow.ui)
+set(mettanode_FORMS
+    MainWindow.ui
+    ProfileEditor.ui
+    PeerPickerWindow.ui
+    SingleCallWidget.ui
+    UserCard.ui)
+
 set(mettanode_RESOURCES ui.qrc)
 
 if (APPLE)
