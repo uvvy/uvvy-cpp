@@ -31,14 +31,8 @@ MainWindow::MainWindow(PeerTableModel* model, QWidget* parent)
 
     // Create a ListView onto our friends list, as the central widget
     Q_ASSERT(model);
-    peerlist = new QTableView(this);
     peerlist->setModel(model);
-    peerlist->setSelectionBehavior(QTableView::SelectRows);
-    //peerlist->setStretchLastColumn(true);
-    peerlist->setColumnWidth(COL_NAME, 150);
-    peerlist->setColumnWidth(COL_EID, 250);
-    peerlist->setColumnWidth(COL_TALK, 75);
-    peerlist->verticalHeader()->hide();
+    // peerlist->setSelectionBehavior(QTableView::SelectRows);
     connect(peerlist, SIGNAL(clicked(const QModelIndex&)),
         this, SLOT(friendsClicked(const QModelIndex&)));
     connect(peerlist->selectionModel(),

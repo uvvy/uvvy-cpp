@@ -12,8 +12,6 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 {
     Q_OBJECT
 
-    QTableView *peerlist;
-
 public:
     MainWindow(PeerTableModel* model, QWidget* parent = nullptr);
     ~MainWindow();
