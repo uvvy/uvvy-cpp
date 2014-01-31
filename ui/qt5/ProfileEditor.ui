@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ProfileEditor</class>
+ <widget class="QWidget" name="ProfileEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>300</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Profile editor</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <property name="spacing">
+    <number>1</number>
+   </property>
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,0,0">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <item>
+        <layout class="QFormLayout" name="formLayout_3">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::ExpandingFieldsGrow</enum>
+         </property>
+         <property name="horizontalSpacing">
+          <number>2</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>2</number>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>2</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="hostEIDLabel">
+           <property name="text">
+            <string>Host EID</string>
+           </property>
+           <property name="buddy">
+            <cstring>hostEIDLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="hostEIDLineEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="portLabel">
+           <property name="text">
+            <string>Port</string>
+           </property>
+           <property name="buddy">
+            <cstring>portSpinBox</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="portSpinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="nicknameLabel">
+           <property name="text">
+            <string>Nickname</string>
+           </property>
+           <property name="buddy">
+            <cstring>nicknameLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="nicknameLineEdit"/>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="firstNameLabel">
+           <property name="text">
+            <string>First name</string>
+           </property>
+           <property name="buddy">
+            <cstring>firstNameLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="firstNameLineEdit"/>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="lastNameLabel">
+           <property name="text">
+            <string>Last name</string>
+           </property>
+           <property name="buddy">
+            <cstring>lastNameLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="lastNameLineEdit"/>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="cityLabel">
+           <property name="text">
+            <string>City</string>
+           </property>
+           <property name="buddy">
+            <cstring>cityLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLineEdit" name="cityLineEdit"/>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="regionLabel">
+           <property name="text">
+            <string>Region</string>
+           </property>
+           <property name="buddy">
+            <cstring>regionLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLineEdit" name="regionLineEdit"/>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="countryLabel">
+           <property name="text">
+            <string>Country</string>
+           </property>
+           <property name="buddy">
+            <cstring>countryLineEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QLineEdit" name="countryLineEdit"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Routing servers:</string>
+           </property>
+           <property name="buddy">
+            <cstring>routingServersTextEdit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="routingServersTextEdit"/>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>2</number>
+       </property>
+       <property name="bottomMargin">
+        <number>2</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="savePushButton">
+         <property name="text">
+          <string>Save</string>
+         </property>
+         <property name="autoDefault">
+          <bool>true</bool>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="closePushButton">
+         <property name="text">
+          <string>Close</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="newPushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Generate host ID</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="statusLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="toolTip">
+    <string>Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+©</string>
+   </property>
+  </action>
+  <action name="actionGenerate_new_host_ID">
+   <property name="text">
+    <string>Generate new host ID</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+ </widget>
+ <tabstops>
+  <tabstop>nicknameLineEdit</tabstop>
+  <tabstop>firstNameLineEdit</tabstop>
+  <tabstop>lastNameLineEdit</tabstop>
+  <tabstop>cityLineEdit</tabstop>
+  <tabstop>regionLineEdit</tabstop>
+  <tabstop>countryLineEdit</tabstop>
+  <tabstop>routingServersTextEdit</tabstop>
+  <tabstop>savePushButton</tabstop>
+  <tabstop>closePushButton</tabstop>
+  <tabstop>portSpinBox</tabstop>
+  <tabstop>hostEIDLineEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>closePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionClose</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>463</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>savePushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionSave</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>463</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newPushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>actionGenerate_new_host_ID</receiver>
+   <slot>trigger()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>463</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

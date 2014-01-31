@@ -1,8 +1,16 @@
-# Qt4
-set(QT_USE_QTGUI TRUE)
-set(QT_USE_QTNETWORK TRUE)
-include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
+# Qt5 - http://qt-project.org/doc/qt-5.0/qtdoc/cmake-manual.html
+set(CMAKE_PREFIX_PATH /usr/local/opt/qt5/)
+
+# Tell CMake to run moc when necessary:
+set(CMAKE_AUTOMOC ON)
+# As moc files are generated in the binary dir, tell CMake
+# to always look for includes there:
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+# Widgets finds its own dependencies.
+find_package(Qt5Widgets REQUIRED)
+
+#add_executable(PeerPicker main.cpp PeerPickerWindow.ui)
 
 set(mettanode_SOURCES
     main.cpp
@@ -11,7 +19,6 @@ set(mettanode_SOURCES
     PeerTableModel.cpp
     PeerPicker.cpp
     XcpApplication.cpp
-    UserCard.cpp
     Meter.cpp)
 set(mettanode_HEADERS
     MainWindow.h
@@ -19,14 +26,12 @@ set(mettanode_HEADERS
     PeerTableModel.h
     PeerPicker.h
     XcpApplication.h
-    UserCard.h
     Meter.h)
 set(mettanode_FORMS
     MainWindow.ui
     ProfileEditor.ui
     PeerPickerWindow.ui
-    SingleCallWidget.ui
-    UserCard.ui)
+    SingleCallWidget.ui)
 
 set(mettanode_RESOURCES ui.qrc)
 
@@ -39,20 +44,17 @@ if (APPLE)
     set(APPLE_BUNDLE_SRC "img/${MACOSX_BUNDLE_ICON_FILE}")
 endif (APPLE)
 
-qt4_wrap_cpp(mettanode_HEADERS_MOC ${mettanode_HEADERS})
-qt4_wrap_ui(mettanode_FORMS_HEADERS ${mettanode_FORMS})
-qt4_add_resources(mettanode_RESOURCES_RCC ${mettanode_RESOURCES})
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_executable(MettaNode ${GUI_TYPE}
     ${mettanode_SOURCES}
-    ${mettanode_HEADERS_MOC}
-    ${mettanode_RESOURCES_RCC}
-    ${mettanode_FORMS_HEADERS}
+    ${mettanode_RESOURCES}
+    ${mettanode_FORMS}
     ${APPLE_BUNDLE_SRC})
 target_link_libraries(MettaNode krypto rclient routing ssu arsenal natclient nat upnpc
     ${VOICEBOX_LIBS} opus
     ${Boost_LIBRARIES} ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
+
+qt5_use_modules(MettaNode Widgets Declarative)
 
 if (WIN32)
     target_link_libraries(MettaNode ws2_32 gdi32 winmm)
