@@ -352,7 +352,7 @@ bool PeerTableModel::removeRows(int position, int rows, const QModelIndex &index
 void PeerTableModel::updateData(int row)
 {
     // NB: this resets all selections made by user...
-    reset(); // Until I fix model indexes, full reload will do.
+    /*reset();*/ // Until I fix model indexes, full reload will do.
     // emit dataChanged(index(row, 0), index(row, columnCount(QModelIndex())));
 }
 
