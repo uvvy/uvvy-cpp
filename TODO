@@ -1,6 +1,5 @@
 Topmost 3 tasks:
- ✔ Clean up UI in designer. @done (14-01-27 01:34)
-   ☐ Render UserCards in peerlist, using QDataWidgetMapper http://doc.qt.digia.com/qq/qq21-datawidgetmapper.html
+ ☐ Switching UI to QtQuick and Qt5
 
 Crashes:
  ☐ This happens on second call attempt on one of the clients (far side?)
