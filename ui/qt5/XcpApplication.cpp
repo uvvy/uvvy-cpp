@@ -4,7 +4,7 @@
 bool XcpApplication::notify(QObject *receiver_, QEvent *event_)
 {
     try {
-        return QApplication::notify(receiver_, event_);
+        return QGuiApplication::notify(receiver_, event_);
     }
     catch (std::exception& ex) {
         std::cerr << "Exception: " << ex.what() << std::endl;
