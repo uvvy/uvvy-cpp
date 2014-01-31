@@ -1,4 +1,5 @@
 #include <QHostInfo>
+#include <QMessageBox>
 #include "ProfileEditor.h"
 #include "arsenal/settings_provider.h"
 #include "arsenal/any_int_cast.h"
