@@ -5,8 +5,6 @@ include(CTest)
 
 include(cmake/setup.cmake)
 
-find_package(Qt4 REQUIRED)
-
 # Export compile commands for ST2 clang plugin.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 

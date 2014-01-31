@@ -1,20 +1,5 @@
-set(QT_USE_QTGUI TRUE)
-set(QT_USE_QTNETWORK TRUE)
-set(QT_USE_QTXML TRUE)
-include(${QT_USE_FILE})
-
 include_directories(../nat/include ../ssu/include ../arsenal/include)
 include_directories(../ui/3rdparty/opus-1.0.1/include) # For unlogger
-
-#set(udpsender_SOURCES udpsend.cpp main.cpp)
-#set(udpsender_HEADERS udpsend.h)
-#qt4_wrap_cpp(udpsender_HEADERS_MOC ${udpsender_HEADERS})
-
-#add_executable(udpsender ${udpsender_SOURCES} ${udpsender_HEADERS_MOC})
-#target_link_libraries(udpsender upnp ${QT_LIBRARIES})
-#install(TARGETS udpsender
-#	RUNTIME DESTINATION tools)
-
 
 add_executable(unlogger unlogger.cpp)
 target_link_libraries(unlogger arsenal opus ${Boost_LIBRARIES})
