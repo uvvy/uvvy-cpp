@@ -10,25 +10,16 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Widgets finds its own dependencies.
 find_package(Qt5Widgets REQUIRED)
 
-#add_executable(PeerPicker main.cpp PeerPickerWindow.ui)
-
 set(mettanode_SOURCES
     main.cpp
-    MainWindow.cpp
+    #MainWindow.cpp
     ProfileEditor.cpp
     PeerTableModel.cpp
     PeerPicker.cpp
     XcpApplication.cpp
     Meter.cpp)
-set(mettanode_HEADERS
-    MainWindow.h
-    ProfileEditor.h
-    PeerTableModel.h
-    PeerPicker.h
-    XcpApplication.h
-    Meter.h)
 set(mettanode_FORMS
-    MainWindow.ui
+    #MainWindow.ui
     ProfileEditor.ui
     PeerPickerWindow.ui
     SingleCallWidget.ui)
@@ -37,24 +28,29 @@ set(mettanode_RESOURCES ui.qrc)
 
 if (APPLE)
     list(APPEND mettanode_SOURCES macosx.mm)
-    list(APPEND mettanode_HEADERS macsupport.h)
+    qt5_wrap_cpp(mettanode_HEADERS_MOC macsupport.h)
     set(MACOSX_BUNDLE_ICON_FILE "mettanode.icns")
     set_source_files_properties("img/${MACOSX_BUNDLE_ICON_FILE}" PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
     set(APPLE_BUNDLE_SRC "img/${MACOSX_BUNDLE_ICON_FILE}")
 endif (APPLE)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+set(mettanode_RESOURCES ui.qrc)
+qt5_add_resources(mettanode_RESOURCES_RCC ${mettanode_RESOURCES})
+
 add_executable(MettaNode ${GUI_TYPE}
     ${mettanode_SOURCES}
+    ${mettanode_HEADERS_MOC}
     ${mettanode_RESOURCES}
+    ${mettanode_RESOURCES_RCC}
     ${mettanode_FORMS}
     ${APPLE_BUNDLE_SRC})
 target_link_libraries(MettaNode krypto rclient routing ssu arsenal natclient nat upnpc
     ${VOICEBOX_LIBS} opus
     ${Boost_LIBRARIES} ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 
-qt5_use_modules(MettaNode Widgets Declarative)
+qt5_use_modules(MettaNode Widgets Quick Network)
+qt5_wrap_ui(mettanode_FORMS_HEADERS ${mettanode_FORMS})
 
 if (WIN32)
     target_link_libraries(MettaNode ws2_32 gdi32 winmm)
