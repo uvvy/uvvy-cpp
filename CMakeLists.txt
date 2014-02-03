@@ -30,5 +30,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src)
-add_subdirectory(demos)
-add_subdirectory(tests)
+
+if (BUILD_TESTING)
+    add_subdirectory(demos)
+    add_subdirectory(tests)
+endif (BUILD_TESTING)
