@@ -1,0 +1,5 @@
+language: cpp
+script:
+  - cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=YES . && make -j4 && ASAN_OPTIONS=alloc_dealloc_mismatch=0 ctest -V
+notifications:
+  email: false

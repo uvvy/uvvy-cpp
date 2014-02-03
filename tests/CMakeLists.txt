@@ -7,9 +7,6 @@ target_link_libraries(regress mk4_static)
 install(TARGETS regress
 	RUNTIME DESTINATION tests/metakit)
 
-add_test(regression regress)
-#test -d tests || mkdir tests
-#test -d ../tests/ok/CVS && (test -d tests/CVS || mkdir tests/CVS)
-#make: [test] Error 1 (ignored)
+add_test(NAME regression WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/.. COMMAND regress)
 #test -f reversed || cp ../unix/reversed .
-#./regress
+
