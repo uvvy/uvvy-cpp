@@ -26,8 +26,8 @@ set(CMAKE_EXTRA_INCLUDE_FILES)
 check_type_size(long SIZEOF_LONG)
 check_type_size("long long" LONG_LONG)
 
-configure_file(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
-include_directories(${CMAKE_BINARY_DIR})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src)
 add_subdirectory(demos)
