@@ -8,7 +8,7 @@ Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audi
 Structure:
   ✔ Submodularize opus (create repo), @done (14-02-03 02:41)
   ✔ RtAudio (create repo) and @done (14-02-03 02:41)
-  ☐ metakit (berkus/metakit - check/merge changes?)
+  ✔ metakit (berkus/metakit - check/merge changes?) @done (14-02-03 03:33)
   ☐ Separate libvoicebox into a separate repo (not yet?)
   ☐ Separate libfilesyncbox into a separate repo (not yet?)
   ☐ Extract ssu::link and other low-level communication helpers into libcomm. (better name?)
