@@ -6,7 +6,9 @@ Crashes:
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
 
 Structure:
-  ☐ Submodularize opus (create repo), RtAudio (create repo) and metakit (berkus/metakit - check/merge changes?)
+  ✔ Submodularize opus (create repo), @done (14-02-03 02:41)
+  ✔ RtAudio (create repo) and @done (14-02-03 02:41)
+  ☐ metakit (berkus/metakit - check/merge changes?)
   ☐ Separate libvoicebox into a separate repo (not yet?)
   ☐ Separate libfilesyncbox into a separate repo (not yet?)
   ☐ Extract ssu::link and other low-level communication helpers into libcomm. (better name?)
