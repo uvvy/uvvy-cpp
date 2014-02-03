@@ -292,13 +292,15 @@ c4_Notifier *c4_FilterSeq::PreChange(c4_Notifier &nf_) {
 
       bool includeRow = r >= 0;
       if (!pass)
-      if (nf_._type == c4_Notifier::kSetAt) {
-        d4_assert(nf_._cursor != 0);
-        includeRow = Match(nf_._cursor->_index, *nf_._cursor->_seq);
+      {
+        if (nf_._type == c4_Notifier::kSetAt) {
+          d4_assert(nf_._cursor != 0);
+          includeRow = Match(nf_._cursor->_index, *nf_._cursor->_seq);
+        }
+         else
+        // set just one property, and it's not in a row yet
+          includeRow = MatchOne(nf_._propId,  *nf_._bytes);
       }
-       else
-      // set just one property, and it's not in a row yet
-        includeRow = MatchOne(nf_._propId,  *nf_._bytes);
 
       if (r >= 0 && !includeRow)
         chg->StartRemoveAt(r, 1);
@@ -360,13 +362,15 @@ void c4_FilterSeq::PostChange(c4_Notifier &nf_) {
 
       bool includeRow = r >= 0;
       if (!pass)
-      if (nf_._type == c4_Notifier::kSetAt) {
-        d4_assert(nf_._cursor != 0);
-        includeRow = Match(nf_._cursor->_index, *nf_._cursor->_seq);
+      {
+        if (nf_._type == c4_Notifier::kSetAt) {
+          d4_assert(nf_._cursor != 0);
+          includeRow = Match(nf_._cursor->_index, *nf_._cursor->_seq);
+        }
+         else
+        // set just one property, and it's not in a row yet
+          includeRow = MatchOne(nf_._propId,  *nf_._bytes);
       }
-       else
-      // set just one property, and it's not in a row yet
-        includeRow = MatchOne(nf_._propId,  *nf_._bytes);
 
       if (r >= 0 && !includeRow)
         _rowMap.RemoveAt(r);

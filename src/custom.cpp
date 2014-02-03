@@ -762,19 +762,21 @@ bool c4_JoinPropViewer::GetItem(int row_, int col_, c4_Bytes &buf_) {
   int r = _base.GetAt(row_);
 
   if (col_ >= _subPos)
-  if (col_ >= _subPos + _subWidth) {
-    col_ -= _subWidth - 1;
-  } else {
-    v = _sub(_parent[r]);
-    r = _offset.GetAt(row_);
-    if (r < 0)
-      return false;
-    // if this is a null row in an outer join
+  {
+    if (col_ >= _subPos + _subWidth) {
+      col_ -= _subWidth - 1;
+    } else {
+      v = _sub(_parent[r]);
+      r = _offset.GetAt(row_);
+      if (r < 0)
+        return false;
+      // if this is a null row in an outer join
 
-    col_ = v.FindProperty(_template.NthProperty(col_).GetId());
-    if (col_ < 0)
-      return false;
-    // if subview doesn't have all properties
+      col_ = v.FindProperty(_template.NthProperty(col_).GetId());
+      if (col_ < 0)
+        return false;
+      // if subview doesn't have all properties
+    }
   }
 
   return v.GetItem(r, col_, buf_);
