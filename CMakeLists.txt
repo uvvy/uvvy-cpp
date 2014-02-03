@@ -29,6 +29,7 @@ check_type_size("long long" LONG_LONG)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
+option(USE_SYSTEM_STL "Build with system STL (duh?)" OFF)
 add_subdirectory(src)
 
 if (BUILD_TESTING)
