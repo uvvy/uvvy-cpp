@@ -6,6 +6,7 @@ set(CMAKE_OSX_ARCHITECTURES x86_64)
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckTypeSize)
+include(CTest)
 
 check_include_files(dlfcn.h HAVE_DLFCN_H)
 check_include_files(inttypes.h HAVE_INTTYPES_H)
