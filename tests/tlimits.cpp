@@ -61,7 +61,7 @@ void TestLimits() {
 
   B(l02, Over 64 Kb of strings, 0)W(l02a);
    {
-    static char *texts[3] =  {
+    static char const*texts[3] =  {
       "Alice in Wonderland", "The wizard of Oz", "I'm singin' in the rain"
     };
 
@@ -185,7 +185,7 @@ void TestLimits() {
 
   B(l05, Delete from 32 Kb of strings, 0)W(l05a);
    {
-    static char *texts[3] =  {
+    static char const*texts[3] =  {
       "Alice in Wonderland", "The wizard of Oz", "I'm singin' in the rain"
     };
 
