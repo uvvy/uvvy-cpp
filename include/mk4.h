@@ -9,6 +9,8 @@
 #ifndef __MK4_H__
 #define __MK4_H__
 
+#include <stdint.h>
+
 //---------------------------------------------------------------------------
 //
 //  TITLE
@@ -197,28 +199,9 @@ defined(__x86_64__) || defined(__s390x__) || defined(__alpha) ||  \
 #define d4_inline
 #endif 
 
-typedef unsigned char t4_byte; // create typedefs for t4_byte, etc.
-
-#if q4_LONG64
-typedef int t4_i32; // if longs are 64b, then int must be 32b
-#else 
-typedef long t4_i32; // if longs aren't 64b, then they are 32b
-#endif 
-
-#if q4_LONG64           // choose a way to represent 64b integers
-typedef long t4_i64;
-#elif defined (LONG_LONG)
-typedef LONG_LONG t4_i64;
-#elif HAVE_LONG_LONG
-typedef long long t4_i64;
-#else 
-struct t4_i64 {
-    long l1;
-    long l2;
-};
-bool operator == (const t4_i64 a_, const t4_i64 b_);
-bool operator < (const t4_i64 a_, const t4_i64 b_);
-#endif 
+typedef uint8_t t4_byte; // create typedefs for t4_byte, etc.
+typedef int32_t t4_i32; // if longs are 64b, then int must be 32b
+typedef int64_t t4_i64;
 
 //---------------------------------------------------------------------------
 
