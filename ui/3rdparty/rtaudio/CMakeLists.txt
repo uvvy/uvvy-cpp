@@ -118,3 +118,6 @@ if (BUILD_TESTING)
     add_subdirectory(tests)
 endif (BUILD_TESTING)
 
+if (BUILD_PYTHON)
+    add_subdirectory(contrib/python/pyrtaudio)
+endif (BUILD_PYTHON)
