@@ -97,10 +97,10 @@ private:
      * Must be called when PeerTableModel is freshly created and still empty
      * (that's why there's a separate constructor you should use).
      */
-    void use_settings(std::shared_ptr<settings_provider> settings);
+    void useSettings(std::shared_ptr<settings_provider> settings);
 
     void insertAt(int row, ssu::peer_id const& eid, QString const& name);
-    void write_settings();
+    void writeSettings();
 
 signals:
     // These signals provide slightly simpler alternatives to

@@ -47,15 +47,15 @@ struct Peer
 
     Peer()
     {
-        init_flags();
+        initFlags();
     }
     Peer(peer_id eid)
         : name_(), eid_(eid), profile_()
     {
-        init_flags();
+        initFlags();
     }
 
-    void init_flags()
+    void initFlags()
     {
         flags_.resize(MaxColumns);
         for (auto& f : flags_) {
@@ -139,7 +139,7 @@ public:
             ssu::endpoint const&,
             uia::routing::client_profile const& profile)
         {
-            update_peer_profile(peer, profile);
+            updatePeerProfile(peer, profile);
         });
         client_.on_lookup_failed.connect([](ssu::peer_id const& peer) {
             logger::debug() << "lookup failed";
@@ -149,14 +149,14 @@ public:
             std::vector<ssu::peer_id> const& peers,
             bool last)
         {
-            found_peers(peers, last);
+            foundPeers(peers, last);
         });
     }
 
-    void update_peer_profile(ssu::peer_id const& peer,
+    void updatePeerProfile(ssu::peer_id const& peer,
             uia::routing::client_profile const& profile)
     {
-        logger::debug() << "update_peer_profile " << peer;
+        logger::debug() << "updatePeerProfile " << peer;
         // find in peers entry with peer id "peer" and update it's profile.
         int i = 0;
         foreach (auto& pair, peers_)
@@ -181,10 +181,10 @@ public:
         return false;
     }
 
-    void found_peers(std::vector<ssu::peer_id> const& peers, bool last)
+    void foundPeers(std::vector<ssu::peer_id> const& peers, bool last)
     {
         for (auto peer : peers) {
-            logger::debug() << "found_peers " << peer;
+            logger::debug() << "foundPeers " << peer;
             if (!containsId(peer)) {
                 peers_.append(Peer(peer));
             }
@@ -192,7 +192,7 @@ public:
         }
     }
 
-    void connect_regservers()
+    void connectRegservers()
     {
         auto settings = settings_provider::instance();
         regclient_set_profile(settings.get(), client_, client_.get_host());
@@ -204,7 +204,7 @@ PeerTableModel::PeerTableModel(shared_ptr<ssu::host> h, QObject *parent)
     : QAbstractTableModel(parent)
     , m_pimpl(make_shared<Private>(this, h.get()))
 {
-    m_pimpl->connect_regservers();
+    m_pimpl->connectRegservers();
 }
 
 PeerTableModel::PeerTableModel(shared_ptr<ssu::host> h, shared_ptr<settings_provider> s,
@@ -212,8 +212,8 @@ PeerTableModel::PeerTableModel(shared_ptr<ssu::host> h, shared_ptr<settings_prov
     : QAbstractTableModel(parent)
     , m_pimpl(make_shared<Private>(this, h.get()))
 {
-    use_settings(s);
-    m_pimpl->connect_regservers();
+    useSettings(s);
+    m_pimpl->connectRegservers();
 }
 
 int PeerTableModel::insert(ssu::peer_id const& eid, QString name)
@@ -233,7 +233,7 @@ int PeerTableModel::insert(ssu::peer_id const& eid, QString name)
     endInsertRows();
 
     // Update our persistent peers list - @todo berkus: umm, friend list management.
-    write_settings();
+    writeSettings();
 
     // Signal anyone interested
     Q_EMIT peerInserted(eid);
@@ -254,7 +254,7 @@ void PeerTableModel::remove(ssu::peer_id const& eid)
     endRemoveRows();
 
     // Update our persistent peers list
-    write_settings();
+    writeSettings();
 
     // Signal anyone interested
     Q_EMIT peerRemoved(eid);
@@ -418,7 +418,7 @@ bool PeerTableModel::setData(const QModelIndex &index, const QVariant &value, in
             }
 
             m_pimpl->peers_[row].name_ = str;
-            write_settings();
+            writeSettings();
             dataChanged(index, index);
             return true;
         }
@@ -502,7 +502,7 @@ bool PeerTableModel::setFlags(const QModelIndex &index, Qt::ItemFlags flags)
     return true;
 }
 
-void PeerTableModel::use_settings(std::shared_ptr<settings_provider> settings)
+void PeerTableModel::useSettings(std::shared_ptr<settings_provider> settings)
 {
     Q_ASSERT(!m_pimpl->settings_);
     Q_ASSERT(settings);
@@ -526,7 +526,7 @@ void PeerTableModel::use_settings(std::shared_ptr<settings_provider> settings)
     }
 }
 
-void PeerTableModel::write_settings()
+void PeerTableModel::writeSettings()
 {
     if (!m_pimpl->settings_)
         return;
