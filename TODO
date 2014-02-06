@@ -6,9 +6,6 @@ Crashes:
 Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
 
 Structure:
-  ✔ Submodularize opus (create repo), @done (14-02-03 02:41)
-  ✔ RtAudio (create repo) and @done (14-02-03 02:41)
-  ✔ metakit (berkus/metakit - check/merge changes?) @done (14-02-03 03:33)
   ☐ Separate libvoicebox into a separate repo (not yet?)
   ☐ Separate libfilesyncbox into a separate repo (not yet?)
   ☐ Extract ssu::link and other low-level communication helpers into libcomm. (better name?)
@@ -26,7 +23,6 @@ UI:
  ☐ file transfers,
  ☐ folder sync,
  ☐ bandwidth utilisation/packet throughput graph window (like in Source).
- ✔ Add ProfileEditor to the app. @done (14-01-28 19:19)
  ☐ Handle empty settings_provider config gracefully!
  ☐ Maintain partial discoloration for online icon based on "stall count"
    e.g. second stall online icon is 2/3 colored, third stall icon is 1/3 colored, then offline (online-66%, online-33%)
