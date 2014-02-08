@@ -27,15 +27,25 @@ int main(int argc, char* argv[])
     XcpApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
+    int rc = 0;
+
     QQmlEngine engine;
     QQmlComponent component(&engine);
-    QQuickWindow::setDefaultAlphaBuffer(true);
+
+    QObject::connect(&engine, SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit()));
+
     component.loadUrl(QUrl("qrc:/quick/MainWindow.qml"));
-    if (component.isReady()) {
-        component.create();
+
+    if (!component.isReady() ) {
+        qFatal() << component.errorString();
     }
-    else {
-        qWarning() << component.errorString();
-    }
+
+    QObject *topLevel = component.create();
+    QQuickWindow *window = qobject_cast<QQuickWindow*>(topLevel);
+
+    QSurfaceFormat surfaceFormat = window->requestedFormat();
+    window->setFormat(surfaceFormat);
+    window->show();
+
     return app.exec();
 }
