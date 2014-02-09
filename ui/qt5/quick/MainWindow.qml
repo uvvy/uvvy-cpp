@@ -39,8 +39,11 @@ ApplicationWindow
     ColumnLayout {
         anchors.fill: parent
         ListView {
+            anchors.fill: parent
             model: ContactModel {}
             delegate: UserCard {}
+            highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+            focus: true
         }
     }
 }
