@@ -32,7 +32,9 @@ ApplicationWindow
             MenuItem { text: "Open synced files" }
         }
     }
-    StatusBar {}
+    /*StatusBar {
+        anchors.bottom: parent.bottom
+    }*/
 
     ColumnLayout {
         anchors.fill: parent
