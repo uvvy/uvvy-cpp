@@ -1,19 +1,38 @@
 /* User card */
 import QtQuick 2.1
+import QtQuick.Controls 1.0
 
 Component {
     Item {
         width: parent.width
         height: cardInfo.height
-        Column {
+        Row {
             id: cardInfo
-            Text {
-                text: name
-                font.pixelSize: 24
+            Image {
+                id: avatar
+                source: avatarUrl
+                width: 96
+                height: 96
+                smooth: true
             }
-            Text {
-                text: nick
-                font.pixelSize: 12
+            Column {
+                Text {
+                    text: nickName
+                    font.pixelSize: 24
+                }
+                Text {
+                    text: firstName
+                    font.pixelSize: 18
+                }
+                Text {
+                    text: lastName
+                    font.pixelSize: 14
+                }
+            }
+            Column {
+                Button {
+                    text: "Call"
+                }
             }
         }
     }
