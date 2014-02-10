@@ -3,8 +3,10 @@ import QtQuick 2.1
 
 Component {
     Item {
-        height: 50
+        width: parent.width
+        height: cardInfo.height
         Column {
+            id: cardInfo
             Text {
                 text: name
                 font.pixelSize: 24
