@@ -8,6 +8,7 @@ Component {
         height: cardInfo.height
         Row {
             id: cardInfo
+            spacing: 8
             Image {
                 id: avatar
                 source: avatarUrl
@@ -16,6 +17,7 @@ Component {
                 smooth: true
             }
             Column {
+                spacing: 3
                 Text {
                     text: nickName
                     font.pixelSize: 24
