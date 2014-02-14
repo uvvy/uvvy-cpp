@@ -1,17 +1,19 @@
 /* Call Window */
 import QtQuick 2.0
+import QtQuick.Controls 1.0
 import QtQuick.Window 2.1
 
 Window {
     Rectangle {
-        anchor.fill: parent
+        anchors.fill: parent
 
-        GridLayout {
+        Grid {
             // inside
             // user avatar on the left, 96x96 fixed
-            Pixmap {
+            Image {
                 width: 96
                 height: 96
+                source: avatarUrl
             }
             Text {
                 text: "username"
@@ -20,9 +22,9 @@ Window {
                 text: "call status"
             }
             // signal meter
-            Widget {
-                id: meter
-            }
+            //Component {
+            //    id: meter
+            //}
             Button {
                 id: hangup
                 text: "Hang up"
