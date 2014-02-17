@@ -4,12 +4,13 @@ import QtQuick.Controls 1.0
 import QtQuick.Window 2.1
 
 Window {
-    width: r.width
-    height: r.height
     property string avatarUrl
     property string userName
     property string callStatus
     property alias hangupButton: hangup
+
+    width: { r.width < 200 ? 200 : r.width }
+    height: { r.height < 100 ? 100 : r.height }
     Row {
         id: r
         spacing: 7
