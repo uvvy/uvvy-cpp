@@ -6,6 +6,10 @@ import QtQuick.Window 2.1
 Window {
     width: r.width
     height: r.height
+    property string avatarUrl
+    property string userName
+    property string callStatus
+    property alias hangupButton: hangup
     Row {
         id: r
         spacing: 7
