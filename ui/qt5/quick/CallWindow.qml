@@ -24,10 +24,10 @@ Window {
         Column {
             spacing: 5
             Text {
-                text: "username"
+                text: userName
             }
             Text {
-                text: "call status"
+                text: callStatus
             }
             // signal meter
             //Component {
