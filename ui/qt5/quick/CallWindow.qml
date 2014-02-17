@@ -33,10 +33,12 @@ Window {
             //Component {
             //    id: meter
             //}
-            Button {
-                id: hangup
-                text: "Hang up"
-            }
         }
+    }
+    Button {
+        id: hangup
+        text: "Hang up"
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
     }
 }
