@@ -27,8 +27,6 @@ int main(int argc, char* argv[])
     XcpApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
-    int rc = 0;
-
     QQmlEngine engine;
     QQmlComponent component(&engine);
 
