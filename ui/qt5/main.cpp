@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     component.loadUrl(QUrl("qrc:/quick/MainWindow.qml"));
 
     if (!component.isReady() ) {
-        qFatal() << component.errorString();
+        qFatal("%s", component.errorString().toUtf8().constData());
     }
 
     QObject *topLevel = component.create();
