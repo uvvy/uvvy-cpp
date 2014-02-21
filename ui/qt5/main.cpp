@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     // }
     std::shared_ptr<ssu::host> host =
         ssu::host::create(settings_provider::instance());
-    ContactModel* model = new ContactModel(host);
+    ContactModel* model = new ContactModel(host, settings_provider::instance());
 
     XcpApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
