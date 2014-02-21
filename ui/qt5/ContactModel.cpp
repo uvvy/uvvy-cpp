@@ -28,6 +28,7 @@ enum {
     Owner_LastName,
     Owner_NickName,
     City,
+    AvatarURL,
     MaxRoles
 };
 
@@ -535,8 +536,8 @@ QHash<int, QByteArray> ContactModel::roleNames() const
     roles[Owner_LastName] = "lastName";
     roles[Owner_NickName] = "nickName";
     roles[City] = "city";
+    roles[AvatarURL] = "avatarUrl";
     // "mood"
     // "email"
-    // "avatarUrl"
     return roles;
 }
