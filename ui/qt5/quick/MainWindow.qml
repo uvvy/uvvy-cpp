@@ -40,7 +40,7 @@ ApplicationWindow
         anchors.fill: parent
         ListView {
             anchors.fill: parent
-            model: ContactModel {}
+            model: contactModel
             delegate: UserCard {}
             highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
             focus: true

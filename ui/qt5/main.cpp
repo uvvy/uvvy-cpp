@@ -1,12 +1,11 @@
 // #include "arsenal/logging.h"
-// #include "ssu/host.h"
-// #include "arsenal/settings_provider.h"
-//#include "MainWindow.h"
-// #include "PeerTableModel.h"
-
+#include "ssu/host.h"
+#include "arsenal/settings_provider.h"
+#include "PeerTableModel.h"
 #include "XcpApplication.h"
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlComponent>
+#include <QtQml/QQmlContext>
 #include <QtQuick/QQuickWindow>
 #include <QtCore/QUrl>
 #include <QDebug>
@@ -20,15 +19,18 @@ int main(int argc, char* argv[])
     // if (!verbose_debug) {
         // logger::set_verbosity(logger::verbosity::info);
     // }
-    // std::shared_ptr<ssu::host> host =
-    //     ssu::host::create(settings_provider::instance());
-    // PeerTableModel* model = new PeerTableModel(host);
+    std::shared_ptr<ssu::host> host =
+        ssu::host::create(settings_provider::instance());
+    PeerTableModel* model = new PeerTableModel(host);
 
     XcpApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
 
     QQmlEngine engine;
     QQmlComponent component(&engine);
+
+    QQmlContext *context = new QQmlContext(engine.rootContext());
+    context->setContextProperty("contactModel", model);
 
     QObject::connect(&engine, SIGNAL(quit()), QCoreApplication::instance(), SLOT(quit()));
 
@@ -38,7 +40,7 @@ int main(int argc, char* argv[])
         qFatal("%s", component.errorString().toUtf8().constData());
     }
 
-    QObject *topLevel = component.create();
+    QObject *topLevel = component.create(context);
     QQuickWindow *window = qobject_cast<QQuickWindow*>(topLevel);
 
     QSurfaceFormat surfaceFormat = window->requestedFormat();
