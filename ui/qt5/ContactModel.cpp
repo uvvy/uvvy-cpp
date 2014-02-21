@@ -109,11 +109,6 @@ public:
     internal::regserver_client client_;
     QList<Peer> peers_;
 
-    /**
-     * Data defining the table headers, by <column, role>.
-     */
-    QHash<QPair<int,int>, QVariant> headers_;
-
     // Save/load peer list in settings if not nullptr
     shared_ptr<settings_provider> settings_;
 
@@ -121,15 +116,6 @@ public:
         : parent_(parent)
         , client_(h)
     {
-        // Set up default header labels
-        headers_.insert(QPair<int,int>(Name, Qt::DisplayRole), tr("Name"));
-        headers_.insert(QPair<int,int>(EID, Qt::DisplayRole), tr("Host ID"));
-        headers_.insert(QPair<int,int>(Host, Qt::DisplayRole), tr("Host name"));
-        headers_.insert(QPair<int,int>(Owner_FirstName, Qt::DisplayRole), tr("First name"));
-        headers_.insert(QPair<int,int>(Owner_LastName, Qt::DisplayRole), tr("Last name"));
-        headers_.insert(QPair<int,int>(Owner_NickName, Qt::DisplayRole), tr("Nickname"));
-        headers_.insert(QPair<int,int>(City, Qt::DisplayRole), tr("City"));
-
         client_.on_ready.connect([this] {
             logger::debug() << "client ready";
             client_.search(""); // Trigger listing of all available peers.
