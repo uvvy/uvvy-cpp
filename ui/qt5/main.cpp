@@ -1,4 +1,3 @@
-// #include "arsenal/logging.h"
 #include "ssu/host.h"
 #include "arsenal/settings_provider.h"
 #include "ContactModel.h"
