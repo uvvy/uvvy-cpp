@@ -224,7 +224,7 @@ QModelIndex ContactModel::parent(const QModelIndex &child) const
 
 QModelIndex ContactModel::index(int row, int column, const QModelIndex &parent) const
 {
-    return QModelIndex();
+    return createIndex(row, column, &m_pimpl->peers_[row]);
 }
 
 int ContactModel::insert(ssu::peer_id const& eid, QString name)
