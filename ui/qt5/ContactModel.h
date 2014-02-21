@@ -8,8 +8,8 @@
 //
 #pragma once
 
-#include <QAbstractTableModel>
-#include <memory>
+#include <QAbstractItemModel>
+// #include <memory>
 
 class settings_provider;
 namespace ssu {
@@ -18,30 +18,40 @@ namespace ssu {
 }
 
 /**
- * Qt table model describing a list of peers.
- * The first column always lists the human-readable peer names,
- * and the second column always lists the base64 encodings of the host IDs.
- * (A UI would typically hide the second column except in "advanced" mode.)
+ * Qt item model describing a list of peers.
+ * There are roles bindings for QML:
+ *
+ * - firstName
+ * - lastName
+ * - nickName
+ * - mood
+ * - eid
+ * - email
+ * - avatarUrl
+ *
  * An arbitrary number of additional columns can hold dynamic content:
  * e.g., online status information about each peer.
  */
-class PeerTableModel : public QAbstractTableModel
+class ContactModel : public QAbstractItemModel
 {
     Q_OBJECT
     class Private;
     std::shared_ptr<Private> m_pimpl;
 
 public:
-    PeerTableModel(std::shared_ptr<ssu::host> h, QObject *parent = 0);
-    PeerTableModel(std::shared_ptr<ssu::host> h, std::shared_ptr<settings_provider> s, QObject *parent = 0);
+    ContactModel(std::shared_ptr<ssu::host> h, QObject *parent = 0);
+    ContactModel(std::shared_ptr<ssu::host> h, std::shared_ptr<settings_provider> s, QObject *parent = 0);
+
+    // QAbstractItemModel methods for QML:
+    QHash<int, QByteArray> roleNames() const override;
+
+    QModelIndex parent(const QModelIndex &child) const override;
+    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
 
     // AbstractTableModel methods;
     int rowCount(const QModelIndex &parent) const override;
     int columnCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
-    QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
-    bool setHeaderData(int section, Qt::Orientation orientation,
-        const QVariant& value, int role = Qt::EditRole) override;
     Qt::ItemFlags flags(const QModelIndex &index) const override;
     bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole) override;
     bool insertRows(int position, int rows, const QModelIndex &index=QModelIndex()) override;

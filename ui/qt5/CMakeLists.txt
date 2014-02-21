@@ -12,16 +12,14 @@ find_package(Qt5Widgets REQUIRED)
 
 set(mettanode_SOURCES
     main.cpp
-    #MainWindow.cpp
     ProfileEditor.cpp
-    PeerTableModel.cpp
-    PeerPicker.cpp
+    ContactModel.cpp
+    #PeerPicker.cpp
     XcpApplication.cpp
     Meter.cpp)
 set(mettanode_FORMS
-    #MainWindow.ui
     ProfileEditor.ui
-    PeerPickerWindow.ui
+    #PeerPickerWindow.ui
     SingleCallWidget.ui)
 
 set(mettanode_RESOURCES ui.qrc)

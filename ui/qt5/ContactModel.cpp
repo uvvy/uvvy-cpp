@@ -8,7 +8,7 @@
 //
 #include <QVector>
 #include <QDebug>
-#include "PeerTableModel.h"
+#include "ContactModel.h"
 #include "routing/private/regserver_client.h"
 #include "routing/client_profile.h"
 #include "client_utils.h"
@@ -21,14 +21,14 @@ using namespace uia::routing;
 
 // @todo move to public API?
 enum {
-    Name = 0,
-    EID = 1,
-    Host = 2,
-    Owner_FirstName = 3,
-    Owner_LastName = 4,
-    Owner_NickName = 5,
-    City = 6,
-    MaxColumns
+    Name = Qt::UserRole,
+    EID,
+    Host,
+    Owner_FirstName,
+    Owner_LastName,
+    Owner_NickName,
+    City,
+    MaxRoles
 };
 
 struct Peer
@@ -57,7 +57,8 @@ struct Peer
 
     void initFlags()
     {
-        flags_.resize(MaxColumns);
+        // FIXME: probably not applicable for generic itemmodel?
+        flags_.resize(1);
         for (auto& f : flags_) {
             f = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
         }
@@ -77,7 +78,7 @@ flurry::iarchive& operator >> (flurry::iarchive& in, QString& str)
 {
     std::string s;
     in >> s;
-    str = QString(s.c_str()); // @fixme That is a fromAscii() conversion...
+    str = QString::fromUtf8(s.c_str());
     return in;
 }
 
@@ -97,13 +98,13 @@ flurry::iarchive& operator >> (flurry::iarchive& in, Peer& peer)
 }
 
 //=================================================================================================
-// PeerTableModel private implementation
+// ContactModel private implementation
 //=================================================================================================
 
-class PeerTableModel::Private
+class ContactModel::Private
 {
 public:
-    PeerTableModel* parent_;
+    ContactModel* parent_;
     internal::regserver_client client_;
     QList<Peer> peers_;
 
@@ -115,7 +116,7 @@ public:
     // Save/load peer list in settings if not nullptr
     shared_ptr<settings_provider> settings_;
 
-    Private(PeerTableModel* parent, ssu::host *h)
+    Private(ContactModel* parent, ssu::host *h)
         : parent_(parent)
         , client_(h)
     {
@@ -200,23 +201,33 @@ public:
     }
 };
 
-PeerTableModel::PeerTableModel(shared_ptr<ssu::host> h, QObject *parent)
-    : QAbstractTableModel(parent)
+ContactModel::ContactModel(shared_ptr<ssu::host> h, QObject *parent)
+    : QAbstractItemModel(parent)
     , m_pimpl(make_shared<Private>(this, h.get()))
 {
     m_pimpl->connectRegservers();
 }
 
-PeerTableModel::PeerTableModel(shared_ptr<ssu::host> h, shared_ptr<settings_provider> s,
+ContactModel::ContactModel(shared_ptr<ssu::host> h, shared_ptr<settings_provider> s,
     QObject *parent)
-    : QAbstractTableModel(parent)
+    : QAbstractItemModel(parent)
     , m_pimpl(make_shared<Private>(this, h.get()))
 {
     useSettings(s);
     m_pimpl->connectRegservers();
 }
 
-int PeerTableModel::insert(ssu::peer_id const& eid, QString name)
+QModelIndex ContactModel::parent(const QModelIndex &child) const
+{
+    return QModelIndex();
+}
+
+QModelIndex ContactModel::index(int row, int column, const QModelIndex &parent) const
+{
+    return QModelIndex();
+}
+
+int ContactModel::insert(ssu::peer_id const& eid, QString name)
 {
     int row = rowWithId(eid);
     if (row >= 0)
@@ -241,7 +252,7 @@ int PeerTableModel::insert(ssu::peer_id const& eid, QString name)
     return row;
 }
 
-void PeerTableModel::remove(ssu::peer_id const& eid)
+void ContactModel::remove(ssu::peer_id const& eid)
 {
     int row = rowWithId(eid);
     if (row < 0) {
@@ -260,12 +271,12 @@ void PeerTableModel::remove(ssu::peer_id const& eid)
     Q_EMIT peerRemoved(eid);
 }
 
-QString PeerTableModel::name(int row) const
+QString ContactModel::name(int row) const
 {
     return m_pimpl->peers_[row].name_;
 }
 
-QString PeerTableModel::name(ssu::peer_id const& eid, QString const& defaultName) const
+QString ContactModel::name(ssu::peer_id const& eid, QString const& defaultName) const
 {
     int row = rowWithId(eid);
     if (row < 0)
@@ -273,12 +284,12 @@ QString PeerTableModel::name(ssu::peer_id const& eid, QString const& defaultName
     return name(row);
 }
 
-ssu::peer_id PeerTableModel::id(int row) const
+ssu::peer_id ContactModel::id(int row) const
 {
     return m_pimpl->peers_[row].eid_;
 }
 
-QList<ssu::peer_id> PeerTableModel::ids() const
+QList<ssu::peer_id> ContactModel::ids() const
 {
     QList<ssu::peer_id> ids;
     for (auto& peer : m_pimpl->peers_) {
@@ -287,7 +298,7 @@ QList<ssu::peer_id> PeerTableModel::ids() const
     return ids;
 }
 
-int PeerTableModel::rowWithId(ssu::peer_id const& eid) const
+int ContactModel::rowWithId(ssu::peer_id const& eid) const
 {
     for (int i = 0; i < m_pimpl->peers_.size(); i++)
         if (m_pimpl->peers_[i].eid_ == eid)
@@ -295,24 +306,25 @@ int PeerTableModel::rowWithId(ssu::peer_id const& eid) const
     return -1;
 }
 
-int PeerTableModel::count() const
+int ContactModel::count() const
 {
     return m_pimpl->peers_.size();
 }
 
-int PeerTableModel::rowCount(const QModelIndex &parent) const
+int ContactModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return count();
 }
 
-int PeerTableModel::columnCount(const QModelIndex &parent) const
+int ContactModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return MaxColumns;
+    return 1;
+    // return MaxColumns;
 }
 
-void PeerTableModel::insertAt(int row, ssu::peer_id const& eid, QString const& name)
+void ContactModel::insertAt(int row, ssu::peer_id const& eid, QString const& name)
 {
     Peer p;
     p.name_ = name;
@@ -321,7 +333,7 @@ void PeerTableModel::insertAt(int row, ssu::peer_id const& eid, QString const& n
     m_pimpl->peers_.insert(row, p);
 }
 
-bool PeerTableModel::insertRows(int position, int rows, const QModelIndex &index)
+bool ContactModel::insertRows(int position, int rows, const QModelIndex &index)
 {
     Q_UNUSED(index);
     beginInsertRows(QModelIndex(), position, position+rows-1);
@@ -336,7 +348,7 @@ bool PeerTableModel::insertRows(int position, int rows, const QModelIndex &index
     return true;
 }
 
-bool PeerTableModel::removeRows(int position, int rows, const QModelIndex &index)
+bool ContactModel::removeRows(int position, int rows, const QModelIndex &index)
 {
     Q_UNUSED(index);
     beginRemoveRows(QModelIndex(), position, position+rows-1);
@@ -349,14 +361,14 @@ bool PeerTableModel::removeRows(int position, int rows, const QModelIndex &index
     return true;
 }
 
-void PeerTableModel::updateData(int row)
+void ContactModel::updateData(int row)
 {
     // NB: this resets all selections made by user...
     /*reset();*/ // Until I fix model indexes, full reload will do.
     // emit dataChanged(index(row, 0), index(row, columnCount(QModelIndex())));
 }
 
-QVariant PeerTableModel::data(const QModelIndex &index, int role) const
+QVariant ContactModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
         return QVariant();
@@ -365,144 +377,112 @@ QVariant PeerTableModel::data(const QModelIndex &index, int role) const
     if (index.row() >= ssize_t(m_pimpl->peers_.size()) || index.row() < 0) {
         return QVariant();
     }
+    Q_ASSERT(index.column() == 0);
 
     auto peer = m_pimpl->peers_.at(index.row());
 
-    int column = index.column();
-    if (column == Name and (role == Qt::DisplayRole or role == Qt::EditRole))
+    if (role == Name) {
         return peer.name_;
-
-    if (role == Qt::DisplayRole) {
-        if (column == EID) {
-            return peer.eid_.to_string().c_str();
-        }
-        else if (column == Host) {
-            return peer.profile_.host_name().c_str();
-        }
-        else if (column == Owner_FirstName) {
-            return peer.profile_.owner_firstname().c_str();
-        }
-        else if (column == Owner_LastName) {
-            return peer.profile_.owner_lastname().c_str();
-        }
-        else if (column == Owner_NickName) {
-            return peer.profile_.owner_nickname().c_str();
-        }
-        else if (column == City) {
-            return peer.profile_.city().c_str();
-        }
     }
-    return peer.additional_data_.value(QPair<int,int>(column, role));
+    else if (role == EID) {
+        return peer.eid_.to_string().c_str();
+    }
+    else if (role == Host) {
+        return peer.profile_.host_name().c_str();
+    }
+    else if (role == Owner_FirstName) {
+        return peer.profile_.owner_firstname().c_str();
+    }
+    else if (role == Owner_LastName) {
+        return peer.profile_.owner_lastname().c_str();
+    }
+    else if (role == Owner_NickName) {
+        return peer.profile_.owner_nickname().c_str();
+    }
+    else if (role == City) {
+        return peer.profile_.city().c_str();
+    }
+    return QVariant();
+    // return peer.additional_data_.value(QPair<int,int>(column, role));
 }
 
-bool PeerTableModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool ContactModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     int row = index.row();
     if (row < 0 or row >= count()) {
         return false;
     }
+    Q_ASSERT(index.column() == 0);
 
-    int column = index.column();
-    if (column < 0 or column == 1 or column >= MaxColumns) {
+    if (role == Name)
+    {
+        // Changing a peer's human-readable name.
+        QString str = value.toString();
+        if (str.isEmpty()) {
+            str = tr("(unnamed peer)");
+        }
+
+        m_pimpl->peers_[row].name_ = str;
+        writeSettings();
+        dataChanged(index, index);
+        return true;
+    }
+    else if (role == EID) {
         return false;
     }
-
-    if (role == Qt::DisplayRole or role == Qt::EditRole)
-    {
-        if (column == Name)
-        {
-            // Changing a peer's human-readable name.
-            QString str = value.toString();
-            if (str.isEmpty()) {
-                str = tr("(unnamed peer)");
-            }
-
-            m_pimpl->peers_[row].name_ = str;
-            writeSettings();
-            dataChanged(index, index);
-            return true;
-        }
-        else if (column == EID) {
-            return false;
-        }
-        else if (column == Host) {
-            return false;
-        }
-        else if (column == Owner_FirstName) {
-            return false;
-        }
-        else if (column == Owner_LastName) {
-            return false;
-        }
-        else if (column == Owner_NickName) {
-            return false;
-        }
-        else if (column == City) {
-            return false;
-        }
+    else if (role == Host) {
+        return false;
+    }
+    else if (role == Owner_FirstName) {
+        return false;
+    }
+    else if (role == Owner_LastName) {
+        return false;
+    }
+    else if (role == Owner_NickName) {
+        return false;
+    }
+    else if (role == City) {
+        return false;
     }
 
     // Changing some dynamic table content.
-    m_pimpl->peers_[row].additional_data_.insert(QPair<int,int>(column,role), value);
-    Q_EMIT dataChanged(index, index);
-    return true;
+    // m_pimpl->peers_[row].additional_data_.insert(QPair<int,int>(column,role), value);
+    // Q_EMIT dataChanged(index, index);
+    // return true;
+    return false;
 }
 
-QVariant PeerTableModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (orientation != Qt::Horizontal)
-        return QVariant();
-
-    return m_pimpl->headers_.value(QPair<int,int>(section, role));
-}
-
-bool PeerTableModel::setHeaderData(int section, Qt::Orientation orientation,
-    const QVariant& value, int role)
-{
-    if (orientation != Qt::Horizontal) {
-        return false;
-    }
-
-    if (section < 0 || section >= MaxColumns) {
-        return false;
-    }
-
-    m_pimpl->headers_.insert(QPair<int,int>(section,role), value);
-    return true;
-}
-
-Qt::ItemFlags PeerTableModel::flags(const QModelIndex &index) const
+Qt::ItemFlags ContactModel::flags(const QModelIndex &index) const
 {
     int row = index.row();
     if (row < 0 or row >= count()) {
         return 0;
     }
 
-    int col = index.column();
-    if (col < 0 or col >= MaxColumns) {
+    if (index.column() != 0) {
         return 0;
     }
 
-    return m_pimpl->peers_[row].flags_[col];
+    return m_pimpl->peers_[row].flags_[0];
 }
 
-bool PeerTableModel::setFlags(const QModelIndex &index, Qt::ItemFlags flags)
+bool ContactModel::setFlags(const QModelIndex &index, Qt::ItemFlags flags)
 {
     int row = index.row();
     if (row < 0 or row >= count()) {
         return false;
     }
 
-    int col = index.column();
-    if (col < 0 or col >= MaxColumns) {
+    if (index.column() != 0) {
         return false;
     }
 
-    m_pimpl->peers_[row].flags_[col] = flags;
+    m_pimpl->peers_[row].flags_[0] = flags;
     return true;
 }
 
-void PeerTableModel::useSettings(std::shared_ptr<settings_provider> settings)
+void ContactModel::useSettings(std::shared_ptr<settings_provider> settings)
 {
     Q_ASSERT(!m_pimpl->settings_);
     Q_ASSERT(settings);
@@ -526,7 +506,7 @@ void PeerTableModel::useSettings(std::shared_ptr<settings_provider> settings)
     }
 }
 
-void PeerTableModel::writeSettings()
+void ContactModel::writeSettings()
 {
     if (!m_pimpl->settings_)
         return;
@@ -543,4 +523,20 @@ void PeerTableModel::writeSettings()
 
     m_pimpl->settings_->set("peers", data);
     m_pimpl->settings_->sync();
+}
+
+QHash<int, QByteArray> ContactModel::roleNames() const
+{
+    QHash<int, QByteArray> roles;
+    roles[Name] = "displayName";
+    roles[EID] = "eid";
+    roles[Host] = "host";
+    roles[Owner_FirstName] = "firstName";
+    roles[Owner_LastName] = "lastName";
+    roles[Owner_NickName] = "nickName";
+    roles[City] = "city";
+    // "mood"
+    // "email"
+    // "avatarUrl"
+    return roles;
 }

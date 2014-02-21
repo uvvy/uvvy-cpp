@@ -1,7 +1,7 @@
 // #include "arsenal/logging.h"
 #include "ssu/host.h"
 #include "arsenal/settings_provider.h"
-#include "PeerTableModel.h"
+#include "ContactModel.h"
 #include "XcpApplication.h"
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlComponent>
@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
     // }
     std::shared_ptr<ssu::host> host =
         ssu::host::create(settings_provider::instance());
-    PeerTableModel* model = new PeerTableModel(host);
+    ContactModel* model = new ContactModel(host);
 
     XcpApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
