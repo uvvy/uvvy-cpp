@@ -19,8 +19,12 @@ Component {
             Column {
                 spacing: 3
                 Text {
-                    text: nickName
+                    text: displayName
                     font.pixelSize: 24
+                }
+                Text {
+                    text: nickName
+                    font.pixelSize: 20
                 }
                 Text {
                     text: firstName
@@ -29,6 +33,18 @@ Component {
                 Text {
                     text: lastName
                     font.pixelSize: 14
+                }
+                Text {
+                    text: host
+                    font.pixelSize: 10
+                }
+                Text {
+                    text: city
+                    font.pixelSize: 10
+                }
+                Text {
+                    text: eid
+                    font.pixelSize: 8
                 }
             }
             Column {
