@@ -24,6 +24,12 @@ public:
         nat_ = traverse_nat(host_);
     }
 
+    ~HostState()
+    {
+        host_->get_io_service().stop();
+        runner_.join();
+    }
+
     inline std::shared_ptr<ssu::host> host() const { return host_; }
     inline std::shared_ptr<settings_provider> settings() const { return settings_; }
 };
