@@ -7,6 +7,8 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <QVector>
+#include <QCryptographicHash>
+#include <QUrl>
 #include <QDebug>
 #include "ContactModel.h"
 #include "routing/private/regserver_client.h"
@@ -27,6 +29,7 @@ enum {
     Owner_FirstName,
     Owner_LastName,
     Owner_NickName,
+    Owner_Email,
     City,
     AvatarURL,
     MaxRoles
@@ -383,11 +386,21 @@ QVariant ContactModel::data(const QModelIndex &index, int role) const
     else if (role == Owner_LastName) {
         return peer.profile_.owner_lastname().c_str();
     }
+    else if (role == Owner_Email) {
+        return peer.profile_.owner_email().c_str();
+    }
     else if (role == Owner_NickName) {
         return peer.profile_.owner_nickname().c_str();
     }
     else if (role == City) {
         return peer.profile_.city().c_str();
+    }
+    else if (role == AvatarURL) {
+        // Must have a valid email registered to make a gravatar url:
+        QString str(peer.profile_.owner_email().c_str());
+        QString hash(QCryptographicHash::hash(str.toLower().trimmed().toUtf8(), QCryptographicHash::Md5).toHex());
+        QString url = QString("http://gravatar.com/avatar/%1?s=96&d=retro").arg(hash);
+        return QUrl(url);
     }
     return QVariant();
     // return peer.additional_data_.value(QPair<int,int>(column, role));
