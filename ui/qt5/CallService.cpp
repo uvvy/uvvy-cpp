@@ -6,67 +6,52 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include <QHostInfo>
-#include <QMessageBox>
-#include <thread>
-#include "PeerPicker.h"
-#include "PeerTableModel.h"
-#include "arsenal/settings_provider.h"
-#include "ssu/host.h"
-#include "routing/client_profile.h"
-#include "voicebox/audio_service.h"
+#include "CallService.h"
 
 using namespace std;
 using namespace ssu;
 
-class PeerPicker::Private
+CallService::CallService(HostState& s, QObject *parent)
+    : QObject(parent)
+    , audioclient_(s.host())
 {
-public:
-    voicebox::audio_service audioclient_;
-
-    Private()
-        , audioclient_(host_)
-    {
-        audioclient_.listen_incoming_session();
-    }
-};
-
-PeerPicker::PeerPicker(QWidget *parent)
-    : QMainWindow(parent)
-    , m_pimpl(make_shared<Private>())
-{
-    m_pimpl->audioclient_.on_session_started.connect([this] {
+    audioclient_.on_session_started.connect([this] {
         // Less detailed logging while in real-time
         logger::set_verbosity(logger::verbosity::warnings);
-        selectedPeerText->appendPlainText("Call started\n");
-        buttonCall->setText("Hang up");
+        // Todo: post this to GUI thread? Signals work fine across threads boundaries.
+        emit callStarted();
     });
 
-    m_pimpl->audioclient_.on_session_finished.connect([this] {
+    audioclient_.on_session_finished.connect([this] {
         // More detailed logging while not in real-time
         logger::set_verbosity(logger::verbosity::debug);
-        selectedPeerText->appendPlainText("Call finished\n");
-        buttonCall->setText("Call");
+        // Todo: post this to GUI thread? Signals work fine across threads boundaries.
+        emit callFinished();
     });
 
-    connect(actionCall, SIGNAL(triggered()), this, SLOT(call()));
+    audioclient_.listen_incoming_session();
+
+    // connect(actionCall, SIGNAL(triggered()), this, SLOT(call()));
 }
 
-void PeerPicker::call()
+void CallService::makeCall(QString callee_eid)
 {
-    if (m_pimpl->audioclient_.is_active()) {
-        m_pimpl->audioclient_.end_session();
-    }
-    else
-    {
-        //get the text of the selected item
-        const QModelIndex index = peersTableView->selectionModel()->currentIndex();
-        const QModelIndex index2 = index.model()->index(index.row(), 1);
-        QString selectedText = index2.data(Qt::DisplayRole).toString();
+    if (isCallActive())
+        return;
 
-        buttonCall->setText("Calling...");
+    audioclient_.establish_outgoing_session(
+        string(callee_eid.toUtf8().constData()), vector<string>());
+}
 
-        m_pimpl->audioclient_.establish_outgoing_session(
-            string(selectedText.toUtf8().constData()), vector<string>());
+void CallService::hangUp()
+{
+    if (isCallActive()) {
+        audioclient_.end_session();
     }
 }
+
+bool CallService::isCallActive() const
+{
+    return audioclient_.is_active();
+}
+

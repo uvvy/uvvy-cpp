@@ -14,12 +14,11 @@ set(mettanode_SOURCES
     main.cpp
     ProfileEditor.cpp
     ContactModel.cpp
-    #PeerPicker.cpp
+    CallService.cpp
     XcpApplication.cpp
     Meter.cpp)
 set(mettanode_FORMS
     ProfileEditor.ui
-    #PeerPickerWindow.ui
     SingleCallWidget.ui)
 
 set(mettanode_RESOURCES ui.qrc)
