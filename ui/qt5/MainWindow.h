@@ -1,37 +1,18 @@
 #pragma once
 
-#include <QMainWindow>
-#include <QModelIndex>
-#include <QSystemTrayIcon>
-#include "ui_MainWindow.h"
+#include <QtQml/QQmlEngine>
+#include <QtQml/QQmlComponent>
+#include <QtQuick/QQuickWindow>
 
-class QTableView;
-class PeerTableModel;
+class ContactModel;
 
-class MainWindow : public QMainWindow, private Ui::MainWindow
+class MainWindow
 {
-    Q_OBJECT
+    QQmlEngine engine_;
+    QQmlComponent component_;
+    QQuickWindow* window_;
 
 public:
-    MainWindow(PeerTableModel* model, QWidget* parent = nullptr);
-    ~MainWindow();
-
-protected:
-    // Re-implement to watch for window activate/deactivate events.
-    virtual bool event(QEvent *event);
-    virtual void closeEvent(QCloseEvent *event);
-
-private:
-    int selectedFriend();
-
-private slots:
-    void openAbout();
-    void exitApp();
-    void updateMenus();
-    void friendsClicked(const QModelIndex &index);
-    void trayActivate(QSystemTrayIcon::ActivationReason);
-
-    void openProfile();
-    void reloadProfile();
+    MainWindow(ContactModel* model);
+    inline void show() { window_->show(); }
 };
-

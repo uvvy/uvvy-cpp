@@ -1,48 +1,35 @@
-#include <QMessageBox>
-#include <QCloseEvent>
-#include <QTableView>
-#include <QHeaderView>
-#include <QApplication>
 #include "MainWindow.h"
-#include "ProfileEditor.h"
-#include "PeerTableModel.h"
-#include "UserCard.h"
-#include "macsupport.h"
+#include "ContactModel.h"
+#include "XcpApplication.h"
+#include <QtQml/QQmlContext>
 
-// Columns in PeerTable
-#define NCOLS       6
-// default ones
-#define COL_NAME    0
-#define COL_EID     1
-// custom
-#define COL_ONLINE  2
-#define COL_FILES   3
-#define COL_TALK    4
-#define COL_LISTEN  5
-
-MainWindow::MainWindow(PeerTableModel* model, QWidget* parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(ContactModel* model)
+    : engine_()
+    , component_(&engine_)
 {
-    setupUi(this); // this sets up GUI
+    QQmlContext *context = new QQmlContext(engine_.rootContext());
+    context->setContextProperty("contactModel", model);
 
-    QIcon appicon(":/img/mettanode.png");
+    QObject::connect(&engine_, SIGNAL(quit()), XcpApplication::instance(), SLOT(quit()));
 
-    setWindowTitle(tr("MettaNode"));
-    setWindowIcon(appicon);
+    component_.loadUrl(QUrl("qrc:/quick/MainWindow.qml"));
 
-    // Create a ListView onto our friends list, as the central widget
-    Q_ASSERT(model);
-    peerlist->setModel(model);
-    peerlist->setItemDelegate(new UserCardDelegate(peerlist));
-    // peerlist->setSelectionBehavior(QTableView::SelectRows);
-    connect(peerlist, SIGNAL(clicked(const QModelIndex&)),
-        this, SLOT(friendsClicked(const QModelIndex&)));
-    connect(peerlist->selectionModel(),
-        SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)),
-        this, SLOT(updateMenus()));
-    setCentralWidget(peerlist);
+    if (!component_.isReady() ) {
+        qFatal("%s", component_.errorString().toUtf8().constData());
+    }
 
-    connect(actionProfile, SIGNAL(triggered()), this, SLOT(openProfile()));
+    QObject *topLevel = component_.create(context);
+    window_ = qobject_cast<QQuickWindow*>(topLevel);
+
+    QSurfaceFormat surfaceFormat = window_->requestedFormat();
+    window_->setFormat(surfaceFormat);
+}
+
+#if 0
+    // QIcon appicon(":/img/mettanode.png");
+
+    // setWindowTitle(tr("MettaNode"));
+    // setWindowIcon(appicon);
 
     // Create a "Friends" toolbar providing friends list controls
     // XX need icons
@@ -329,10 +316,4 @@ void MainWindow::closeEvent(QCloseEvent *event)
     event->ignore();
     hide();
 }
-
-void MainWindow::exitApp()
-{
-    qDebug("MainWindow exit");
-    QApplication::exit(0);
-}
-
+#endif
