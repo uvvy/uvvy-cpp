@@ -1,7 +1,6 @@
-#include "ssu/host.h"
-#include "arsenal/settings_provider.h"
 #include "ContactModel.h"
 #include "XcpApplication.h"
+#include "HostState.h"
 #include <QtQml/QQmlEngine>
 #include <QtQml/QQmlComponent>
 #include <QtQml/QQmlContext>
@@ -9,33 +8,9 @@
 #include <QtCore/QUrl>
 #include <QDebug>
 #include <memory>
-#include "traverse_nat.h"
 
 using namespace std;
 using namespace ssu;
-
-/**
- * HostState embeds settings, NAT traversal and io_service runner for the SSU host.
- */
-class HostState
-{
-    shared_ptr<settings_provider> settings_;
-    shared_ptr<host> host_;
-    shared_ptr<upnp::UpnpIgdClient> nat_;
-    std::thread runner_; // Thread to run io_service (@todo Could be a thread pool)
-
-public:
-    HostState()
-        : settings_(settings_provider::instance())
-        , host_(host::create(settings_))
-        , runner_([this] { host_->run_io_service(); })
-    {
-        nat_ = traverse_nat(host_);
-    }
-
-    inline shared_ptr<host> host() const { return host_; }
-    inline shared_ptr<settings_provider> settings() const { return settings_; }
-};
 
 class MainWindow
 {
