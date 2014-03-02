@@ -1,5 +1,6 @@
 Topmost 3 tasks:
  ☐ Switching UI to QtQuick and Qt5
+   ☐ Make calling window work (send signals to start/stop call, update status)
 
 Crashes:
  ☐ This happens on second call attempt on one of the clients (far side?)
@@ -18,19 +19,16 @@ Structure:
 
 UI:
  ☐ Draw UI sketches for contacts list,
- ☐ chat,
- ☐ audio/video call window,
- ☐ file transfers,
- ☐ folder sync,
- ☐ bandwidth utilisation/packet throughput graph window (like in Source).
+   ☐ chat,
+   ☐ audio/video call window,
+   ☐ file transfers,
+   ☐ folder sync,
+   ☐ bandwidth utilisation/packet throughput graph window (like in Source).
  ☐ Handle empty settings_provider config gracefully!
  ☐ Maintain partial discoloration for online icon based on "stall count"
    e.g. second stall online icon is 2/3 colored, third stall icon is 1/3 colored, then offline (online-66%, online-33%)
    first stall is ignored as possibly temporary glitch
- ☐ Deploy nshd to motoko?
  ☐ how to perform search? an ESC-interface sounds intriguing
- ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
-    Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol?
 
 Voice calls:
  ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
@@ -41,7 +39,6 @@ Voice calls:
  ✔ Establish clock skew estimation and use it to drive jitterbuffer.
    ☐ (Adjust received packets time to local machine time, drop too old packets immediately.)
       See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
-
 
 Chats:
  ☐ Sync history between instances
@@ -131,7 +128,8 @@ Routing:
  ☐ BUG: Crashes on access to client_profile.endpoints() if no endpoints was provided by the client.
 
  ☐ Regserver uses unencrypted network traffic.
-   ☐ a) switch regserver to use regular ssu streams
+   ☐ a) switch regserver to use regular ssu streams -- in progress
+     ☐ add non-encrypted channel armor
    ☐ b) move regserver to a regular ssu protocol
    ☐ c) run regserver inside host on the same port
    ☐ d) regserver shall be integral part of each participating node
@@ -151,6 +149,9 @@ Structured Streams:
 
   ✔ we actually receive a datagram packet from the other side if it's a datagram, not a substream so simply stuff it into a separate datagram queue? @done (14-01-28 07:43)
     Done this for now, need to investigate setting up reliable or too big datagrams as substreams still, write a test.
+
+ ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
+    Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol? This is bug in Old SST, check if still applicable.
 
  ☐ tx_reset implementation - test
  ☐ implement rx_reset_packet
@@ -226,6 +227,7 @@ Most immediate usability necessities:
 sst/shell:
  ☐ unlock console fds once the shell connection ceases
  ☐ after some waiting time the streams disconnect and mix up
+ ☐ Deploy nshd to motoko?
 
 Testing:
 
@@ -263,4 +265,7 @@ NAT and UPnP:
      PortMappingNumberOfEntries - if changed, might need to re-read the actual mapping information.
      PortMappingLeaseDuration - is decremented and needs to be checked regularly, some seconds before the lease time out the lease must be extended for our port forwardings.
      Therefore, we need to maintain the status of UPnPRouter endpoint.
+
+Cross-compile:
+  QtCreator xcompile to all platforms http://habrahabr.ru/post/198142/
 
