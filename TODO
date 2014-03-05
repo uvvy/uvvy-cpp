@@ -29,6 +29,9 @@ UI:
    e.g. second stall online icon is 2/3 colored, third stall icon is 1/3 colored, then offline (online-66%, online-33%)
    first stall is ignored as possibly temporary glitch
  ☐ how to perform search? an ESC-interface sounds intriguing
+ ☐ Public/friends-only choices on profile items
+ ☐ Profile picture
+ ☐ Log window for log display in real-time.
 
 Voice calls:
  ☐ Handle dissync - Ulric got packets about 3 minutes (!) later,
@@ -130,10 +133,12 @@ Routing:
  ☐ Regserver uses unencrypted network traffic.
    ☐ a) switch regserver to use regular ssu streams -- in progress
      ☐ add non-encrypted channel armor
+       -- requires negotiation work, see below
    ☐ b) move regserver to a regular ssu protocol
    ☐ c) run regserver inside host on the same port
    ☐ d) regserver shall be integral part of each participating node
    ☐ e) regserver will become a part of p2p directory when DHT is implemented
+ ☐ Extract regserver logic/state management to remove code duplication between old and new regserver.
 
 Structured Streams:
  ☐ Need to differentiate between substreams received as result of user actions
@@ -158,18 +163,18 @@ Structured Streams:
  ✔ Split CC into per-strategy subclasses for CC @done (14-01-23 16:03)
  ☐ Read up on Multipath TCP
 
+Keying Negotiation:
+
 zlib_armor
  ☐ using boost.iostreams?
 
  negotiate zlib or bzip2 compression (gzip compression is for files, using same zlib)
 
-encryption/compression negotiation
-
   vector<string> s = {"saes128ctr", "sxsalsa20", "snone", "ahmacsha512256", "czlib", "cnone"};
 
- ☐ saes256ctr  = 's'ymmetric key encryption
- ☐ czlib                = 'c'ompression
- ☐ hmacsha512256        = 'a'uthentication
+ ☐ saes256ctr            = 's'ymmetric key encryption
+ ☐ czlib                 = 'c'ompression
+ ☐ ahmacsha512256        = 'a'uthentication
  ☐ = 'o' options, anything extra - may be protocol specific
 
  ☐ public key system in use? prsa160, pdsa160, pEcdsasomething
@@ -181,6 +186,7 @@ encryption/compression negotiation
   symmetric encryption and authentication are mandatory, compression is optional.
 
   initiator may skip compression request, for example for realtime audio/video streams.
+  compression is not advised for encrypted streams due to watermarking attacks.
 
 public API
 
@@ -192,16 +198,15 @@ Later
  ☐ Drop OPENSSL_LIBRARIES - once nacl supports whatever needed.
  ☐ Change krypto to use cryptobox_*
 
- ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow?)
+ ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow
+    - by generating non-random fixtures?)
  ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
+   - hard atm due to source/sink driver design, look at pjsip ports/master-port idea for proper driver
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
+   - some ssu doc posted on atta-metta.net
  ☐ Automatic launching on host OS login
- ☐ Public/friends-only choices on profile items
- ☐ Profile picture
- ☐ Log window for log display in real-time.
- ☐ Registration server logging to file.
 
  ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document
    ☐ assign IETF RFC number, see http://www.ietf.org/id-info/
@@ -241,12 +246,14 @@ substreams
  ☐ create a lot of substreams rapidly, hold onto them, use them once in a while
  ☐ create and destroy a lot of substreams in rapid succession
  ☐ rapidly create a deep hierarchy of nested substreams
+   - see test_substreams
 
 datagrams
  ☐ send a stream of datagrams of widely varying size
  ☐ send a mix of datagram substreams and real two-way substreams
  ☐ send datagrams with a control side-channel which manages the datagram sending, confirm
    that side-channel has priority.
+
 flow control
  ☐ flow control for byte streams
  ☐ receive window borrowing
@@ -254,7 +261,8 @@ flow control
  ☐ inherited versus independent receive windows
 
 NAT and UPnP:
- ☐ Integrate UPnP into ssu::host.
+ ☐ Integrate UPnP into ssu::host. - should find upnp/natpnp and open necessary port from config
+   when instantiating host, maintain it open for duration of host existence.
  ☐ Integrate hole punching machinery with ssu::host.
  ☐ Assign a new `endpoint` with public IP and UPnP-assigned port number.
    ☐ Use it to register on regserver as primary.
