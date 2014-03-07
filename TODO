@@ -15,7 +15,8 @@ Structure:
      ☐ getting local interface addresses for example
      ☐ need to remove references to ssu::host
        ☐ replace with some kind of template maybe? need to implement an api for registering the link
-         and unregistering the link.
+         and unregistering the link. (link observer/subscriber?)
+         class link_subscriber { virtual void bind() = 0; virtual void unbind() = 0; }; or sth
 
 UI:
  ☐ Draw UI sketches for contacts list,
