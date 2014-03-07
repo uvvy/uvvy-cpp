@@ -169,6 +169,16 @@ Structured Streams:
 
 Keying Negotiation:
 
+  Make symmetric key encryption family of interfaces (for aes, xsalsa etc, implement the ones supported,
+  generate the list of preferred symmetric ciphers using some api, sth like pair<weight,cipher> array?)
+  Same for auth check interfaces.
+
+  the channel armor must stack several operations in a defined order
+  according to optional SST layers:
+    - Privacy (symmetric key cipher)
+    - Integrity (hmac)
+    - Encoding (fec)
+
 zlib_armor
  ☐ using boost.iostreams?
 
