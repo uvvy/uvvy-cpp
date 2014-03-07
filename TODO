@@ -162,7 +162,10 @@ Structured Streams:
  ☐ tx_reset implementation - test
  ☐ implement rx_reset_packet
  ✔ Split CC into per-strategy subclasses for CC @done (14-01-23 16:03)
- ☐ Read up on Multipath TCP
+ ☐ Read up on Multipath TCP (@sa sst spec 4.3)
+
+ ☐ Support obtaining readable descriptions and lists of supported services/protocols (spec 4.4 end)
+   -- started in base_stream.cpp
 
 Keying Negotiation:
 
@@ -177,6 +180,9 @@ zlib_armor
  ☐ czlib                 = 'c'ompression
  ☐ ahmacsha512256        = 'a'uthentication
  ☐ = 'o' options, anything extra - may be protocol specific
+ ☐ also need to negotiate congestion control modes, try Ctcp Cvegas Clowdelay Cfixed,cwndsize etc
+   e.g. Cfixed,32768
+ ☐ also need to negotiate dynamic MSS (spec 3.9)
 
  ☐ public key system in use? prsa160, pdsa160, pEcdsasomething
 
@@ -216,7 +222,7 @@ Most immediate usability necessities:
    ☐ datagram reassembly
    ☐ stream attachment and detachment
    ☐ proper stream ID allocation & assignment
-   ☐ implement and use sequencing barriers properly (spec 3.4.1)
+   ☐ implement and use sequencing barriers properly (spec 3.4.1, also Figure 15 page 18)
  ☐ specify and fix negotiation protocol format
 
  ☐ give priority to local-network Endpoint addresses first (need to match network against available interfaces' IPs)
