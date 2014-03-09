@@ -6,8 +6,11 @@ import QtQuick.Layouts 1.0
 ApplicationWindow
 {
     title: "MettaNode"
+    id: mainWindow
     width: 600
     height: 400
+
+    signal startCall(string eid)
 
     MenuBar {
         Menu {

@@ -2,6 +2,7 @@
 #include "ContactModel.h"
 #include "XcpApplication.h"
 #include <QtQml/QQmlContext>
+#include <QDebug>
 
 MainWindow::MainWindow(ContactModel* model)
     : engine_()
@@ -21,8 +22,16 @@ MainWindow::MainWindow(ContactModel* model)
     QObject *topLevel = component_.create(context);
     window_ = qobject_cast<QQuickWindow*>(topLevel);
 
+    QObject::connect(topLevel, SIGNAL(startCall(QString)),
+                     this, SLOT(startCall(QString)));
+
     QSurfaceFormat surfaceFormat = window_->requestedFormat();
     window_->setFormat(surfaceFormat);
+}
+
+void MainWindow::startCall(QString const& eid)
+{
+    qDebug() << "Starting call to " << eid;
 }
 
 #if 0

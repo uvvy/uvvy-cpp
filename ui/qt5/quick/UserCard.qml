@@ -50,6 +50,7 @@ Component {
             Column {
                 Button {
                     text: "Call"
+                    onClicked: { mainWindow.startCall(eid) }
                 }
             }
         }
