@@ -15,6 +15,7 @@ set(mettanode_SOURCES
     ProfileEditor.cpp
     ContactModel.cpp
     CallService.cpp
+    QmlBasedWindow.cpp
     MainWindow.cpp
     XcpApplication.cpp
     Meter.cpp)

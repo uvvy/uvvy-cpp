@@ -5,28 +5,12 @@
 #include <QDebug>
 
 MainWindow::MainWindow(ContactModel* model)
-    : engine_()
-    , component_(&engine_)
+    : QmlBasedWindow("qrc:/quick/MainWindow.qml")
 {
-    QQmlContext *context = new QQmlContext(engine_.rootContext());
-    context->setContextProperty("contactModel", model);
-
+    context_->setContextProperty("contactModel", model);
     QObject::connect(&engine_, SIGNAL(quit()), XcpApplication::instance(), SLOT(quit()));
-
-    component_.loadUrl(QUrl("qrc:/quick/MainWindow.qml"));
-
-    if (!component_.isReady() ) {
-        qFatal("%s", component_.errorString().toUtf8().constData());
-    }
-
-    QObject *topLevel = component_.create(context);
-    window_ = qobject_cast<QQuickWindow*>(topLevel);
-
-    QObject::connect(topLevel, SIGNAL(startCall(QString)),
+    QObject::connect(window_, SIGNAL(startCall(QString)),
                      this, SLOT(startCall(QString)));
-
-    QSurfaceFormat surfaceFormat = window_->requestedFormat();
-    window_->setFormat(surfaceFormat);
 }
 
 void MainWindow::startCall(QString const& eid)

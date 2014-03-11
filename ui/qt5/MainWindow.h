@@ -1,22 +1,15 @@
 #pragma once
 
-#include <QtQml/QQmlEngine>
-#include <QtQml/QQmlComponent>
-#include <QtQuick/QQuickWindow>
+#include "QmlBasedWindow.h"
 
 class ContactModel;
 
-class MainWindow : public QObject
+class MainWindow : public QObject, public QmlBasedWindow
 {
     Q_OBJECT
 
-    QQmlEngine engine_;
-    QQmlComponent component_;
-    QQuickWindow* window_;
-
 public:
     MainWindow(ContactModel* model);
-    inline void show() { window_->show(); }
 
 public slots:
     void startCall(QString const& eid);
