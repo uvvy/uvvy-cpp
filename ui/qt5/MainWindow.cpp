@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "CallWindow.h"
 #include "ContactModel.h"
 #include "XcpApplication.h"
 #include <QtQml/QQmlContext>
@@ -16,6 +17,10 @@ MainWindow::MainWindow(ContactModel* model)
 void MainWindow::startCall(QString const& eid)
 {
     qDebug() << "Starting call to " << eid;
+    CallWindow* win = new CallWindow(); //::for(eid);
+    win->show();
+    // win->bringToFront();
+    // win->startCallIfNotStarted(eid);
 }
 
 #if 0

@@ -17,6 +17,7 @@ set(mettanode_SOURCES
     CallService.cpp
     QmlBasedWindow.cpp
     MainWindow.cpp
+    CallWindow.cpp
     XcpApplication.cpp
     Meter.cpp)
 set(mettanode_FORMS
