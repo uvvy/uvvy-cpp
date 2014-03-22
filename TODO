@@ -2,21 +2,17 @@ Topmost 3 tasks:
  ☐ Switching UI to QtQuick and Qt5
    ☐ Make calling window work (send signals to start/stop call, update status)
 
-Crashes:
- ☐ This happens on second call attempt on one of the clients (far side?)
-Assertion failed: (!stream_), function new_connection, file ../voicebox/lib/audio_service.cpp, line 244.
-
 Structure:
   ☐ Separate libvoicebox into a separate repo (not yet?)
   ☐ Separate libfilesyncbox into a separate repo (not yet?)
-  ☐ Extract ssu::link and other low-level communication helpers into libcomm. (better name?)
-     ☐ ssu::link
+  ☐ Extract ssu::link and other low-level communication helpers into libcomm. (uia::comm)
+     ☐ ssu::link -> uia::comm::socket
      list other classes to move
      ☐ getting local interface addresses for example
      ☐ need to remove references to ssu::host
        ☐ replace with some kind of template maybe? need to implement an api for registering the link
          and unregistering the link. (link observer/subscriber?)
-         class link_subscriber { virtual void bind() = 0; virtual void unbind() = 0; }; or sth
+         class link_subscriber { virtual void activate_link() = 0; virtual void deactivate_link() = 0; }; or sth
 
 UI:
  ☐ Draw UI sketches for contacts list,
@@ -46,13 +42,6 @@ Voice calls:
 
 Chats:
  ☐ Sync history between instances
-     Message has a timestamp, originator and the target chat. Synchronize based on that. Chat should pull
-     non-existant entries once activated. How to track joins/leaves (+ history available to new joiners)?
-     (unread, originator, timestamp, target, msg_hash) - tuple for syncing messages.
-     Unread is synced, for example if the chat was already read on a device, then unread=0 may be synced.
-     (originator_user, originator_eid, originator_timestamp) - to track source of the message.
-     (rx_timestamp) - to measure interdevice synchronization time.
-     (chat_id) - a hashed concatenation of originator and receiver ids plus, perhaps, some nonce.
  ☐ Draw possible chat synchronization graph ideas between Alice's and Bob's personal cluser devices.
  ☐ Chat documentation on https://github.com/berkus/mettanode/blob/develop/ui/doc/chat_and_messaging.md
  ☐ Group chat.
@@ -131,6 +120,8 @@ Routing:
 
  ☐ BUG: Crashes on access to client_profile.endpoints() if no endpoints was provided by the client.
 
+ ☐ Possible intermediate step for work below:
+   Handle standard ROU messages but from within link::receive()
  ☐ Regserver uses unencrypted network traffic.
    ☐ a) switch regserver to use regular ssu streams -- in progress
      ☐ add non-encrypted channel armor
