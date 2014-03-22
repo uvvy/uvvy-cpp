@@ -115,7 +115,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
 
     if (upnp->IsAsync()) {
         logger::debug() << "Waiting...";
-        boost::this_thread::sleep(boost::posix_time::seconds(5));
+        this_thread::sleep_for(chrono::seconds(5));
     }
 
     if (upnp->HasServices()) {
