@@ -109,7 +109,7 @@ class ContactModel::Private
 {
 public:
     ContactModel* parent_;
-    internal::regserver_client client_;
+    uia::routing::internal::regserver_client client_;
     QList<Peer> peers_;
 
     // Save/load peer list in settings if not nullptr
