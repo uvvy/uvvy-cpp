@@ -246,7 +246,7 @@ void audio_hardware::playback(void* outputBuffer, unsigned int nFrames)
         for (auto s : outstreams)
         {
             s->produce_output(encbuf);
-            // Mixing in based on 
+            // Mixing in based on
             // http://dsp.stackexchange.com/questions/3581/algorithms-to-mix-audio-signals
             // to maintain the signal level of the mix.
             // Need to apply compressor/limiter afterwards if there are spikes.
