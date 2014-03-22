@@ -52,6 +52,10 @@ Component {
                     text: "Call"
                     onClicked: { mainWindow.startCall(eid) }
                 }
+                Button {
+                    text: "Chat"
+                    onClicked: { mainWindow.startChat(eid) }
+                }
             }
         }
     }
