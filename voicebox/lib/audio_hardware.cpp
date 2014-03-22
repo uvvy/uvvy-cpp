@@ -7,6 +7,7 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <mutex>
+#include <set>
 #include "RtAudio.h"
 #include "voicebox/audio_hardware.h"
 #include "voicebox/audio_sink.h"
