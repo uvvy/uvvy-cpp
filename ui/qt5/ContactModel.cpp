@@ -127,7 +127,7 @@ public:
             logger::debug() << "client disconnected";
         });
         client_.on_lookup_done.connect([this](ssu::peer_id const& peer,
-            ssu::endpoint const&,
+            uia::comm::endpoint const&,
             uia::routing::client_profile const& profile)
         {
             updatePeerProfile(peer, profile);

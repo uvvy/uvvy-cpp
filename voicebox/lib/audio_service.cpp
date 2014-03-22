@@ -239,7 +239,7 @@ void audio_service::private_impl::establish_outgoing_session(peer_id const& eid,
         {
             // @todo Allow specifying a port too.
             // @todo Allow specifying a DNS name for endpoint.
-            ssu::endpoint ep(boost::asio::ip::address::from_string(epstr),
+            uia::comm::endpoint ep(boost::asio::ip::address::from_string(epstr),
                 stream_protocol::default_port);
             logger::debug(TRACE_DETAIL) << "Connecting at location hint " << ep;
             data_stream_->connect_at(ep);

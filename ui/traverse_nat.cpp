@@ -40,18 +40,18 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
 
     bool all_added = true;
 
-    set<boost::asio::ip::udp::endpoint> mapped_endpoints;
+    set<uia::comm::endpoint> mapped_endpoints;
     list<upnp::PortMappingExt> out_mapping;
     upnp->GetPortMappings(out_mapping);
 
-    map<uint16_t, boost::asio::ip::udp::endpoint> mapping_map;
+    map<uint16_t, uia::comm::endpoint> mapping_map;
 
     set<uint16_t> used_ports;
     for (auto m : out_mapping)
     {
         used_ports.insert(m.external_port);
 
-        endpoint ep(boost::asio::ip::address::from_string(m.internal_host), m.internal_port);
+        uia::comm::endpoint ep(boost::asio::ip::address::from_string(m.internal_host), m.internal_port);
 
         mapped_endpoints.insert(ep);
 
