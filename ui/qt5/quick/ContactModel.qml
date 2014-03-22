@@ -1,3 +1,7 @@
+//
+// Temporary testing model
+// Replaced by ContactModel.cpp in real client
+//
 import QtQuick 2.1
 
 ListModel {
