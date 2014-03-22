@@ -10,7 +10,7 @@ ListModel {
         lastName: "Karchebny"
         nickName: "berkus"
         mood: "no mood"
-        eid: "swabba-gabba-bobus-dockus"
+        eid: "swab|ba-gab|ba-bob|us-dock|us"
         email: "berkus@gmail.com"
         avatarUrl: "http://gravatar.com/avatar/29191c38b8d1e4d6a3a25846c5e673c9?s=96"
     }
@@ -18,7 +18,7 @@ ListModel {
         firstName: "Anton"
         lastName: "Kotenko"
         nickName: "shaman🚶sir"
-        eid: "siufbe-wearv-werw-ewaety"
+        eid: "dog|e-wear|ba-werw-ewaety"
         avatarUrl: ""
     }
     ListElement{
