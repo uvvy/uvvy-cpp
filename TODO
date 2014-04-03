@@ -6,10 +6,10 @@ Structure:
   ☐ Separate libvoicebox into a separate repo (not yet?)
   ☐ Separate libfilesyncbox into a separate repo (not yet?)
   ☐ Extract ssu::link and other low-level communication helpers into libcomm. (uia::comm)
-     ☐ ssu::link -> uia::comm::socket
+     ✔ ssu::link -> uia::comm::socket @done (14-04-01 23:38)
      list other classes to move
      ☐ getting local interface addresses for example
-     ☐ need to remove references to ssu::host
+     ✔ need to remove references to ssu::host @done (14-04-01 23:38)
        ☐ replace with some kind of template maybe? need to implement an api for registering the link
          and unregistering the link. (link observer/subscriber?)
          class link_subscriber { virtual void activate_link() = 0; virtual void deactivate_link() = 0; }; or sth
