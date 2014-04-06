@@ -6,4 +6,7 @@
  *
  * Index also allows to look up hash information for a given local file, under any directory.
  * It will calculate the information upon first request and cache it.
+
+multimap<inner_hash, outer_hash, small_hash => chunk*>
+
  */
