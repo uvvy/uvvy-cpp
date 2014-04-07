@@ -42,17 +42,17 @@ public:
     {
         byte_array const outer_hash; // Chunk identity
 
-        set<AbstractChunkReader*> readers;  // who wants it
+        set<abstract_chunk_reader*> readers;  // who wants it
 
         // Potential peers that might have this chunk.
         // A peer is included if we've sent it a status request,
         // or if it has positively reported having the chunk.
-        set<ChunkPeer*> potentials;
+        set<chunk_peer*> potentials;
 
         // Who knows what about this chunk.
         // We use the 'InvalidStatus' code here to mean
         // we've requested status from this peer but not received it.
-        QHash<ChunkPeer*, ChunkStatus> status;
+        QHash<chunk_peer*, chunk_status> status;
 
 
         inline request(byte_array const& ohash) : outer_hash(ohash) {}

@@ -31,11 +31,11 @@ public:
 
     void send_status_request(request *req);
 
-    void got_status_request(SST::Stream *strm, SST::XdrStream &rs);
-    void got_chunk_request(SST::Stream *strm, SST::XdrStream &rs);
+    void got_status_request(stream *strm, byte_array_iwrap<flurry::iarchive>& is);
+    void got_chunk_request(stream *strm, byte_array_iwrap<flurry::iarchive>& is);
 
-    void got_status_reply(SST::Stream *strm, SST::XdrStream &rs);
-    void got_chunk_reply(SST::Stream *strm, SST::XdrStream &rs);
+    void got_status_reply(stream *strm, byte_array_iwrap<flurry::iarchive>& is);
+    void got_chunk_reply(stream *strm, byte_array_iwrap<flurry::iarchive>& is);
 
     void remove_from_requests();
 

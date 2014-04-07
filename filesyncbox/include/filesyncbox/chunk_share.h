@@ -8,13 +8,12 @@ class chunk_share : public peer_service, chunk_protocol
     /**
      * Outstanding chunk requests
      */
-    static QHash<SST::PeerId, Request*> requests;
+    static std::map<peer_id, request*> requests;
 
     /**
      * Maintain a persistent chunk query stream for each of our peers.
      */
-    static QHash<SST::PeerId, chunk_peer*> peers;
-
+    static std::map<peer_id, chunk_peer*> peers;
 
     chunk_share();
 
@@ -27,7 +26,7 @@ public:
                 const byte_array &ohash);
 
 private:
-    static chunk_peer *peer(const SST::PeerId &hostid, bool create);
+    static chunk_peer *peer(peer_id const& hostid, bool create);
 
     /**
      * Check all peers for chunks they might be able to download.
@@ -41,7 +40,7 @@ private:
     static void check_request(Request *req);
 
 // private slots:
-    void got_out_stream_connected(Stream *stream);
-    void got_out_stream_disconnected(Stream *stream);
-    void got_in_stream_connected(Stream *stream);
+    void got_out_stream_connected(stream *stream);
+    void got_out_stream_disconnected(stream *stream);
+    void got_in_stream_connected(stream *stream);
 };
