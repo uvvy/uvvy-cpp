@@ -3,7 +3,7 @@
 /**
  * Single-instance class that handles chunk sharing in the social network.
  */
-class chunk_share : public peer_service, chunk_protocol
+class chunk_share : public peer_service, private chunk_protocol
 {
     /**
      * Outstanding chunk requests
@@ -15,6 +15,7 @@ class chunk_share : public peer_service, chunk_protocol
      */
     static std::map<peer_id, chunk_peer*> peers;
 
+private:
     chunk_share();
 
 public:
