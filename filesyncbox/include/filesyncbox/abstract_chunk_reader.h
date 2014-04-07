@@ -13,12 +13,12 @@ protected:
      * The caller can use a single ChunkReader object
      * to read multiple chunks simultaneously.
      */
-    void read_chunk(const QByteArray &ohash);
+    void read_chunk(byte_array const& ohash);
 
     /**
      * The chunk reader calls these methods when a chunk arrives,
      * or when it gives up on finding a chunk.
      */
-    virtual void got_data(const byte_array &outer_hash, const byte_array &data) = 0;
-    virtual void no_data(const byte_array &outer_hash) = 0;
+    virtual void got_data(byte_array const& outer_hash, byte_array const& data) = 0;
+    virtual void no_data(byte_array const& outer_hash) = 0;
 };

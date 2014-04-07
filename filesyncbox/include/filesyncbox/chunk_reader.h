@@ -7,6 +7,6 @@ class chunk_reader : public abstract_chunk_reader
     inline chunk_reader() : abstract_chunk_reader() {}
 
 // signals:
-    void got_data(const byte_array &outer_hash, const byte_array &data) override;
-    void no_data(const byte_array &outer_hash) override;
+    void got_data(byte_array const& outer_hash, byte_array const& data) override;
+    void no_data(byte_array const& outer_hash) override;
 };
