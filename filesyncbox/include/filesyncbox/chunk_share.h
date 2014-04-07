@@ -22,8 +22,7 @@ public:
 
     static inline void init() { (void)instance(); }
 
-    static void request_chunk(abstract_chunk_reader *reader,
-                const byte_array &ohash);
+    static void request_chunk(abstract_chunk_reader *reader, byte_array const& ohash);
 
 private:
     static chunk_peer *peer(peer_id const& hostid, bool create);
