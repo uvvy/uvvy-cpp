@@ -8,6 +8,8 @@ namespace filesyncbox {
  *
  * A chunk is "positively matched" when all the hashes match search criteria.
  * A chunk is "partially matched" when at least one hash matches.
+ *
+ * Hashes list from gentoo SHA256 SHA512 WHIRLPOOL size ;-)
  */
 class chunk
 {
