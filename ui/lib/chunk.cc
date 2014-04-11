@@ -20,20 +20,6 @@ OuterCheck hashCheck(const QByteArray &ohash)
 	return chk;
 }
 
-
-////////// AbstractChunkReader //////////
-
-void AbstractChunkReader::readChunk(const QByteArray &ohash)
-{
-	QByteArray data = Store::readStores(ohash);
-	if (!data.isEmpty())
-		return gotData(ohash, data);
-
-	// Request asynchronously from other nodes
-	ChunkShare::requestChunk(this, ohash);
-}
-
-
 ////////// ChunkShare //////////
 
 QHash<PeerId, ChunkShare::Request*> ChunkShare::requests;
