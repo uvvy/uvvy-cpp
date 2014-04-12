@@ -37,7 +37,7 @@ private:
      * Check a particular request to see if it can still be satisfied;
      * otherwise delete it and send noData() to all requestors.
      */
-    static void check_request(Request *req);
+    static void check_request(request *req);
 
 // private slots:
     void got_out_stream_connected(stream *stream);
