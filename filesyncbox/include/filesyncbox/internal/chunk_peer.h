@@ -16,9 +16,9 @@ class chunk_peer : public chunk_protocol
      */
     static const int recon_delay = 60*1000;
 
-    peer_id const eid_;             ///< Host ID of peer
-    std::set<byte_array> wishlist;  ///< What we want from this host
-    byte_array current;             ///< Ohash of chunk being gotten
+    peer_id const eid_;              ///< Host ID of peer
+    std::set<byte_array> wishlist_;  ///< What we want from this host
+    byte_array current_;             ///< Ohash of chunk being gotten
 
 public:
     chunk_peer(peer_id const& hostid);
