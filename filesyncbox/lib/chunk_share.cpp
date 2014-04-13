@@ -1,6 +1,6 @@
 
-QHash<PeerId, chunk_share::request*> chunk_share::requests;
-QHash<PeerId, chunk_peer*> chunk_share::peers;
+std::map<peer_id, chunk_share::request*> chunk_share::requests;
+std::map<peer_id, chunk_peer*> chunk_share::peers;
 
 chunk_share::chunk_share()
     : PeerService("metta:Share", tr("Data sharing"),
