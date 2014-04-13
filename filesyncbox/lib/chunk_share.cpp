@@ -24,12 +24,14 @@ chunk_share::instance()
 chunk_peer*
 chunk_share::peer(peer_id const& hostid, bool create)
 {
-    if (!create)
+    if (!create) {
         return peers.value(hostid);
+    }
 
     chunk_peer *&peer = peers[hostid];
-    if (!peer && create)
+    if (!peer && create) {
         peer = new chunk_peer(hostid);
+    }
     return peer;
 }
 
