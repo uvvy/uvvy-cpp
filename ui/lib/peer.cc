@@ -1,7 +1,3 @@
-//=================================================================================================
-// PeerService
-//=================================================================================================
-
 PeerService::PeerService(const QString &svname, const QString &svdesc,
                          const QString &prname, const QString &prdesc,
                          QObject *parent)
