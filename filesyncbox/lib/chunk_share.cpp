@@ -1,3 +1,4 @@
+#include "chunk_share.h"
 
 std::map<peer_id, chunk_share::request*> chunk_share::requests;
 std::map<peer_id, chunk_peer*> chunk_share::peers;
@@ -7,11 +8,11 @@ chunk_share::chunk_share()
         "NodeData", tr("MettaNode data sharing protocol"))
 {
     connect(this, SIGNAL(outStreamConnected(Stream *)),
-        this, SLOT(gotOutStreamConnected(Stream *)));
+        this, SLOT(got_out_stream_connected(Stream *)));
     connect(this, SIGNAL(outStreamDisconnected(Stream *)),
-        this, SLOT(gotOutStreamDisconnected(Stream *)));
+        this, SLOT(got_out_stream_disconnected(Stream *)));
     connect(this, SIGNAL(inStreamConnected(Stream *)),
-        this, SLOT(gotInStreamConnected(Stream *)));
+        this, SLOT(got_in_stream_connected(Stream *)));
 }
 
 chunk_share*
