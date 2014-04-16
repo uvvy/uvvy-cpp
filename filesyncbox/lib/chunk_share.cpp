@@ -4,15 +4,18 @@ std::map<peer_id, chunk_share::request*> chunk_share::requests;
 std::map<peer_id, chunk_peer*> chunk_share::peers;
 
 chunk_share::chunk_share()
-    : PeerService("metta:Share", tr("Data sharing"),
-        "NodeData", tr("MettaNode data sharing protocol"))
+    : peer_service("metta:ChunkShare", "Chunked data sharing",
+                   "DataShare", "MettaNode data sharing protocol")
 {
-    connect(this, SIGNAL(outStreamConnected(Stream *)),
-        this, SLOT(got_out_stream_connected(Stream *)));
-    connect(this, SIGNAL(outStreamDisconnected(Stream *)),
-        this, SLOT(got_out_stream_disconnected(Stream *)));
-    connect(this, SIGNAL(inStreamConnected(Stream *)),
-        this, SLOT(got_in_stream_connected(Stream *)));
+    on_out_stream_connected.connect([this](stream* s) {
+        got_out_stream_connected(s);
+    });
+    on_out_stream_disconnected.connect([this](stream* s) {
+        got_out_stream_disconnected(s);
+    });
+    on_in_stream_connected.connect([this](stream* s) {
+        got_in_stream_connected(s);
+    });
 }
 
 chunk_share*
