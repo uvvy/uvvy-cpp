@@ -39,7 +39,7 @@ public:
 
     void remove_from_requests();
 
-    void peer_read_message();
+    void peer_read_message(stream* s);
 };
 
 } // internal namespace

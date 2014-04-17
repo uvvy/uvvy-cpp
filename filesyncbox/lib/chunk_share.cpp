@@ -90,23 +90,25 @@ void chunk_share::check_peers()
         peer->checkWork();
 }
 
-void chunk_share::got_out_stream_connected(Stream *stream)
+void chunk_share::got_out_stream_connected(stream *stream)
 {
     // Find or create the appropriate chunk_peer
-    chunk_peer *peer = this->peer(stream->remoteHostId(), true);
+    chunk_peer *peer = peer(stream->remote_host_id(), true);
 
     // Watch for messages on this stream
-    connect(stream, SIGNAL(readyReadMessage()),
-        peer, SLOT(peerReadMessage()));
+    stream->on_ready_read_message.connect([peer, stream]() {
+        peer->peer_read_message(stream);
+    });
 
     // Reset current chunk downloading state for this peer,
     // since any chunk we were downloading probably got lost
     // when our last outgoing connection (if any) failed.
-    peer->current = QByteArray();
+    peer->current = byte_array();
 
     // Unconditionally re-send all outstanding status requests.
-    foreach (Request *req, chunk_share::requests)
+    for (request *req : chunk_share::requests) {
         peer->send_status_request(req);
+    }
 }
 
 void chunk_share::got_out_stream_disconnected(Stream *stream)

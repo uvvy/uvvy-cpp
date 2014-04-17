@@ -101,13 +101,14 @@ void chunk_peer::check_work()
     current = selhash;
 }
 
-void chunk_peer::peer_read_message()
+void chunk_peer::peer_read_message(stream* strm)
 {
-    Stream *strm = (Stream*)sender();
-    Q_ASSERT(strm);
+    assert(strm);
 
-    forever {
-        if (!strm->isLinkUp() || strm->atEnd()) {
+    forever
+    {
+        if (!strm->is_link_up() or strm->at_end())
+        {
             qDebug() << "chunk_peer:" << peerName() << "disconnected";
             strm->disconnect();
             break;
