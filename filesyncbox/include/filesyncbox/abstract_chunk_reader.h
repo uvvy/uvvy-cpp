@@ -18,9 +18,9 @@ protected:
     /**
      * Submit a request to read a chunk.
      * For each such chunk request this class will send either
-     * a gotData() or a noData() signal for the requested chunk
-     * (unless the ChunkReader gets destroyed first).
-     * The caller can use a single ChunkReader object
+     * a got_data() or a no_data() signal for the requested chunk
+     * (unless the chunk_reader gets destroyed first).
+     * The caller can use a single chunk_reader object
      * to read multiple chunks simultaneously.
      */
     void read_chunk(byte_array const& ohash);

@@ -35,7 +35,7 @@ private:
 
     /**
      * Check a particular request to see if it can still be satisfied;
-     * otherwise delete it and send noData() to all requestors.
+     * otherwise delete it and send no_data() to all requestors.
      */
     static void check_request(request *req);
 
