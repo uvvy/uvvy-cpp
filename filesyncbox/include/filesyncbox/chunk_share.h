@@ -44,7 +44,7 @@ private:
      */
     static void check_request(request *req);
 
-// private slots:
+private:
     void got_out_stream_connected(stream *stream);
     void got_out_stream_disconnected(stream *stream);
     void got_in_stream_connected(stream *stream);
