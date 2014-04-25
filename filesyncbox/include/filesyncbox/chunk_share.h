@@ -2,6 +2,11 @@
 
 /**
  * Single-instance class that handles chunk sharing in the social network.
+ *
+ * Updating a file tree is handled by simply sending a NewRoot message with the outerhash
+ * of new tree root block, which in turn would contain a merkle tree of outerhashes
+ * for sub-trees. These sub-trees are recursively requested and are either satisfied
+ * from local storage or pulled from another node.
  */
 class chunk_share : public peer_service, private chunk_protocol
 {
