@@ -45,7 +45,7 @@ void UdpTestSender::onReadyRead()
     QByteArray data(pendingDatagramSize(),0);
     if (readDatagram(data.data(),pendingDatagramSize(),&origin,&port) == -1)
         return;
-    
+
     qDebug() << "Received:" << QString(data);
 
     ping(origin, port);

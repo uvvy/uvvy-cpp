@@ -13,7 +13,7 @@
 // QByteArray bytes;
 // QBuffer buffer(&bytes);
 // buffer.open(QIODevice::WriteOnly);
-// pixmap.save(&buffer, "JPEG", 0); 
+// pixmap.save(&buffer, "JPEG", 0);
 
 float dpiScaleFactor(QWidget* widget);
 

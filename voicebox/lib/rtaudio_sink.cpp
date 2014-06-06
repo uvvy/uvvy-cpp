@@ -29,7 +29,7 @@ void rtaudio_sink::set_enabled(bool enabling)
         if (wasempty or audio_hardware::get_sample_rate() < sample_rate()) {
             audio_hardware::reopen(); // (re-)open at suitable rate
         }
-    } 
+    }
     else if (!enabling and is_enabled())
     {
         bool isempty = audio_hardware::remove_outstream(this);
