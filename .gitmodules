@@ -28,3 +28,12 @@
 [submodule "3rdparty/dir_monitor"]
 	path = 3rdparty/dir_monitor
 	url = git@github.com:berkus/dir_monitor.git
+[submodule "3rdparty/metakit"]
+	path = 3rdparty/metakit
+	url = https://berkus@github.com/berkus/metakit.git
+[submodule "3rdparty/opus"]
+	path = 3rdparty/opus
+	url = https://berkus@github.com/berkus/opus.git
+[submodule "3rdparty/rtaudio"]
+	path = 3rdparty/rtaudio
+	url = https://berkus@github.com/berkus/rtaudio.git
