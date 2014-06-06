@@ -22,9 +22,9 @@
 [submodule "ssu-qt4"]
 	path = ssu-qt4
 	url = https://berkus@github.com/berkus/libssu-qt4.git
-[submodule "filesyncbox/3rdparty/dir_monitor"]
-	path = filesyncbox/3rdparty/dir_monitor
-	url = https://berkus@github.com/berkus/dir_monitor.git
 [submodule "arsenal"]
 	path = arsenal
 	url = https://berkus@github.com/berkus/libarsenal.git
+[submodule "3rdparty/dir_monitor"]
+	path = 3rdparty/dir_monitor
+	url = git@github.com:berkus/dir_monitor.git
