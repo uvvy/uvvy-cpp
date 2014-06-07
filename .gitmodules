@@ -37,3 +37,6 @@
 [submodule "3rdparty/rtaudio"]
 	path = 3rdparty/rtaudio
 	url = https://berkus@github.com/berkus/rtaudio.git
+[submodule "3rdparty/sodiumpp"]
+	path = 3rdparty/sodiumpp
+	url = git@github.com:rubendv/sodiumpp.git
