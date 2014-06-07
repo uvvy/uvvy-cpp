@@ -32,6 +32,10 @@ add_subdirectory(ssu)
 add_subdirectory(routing)
 add_subdirectory(naming)
 add_subdirectory(nat)
+
+add_subdirectory(3rdparty/opus)
+add_subdirectory(3rdparty/rtaudio)
+add_subdirectory(3rdparty/metakit)
 add_subdirectory(ui)
 
 add_subdirectory(demos)
