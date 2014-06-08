@@ -39,4 +39,4 @@
 	url = https://berkus@github.com/berkus/rtaudio.git
 [submodule "3rdparty/sodiumpp"]
 	path = 3rdparty/sodiumpp
-	url = git@github.com:rubendv/sodiumpp.git
+url=git@github.com:berkus/sodiumpp.git
