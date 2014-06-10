@@ -23,6 +23,7 @@ include_directories(ssu/include) # For routing access to ssu host and link_recei
 include_directories(routing/include) # For ssu access to routing client
 include_directories(voicebox/include)
 
+add_subdirectory(3rdparty/sodiumpp)
 add_subdirectory(arsenal)
 add_subdirectory(krypto)
 add_subdirectory(voicebox)
