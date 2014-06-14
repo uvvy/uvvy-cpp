@@ -1,5 +1,5 @@
 include_directories(../nat/include ../ssu/include ../arsenal/include)
-include_directories(../ui/3rdparty/opus-1.0.1/include) # For unlogger
+include_directories(../3rdparty/opus/include) # For unlogger
 
 add_executable(unlogger unlogger.cpp)
 target_link_libraries(unlogger arsenal opus ${Boost_LIBRARIES})
