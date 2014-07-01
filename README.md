@@ -11,12 +11,14 @@ Dependencies
 ============
 
 * C++14 (right now, only Clang and libc++)
-* [Qt4](http://qt-project.org/) (QtCore, QtNetwork; QtXml for UPnP; QtGui for demo apps)
+* [Qt5](http://qt-project.org/) (QtCore, QtNetwork; QtXml for UPnP; QtGui for demo apps)
 * [cmake](http://cmake.org/)
 * [boost](http://boost.org/)
 
 aptly
+```
  $ apt-get install git cmake clang libboost-test1.50-dev libqt4-dev libssl-dev libasound2-dev
+```
 
 Included in this repository:
 
@@ -27,8 +29,10 @@ Included in this repository:
 
 Typical config command
 ======================
-
-cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
+```
+cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -G Ninja \
+ -DBUILD_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
+```
 
 CI status
 =========
