@@ -1,11 +1,34 @@
 language: cpp
+
 compiler: clang
+
+os:
+  - linux
+  - osx
+
+env:
+  - BUILD_TYPE=RelWithDebInfo
+  - BUILD_TYPE=Release
+  - BUILD_TYPE=Debug
+
 cache: apt
+
 before_install:
-  - ./travis-ci/travis_install_packages.sh
-  - ./travis-ci/travis_build_ninja.sh
-  - ./travis-ci/travis_build_libcxx.sh
-  - ./travis-ci/travis_build_boost.sh
-script: ./scripts/travis_build.sh
+  - sh ./travis-ci/travis_install_packages.sh
+  - sh ./travis-ci/travis_build_ninja.sh
+  - sh ./travis-ci/travis_build_libcxx.sh
+  - sh ./travis-ci/travis_build_boost.sh
+
+install: sh ./scripts/travis_build.sh
+script: sh ./scripts/travis_tests.sh
+
+branches:
+  only:
+    - master
+
 notifications:
-  email: false
+  recipients:
+    - berkus@atta-metta.net
+  email:
+    on_success: change
+    on_failure: always
