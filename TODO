@@ -65,8 +65,9 @@ Storage (grabber/file sync/versioning):
      Something like full-fledged git might be needed. At the very least a key-value like store, that resolves modifications using full file path
      as just another attribute (change in FILE_PATH attribute might cause a rename, for example).
 
-     Try git model approach - files are in trees, trees are hashed and upon change a Change of tree is recorded with the link to previous (parent)
-     tree(s). Files are like git blobs but assembled of multiple chunks.
+     Try git model approach - files are in merkle trees, trees are hashed and upon change
+     a Change of tree is recorded with the link to previous (parent) tree(s).
+     Files are like git blobs but assembled of multiple chunks. (See git implementation?)
 
 ☐ Synchronized objects - some blobs with associated metadata. Blob structure is not defined and is not interesting to the synchronization layer. Metadata is a key-value store, with fine-grained synchronization.
 ☐ Grab files from a specified directory a-la Dropbox.
@@ -158,7 +159,7 @@ Keying Negotiation:
   Same for auth check interfaces.
 
   the channel armor must stack several operations in a defined order
-  according to optional SST layers:
+  according to optional SST layers
     - Privacy (symmetric key cipher)
     - Integrity (hmac)
     - Encoding (fec)
