@@ -99,6 +99,7 @@ Grabber prototype:
   ☐ If user favourites is public, no need to auth?
   ☐ Do that periodically to fetch new videos.
   ☐ Use https://github.com/google/google-api-cpp-client/ - CRAP!
+  ☐ There's `o2' qt library for oauth 1.0 and 2.0 - could use for login?
   ☐ This is against the TOS!
 
 Personal Cluster Management:
