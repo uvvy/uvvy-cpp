@@ -171,20 +171,20 @@ zlib_armor
 
  negotiate zlib or bzip2 compression (gzip compression is for files, using same zlib)
 
-  vector<string> s = {"saes128ctr", "sxsalsa20", "snone", "ahmacsha512256", "czlib", "cnone"};
+  vector<string> s = {"Saes128ctr", "Sxsalsa20", "Snone", "Ahmacsha512256", "Czlib", "Cnone"};
 
- ☐ saes256ctr            = 's'ymmetric key encryption
- ☐ czlib                 = 'c'ompression
- ☐ ahmacsha512256        = 'a'uthentication
- ☐ = 'o' options, anything extra - may be protocol specific
- ☐ also need to negotiate congestion control modes, try Ctcp Cvegas Clowdelay Cfixed,cwndsize etc
-   e.g. Cfixed,32768
+ ☐ Saes256ctr            = 's'ymmetric key encryption
+ ☐ Czlib                 = 'c'ompression
+ ☐ Ahmacsha512256        = 'a'uthentication
+ ☐ = 'O' options, anything extra - may be protocol specific
+ ☐ also need to negotiate congestion control modes, try Gtcp Gvegas Glowdelay Gfixed,cwndsize etc
+   e.g. Gfixed,32768
  ☐ also need to negotiate dynamic MSS (spec 3.9)
 
- ☐ public key system in use? prsa160, pdsa160, pEcdsasomething
+ ☐ public key system in use? Prsa160, Pdsa160, Pecdsa
 
- ☐ 'none' is always a flag indicating no feature used, can be missing from negotiation params in case
-   some feature is always required.
+ ☐ 'none' is always-present flag indicating no feature used, can be missing from negotiation params
+    in case some feature is always required.
 
   can be multiple keys with all prefixes, in order of priority, other side picks best supported and responds.
   authentication is mandatory, (a)symmetric encryption and compression are optional. (?)
