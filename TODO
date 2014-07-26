@@ -158,6 +158,7 @@ Keying Negotiation:
   Make symmetric key encryption family of interfaces (for aes, xsalsa etc, implement the ones supported,
   generate the list of preferred symmetric ciphers using some api, sth like pair<weight,cipher> array?)
   Same for auth check interfaces.
+  NaCl could support asymmetric encryption as well using secretbox (?)
 
   the channel armor must stack several operations in a defined order
   according to optional SST layers
@@ -186,7 +187,7 @@ zlib_armor
    some feature is always required.
 
   can be multiple keys with all prefixes, in order of priority, other side picks best supported and responds.
-  symmetric encryption and authentication are mandatory, compression is optional.
+  authentication is mandatory, (a)symmetric encryption and compression are optional. (?)
 
   initiator may skip compression request, for example for realtime audio/video streams.
   compression is not advised for encrypted streams due to watermarking attacks.
