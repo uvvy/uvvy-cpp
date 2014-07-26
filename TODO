@@ -198,8 +198,8 @@ public API
    or a no_compress, zlib_compress, bzip2_compress options - this limits the API
 
 Later
- ☐ add support for nacl - anticipating openssl primitives support in nacl soon
- ☐ Drop OPENSSL_LIBRARIES - once nacl supports whatever needed.
+ ✔ add support for nacl - anticipating openssl primitives support in nacl soon @done (14-06-29 23:17)
+ ✔ Drop OPENSSL_LIBRARIES - once nacl supports whatever needed. @done (14-06-29 23:17)
  ☐ Change krypto to use cryptobox_*
 
  ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow
