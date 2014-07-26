@@ -27,7 +27,7 @@ add_subdirectory(3rdparty/sodiumpp)
 add_subdirectory(arsenal)
 #add_subdirectory(krypto)
 add_subdirectory(voicebox)
-add_subdirectory(filesyncbox)
+#add_subdirectory(filesyncbox)
 
 add_subdirectory(ssu)
 add_subdirectory(routing)
