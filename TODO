@@ -77,8 +77,9 @@ Storage (grabber/file sync/versioning):
 ☐ metadata assignments - how? extract as much as possible automatically.
  ☐ synchronize arbitrary file chunks and their metadata between devices in the cluster (hardcoded for start).
  ☐ sync git-like file trees and chunk blobs
-   ☐ split a file into a number of fixed-size blocks (plus a smaller trailing block if necessary)
-     ☐ Split files into C*log2(size) chunks?
+   ☐ @sa merkledag
+   ☐ split a file into a number of variable-size blocks
+     ☐ https://en.wikipedia.org/wiki/Rabin_fingerprint can be used to implement shift-resistant block splitting.
    ☐ record each block hash into a file record
    ☐ record metadata block(s), HMAC it/them - should it be fixed size or some more manageable chunks?
    ☐ add metadata block(s) hash(es) into a file record and then HMAC the entire record
@@ -118,13 +119,13 @@ Routing:
  ☐ Possible intermediate step for work below:
    Handle standard ROU messages but from within link::receive()
  ☐ Regserver uses unencrypted network traffic.
-   ☐ a) switch regserver to use regular ssu streams -- in progress
+   ☐ switch regserver to use regular ssu streams -- in progress
      ☐ add non-encrypted channel armor
        -- requires negotiation work, see below
-   ☐ b) move regserver to a regular ssu protocol
-   ☐ c) run regserver inside host on the same port
-   ☐ d) regserver shall be integral part of each participating node
-   ☐ e) regserver will become a part of p2p directory when DHT is implemented
+   ☐ move regserver to a regular ssu protocol
+   ☐ run regserver inside host on the same port
+   ☐ regserver shall be integral part of each participating node
+   ☐ regserver will become a part of p2p directory when DHT is implemented
  ☐ Extract regserver logic/state management to remove code duplication between old and new regserver.
 
 Structured Streams:
@@ -277,7 +278,9 @@ NAT and UPnP:
      PortMappingNumberOfEntries - if changed, might need to re-read the actual mapping information.
      PortMappingLeaseDuration - is decremented and needs to be checked regularly, some seconds before the lease time out the lease must be extended for our port forwardings.
      Therefore, we need to maintain the status of UPnPRouter endpoint.
+ ☐ rfc5766-turn-server
+ ☐ TRAM http://www.ietf.org/mail-archive/web/rtcweb/current/msg09823.html
 
 Cross-compile:
   QtCreator xcompile to all platforms http://habrahabr.ru/post/198142/
-
+  use mingw to cross-compile Qt for windows
