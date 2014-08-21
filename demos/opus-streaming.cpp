@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
     int port = stream_protocol::default_port;
     vector<string> location_hints;
     bool verbose_debug{false};
+    bool disable_upnp{false};
 
     po::options_description desc("Program arguments");
     desc.add_options()
@@ -46,6 +47,8 @@ int main(int argc, char* argv[])
             "Run service on this port, connect peer on this port")
         ("verbose,v", po::bool_switch(&verbose_debug),
             "Print verbose output for debug")
+        ("noupnp,n", po::bool_switch(&disable_upnp),
+            "Disable UPnP mappings")
         ("help",
             "Print this help message");
     po::positional_options_description p;
@@ -89,7 +92,11 @@ int main(int argc, char* argv[])
 
     // Shared ptr ensures nat is destroyed on exit...
     shared_ptr<host> host(host::create(settings.get(), port));
-    shared_ptr<upnp::UpnpIgdClient> nat(traverse_nat(host));
+    shared_ptr<upnp::UpnpIgdClient> nat;
+
+    if (!disable_upnp) {
+        nat = traverse_nat(host);
+    }
 
     uia::routing::internal::regserver_client regclient(host.get());
     regclient_set_profile(settings.get(), regclient, host.get());
