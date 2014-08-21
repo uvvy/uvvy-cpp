@@ -4,6 +4,7 @@
 #include "arsenal/settings_provider.h"
 #include "arsenal/any_int_cast.h"
 #include "ssu/identity.h"
+#include "ssu/stream_protocol.h"
 #include "routing/client_profile.h"
 
 using namespace std;
@@ -41,7 +42,7 @@ void ProfileEditor::load()
     if (!s_port.empty()) {
         portSpinBox->setValue(any_int_cast<uint16_t>(s_port));
     } else {
-        portSpinBox->setValue(stream_protocol::default_port);
+        portSpinBox->setValue(ssu::stream_protocol::default_port);
     }
 
     auto s_client = m_pimpl->settings->get("profile");
