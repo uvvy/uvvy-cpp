@@ -29,94 +29,97 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
     }
 
     logger::debug() << "Need to map " << dec << ports.size() << " ports";
-
-    upnp->InitControlPoint();
-
-    if (upnp->IsAsync()) {
-        upnp->SetNewMappingCallback([&](const int &port, const upnp::ProtocolType &protocol) {
-            ports.erase(port);
-        });
-    }
-
     bool all_added = true;
 
-    set<uia::comm::endpoint> mapped_endpoints;
-    list<upnp::PortMappingExt> out_mapping;
-    upnp->GetPortMappings(out_mapping);
-
-    map<uint16_t, uia::comm::endpoint> mapping_map;
-
-    set<uint16_t> used_ports;
-    for (auto m : out_mapping)
-    {
-        used_ports.insert(m.external_port);
-
-        uia::comm::endpoint ep(boost::asio::ip::address::from_string(m.internal_host), m.internal_port);
-
-        mapped_endpoints.insert(ep);
-
-        mapping_map.insert(make_pair(m.external_port, ep));
+    if (!upnp->InitControlPoint()) {
+        logger::debug() << "UPnP control point not found";
     }
-
-    auto ports_copy = ports;
-    for (auto port : ports_copy)
+    else
     {
-        bool mapping_exists = false;
-        if (contains(used_ports, port)) {
-            // We have a mapping for this port, is it for the same address as us? (1)
-            auto mapping = mapping_map[port];
-            for (auto& ep : endpoints) {
-                if (ep == mapping) {
-                    // YES(1): We're good
-                    // remove port from ports
-                    logger::debug() << "NAT found existing port mapping for our endpoint - ext port "
-                        << port << "->" << mapping;
-                    ports.erase(port);
-                    mapping_exists = true;
-                    break;
+        if (upnp->IsAsync()) {
+            upnp->SetNewMappingCallback([&](const int &port, const upnp::ProtocolType &protocol) {
+                ports.erase(port);
+            });
+        }
+
+        set<uia::comm::endpoint> mapped_endpoints;
+        list<upnp::PortMappingExt> out_mapping;
+        upnp->GetPortMappings(out_mapping);
+
+        map<uint16_t, uia::comm::endpoint> mapping_map;
+
+        set<uint16_t> used_ports;
+        for (auto m : out_mapping)
+        {
+            used_ports.insert(m.external_port);
+
+            uia::comm::endpoint ep(boost::asio::ip::address::from_string(m.internal_host), m.internal_port);
+
+            mapped_endpoints.insert(ep);
+
+            mapping_map.insert(make_pair(m.external_port, ep));
+        }
+
+        auto ports_copy = ports;
+        for (auto port : ports_copy)
+        {
+            bool mapping_exists = false;
+            if (contains(used_ports, port)) {
+                // We have a mapping for this port, is it for the same address as us? (1)
+                auto mapping = mapping_map[port];
+                for (auto& ep : endpoints) {
+                    if (ep == mapping) {
+                        // YES(1): We're good
+                        // remove port from ports
+                        logger::debug() << "NAT found existing port mapping for our endpoint - ext port "
+                            << port << "->" << mapping;
+                        ports.erase(port);
+                        mapping_exists = true;
+                        break;
+                    }
                 }
             }
-        }
-        // IP based check - do we have a mapping for our local endpoint? (2)
-        // If so, it must map some external port to our internal port.
-        for (auto& ep : endpoints)
-        {
-            if (ep.port() != port) {
-                continue;
-            }
-            for (auto m : mapping_map)
+            // IP based check - do we have a mapping for our local endpoint? (2)
+            // If so, it must map some external port to our internal port.
+            for (auto& ep : endpoints)
             {
-                if (m.second == ep) {
-                    // YES(2): We're good
-                    // remove port from ports
-                    logger::debug() << "NAT found existing port mapping for our endpoint - ext port "
-                        << m.first << "->" << m.second;
-                    ports.erase(port);
-                    mapping_exists = true;
+                if (ep.port() != port) {
+                    continue;
+                }
+                for (auto m : mapping_map)
+                {
+                    if (m.second == ep) {
+                        // YES(2): We're good
+                        // remove port from ports
+                        logger::debug() << "NAT found existing port mapping for our endpoint - ext port "
+                            << m.first << "->" << m.second;
+                        ports.erase(port);
+                        mapping_exists = true;
+                        break;
+                    }
+                }
+                if (mapping_exists) {
                     break;
                 }
             }
-            if (mapping_exists) {
-                break;
+            // NO(1,2): Set up a new mapping on an unused ext_port
+            if (!mapping_exists)
+            {
+                uint16_t ext_port = port;
+                while (contains(used_ports, ext_port)) {
+                    ++ext_port;
+                }
+                logger::debug() << "NAT creating port mapping for our endpoint port "
+                    << dec << port << "->" << ext_port;
+                all_added &= upnp->AddPortMapping(port, ext_port, upnp::kTcp);
+                all_added &= upnp->AddPortMapping(port, ext_port, upnp::kUdp);
             }
         }
-        // NO(1,2): Set up a new mapping on an unused ext_port
-        if (!mapping_exists)
-        {
-            uint16_t ext_port = port;
-            while (contains(used_ports, ext_port)) {
-                ++ext_port;
-            }
-            logger::debug() << "NAT creating port mapping for our endpoint port "
-                << dec << port << "->" << ext_port;
-            all_added &= upnp->AddPortMapping(port, ext_port, upnp::kTcp);
-            all_added &= upnp->AddPortMapping(port, ext_port, upnp::kUdp);
-        }
-    }
 
-    if (upnp->IsAsync()) {
-        logger::debug() << "Waiting...";
-        this_thread::sleep_for(chrono::seconds(5));
+        if (upnp->IsAsync()) {
+            logger::debug() << "Waiting...";
+            this_thread::sleep_for(chrono::seconds(5));
+        }
     }
 
     if (upnp->HasServices()) {
