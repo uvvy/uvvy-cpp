@@ -7,7 +7,7 @@ import QtQuick.Window 2.1
 Window
 {
     property alias textEntry: sendText
-    signal sendMessage(string)
+    //signal sendMessage(string)
 
     title: "Chat"
     width: 600
@@ -22,7 +22,7 @@ Window
             anchors.right: parent.right
             anchors.bottom: input.top
 
-            model: chatModel
+            model: ChatModel {}
             delegate: ChatMessage {}
             focus: true
             clip: true
