@@ -1,13 +1,15 @@
 /* Call Window */
-import QtQuick 2.0
+import QtQuick 2.1
 import QtQuick.Controls 1.0
 import QtQuick.Window 2.1
 
 Window {
-    property string avatarUrl
-    property string userName
-    property string callStatus
+    property string avatarUrl: "http://gravatar.com/avatar/29191c38b8d1e4d6a3a25846c5e673c9?s=96"
+    property string userName: "berkus"
+    property string callStatus: "RINGING..."
     property alias hangupButton: hangup
+
+    title: "Call"
 
     width: { r.width < 200 ? 200 : r.width }
     height: { r.height < 100 ? 100 : r.height }
