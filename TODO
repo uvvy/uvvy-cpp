@@ -89,6 +89,7 @@ Storage (grabber/file sync/versioning):
    ☐ this is where tree sync will start - other nodes compare their own HEAD changes with this node and perform a sync-fetch to align histories.
       in general case sync doesn't have to bring in all changes of the history, e.g. each Change object lineage may be synced, but for the file blocks
       you only need to know the actual contents of the latest version and where to find the earlier version in case user takes a peek.
+ ☐ http://ailev.livejournal.com/1127145.html
 
 Grabber prototype:
   ☐ Simple feature - grab YouTube "Favourites video" playlist, download all videos from there and store them.
