@@ -1,5 +1,6 @@
 include_directories(../nat/include ../ssu/include ../arsenal/include)
 include_directories(../3rdparty/opus/include) # For unlogger
+include_directories(../3rdparty) # For cryptest
 
 add_executable(unlogger unlogger.cpp)
 target_link_libraries(unlogger arsenal opus ${Boost_LIBRARIES})
@@ -15,3 +16,5 @@ install(TARGETS unlogger
 
 #add_subdirectory(sstreams)
 
+add_executable(cryptest cryptest.cpp)
+target_link_libraries(cryptest sodiumpp arsenal)
