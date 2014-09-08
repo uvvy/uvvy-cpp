@@ -3,13 +3,11 @@
 #include <set>
 #include <valarray>
 #include <iostream>
-#include <boost/range/adaptors.hpp>
-#include <boost/range/algorithm.hpp>
-#include <boost/range/algorithm_ext/overwrite.hpp>
 #include "arsenal/proquint.h"
 #include "arsenal/base32x.h"
 #include "arsenal/base64.h"
 #include "arsenal/hexdump.h"
+#include "arsenal/subrange.h"
 
 using namespace sodiumpp;
 using namespace boost;
@@ -21,14 +19,6 @@ typedef nonce<crypto_box_NONCEBYTES-16, 16> nonce128;
 const string helloPacketMagic    = "hellopkt";
 const string cookiePacketMagic   = "cookipkt";
 const string initiatePacketMagic = "init-pkt";
-
-template <typename T>
-iterator_range<typename T::iterator> subrange(T& base, int start_offset, int end_offset)
-{
-    return iterator_range<typename T::iterator>(
-        base.begin() + start_offset,
-        base.begin() + start_offset + end_offset);
-}
 
 // Initiator sends Hello and subsequently Initiate
 class kex_initiator
@@ -45,13 +35,13 @@ public:
     string send_hello()
     {
         string packet(192, '\0');
-        boost::overwrite(helloPacketMagic, subrange(packet, 0, 8));
-        boost::overwrite(short_term_key.pk.get(), subrange(packet, 8, 32));
-        boost::overwrite(hello_nonce.sequential(), subrange(packet, 104, 8));
+        subrange(packet, 0, 8) = helloPacketMagic;
+        subrange(packet, 8, 32) = short_term_key.pk.get();
+        subrange(packet, 104, 8) = hello_nonce.sequential();
         string boxed(64, '\0');
-        boost::overwrite(long_term_key.pk.get(), subrange(boxed, 0, 32));
-        string box = "";//box(boxed, short_term_key, server.long_term_key, hello_nonce);
-        boost::overwrite(box, subrange(packet, 112, 80));
+        subrange(boxed, 0, 32) = long_term_key.pk.get();
+        // string box = "";//box(boxed, short_term_key, server.long_term_key, hello_nonce);
+        subrange(packet, 112, 80) = boxed;
         return packet;
     }
 
