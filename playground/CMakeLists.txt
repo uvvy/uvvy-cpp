@@ -16,5 +16,4 @@ install(TARGETS unlogger
 
 #add_subdirectory(sstreams)
 
-add_executable(cryptest cryptest.cpp)
-target_link_libraries(cryptest sodiumpp arsenal)
+add_subdirectory(kextest)
