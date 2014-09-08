@@ -77,7 +77,7 @@ void ProfileEditor::load()
         m_pimpl->ident.set_id(id);
         if (m_pimpl->ident.set_key(key) && m_pimpl->ident.has_private_key())
         {
-            hostEIDLineEdit->setText(peer_id(m_pimpl->ident.id().id()).to_string().c_str());
+            hostEIDLineEdit->setText(m_pimpl->ident.to_string().c_str());
             setStatus("Profile loaded");
             return;
         }
@@ -86,7 +86,7 @@ void ProfileEditor::load()
     // Generate a new key pair
     m_pimpl->ident = identity::generate();
 
-    hostEIDLineEdit->setText(peer_id(m_pimpl->ident.id().id()).to_string().c_str());
+    hostEIDLineEdit->setText(m_pimpl->ident.to_string().c_str());
     setStatus("New host EID generated, save to keep it");
 }
 
@@ -150,6 +150,6 @@ void ProfileEditor::generateNewEid()
         return;
 
     m_pimpl->ident = identity::generate();
-    hostEIDLineEdit->setText(peer_id(m_pimpl->ident.id().id()).to_string().c_str());
+    hostEIDLineEdit->setText(m_pimpl->ident.to_string().c_str());
     setStatus("New host EID generated, save to keep it");
 }
