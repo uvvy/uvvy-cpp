@@ -29,6 +29,7 @@ class kex_initiator
 
 public:
     kex_initiator()
+        : hello_nonce("hello-nonce-----", true)
     {}
 
     // Create and return a hello packet from the initiator
