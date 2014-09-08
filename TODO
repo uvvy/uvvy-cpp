@@ -156,56 +156,12 @@ Structured Streams:
    -- started in base_stream.cpp
 
 Keying Negotiation:
-
-  Make symmetric key encryption family of interfaces (for aes, xsalsa etc, implement the ones supported,
-  generate the list of preferred symmetric ciphers using some api, sth like pair<weight,cipher> array?)
-  Same for auth check interfaces.
-  NaCl could support asymmetric encryption as well using secretbox (?)
-
-  the channel armor must stack several operations in a defined order
-  according to optional SST layers
-    - Privacy (symmetric key cipher)
-    - Integrity (hmac)
-    - Encoding (fec)
-
-zlib_armor
- ☐ using boost.iostreams?
-
- negotiate zlib or bzip2 compression (gzip compression is for files, using same zlib)
-
-  vector<string> s = {"Saes128ctr", "Sxsalsa20", "Snone", "Ahmacsha512256", "Czlib", "Cnone"};
-
- ☐ Saes256ctr            = 's'ymmetric key encryption
- ☐ Czlib                 = 'c'ompression
- ☐ Ahmacsha512256        = 'a'uthentication
- ☐ = 'O' options, anything extra - may be protocol specific
- ☐ also need to negotiate congestion control modes, try Gtcp Gvegas Glowdelay Gfixed,cwndsize etc
-   e.g. Gfixed,32768
+ ☐ http://ianix.com/pub/curve25519-deployment.html
  ☐ also need to negotiate dynamic MSS (spec 3.9)
-
- ☐ public key system in use? Prsa160, Pdsa160, Pecdsa
-
- ☐ 'none' is always-present flag indicating no feature used, can be missing from negotiation params
-    in case some feature is always required.
-
-  can be multiple keys with all prefixes, in order of priority, other side picks best supported and responds.
-  authentication is mandatory, (a)symmetric encryption and compression are optional. (?)
-
-  initiator may skip compression request, for example for realtime audio/video streams.
-  compression is not advised for encrypted streams due to watermarking attacks.
-
-public API
-
- ☐ how to specify required armors? probably just a no_compress flag from initiator API.
-   or a no_compress, zlib_compress, bzip2_compress options - this limits the API
-
-Later
- ✔ add support for nacl - anticipating openssl primitives support in nacl soon @done (14-06-29 23:17)
- ✔ Drop OPENSSL_LIBRARIES - once nacl supports whatever needed. @done (14-06-29 23:17)
  ☐ Change krypto to use cryptobox_*
-
  ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow
-    - by generating non-random fixtures?)
+    - by generating non-random fixtures - have pre-defined secret/public keys in fixtures)
+
  ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
    - hard atm due to source/sink driver design, look at pjsip ports/master-port idea for proper driver
 
