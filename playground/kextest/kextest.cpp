@@ -23,9 +23,11 @@ const string cookiePacketMagic   = "cookipkt";
 const string initiatePacketMagic = "init-pkt";
 
 template <typename T>
-iterator_range<typename T::iterator> subrange(T base, int start_offset, int end_offset)
+iterator_range<typename T::iterator> subrange(T& base, int start_offset, int end_offset)
 {
-    return iterator_range<typename T::iterator>(base.begin() + start_offset, base.begin() + end_offset);
+    return iterator_range<typename T::iterator>(
+        base.begin() + start_offset,
+        base.begin() + start_offset + end_offset);
 }
 
 // Initiator sends Hello and subsequently Initiate
