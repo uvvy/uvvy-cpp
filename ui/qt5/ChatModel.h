@@ -14,7 +14,7 @@
 class settings_provider;
 namespace ssu {
     class host;
-    class peer_id;
+    class peer_identity;
 }
 
 /**
@@ -57,11 +57,11 @@ public:
     // Internal use only.
     void updateData(int row);
 private:
-    void insertAt(int row, ssu::peer_id const& eid, QString const& name);
+    void insertAt(int row, ssu::peer_identity const& eid, QString const& name);
 
 signals:
     // These signals provide slightly simpler alternatives to
     // beginInsertRow, endInsertRow, beginInsertColumn, endInsertColumn.
-    void peerInserted(ssu::peer_id const& eid);
-    void peerRemoved(ssu::peer_id const& eid);
+    void peerInserted(ssu::peer_identity const& eid);
+    void peerRemoved(ssu::peer_identity const& eid);
 };

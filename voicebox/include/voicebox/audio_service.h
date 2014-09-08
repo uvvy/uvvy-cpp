@@ -40,7 +40,7 @@ public:
     ~audio_service();
 
     bool is_active() const;
-    void establish_outgoing_session(ssu::peer_id const& eid, std::vector<std::string> ep_hints);
+    void establish_outgoing_session(ssu::peer_identity const& eid, std::vector<std::string> ep_hints);
     void listen_incoming_session();
     /**
      * Terminate an active session, causing all audio I/O to stop.

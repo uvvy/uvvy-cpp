@@ -9,10 +9,11 @@ public:
     std::unique_ptr<c4_Storage> storage;
     std::unique_ptr<c4_View> view;
 
-    Private(ssu::peer_id const& id)
+    Private(ssu::peer_identity const& id)
     {
         appdir.mkdir("ChatHistory");
         // Use base32 for naming the files, it's more filesystem-compatible.
+        // this here uses proquint currently.
         QString filename = QString::fromUtf8(id.to_string().c_str());
         QString name = appdir.path() + "/ChatHistory/history." + filename;
 
@@ -30,7 +31,7 @@ public:
     }
 };
 
-ChatHistory::ChatHistory(ssu::peer_id const& id, QObject* parent)
+ChatHistory::ChatHistory(ssu::peer_identity const& id, QObject* parent)
     : QObject(parent)
     , m_pimpl(std::make_shared<Private>(id))
 {}

@@ -156,7 +156,7 @@ public:
     void new_connection(shared_ptr<server> server);
     void new_substream();
 
-    void establish_outgoing_session(peer_id const& eid, vector<string> ep_hints);
+    void establish_outgoing_session(peer_identity const& eid, vector<string> ep_hints);
     void listen_incoming_session();
     void end_session();
 };
@@ -218,7 +218,7 @@ void audio_service::private_impl::connect_stream()
     send_command(cmd_start_session);
 }
 
-void audio_service::private_impl::establish_outgoing_session(peer_id const& eid,
+void audio_service::private_impl::establish_outgoing_session(peer_identity const& eid,
                                                              vector<string> ep_hints)
 {
     data_stream_ = make_shared<ssu::stream>(host_);
@@ -339,7 +339,7 @@ bool audio_service::is_active() const
     return pimpl_->is_active();
 }
 
-void audio_service::establish_outgoing_session(peer_id const& eid,
+void audio_service::establish_outgoing_session(peer_identity const& eid,
                                                vector<string> ep_hints)
 {
     logger::info() << "Connecting to " << eid;
