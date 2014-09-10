@@ -18,10 +18,12 @@ typedef nonce<crypto_box_NONCEBYTES-8, 8> nonce64;
 typedef nonce<crypto_box_NONCEBYTES-16, 16> nonce128;
 typedef source_nonce<crypto_box_NONCEBYTES> recv_nonce;
 
-const string helloPacketMagic    = "hellopkt";
-const string cookiePacketMagic   = "cookipkt";
-const string initiatePacketMagic = "init-pkt";
-const string helloNoncePrefix    = "hello-nonce-----";
+const string helloPacketMagic     = "hellopkt";
+const string cookiePacketMagic    = "cookipkt";
+const string initiatePacketMagic  = "init-pkt";
+const string helloNoncePrefix     = "hello-nonce-----";
+const string minuteKeyNoncePrefix = "minute-k";
+const string cookieNoncePrefix    = "CurveCPK";
 
 // Initiator sends Hello and subsequently Initiate
 class kex_initiator
@@ -90,12 +92,52 @@ public:
         string open = unseal.unbox(subrange(pkt, 112, 80));
         hexdump(open);
 
-        return ""s;
+        // Open box contains client's long-term public key which we should check against:
+        //  a) blacklist
+        //  b) already initiated connection list
+
+        // It could be beneficial to have asymmetric connection channels, it will ease
+        // connection setup handling.
+
+        return send_cookie(clientKey);
     }
 
-    string send_cookie() { return ""s; }
     void got_initiate(string pkt) {} // end of negotiation
     string send_message(string pkt) { return ""s; }
+
+private:
+    string send_cookie(string clientKey)
+    {
+        string packet(8+16+144, '\0');
+        string cookie(96, '\0');
+        secret_key sessionKey; // Generate short-term server key
+
+        // Client short-term public key
+        boost::copy(clientKey, subrange(cookie, 16, 32).begin());
+        // Server short-term secret key
+        boost::copy(sessionKey.get(), subrange(cookie, 48, 32).begin());
+
+        // minute-key secretbox nonce
+        random_nonce<8> minuteKeyNonce(minuteKeyNoncePrefix);
+        boost::copy(crypto_secretbox(subrange(cookie, 16, 64), minuteKeyNonce.get(), minute_key.get()),
+            subrange(cookie, 16, 80).begin());
+
+        // Compressed cookie nonce
+        boost::copy(minuteKeyNonce.sequential(), subrange(cookie, 0, 16).begin());
+
+        boxer<random_nonce<8>> seal(clientKey, long_term_key, cookieNoncePrefix);
+
+        // Server short-term public key + cookie
+        // Box the cookies
+        string box = seal.box(sessionKey.pk.get() + cookie);
+        assert(box.size() == 96+32+16);
+
+        boost::copy(cookiePacketMagic, subrange(packet, 0, 8).begin());
+        boost::copy(seal.nonce_sequential(), subrange(packet, 8, 16).begin());
+        boost::copy(box, subrange(packet, 24, 144).begin());
+
+        return packet;
+    }
 };
 
 int main(int argc, const char ** argv)
@@ -109,7 +151,7 @@ int main(int argc, const char ** argv)
     msg = client.send_hello();
     hexdump(msg);
     msg = server.got_hello(msg);
-    // hexdump(msg);
+    hexdump(msg);
     msg = client.got_cookie(msg);
     // hexdump(msg);
     server.got_initiate(msg);
