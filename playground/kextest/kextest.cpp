@@ -18,12 +18,15 @@ typedef nonce<crypto_box_NONCEBYTES-8, 8> nonce64;
 typedef nonce<crypto_box_NONCEBYTES-16, 16> nonce128;
 typedef source_nonce<crypto_box_NONCEBYTES> recv_nonce;
 
-const string helloPacketMagic     = "hellopkt";
-const string cookiePacketMagic    = "cookipkt";
-const string initiatePacketMagic  = "init-pkt";
-const string helloNoncePrefix     = "hello-nonce-----";
+const string helloPacketMagic     = "qVNq5xLh";
+const string cookiePacketMagic    = "rl3Anmxk";
+const string initiatePacketMagic  = "qVNq5xLi";
+const string messagePacketMagic   = "rl3q5xLm";
+const string helloNoncePrefix     = "cURVEcp-CLIENT-h";
 const string minuteKeyNoncePrefix = "minute-k";
-const string cookieNoncePrefix    = "CurveCPK";
+const string cookieNoncePrefix    = "cURVEcpk";
+const string vouchNoncePrefix     = "cURVEcpv";
+const string initiateNoncePrefix  = "cURVEcp-CLIENT-i";
 
 // Initiator sends Hello and subsequently Initiate
 class kex_initiator
