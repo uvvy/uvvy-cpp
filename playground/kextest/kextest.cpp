@@ -35,6 +35,7 @@ class kex_initiator
     secret_key short_term_key;
     struct server {
         string long_term_key; // == kex_responder.long_term_key.pk
+        string short_term_key;
     } server;
 
 public:
@@ -58,11 +59,52 @@ public:
         return packet;
     }
 
-    string got_cookie(string pkt) { return send_initiate(); }
+    string got_cookie(string pkt)
+    {
+        assert(pkt.size() == 168);
+        assert(subrange(pkt, 0, 8) == cookiePacketMagic);
+
+        // open cookie box
+        string nonce(24, '\0');
+        subrange(nonce, 0, 8) = cookieNoncePrefix;
+        subrange(nonce, 8, 16) = subrange(pkt, 8, 16);
+
+        unboxer<recv_nonce> unseal(server.long_term_key, short_term_key, nonce);
+        string open = unseal.unbox(subrange(pkt, 24, 144));
+
+        server.short_term_key = subrange(open, 0, 32);
+        string cookie = subrange(open, 32, 96);
+
+        // @todo Must get payload from client
+        return send_initiate(cookie, "Hello, world!");
+    }
+
     string send_message() { return ""s; } // must be in client
 
 private:
-    string send_initiate() { return ""s; } // must get payload from client
+    string send_initiate(string cookie, string payload)
+    {
+        // Create vouch subpacket
+        boxer<random_nonce<8>> vouchSeal(server.long_term_key, long_term_key, vouchNoncePrefix);
+        string vouch = vouchSeal.box(short_term_key.pk.get());
+        assert(vouch.size() == 48);
+
+        // Assemble initiate packet
+        string initiate(256+payload.size(), '\0');
+
+        subrange(initiate, 0, 8) = initiatePacketMagic;
+        subrange(initiate, 8, 32) = short_term_key.pk.get();
+        subrange(initiate, 40, 96) = cookie;
+
+        boxer<nonce64> seal(server.short_term_key, short_term_key, initiateNoncePrefix);
+        subrange(initiate, 144, 112+payload.size())
+            = seal.box(long_term_key.pk.get()+vouchSeal.nonce_sequential()+vouch+payload);
+        // @todo Round payload size to next or second next multiple of 16..
+
+        subrange(initiate, 136, 8) = seal.nonce_sequential();
+
+        return initiate;
+    }
 };
 
 // Responder responds with Cookie and subsequently creates far-end session state.
@@ -105,7 +147,35 @@ public:
         return send_cookie(clientKey);
     }
 
-    void got_initiate(string pkt) {} // end of negotiation
+    void got_initiate(string pkt) // end of negotiation
+    {
+        assert(subrange(pkt, 0, 8) == initiatePacketMagic);
+
+        // Try to open the cookie
+        string nonce(24, '\0');
+        subrange(nonce, 0, 8) = minuteKeyNoncePrefix;
+        subrange(nonce, 8, 16) = subrange(pkt, 40, 16);
+
+        string cookie = crypto_secretbox_open(subrange(pkt, 56, 80), nonce, minute_key.get());
+
+        // Check that cookie and client match
+        assert(subrange(pkt, 8 ,32) == subrange(cookie, 0, 32));
+
+        // Extract server short-term secret key
+        short_term_key = secret_key(public_key(""), subrange(cookie, 32, 32));
+
+        // Open the Initiate box using both short-term keys
+        string initateNonce(24, '\0');
+        subrange(initateNonce, 0, 16) = initiateNoncePrefix;
+        subrange(initateNonce, 16, 8) = subrange(pkt, 136, 8);
+
+        string clientKey = subrange(pkt, 8, 32);
+
+        unboxer<recv_nonce> unseal(clientKey, short_term_key, initateNonce);
+        string msg = unseal.unbox(subrange(pkt, 144));
+        hexdump(msg);
+    }
+
     string send_message(string pkt) { return ""s; }
 
 private:
@@ -157,7 +227,7 @@ int main(int argc, const char ** argv)
         msg = server.got_hello(msg);
         hexdump(msg);
         msg = client.got_cookie(msg);
-        // hexdump(msg);
+        hexdump(msg);
         server.got_initiate(msg);
         msg = client.send_message();
         // hexdump(msg);
