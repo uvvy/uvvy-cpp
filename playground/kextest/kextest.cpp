@@ -90,7 +90,6 @@ public:
         subrange(nonce, 0, 16) = helloNoncePrefix;
         subrange(nonce, 16, 8) = subrange(pkt, 104, 8);
 
-        string unbox(64, '\0');
         unboxer<recv_nonce> unseal(clientKey, long_term_key, nonce);
 
         string open = unseal.unbox(subrange(pkt, 112, 80));
