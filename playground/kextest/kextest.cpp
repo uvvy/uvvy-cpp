@@ -169,11 +169,27 @@ public:
         subrange(initateNonce, 0, 16) = initiateNoncePrefix;
         subrange(initateNonce, 16, 8) = subrange(pkt, 136, 8);
 
-        string clientKey = subrange(pkt, 8, 32);
+        string clientShortTermKey = subrange(pkt, 8, 32);
 
-        unboxer<recv_nonce> unseal(clientKey, short_term_key, initateNonce);
+        unboxer<recv_nonce> unseal(clientShortTermKey, short_term_key, initateNonce);
         string msg = unseal.unbox(subrange(pkt, 144));
-        hexdump(msg);
+
+        // Extract client long-term public key and check the vouch subpacket.
+        string clientLongTermKey = subrange(msg, 0, 32);
+
+        string vouchNonce(24, '\0');
+        subrange(vouchNonce, 0, 8) = vouchNoncePrefix;
+        subrange(vouchNonce, 8, 16) = subrange(msg, 32, 16);
+
+        unboxer<recv_nonce> vouchUnseal(clientLongTermKey, long_term_key, vouchNonce);
+        string vouch = vouchUnseal.unbox(subrange(msg, 48, 48));
+
+        assert(vouch == clientShortTermKey);
+
+        // All is good, what's in the payload?
+
+        string payload = subrange(msg, 96);
+        hexdump(payload);
     }
 
     string send_message(string pkt) { return ""s; }
