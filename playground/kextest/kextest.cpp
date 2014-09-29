@@ -1,18 +1,16 @@
-#include <sodiumpp/sodiumpp.h>
-#include <string>
 #include <set>
-#include <valarray>
+#include <string>
 #include <iostream>
 #include <boost/range/algorithm.hpp>
+#include <sodiumpp/sodiumpp.h>
 #include "arsenal/proquint.h"
-#include "arsenal/base32x.h"
-#include "arsenal/base64.h"
 #include "arsenal/hexdump.h"
 #include "arsenal/subrange.h"
+#include "arsenal/opaque_endian.h"
 
-using namespace sodiumpp;
-using namespace boost;
 using namespace std;
+using namespace boost;
+using namespace sodiumpp;
 
 typedef nonce<crypto_box_NONCEBYTES-8, 8> nonce64;
 typedef nonce<crypto_box_NONCEBYTES-16, 16> nonce128;
@@ -27,6 +25,42 @@ const string minuteKeyNoncePrefix = "minute-k";
 const string cookieNoncePrefix    = "cURVEcpk";
 const string vouchNoncePrefix     = "cURVEcpv";
 const string initiateNoncePrefix  = "cURVEcp-CLIENT-i";
+
+constexpr unsigned int operator"" _bits_mask (unsigned long long bits)
+{
+    return (1 << bits) - 1;
+}
+
+struct MessageHeader
+{
+    big_uint32_t id;
+    big_uint32_t last_id;
+    big_uint64_t range1;
+    big_uint32_t range12_gap;
+    big_uint16_t range2;
+    big_uint16_t range23_gap;
+    big_uint16_t range3;
+    big_uint16_t range34_gap;
+    big_uint16_t range4;
+    big_uint16_t range45_gap;
+    big_uint16_t range5;
+    big_uint16_t range56_gap;
+    big_uint16_t range6;
+    big_uint16_t size_and_flags;
+    big_uint64_t offset;
+
+    uint16_t size() { return size_and_flags & 10_bits_mask; }
+} packed_struct;
+
+// Create a container big enough to contain a MessageHeader and payload with appropriate padding
+// @todo Randomize padding amount
+// @todo Limit total message size
+string make_message_container(string const& payload)
+{
+    size_t size = sizeof(MessageHeader)+payload.size()+16/*box overhead*/;
+    size = (size + 15) & ~15;
+    return string(size, '\0');
+}
 
 // Initiator sends Hello and subsequently Initiate
 class kex_initiator
@@ -133,9 +167,7 @@ public:
         subrange(nonce, 16, 8) = subrange(pkt, 104, 8);
 
         unboxer<recv_nonce> unseal(clientKey, long_term_key, nonce);
-
         string open = unseal.unbox(subrange(pkt, 112, 80));
-        hexdump(open);
 
         // Open box contains client's long-term public key which we should check against:
         //  a) blacklist

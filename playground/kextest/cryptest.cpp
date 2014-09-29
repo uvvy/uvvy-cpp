@@ -33,6 +33,9 @@ std::ostream& print_proquint_key(std::ostream& stream, const sodiumpp::public_ke
     return stream << "public_key(\"" << encode::to_proquint(pk.get()) << "\")";
 }
 
+// https://code.google.com/p/go/source/browse/nacl/box/box.go?repo=crypto
+// http://curvecp.org/packets.html
+
 struct hello_packet
 {
     string short_term_client;
