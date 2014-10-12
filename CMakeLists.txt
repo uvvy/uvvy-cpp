@@ -17,10 +17,10 @@ endif (APPLE)
 
 include_directories(3rdparty/endian) # Additional unofficial boost libraries
 
-include_directories(arsenal/include) # For routing access to ssu host and link_receiver
+include_directories(arsenal/include) # For routing access to sss host and link_receiver
 include_directories(krypto/include) # For cryptographic primitives
-include_directories(ssu/include) # For routing access to ssu host and link_receiver
-include_directories(routing/include) # For ssu access to routing client
+include_directories(sss/include) # For routing access to sss host and link_receiver
+include_directories(routing/include) # For sss access to routing client
 include_directories(voicebox/include)
 
 add_subdirectory(3rdparty/sodiumpp)
@@ -29,10 +29,10 @@ add_subdirectory(arsenal)
 add_subdirectory(voicebox)
 #add_subdirectory(filesyncbox)
 
-add_subdirectory(ssu)
 add_subdirectory(routing)
 add_subdirectory(naming)
 add_subdirectory(nat)
+add_subdirectory(sss)
 
 add_subdirectory(3rdparty/opus)
 add_subdirectory(3rdparty/rtaudio)

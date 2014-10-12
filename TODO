@@ -129,7 +129,7 @@ Routing:
    ☐ regserver will become a part of p2p directory when DHT is implemented
  ☐ Extract regserver logic/state management to remove code duplication between old and new regserver.
 
-Structured Streams:
+Structured Secure Streams:
  ☐ Need to differentiate between substreams received as result of user actions
    and substreams received as means to deliver datagrams.
    Might not be that easy, but possibly streams that are already closed for writing by peer can be
