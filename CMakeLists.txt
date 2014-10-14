@@ -36,8 +36,6 @@ add_subdirectory(sss)
 
 add_subdirectory(3rdparty/opus)
 add_subdirectory(3rdparty/rtaudio)
-set(METAKIT_TCL OFF)
-set(METAKIT_PYTHON OFF)
 add_subdirectory(3rdparty/metakit)
 #add_subdirectory(ui)
 
