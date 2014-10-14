@@ -9,7 +9,7 @@
 #pragma once
 
 #include <boost/signals2/signal.hpp>
-#include "ssu/host.h"
+#include "sss/host.h"
 
 // Set to 1 if you want to console-log in realtime thread.
 #define REALTIME_CRIME 0
@@ -36,11 +36,11 @@ class audio_service
     std::shared_ptr<private_impl> pimpl_;
 
 public:
-    audio_service(std::shared_ptr<ssu::host> host);
+    audio_service(std::shared_ptr<sss::host> host);
     ~audio_service();
 
     bool is_active() const;
-    void establish_outgoing_session(ssu::peer_identity const& eid, std::vector<std::string> ep_hints);
+    void establish_outgoing_session(sss::peer_identity const& eid, std::vector<std::string> ep_hints);
     void listen_incoming_session();
     /**
      * Terminate an active session, causing all audio I/O to stop.

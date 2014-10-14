@@ -15,7 +15,7 @@
 #include "voicebox/audio_service.h"
 
 using namespace std;
-using namespace ssu;
+using namespace sss;
 
 namespace voicebox {
 

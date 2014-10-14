@@ -10,7 +10,7 @@
 #include "voicebox/packet_sink.h"
 
 using namespace std;
-using namespace ssu;
+using namespace sss;
 
 namespace voicebox {
 

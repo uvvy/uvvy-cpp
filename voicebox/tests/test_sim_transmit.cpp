@@ -13,7 +13,7 @@
 #define BOOST_TEST_MODULE Test_sim_transmit
 #include <boost/test/unit_test.hpp>
 
-#include "../../ssu/tests/simulator_fixture.h" //@todo Fix include directory for test fixtures
+#include "../../sss/tests/simulator_fixture.h" //@todo Fix include directory for test fixtures
 #include "voicebox/rtaudio_source.h"
 #include "voicebox/rtaudio_sink.h"
 #include "voicebox/packetizer.h"
@@ -22,8 +22,8 @@
 #include "voicebox/packet_sink.h"
 
 using namespace std;
-using namespace ssu;
-using namespace ssu::simulation;
+using namespace sss;
+using namespace sss::simulation;
 using namespace voicebox;
 
 BOOST_FIXTURE_TEST_CASE(simple_sim_step, simulator_fixture)

@@ -9,7 +9,7 @@ public:
     std::unique_ptr<c4_Storage> storage;
     std::unique_ptr<c4_View> view;
 
-    Private(ssu::peer_identity const& id)
+    Private(sss::peer_identity const& id)
     {
         appdir.mkdir("ChatHistory");
         // Use base32 for naming the files, it's more filesystem-compatible.
@@ -31,7 +31,7 @@ public:
     }
 };
 
-ChatHistory::ChatHistory(ssu::peer_identity const& id, QObject* parent)
+ChatHistory::ChatHistory(sss::peer_identity const& id, QObject* parent)
     : QObject(parent)
     , m_pimpl(std::make_shared<Private>(id))
 {}

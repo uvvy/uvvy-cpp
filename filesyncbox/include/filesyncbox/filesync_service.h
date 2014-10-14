@@ -2,7 +2,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/signals2/signal.hpp>
-#include "ssu/host.h"
+#include "sss/host.h"
 
 namespace filesyncbox {
 
@@ -17,11 +17,11 @@ class filesync_service
     std::shared_ptr<private_impl> pimpl_;
 
 public:
-    filesync_service(std::shared_ptr<ssu::host> host);
+    filesync_service(std::shared_ptr<sss::host> host);
     ~filesync_service();
     bool is_active() const;
 
-    void add_directory_sync(boost::filesystem::path dir, std::vector<ssu::peer_id> const& to_peers);
+    void add_directory_sync(boost::filesystem::path dir, std::vector<sss::peer_identity> const& to_peers);
 
     // File sync service signals
     typedef boost::signals2::signal<void (void)> completion_signal;

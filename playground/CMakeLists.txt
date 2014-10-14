@@ -1,4 +1,4 @@
-include_directories(../nat/include ../ssu/include ../arsenal/include)
+include_directories(../nat/include ../sss/include ../arsenal/include)
 include_directories(../3rdparty/opus/include) # For unlogger
 include_directories(../3rdparty) # For cryptest
 

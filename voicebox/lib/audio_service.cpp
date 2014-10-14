@@ -11,8 +11,8 @@
 #include <boost/asio/strand.hpp>
 #include "arsenal/logging.h"
 #include "arsenal/algorithm.h"
-#include "ssu/stream.h"
-#include "ssu/server.h"
+#include "sss/stream.h"
+#include "sss/server.h"
 #include "voicebox/audio_service.h"
 #include "voicebox/audio_hardware.h"
 
@@ -26,7 +26,7 @@
 #include "voicebox/opus_decode_sink.h"
 
 using namespace std;
-using namespace ssu;
+using namespace sss;
 using namespace voicebox;
 using namespace boost::asio;
 
@@ -134,7 +134,7 @@ class audio_service::private_impl
     boost::signals2::connection link_down_conn;
 
 public:
-    private_impl(audio_service* parent, shared_ptr<ssu::host> host)
+    private_impl(audio_service* parent, shared_ptr<sss::host> host)
         : parent_(parent)
         , host_(host)
     {}
@@ -221,7 +221,7 @@ void audio_service::private_impl::connect_stream()
 void audio_service::private_impl::establish_outgoing_session(peer_identity const& eid,
                                                              vector<string> ep_hints)
 {
-    data_stream_ = make_shared<ssu::stream>(host_);
+    data_stream_ = make_shared<sss::stream>(host_);
     send_ = make_shared<send_chain>(data_stream_);
     recv_ = make_shared<receive_chain>(data_stream_);
 
@@ -283,7 +283,7 @@ void audio_service::private_impl::new_substream()
 
 void audio_service::private_impl::listen_incoming_session()
 {
-    server_ = make_shared<ssu::server>(host_);
+    server_ = make_shared<sss::server>(host_);
     server_->on_new_connection.connect([this]
     {
         new_connection(server_);
@@ -327,7 +327,7 @@ void audio_service::private_impl::end_session()
 // audio_service
 //=================================================================================================
 
-audio_service::audio_service(shared_ptr<ssu::host> host)
+audio_service::audio_service(shared_ptr<sss::host> host)
     : pimpl_(make_shared<private_impl>(this, host))
 {}
 

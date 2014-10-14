@@ -8,23 +8,23 @@
 //
 #pragma once
 
-#include "ssu/stream.h"
+#include "sss/stream.h"
 #include "voicebox/audio_sink.h"
 
 namespace voicebox {
 
 /**
- * Packet sink sends data to the network using an ssu::stream.
+ * Packet sink sends data to the network using an sss::stream.
  */
 class packet_sink : public audio_sink
 {
     typedef audio_sink super;
 
-    std::shared_ptr<ssu::stream> stream_;
+    std::shared_ptr<sss::stream> stream_;
     uint32_t sequence_number_{0};
 
 public:
-    packet_sink(std::shared_ptr<ssu::stream> stream, audio_sink* from = nullptr)
+    packet_sink(std::shared_ptr<sss::stream> stream, audio_sink* from = nullptr)
         : audio_sink(from)
         , stream_(stream)
     {}

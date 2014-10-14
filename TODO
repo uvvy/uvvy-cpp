@@ -5,7 +5,7 @@ Topmost 3 tasks:
 Structure:
   ☐ Separate libvoicebox into a separate repo (not yet?)
   ☐ Separate libfilesyncbox into a separate repo (not yet?)
-  ☐ Extract ssu::link and other low-level communication helpers into libcomm. (uia::comm)
+  ☐ Extract sss::link and other low-level communication helpers into libcomm. (uia::comm)
 
 UI:
  ☐ Draw UI sketches for contacts list,
@@ -120,10 +120,7 @@ Routing:
  ☐ Possible intermediate step for work below:
    Handle standard ROU messages but from within link::receive()
  ☐ Regserver uses unencrypted network traffic.
-   ☐ switch regserver to use regular ssu streams -- in progress
-     ☐ add non-encrypted channel armor
-       -- requires negotiation work, see below
-   ☐ move regserver to a regular ssu protocol
+   ☐ move regserver to a regular sss protocol
    ☐ run regserver inside host on the same port
    ☐ regserver shall be integral part of each participating node
    ☐ regserver will become a part of p2p directory when DHT is implemented
@@ -167,7 +164,7 @@ Keying Negotiation:
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
-   - some ssu doc posted on atta-metta.net
+   - some sss doc posted on atta-metta.net
  ☐ Automatic launching on host OS login
 
  ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document
@@ -223,9 +220,9 @@ flow control
  ☐ inherited versus independent receive windows
 
 NAT and UPnP:
- ☐ Integrate UPnP into ssu::host. - should find upnp/natpnp and open necessary port from config
+ ☐ Integrate UPnP into sss::host. - should find upnp/natpnp and open necessary port from config
    when instantiating host, maintain it open for duration of host existence.
- ☐ Integrate hole punching machinery with ssu::host.
+ ☐ Integrate hole punching machinery with sss::host.
  ☐ Assign a new `endpoint` with public IP and UPnP-assigned port number.
    ☐ Use it to register on regserver as primary.
      Right now regserver gives us this external IP address.

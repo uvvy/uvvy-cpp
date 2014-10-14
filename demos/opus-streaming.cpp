@@ -14,7 +14,7 @@
 #include "arsenal/logging.h"
 #include "arsenal/settings_provider.h"
 #include "arsenal/any_int_cast.h"
-#include "ssu/host.h"
+#include "sss/host.h"
 #include "voicebox/audio_service.h"
 #include "routing/private/regserver_client.h" // @fixme Testing only.
 #include "traverse_nat.h"
@@ -22,7 +22,7 @@
 
 namespace po = boost::program_options;
 using namespace std;
-using namespace ssu;
+using namespace sss;
 
 /**
  * Get the address to talk to over IPv6 from the command line.

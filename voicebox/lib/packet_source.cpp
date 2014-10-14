@@ -11,12 +11,12 @@
 #include "voicebox/audio_service.h"
 
 using namespace std;
-using namespace ssu;
+using namespace sss;
 namespace pt = boost::posix_time;
 
 namespace voicebox {
 
-packet_source::packet_source(std::shared_ptr<ssu::stream> stream)
+packet_source::packet_source(std::shared_ptr<sss::stream> stream)
     : audio_source()
 {
     set_source(stream);
@@ -30,7 +30,7 @@ packet_source::~packet_source()
     }
 }
 
-void packet_source::set_source(std::shared_ptr<ssu::stream> stream)
+void packet_source::set_source(std::shared_ptr<sss::stream> stream)
 {
     stream_ = stream;
     ready_read_conn = stream_->on_ready_read_datagram.connect([this]{ on_packet_received(); });

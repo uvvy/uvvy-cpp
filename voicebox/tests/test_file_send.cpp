@@ -1,14 +1,14 @@
 #include <thread>
 #include <chrono>
-#include "ssu/host.h"
-#include "ssu/stream.h"
+#include "sss/host.h"
+#include "sss/stream.h"
 #include "arsenal/settings_provider.h"
 #include "voicebox/file_read_sink.h"
 #include "voicebox/opus_encode_sink.h"
 #include "voicebox/packet_sink.h"
 
 using namespace std;
-using namespace ssu;
+using namespace sss;
 using namespace voicebox;
 
 int main()

@@ -8,7 +8,7 @@
 //
 #include <boost/any.hpp>
 #include "arsenal/settings_provider.h"
-#include "ssu/host.h"
+#include "sss/host.h"
 #include "routing/client_profile.h"
 #include "client_utils.h"
 #include "routing/private/regserver_client.h"
@@ -17,7 +17,7 @@ using namespace std;
 
 void regclient_set_profile(settings_provider* settings,
     uia::routing::internal::regserver_client& regclient,
-    ssu::host* host)
+    sss::host* host)
 {
     // Pull client profile from settings.
     byte_array s_client = settings->get_byte_array("profile");

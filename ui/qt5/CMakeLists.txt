@@ -45,7 +45,7 @@ add_executable(MettaNode ${GUI_TYPE}
     ${mettanode_RESOURCES_RCC}
     ${mettanode_FORMS}
     ${APPLE_BUNDLE_SRC})
-target_link_libraries(MettaNode krypto rclient routing ssu arsenal natclient nat upnpc
+target_link_libraries(MettaNode krypto rclient routing sss arsenal natclient nat upnpc
     ${VOICEBOX_LIBS} opus
     ${Boost_LIBRARIES} ${QT_LIBRARIES} ${OPENSSL_LIBRARIES})
 

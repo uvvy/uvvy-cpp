@@ -9,10 +9,10 @@
 #include <set>
 #include "traverse_nat.h"
 #include "arsenal/logging.h"
-#include "ssu/host.h"
+#include "sss/host.h"
 
 using namespace std;
-using namespace ssu;
+using namespace sss;
 
 shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
 {

@@ -11,12 +11,12 @@
 #include <boost/asio/strand.hpp>
 #include "filesyncbox/filesync_service.h"
 #include "filesyncbox/chunk.h"
-#include "ssu/stream.h"
-#include "ssu/server.h"
+#include "sss/stream.h"
+#include "sss/server.h"
 #include "arsenal/logging.h"
 
 using namespace std;
-using namespace ssu;
+using namespace sss;
 using namespace filesyncbox;
 using namespace boost::asio;
 
@@ -61,7 +61,7 @@ class filesync_service::private_impl
     bool active_{false};
 
 public:
-    private_impl(filesync_service* parent, shared_ptr<ssu::host> host)
+    private_impl(filesync_service* parent, shared_ptr<sss::host> host)
         : parent_(parent)
         , host_(host)
     {}
@@ -157,7 +157,7 @@ void filesync_service::private_impl::end_session_with(shared_ptr<peer_sync>& pee
 
 void filesync_service::private_impl::listen_incoming_session()
 {
-    server_ = make_shared<ssu::server>(host_);
+    server_ = make_shared<sss::server>(host_);
     server_->on_new_connection.connect([this]
     {
         new_connection(server_);
@@ -174,7 +174,7 @@ void filesync_service::private_impl::listen_incoming_session()
 // filesync_service
 //=================================================================================================
 
-filesync_service::filesync_service(shared_ptr<ssu::host> host)
+filesync_service::filesync_service(shared_ptr<sss::host> host)
     : pimpl_(make_shared<private_impl>(this, host))
 {
     pimpl_->listen_incoming_session();
@@ -188,7 +188,7 @@ bool filesync_service::is_active() const
     return pimpl_->is_active();
 }
 
-void add_directory_sync(boost::filesystem::path dir, std::vector<ssu::peer_id> const& to_peers)
+void add_directory_sync(boost::filesystem::path dir, std::vector<sss::peer_identity> const& to_peers)
 {}
 
 } // filesyncbox namespace

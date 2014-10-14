@@ -18,7 +18,7 @@
 #include "arsenal/logging.h"
 
 using namespace std;
-using namespace ssu;
+using namespace sss;
 using namespace uia::routing;
 
 // @todo move to public API?
@@ -115,7 +115,7 @@ public:
     // Save/load peer list in settings if not nullptr
     shared_ptr<settings_provider> settings_;
 
-    Private(ContactModel* parent, ssu::host *h)
+    Private(ContactModel* parent, host *h)
         : parent_(parent)
         , client_(h)
     {
@@ -126,25 +126,25 @@ public:
         client_.on_disconnected.connect([] {
             logger::debug() << "client disconnected";
         });
-        client_.on_lookup_done.connect([this](ssu::peer_identity const& peer,
+        client_.on_lookup_done.connect([this](peer_identity const& peer,
             uia::comm::endpoint const&,
             uia::routing::client_profile const& profile)
         {
             updatePeerProfile(peer, profile);
         });
-        client_.on_lookup_failed.connect([](ssu::peer_identity const& peer) {
+        client_.on_lookup_failed.connect([](peer_identity const& peer) {
             logger::debug() << "lookup failed";
         });
 
         client_.on_search_done.connect([this](std::string const&,
-            std::vector<ssu::peer_identity> const& peers,
+            std::vector<peer_identity> const& peers,
             bool last)
         {
             foundPeers(peers, last);
         });
     }
 
-    void updatePeerProfile(ssu::peer_identity const& peer,
+    void updatePeerProfile(peer_identity const& peer,
             uia::routing::client_profile const& profile)
     {
         logger::debug() << "updatePeerProfile " << peer;
@@ -162,7 +162,7 @@ public:
         }
     }
 
-    bool containsId(ssu::peer_identity const& eid) const
+    bool containsId(peer_identity const& eid) const
     {
         for (auto& peer : peers_) {
             if (peer.eid_ == eid) {
@@ -172,7 +172,7 @@ public:
         return false;
     }
 
-    void foundPeers(std::vector<ssu::peer_identity> const& peers, bool last)
+    void foundPeers(std::vector<peer_identity> const& peers, bool last)
     {
         for (auto peer : peers) {
             logger::debug() << "foundPeers " << peer;
@@ -191,14 +191,14 @@ public:
     }
 };
 
-ContactModel::ContactModel(shared_ptr<ssu::host> h, QObject *parent)
+ContactModel::ContactModel(shared_ptr<host> h, QObject *parent)
     : QAbstractItemModel(parent)
     , m_pimpl(make_shared<Private>(this, h.get()))
 {
     m_pimpl->connectRegservers();
 }
 
-ContactModel::ContactModel(shared_ptr<ssu::host> h, shared_ptr<settings_provider> s,
+ContactModel::ContactModel(shared_ptr<host> h, shared_ptr<settings_provider> s,
     QObject *parent)
     : QAbstractItemModel(parent)
     , m_pimpl(make_shared<Private>(this, h.get()))
@@ -217,7 +217,7 @@ QModelIndex ContactModel::index(int row, int column, const QModelIndex &parent) 
     return createIndex(row, column, &m_pimpl->peers_[row]);
 }
 
-int ContactModel::insert(ssu::peer_identity const& eid, QString name)
+int ContactModel::insert(peer_identity const& eid, QString name)
 {
     int row = rowWithId(eid);
     if (row >= 0)
@@ -242,7 +242,7 @@ int ContactModel::insert(ssu::peer_identity const& eid, QString name)
     return row;
 }
 
-void ContactModel::remove(ssu::peer_identity const& eid)
+void ContactModel::remove(peer_identity const& eid)
 {
     int row = rowWithId(eid);
     if (row < 0) {
@@ -266,7 +266,7 @@ QString ContactModel::name(int row) const
     return m_pimpl->peers_[row].name_;
 }
 
-QString ContactModel::name(ssu::peer_identity const& eid, QString const& defaultName) const
+QString ContactModel::name(peer_identity const& eid, QString const& defaultName) const
 {
     int row = rowWithId(eid);
     if (row < 0)
@@ -274,21 +274,21 @@ QString ContactModel::name(ssu::peer_identity const& eid, QString const& default
     return name(row);
 }
 
-ssu::peer_identity ContactModel::id(int row) const
+peer_identity ContactModel::id(int row) const
 {
     return m_pimpl->peers_[row].eid_;
 }
 
-QList<ssu::peer_identity> ContactModel::ids() const
+QList<peer_identity> ContactModel::ids() const
 {
-    QList<ssu::peer_identity> ids;
+    QList<peer_identity> ids;
     for (auto& peer : m_pimpl->peers_) {
         ids.append(peer.eid_);
     }
     return ids;
 }
 
-int ContactModel::rowWithId(ssu::peer_identity const& eid) const
+int ContactModel::rowWithId(peer_identity const& eid) const
 {
     for (int i = 0; i < m_pimpl->peers_.size(); i++)
         if (m_pimpl->peers_[i].eid_ == eid)
@@ -314,7 +314,7 @@ int ContactModel::columnCount(const QModelIndex &parent) const
     // return MaxColumns;
 }
 
-void ContactModel::insertAt(int row, ssu::peer_identity const& eid, QString const& name)
+void ContactModel::insertAt(int row, peer_identity const& eid, QString const& name)
 {
     Peer p;
     p.name_ = name;

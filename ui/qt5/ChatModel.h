@@ -12,7 +12,7 @@
 // #include <memory>
 
 class settings_provider;
-namespace ssu {
+namespace sss {
     class host;
     class peer_identity;
 }
@@ -33,7 +33,7 @@ class ChatModel : public QAbstractItemModel
     std::shared_ptr<Private> m_pimpl;
 
 public:
-    ChatModel(std::shared_ptr<ssu::host> h, QObject *parent = 0);
+    ChatModel(std::shared_ptr<sss::host> h, QObject *parent = 0);
 
     // QAbstractItemModel methods for QML:
     QHash<int, QByteArray> roleNames() const override;
@@ -57,11 +57,11 @@ public:
     // Internal use only.
     void updateData(int row);
 private:
-    void insertAt(int row, ssu::peer_identity const& eid, QString const& name);
+    void insertAt(int row, sss::peer_identity const& eid, QString const& name);
 
 signals:
     // These signals provide slightly simpler alternatives to
     // beginInsertRow, endInsertRow, beginInsertColumn, endInsertColumn.
-    void peerInserted(ssu::peer_identity const& eid);
-    void peerRemoved(ssu::peer_identity const& eid);
+    void peerInserted(sss::peer_identity const& eid);
+    void peerRemoved(sss::peer_identity const& eid);
 };

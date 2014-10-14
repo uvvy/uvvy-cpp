@@ -10,7 +10,7 @@
 
 #include "arsenal/byte_array.h"
 
-namespace ssu {
+namespace sss {
 
 /**
  * Base pseudo-class to provide symbols shared by several chunk classes.
@@ -59,4 +59,4 @@ public:
     };
 };
 
-} // ssu namespace
+} // sss namespace

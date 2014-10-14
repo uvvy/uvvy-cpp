@@ -9,7 +9,7 @@
 #include "CallService.h"
 
 using namespace std;
-using namespace ssu;
+using namespace sss;
 
 CallService::CallService(HostState& s, QObject *parent)
     : QObject(parent)

@@ -10,7 +10,7 @@
 
 #include "filesyncbox/chunk_protocol.h"
 
-namespace ssu {
+namespace sss {
 namespace internal {
 
 /**
@@ -51,4 +51,4 @@ public:
 };
 
 } // internal namespace
-} // ssu namespace
+} // sss namespace

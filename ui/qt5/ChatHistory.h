@@ -17,7 +17,7 @@ public:
     /**
      * @param id binary chat identifier.
      */
-    ChatHistory(ssu::peer_identity const& id, QObject* parent = 0);
+    ChatHistory(sss::peer_identity const& id, QObject* parent = 0);
     ~ChatHistory();
 
 public slots:

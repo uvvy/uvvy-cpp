@@ -6,7 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-namespace ssu {
+namespace sss {
 namespace internal {
 
 chunk_peer::chunk_peer(const PeerId &eid)
@@ -279,4 +279,4 @@ void chunk_peer::got_chunk_reply(Stream *, XdrStream &rs)
 }
 
 } // internal namespace
-} // ssu namespace
+} // sss namespace
