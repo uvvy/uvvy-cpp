@@ -17,7 +17,7 @@ namespace voicebox {
  */
 class rtaudio_sink : public audio_sink
 {
-    typedef audio_sink super;
+    using super = audio_sink;
 
 public:
     rtaudio_sink(audio_sink* from = nullptr) : audio_sink(from) {}

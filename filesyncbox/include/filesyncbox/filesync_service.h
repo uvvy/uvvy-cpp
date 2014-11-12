@@ -24,7 +24,7 @@ public:
     void add_directory_sync(boost::filesystem::path dir, std::vector<sss::peer_identity> const& to_peers);
 
     // File sync service signals
-    typedef boost::signals2::signal<void (void)> completion_signal;
+    using completion_signal = boost::signals2::signal<void (void)>;
     completion_signal sync_completed;
 };
 

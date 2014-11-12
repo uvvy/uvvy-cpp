@@ -12,7 +12,7 @@ namespace voicebox {
  */
 class file_read_sink : public audio_sink
 {
-    typedef audio_sink super;
+    using super = audio_sink;
 
     std::string filename_;
     std::ifstream file_;

@@ -22,7 +22,7 @@ namespace voicebox {
  */
 class audio_source : public audio_stream
 {
-    typedef audio_stream super;
+    using super = audio_stream;
 
     audio_source* acceptor_{nullptr};
 

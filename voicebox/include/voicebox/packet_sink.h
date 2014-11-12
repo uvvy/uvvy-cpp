@@ -18,7 +18,7 @@ namespace voicebox {
  */
 class packet_sink : public audio_sink
 {
-    typedef audio_sink super;
+    using super = audio_sink;
 
     std::shared_ptr<sss::stream> stream_;
     uint32_t sequence_number_{0};

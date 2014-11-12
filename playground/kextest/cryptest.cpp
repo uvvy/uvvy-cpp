@@ -67,10 +67,10 @@ int main(int argc, const char ** argv)
     // There's a page describing how curvecp nonces should be generated: http://curvecp.org/nonces.html
 
     // Create a nonce type that has a 64-bit sequential counter and constant random bytes for the remaining bytes
-    typedef nonce<crypto_box_NONCEBYTES-8, 8> nonce64;
+    using nonce64 = nonce<crypto_box_NONCEBYTES-8, 8>;
 
     // Server nonce
-    typedef nonce<crypto_box_NONCEBYTES-16, 16> nonce128;
+    using nonce128 = nonce<crypto_box_NONCEBYTES-16, 16>;
 
     // Client prepares and sends Hello packet:
     hello_packet hello;

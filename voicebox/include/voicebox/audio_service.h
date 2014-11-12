@@ -49,7 +49,7 @@ public:
     void end_session();
 
     // Voice service media signals
-    typedef boost::signals2::signal<void (void)> session_signal;
+    using session_signal = boost::signals2::signal<void (void)>;
     session_signal on_session_started;
     session_signal on_session_finished;
 };

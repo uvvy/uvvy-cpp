@@ -18,7 +18,7 @@ namespace voicebox {
  */
 class packet_source : public audio_source
 {
-    typedef audio_source super;
+    using super = audio_source;
 
     std::shared_ptr<sss::stream> stream_;
     boost::signals2::connection ready_read_conn;

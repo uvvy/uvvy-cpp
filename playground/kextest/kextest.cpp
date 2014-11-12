@@ -12,9 +12,9 @@ using namespace std;
 using namespace boost;
 using namespace sodiumpp;
 
-typedef nonce<crypto_box_NONCEBYTES-8, 8> nonce64;
-typedef nonce<crypto_box_NONCEBYTES-16, 16> nonce128;
-typedef source_nonce<crypto_box_NONCEBYTES> recv_nonce;
+using nonce64 = nonce<crypto_box_NONCEBYTES-8, 8>;
+using nonce128 = nonce<crypto_box_NONCEBYTES-16, 16>;
+using recv_nonce = source_nonce<crypto_box_NONCEBYTES>;
 
 const string helloPacketMagic     = "qVNq5xLh";
 const string cookiePacketMagic    = "rl3Anmxk";

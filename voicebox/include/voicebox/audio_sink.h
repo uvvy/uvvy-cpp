@@ -21,7 +21,7 @@ namespace voicebox {
  */
 class audio_sink : public audio_stream
 {
-    typedef audio_stream super;
+    using super = audio_stream;
 
     audio_sink* producer_{nullptr};
 

@@ -18,7 +18,7 @@ namespace voicebox {
  */
 class opus_encode_sink : public audio_sink
 {
-    typedef audio_sink super;
+    using super = audio_sink;
 
     /**
      * Encoder state.

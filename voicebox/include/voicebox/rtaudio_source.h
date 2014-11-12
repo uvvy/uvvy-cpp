@@ -20,7 +20,7 @@ namespace voicebox {
  */
 class rtaudio_source : public audio_source
 {
-    typedef audio_source super;
+    using super = audio_source;
 
 public:
     rtaudio_source() = default;

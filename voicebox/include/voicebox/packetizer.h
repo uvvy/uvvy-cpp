@@ -57,7 +57,7 @@ public:
     void produce_output(byte_array& buffer) override; // from sink
     void accept_input(byte_array data) override; // from source
 
-    typedef boost::signals2::signal<void (void)> state_signal;
+    using state_signal = boost::signals2::signal<void (void)>;
     state_signal on_ready_read;
     state_signal on_queue_empty;
 };
