@@ -16,6 +16,7 @@ if (APPLE)
 endif (APPLE)
 
 include_directories(3rdparty/endian) # Additional unofficial boost libraries
+include_directories(3rdparty) # sodiumpp
 
 include_directories(arsenal/include) # For routing access to sss host and link_receiver
 include_directories(krypto/include) # For cryptographic primitives
