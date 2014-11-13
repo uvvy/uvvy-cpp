@@ -60,7 +60,7 @@ public:
     int count() const;
     bool setFlags(const QModelIndex &index, Qt::ItemFlags flags);
 
-    // SSU-relevant model functions.
+    // SSS-relevant model functions.
     /**
      * Insert a peer.
      */

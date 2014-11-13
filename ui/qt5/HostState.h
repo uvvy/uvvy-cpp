@@ -6,7 +6,7 @@
 #include "traverse_nat.h"
 
 /**
- * HostState embeds settings, NAT traversal and io_service runner for the SSU host.
+ * HostState embeds settings, NAT traversal and io_service runner for the SSS host.
  */
 class HostState
 {
