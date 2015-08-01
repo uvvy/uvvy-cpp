@@ -5,7 +5,7 @@ include(CTest)
 
 include(cmake/setup.cmake)
 
-# Export compile commands for ST2 clang plugin.
+# Export compile commands for ST3 clang plugin.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set flag for submodules build
