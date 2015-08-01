@@ -69,7 +69,7 @@ ChunkSearch *Store::searchStores(const QByteArray &ohash,
 bool StoresSearch::done()
 {
 	foreach (ChunkSearch *cs, subs)
-		if (cs && !cs->done())
+		if (cs and !cs->done())
 			return false;
 	return true;
 }

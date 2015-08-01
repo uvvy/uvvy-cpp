@@ -41,7 +41,7 @@ chunk_share::peer(peer_id const& hostid, bool create)
     }
 
     chunk_peer *&peer = peers[hostid];
-    if (!peer && create) {
+    if (!peer and create) {
         peer = new chunk_peer(hostid);
     }
     return peer;

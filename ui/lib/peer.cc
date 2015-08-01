@@ -79,7 +79,7 @@ void PeerService::updateStatus(const PeerId &hostid)
 
     // Update the status indicator
     Stream *stream = out.value(hostid.getId());
-    bool online = stream && stream->isLinkUp(); // @todo isConnected() returns true erroneously?
+    bool online = stream and stream->isLinkUp(); // @todo isConnected() returns true erroneously?
     QModelIndex idx = peers->index(row, statcol);
     const QVariant &val = online
             ? (onlineval.isNull() ? tr("Online") : onlineval)
@@ -243,7 +243,7 @@ void PeerService::inConnection()
         // Use this event to prod our outgoing connection attempt
         // if appropriate
         Stream *outstream = outStream(id);
-        if (outstream && !outstream->isLinkUp())
+        if (outstream and !outstream->isLinkUp())
             reconnectToPeer(id);
 
         // Forward the notification to our client

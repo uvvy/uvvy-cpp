@@ -119,7 +119,7 @@ void Update::FileReader::gotData2(const QByteArray &ohash, qint64 ofs, qint64,
 //		<< "size" << data.size() << "to" << tmp.fileName();
 
 	// Open the temporary download file
-	if (!tmp.isOpen() && !tmp.open())
+	if (!tmp.isOpen() and !tmp.open())
 		return error(tr("Cannot create: %0")
 				.arg(tmp.errorString()));
 
@@ -211,7 +211,7 @@ void Update::DirReader::gotEntries(int pos, qint64, const QList<FileInfo> &ents)
 
 	int nents = ents.size();
 	Q_ASSERT(nents > 0);
-	Q_ASSERT(pos >= 0 && pos <= up->numParts());
+	Q_ASSERT(pos >= 0 and pos <= up->numParts());
 	up->beforeInsertParts(pos, pos + nents - 1);
 
 	for (int i = 0; i < nents; i++) {
@@ -279,7 +279,7 @@ void Update::DirReader::check()
 	}
 
 	// XXX report fatal errors in subs
-	if (dirdone && subsdone) {
+	if (dirdone and subsdone) {
 		if (up->nerrors)
 			up->setStatus(up->FatalError,
 				tr("Download failed (%0 errors)")

@@ -86,8 +86,8 @@ void Scan::start()
 	if (info.isNull())
 		qDebug() << "isnull";
 #endif
-	if (!(opts & ForceRescan) && !qfi.isDir() && !info.isNull()
-			&& (Time::fromQDateTime(qfi.lastModified())
+	if (!(opts & ForceRescan) and !qfi.isDir() and !info.isNull()
+			and (Time::fromQDateTime(qfi.lastModified())
 				== info.modTime()))
 		return reportDone();
 

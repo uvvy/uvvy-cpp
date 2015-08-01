@@ -71,7 +71,7 @@ int main(int argc, char **argv)
     app.setOrganizationDomain("exquance.com"); // for OSX
     app.setApplicationName("SstreamS");
 
-    while (argc > 1 && argv[1][0] == '-') {
+    while (argc > 1 and argv[1][0] == '-') {
         switch (argv[1][1]) {
         case 'i':
             initiator = true;

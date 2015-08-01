@@ -222,7 +222,7 @@ void VoiceService::updateStatus(const SST::PeerId& id)
 		return;
 
 	Stream *stream = outStream(id);
-	bool online = stream && stream->isConnected();
+	bool online = stream and stream->isConnected();
 
 	if (talkcol >= 0) {
 		QVariant val = !online

@@ -276,7 +276,7 @@ void audio_hardware::open_audio()
     bool enable_playback = !outstreams.empty();
 
     // See if any input or output streams are actually enabled
-    if (!enable_capture && !enable_playback) {
+    if (!enable_capture and !enable_playback) {
         return;
     }
 

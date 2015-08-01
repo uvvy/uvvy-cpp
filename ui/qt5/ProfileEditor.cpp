@@ -75,7 +75,7 @@ void ProfileEditor::load()
     if (!id.is_empty() and !key.is_empty())
     {
         m_pimpl->ident.set_id(id);
-        if (m_pimpl->ident.set_key(key) && m_pimpl->ident.has_private_key())
+        if (m_pimpl->ident.set_key(key) and m_pimpl->ident.has_private_key())
         {
             hostEIDLineEdit->setText(m_pimpl->ident.to_string().c_str());
             setStatus("Profile loaded");

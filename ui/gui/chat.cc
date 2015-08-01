@@ -247,7 +247,7 @@ static QStringList files(const QMimeData *data)
         QString path = url.path();
 #ifdef WIN32
         // Get rid of the leading slash before the drive letter.
-        if (path.size() >= 3 && path[0] == '/' && path[2] == ':')
+        if (path.size() >= 3 and path[0] == '/' and path[2] == ':')
             path = path.mid(1);
 #endif
         l.append(path);
