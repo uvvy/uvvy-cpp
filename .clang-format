@@ -25,12 +25,13 @@ AlignTrailingComments: true
 BinPackArguments: false
 BinPackParameters: false
 BreakBeforeBinaryOperators: NonAssignment
-BreakBeforeBraces: Linux
+BreakBeforeBraces: Mozilla
 BreakBeforeTernaryOperators: false
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
 Cpp11BracedListStyle: true
 IndentCaseLabels: true
 MaxEmptyLinesToKeep: 1
+NamespaceIndentation: None
 SpaceAfterCStyleCast: false
 SpacesInCStyleCastParentheses: false
 SpaceBeforeParens: ControlStatements
