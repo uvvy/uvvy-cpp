@@ -48,6 +48,12 @@ public:
     Q_INVOKABLE void registerUser(QString u, QString p, QString e, QString f,
             QString l, QString c, QString a);
 
+    /**
+     * @brief Find contact with given credentials.
+     * @param u Credential (username, name or email).
+     */
+    Q_INVOKABLE QList<QObject*> findContact(QString u);
+
 private:
     Root* root_;
     UserManager* mainUser_;

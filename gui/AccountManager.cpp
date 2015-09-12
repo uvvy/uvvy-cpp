@@ -46,4 +46,10 @@ void AccountManager::registerUser(QString u, QString p, QString e, QString f,
     ff << a.toStdString() << " " << std::endl;
 }
 
+QList<QObject*> AccountManager::findContact(QString u)
+{
+    QList<QObject*> r;
+    return r;
+}
+
 }

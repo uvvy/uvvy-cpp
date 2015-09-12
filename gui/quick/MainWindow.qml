@@ -1,13 +1,31 @@
 /* Contact List */
-import QtQuick 2.1
+import QtQuick 2.3
 import QtQuick.Controls 1.0
 import QtQuick.Layouts 1.0
 import QtQuick.Window 2.1
 
-Window {
+
+ApplicationWindow {
+    id: main
     title: "Contacts"
     width: 300
     height: 600
+
+    menuBar: MenuBar {
+        Menu {
+            title: "Uvvy"
+            MenuItem {
+                text: "Add Contact"
+                action: Action { onTriggered: Qt.createQmlObject('AddContactDialog{}', main, 1) }
+            }
+        }
+        Menu {
+            title: "Help"
+            MenuItem {
+                text : "Help"
+            }
+        }
+    }
 
         Column {
             anchors.fill: parent
