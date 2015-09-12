@@ -24,6 +24,7 @@ public:
     Q_PROPERTY(QString host READ host)
     Q_PROPERTY(QString city READ city)
     Q_PROPERTY(QString eid READ eid)
+    Q_PROPERTY(QObject* this_ READ self())
 
 public:
     const QString& firstName() const
@@ -64,6 +65,10 @@ public:
     const QString& eid() const
     {
         return eid_;
+    }
+
+    QObject* self() {
+        return this;
     }
 
 public:

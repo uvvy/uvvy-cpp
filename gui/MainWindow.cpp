@@ -24,4 +24,11 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::updateContactList(UserInfo* u)
+{
+    contactList_.append(u);
+    auto c = manager_->qmlContext();
+    c->setContextProperty("contactListModel", QVariant::fromValue(contactList_));
+}
+
 }

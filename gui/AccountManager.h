@@ -54,6 +54,12 @@ public:
      */
     Q_INVOKABLE QList<QObject*> findContact(QString u);
 
+    /**
+     * @brief Send contact request to given user.
+     * @param u User's base QObject class.
+     */
+    Q_INVOKABLE void contactRequest(QObject* u);
+
 private:
     Root* root_;
     UserManager* mainUser_;

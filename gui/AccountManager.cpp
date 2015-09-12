@@ -49,7 +49,18 @@ void AccountManager::registerUser(QString u, QString p, QString e, QString f,
 QList<QObject*> AccountManager::findContact(QString u)
 {
     QList<QObject*> r;
+    UserInfo* i = new UserInfo();
+    i->read();
+
+    r.append(i);
+    auto c = root_->windowManager().qmlContext();
+    c->setContextProperty("foundContactsModel", QVariant::fromValue(r));
     return r;
+}
+
+void AccountManager::contactRequest(QObject* u)
+{
+    mainUser_->addContact(static_cast<UserInfo*>(u));
 }
 
 }

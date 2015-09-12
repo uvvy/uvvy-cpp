@@ -1,9 +1,11 @@
 #include "WindowManager.h"
 
+#include "AccountManager.h"
+#include "MainWindow.h"
 #include "QmlWindow.h"
 #include "Root.h"
 #include "UserInfo.h"
-#include "MainWindow.h"
+#include "UserManager.h"
 
 #include <QtQml/QQmlContext>
 
@@ -41,6 +43,8 @@ void WindowManager::login(UserInfo* u)
     delete mainWindow_;
     mainWindow_ = s;
     QObject::connect(mainWindow_, SIGNAL(closing()), root_, SLOT(exit()));
+    QObject::connect(root()->accountManager().mainUser(), SIGNAL(userAdded(UserInfo*)),
+            s, SLOT(updateContactList(UserInfo*)));
 }
 
 void WindowManager::startCall(UserInfo* u1, UserInfo* u2)

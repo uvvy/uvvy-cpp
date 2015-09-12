@@ -8,7 +8,7 @@ import QtQuick.Window 2.1
 ApplicationWindow {
     id: main
     title: "Contacts"
-    width: 300
+    width: 400
     height: 600
 
     menuBar: MenuBar {
@@ -26,10 +26,10 @@ ApplicationWindow {
             }
         }
     }
-
-        Column {
+    Column {
+        anchors.fill: parent
+        ScrollView {
             anchors.fill: parent
-
             ListView {
                 anchors.fill: parent
                 delegate: UserInfoDelegate {}
@@ -38,4 +38,5 @@ ApplicationWindow {
                 clip: true
             }
         }
+    }
 }

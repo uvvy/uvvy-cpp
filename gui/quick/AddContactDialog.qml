@@ -27,5 +27,6 @@ Dialog {
 
     onAccepted: {
         accountManager.findContact(username.text)
+        Qt.createQmlObject('FoundContactsList{}', main, 2)
     }
 }

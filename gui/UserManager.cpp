@@ -32,4 +32,10 @@ UserInfo* UserManager::userById(QString id)
     return i->second;
 }
 
+void UserManager::addContact(UserInfo* u)
+{
+    contacts_["cccc"] = u;
+    emit userAdded(u);
+}
+
 }
