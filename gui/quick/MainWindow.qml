@@ -16,7 +16,10 @@ ApplicationWindow {
             title: "Uvvy"
             MenuItem {
                 text: "Add Contact"
-                action: Action { onTriggered: Qt.createQmlObject('AddContactDialog{}', main, 1) }
+                action: Action { 
+                    onTriggered: Qt.createQmlObject('AddContactDialog{}', main, 1)
+                    shortcut: "Ctrl+N"
+                }
             }
         }
         Menu {
