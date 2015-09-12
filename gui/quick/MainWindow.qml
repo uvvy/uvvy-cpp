@@ -21,6 +21,15 @@ ApplicationWindow {
                     shortcut: "Ctrl+N"
                 }
             }
+            MenuSeparator {
+            }
+            MenuItem {
+                text: "Quit"
+                action: Action { 
+                    onTriggered: root.exit()
+                    shortcut: "Ctrl+Q"
+                }
+            }
         }
         Menu {
             title: "Help"
