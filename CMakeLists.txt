@@ -31,7 +31,7 @@ add_subdirectory(arsenal)
 #add_subdirectory(filesyncbox)
 
 add_subdirectory(sss)
-#add_subdirectory(routing)
+add_subdirectory(routing)
 #add_subdirectory(naming)
 #add_subdirectory(nat)
 
