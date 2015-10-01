@@ -16,30 +16,33 @@ Root::Root()
     windowManager_->qmlContext()->setContextProperty("root", this);
 }
 
-void Root::login(const QString& u, const QString& p)
+void
+Root::login(const QString& u, const QString& p)
 {
     accountManager_->login(u, p);
     auto s = accountManager_->mainUser()->user();
     windowManager_->login(s);
 }
 
-void Root::startCall(const QString& id)
+void
+Root::startCall(const QString& id)
 {
     auto u1 = accountManager_->mainUser()->user();
     auto u2 = accountManager_->mainUser()->userById(id);
     windowManager_->startCall(u1, u2);
 }
 
-void Root::startChat(const QString& id)
+void
+Root::startChat(const QString& id)
 {
     auto u1 = accountManager_->mainUser()->user();
     auto u2 = accountManager_->mainUser()->userById(id);
     windowManager_->startChat(u1, u2);
 }
 
-void Root::exit() const
+void
+Root::exit() const
 {
-    std::exit(0);
+    ::exit(0);
 }
-
 }

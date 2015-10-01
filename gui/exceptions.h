@@ -11,10 +11,7 @@ public:
 class not_logged_in : public base_exception
 {
 public:
-    virtual QString what() const override
-    {
-        return QString("User not logged in yet");
-    }
+    virtual QString what() const override { return QString("User not logged in yet"); }
 };
 
 class invalid_user : public base_exception
@@ -25,13 +22,9 @@ public:
     {
     }
 
-    virtual QString what() const override
-    {
-        return QString("Invalid user ") + id_;
-    }
+    virtual QString what() const override { return QString("Invalid user ") + id_; }
 
 private:
     QString id_;
 };
-
 }

@@ -1,30 +1,31 @@
-#include "ChatMessageTextEdit.h"
+#include "Chat/ChatMessageTextEdit.h"
+#include <QEvent>
 
-ChatMessageTextEdit::ChatMessageTextEdit(QWidget *parent)
-		: QTextEdit(parent)
+ChatMessageTextEdit::ChatMessageTextEdit(QWidget* parent)
+    : QTextEdit(parent)
 {
 }
 
-void ChatMessageTextEdit::showEvent(QShowEvent * /*event*/)
+void
+ChatMessageTextEdit::showEvent(QShowEvent* /*event*/)
 {
-	if(!_showed)
-	{
-		_showed = true;
+    if (!_showed) {
+        _showed = true;
 
-		QTextCursor cursor = cursorForPosition(mapFromGlobal(QCursor::pos()));
-		setTextCursor(cursor);
+        QTextCursor cursor = cursorForPosition(mapFromGlobal(QCursor::pos()));
+        setTextCursor(cursor);
 
-		resize(size().width() + 4, size().height() + 4);
-	}
+        resize(size().width() + 4, size().height() + 4);
+    }
 }
 
-bool ChatMessageTextEdit::eventFilter(QObject *object, QEvent *event)
+bool
+ChatMessageTextEdit::eventFilter(QObject* object, QEvent* event)
 {
-	if(event->type() == QEvent::Wheel)
-	{
-		event->ignore();
-		return true;
-	}
-	
-	return QWidget::eventFilter(object, event);
+    if (event->type() == QEvent::Wheel) {
+        event->ignore();
+        return true;
+    }
+
+    return QWidget::eventFilter(object, event);
 }

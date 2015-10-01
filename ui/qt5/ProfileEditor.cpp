@@ -3,8 +3,8 @@
 #include "ProfileEditor.h"
 #include "arsenal/settings_provider.h"
 #include "arsenal/any_int_cast.h"
-#include "sss/peer_identity.h"
-#include "sss/stream_protocol.h"
+#include "uia/peer_identity.h"
+#include "sss/framing/stream_protocol.h"//FIXME
 #include "routing/client_profile.h"
 
 using namespace std;
@@ -14,7 +14,7 @@ class ProfileEditor::Private
 {
 public:
     shared_ptr<settings_provider> settings;
-    identity ident;
+    uia::peer_identity ident;
 
     Private()
         : settings(settings_provider::instance())
@@ -84,7 +84,7 @@ void ProfileEditor::load()
     }
 
     // Generate a new key pair
-    m_pimpl->ident = identity::generate();
+    m_pimpl->ident = uia::peer_identity::generate();
 
     hostEIDLineEdit->setText(m_pimpl->ident.to_string().c_str());
     setStatus("New host EID generated, save to keep it");
@@ -104,8 +104,8 @@ void ProfileEditor::clearStatus()
 void ProfileEditor::save()
 {
     qDebug() << "Saving settings";
-    m_pimpl->settings->set("id", m_pimpl->ident.id().id());
-    m_pimpl->settings->set("key", m_pimpl->ident.private_key());
+    m_pimpl->settings->set("id", m_pimpl->ident.public_key());
+    m_pimpl->settings->set("key", m_pimpl->ident.secret_key());
 
     m_pimpl->settings->set("port", portSpinBox->value());
     uia::routing::client_profile client;
@@ -149,7 +149,7 @@ void ProfileEditor::generateNewEid()
     if (ret == QMessageBox::Cancel)
         return;
 
-    m_pimpl->ident = identity::generate();
+    m_pimpl->ident = uia::peer_identity::generate();
     hostEIDLineEdit->setText(m_pimpl->ident.to_string().c_str());
     setStatus("New host EID generated, save to keep it");
 }

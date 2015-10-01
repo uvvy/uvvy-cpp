@@ -1,14 +1,16 @@
 #pragma once
 
-class ChatMessageTextEdit: public QTextEdit
+#include <QTextEdit>
+
+class ChatMessageTextEdit : public QTextEdit
 {
 public:
-	ChatMessageTextEdit(QWidget *parent);
+    ChatMessageTextEdit(QWidget* parent);
 
-	void showEvent(QShowEvent *event) override;
+    void showEvent(QShowEvent* event) override;
 
-	bool eventFilter(QObject *o, QEvent *e) override;
+    bool eventFilter(QObject* o, QEvent* e) override;
 
 private:
-	bool _showed = false;
+    bool _showed = false;
 };

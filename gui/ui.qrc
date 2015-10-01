@@ -1,0 +1,11 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>quick/MainWindow.qml</file>
+    <file>quick/RegistrationWindow.qml</file>
+    <file>quick/UserInfoDelegate.qml</file>
+    <file>quick/LoginScreen.qml</file>
+    <file>quick/FoundContactsList.qml</file>
+    <file>quick/AddContactDialog.qml</file>
+    <file>quick/ContactRequestDelegate.qml</file>
+</qresource>
+</RCC>

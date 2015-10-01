@@ -1,23 +1,28 @@
 #pragma once
 
+#include <QStyledItemDelegate>
+
 class ChatItemModel;
 
-class ChatItemDelegate: public QStyledItemDelegate
+class ChatItemDelegate : public QStyledItemDelegate
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-	ChatItemDelegate(ChatItemModel *model);
+    ChatItemDelegate(ChatItemModel* model);
 
-	~ChatItemDelegate();
+    ~ChatItemDelegate();
 
-	void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+    void paint(QPainter* painter,
+               const QStyleOptionViewItem& option,
+               const QModelIndex& index) const override;
 
-	QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
-	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QWidget* createEditor(QWidget* parent,
+                          const QStyleOptionViewItem& option,
+                          const QModelIndex& index) const override;
 
 private:
-	ChatItemModel *_model = 0;
-
+    ChatItemModel* _model = 0;
 };

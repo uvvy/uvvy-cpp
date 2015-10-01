@@ -13,12 +13,12 @@ QmlWindow::QmlWindow(QString qmlFile, WindowManager* m)
     auto c = manager_->engine().rootContext();
     component_.loadUrl(QUrl(qmlFile));
 
-    if (!component_.isReady() ) {
+    if (!component_.isReady()) {
         qFatal("%s", component_.errorString().toUtf8().constData());
     }
 
-    QObject *topLevel = component_.create(c);
-    window_ = qobject_cast<QQuickWindow*>(topLevel);
+    QObject* topLevel = component_.create(c);
+    window_           = qobject_cast<QQuickWindow*>(topLevel);
 
     QSurfaceFormat surfaceFormat = window_->requestedFormat();
     window_->setFormat(surfaceFormat);
@@ -31,5 +31,4 @@ QmlWindow::~QmlWindow()
     /// @todo Need to normally delete the window_;
     hide();
 }
-
 }

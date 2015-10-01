@@ -19,6 +19,7 @@
 
 using namespace std;
 using namespace sss;
+using namespace uia;
 using namespace uia::routing;
 
 // @todo move to public API?
@@ -497,7 +498,7 @@ void ContactModel::useSettings(std::shared_ptr<settings_provider> settings)
         std::vector<Peer> in_peers;
         read.archive() >> in_peers;
         for (auto& peer : in_peers) {
-            if (peer.eid_.is_empty() or containsId(peer.eid_)) {
+            if (peer.eid_.is_null() or containsId(peer.eid_)) {
                 qDebug() << "Empty or duplicate peer ID";
                 continue;
             }

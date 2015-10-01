@@ -38,20 +38,13 @@ public:
 
 public:
     /// @brief Access to account manager.
-    inline AccountManager& accountManager()
-    {
-        return *accountManager_;
-    }
+    inline AccountManager& accountManager() { return *accountManager_; }
 
     /// @brief Access to window manager.
-    inline WindowManager& windowManager()
-    {
-        return *windowManager_;
-    }
+    inline WindowManager& windowManager() { return *windowManager_; }
 
 private:
     WindowManager* windowManager_;
     AccountManager* accountManager_;
 };
-
 }

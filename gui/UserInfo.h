@@ -27,49 +27,23 @@ public:
     Q_PROPERTY(QObject* this_ READ self())
 
 public:
-    const QString& firstName() const
-    {
-        return firstName_;
-    }
+    const QString& firstName() const { return firstName_; }
 
-    const QString& lastName() const
-    {
-        return lastName_;
-    }
+    const QString& lastName() const { return lastName_; }
 
-    const QString& username() const
-    {
-        return username_;
-    }
+    const QString& username() const { return username_; }
 
-    const QString& email() const
-    {
-        return email_;
-    }
+    const QString& email() const { return email_; }
 
-    const QString& avatar() const
-    {
-        return avatar_;
-    }
+    const QString& avatar() const { return avatar_; }
 
-    const QString& host() const
-    {
-        return host_;
-    }
+    const QString& host() const { return host_; }
 
-    const QString& city() const
-    {
-        return city_;
-    }
+    const QString& city() const { return city_; }
 
-    const QString& eid() const
-    {
-        return eid_;
-    }
+    const QString& eid() const { return eid_; }
 
-    QObject* self() {
-        return this;
-    }
+    QObject* self() { return this; }
 
 public:
     void read();
@@ -86,5 +60,4 @@ private:
     QString city_;
     QString eid_;
 };
-
 }

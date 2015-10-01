@@ -10,6 +10,7 @@
 
 #include <boost/signals2/signal.hpp>
 #include "sss/host.h"
+#include "uia/peer_identity.h"
 
 // Set to 1 if you want to console-log in realtime thread.
 #define REALTIME_CRIME 0
@@ -40,7 +41,7 @@ public:
     ~audio_service();
 
     bool is_active() const;
-    void establish_outgoing_session(sss::peer_identity const& eid, std::vector<std::string> ep_hints);
+    void establish_outgoing_session(uia::peer_identity const& eid, std::vector<std::string> ep_hints);
     void listen_incoming_session();
     /**
      * Terminate an active session, causing all audio I/O to stop.

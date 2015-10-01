@@ -19,21 +19,30 @@ AccountManager::AccountManager(Root* r)
     root_->windowManager().qmlContext()->setContextProperty("accountManager", this);
 }
 
-void AccountManager::login(QString u, QString p)
+void
+AccountManager::login(QString u, QString p)
 {
     /// Get user info by username and password.
     mainUser_ = UserManager::login(u, p);
 }
 
-UserManager* AccountManager::mainUser() {
+UserManager*
+AccountManager::mainUser()
+{
     if (mainUser_ == nullptr) {
         throw not_logged_in{};
     }
     return mainUser_;
 }
 
-void AccountManager::registerUser(QString u, QString p, QString e, QString f,
-        QString l, QString c, QString a)
+void
+AccountManager::registerUser(QString u,
+                             QString p,
+                             QString e,
+                             QString f,
+                             QString l,
+                             QString c,
+                             QString a)
 {
     std::string h = std::getenv("HOME");
     std::ofstream ff(h + "/.uvvy/users", std::ios_base::ate | std::ios_base::out);
@@ -46,7 +55,8 @@ void AccountManager::registerUser(QString u, QString p, QString e, QString f,
     ff << a.toStdString() << " " << std::endl;
 }
 
-QList<QObject*> AccountManager::findContact(QString u)
+QList<QObject*>
+AccountManager::findContact(QString u)
 {
     QList<QObject*> r;
     UserInfo* i = new UserInfo();
@@ -58,9 +68,9 @@ QList<QObject*> AccountManager::findContact(QString u)
     return r;
 }
 
-void AccountManager::contactRequest(QObject* u)
+void
+AccountManager::contactRequest(QObject* u)
 {
     mainUser_->addContact(static_cast<UserInfo*>(u));
 }
-
 }

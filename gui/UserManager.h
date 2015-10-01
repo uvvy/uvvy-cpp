@@ -36,5 +36,4 @@ private:
     std::map<QString, UserInfo*> contacts_;
     UserInfo* user_;
 };
-
 }

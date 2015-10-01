@@ -9,12 +9,11 @@
 #pragma once
 
 #include <QAbstractItemModel>
-// #include <memory>
+#include "uia/peer_identity.h"
 
 class settings_provider;
 namespace sss {
     class host;
-    class peer_identity;
 }
 
 /**
@@ -64,11 +63,11 @@ public:
     /**
      * Insert a peer.
      */
-    int insert(sss::peer_identity const& eid, QString name);
+    int insert(uia::peer_identity const& eid, QString name);
     /**
      * Remove a peer.
      */
-    void remove(sss::peer_identity const& eid);
+    void remove(uia::peer_identity const& eid);
     /**
      * Return the name of a peer by row number.
      */
@@ -76,24 +75,24 @@ public:
     /**
      * Return the name of a peer by host ID, defaultName if no such peer.
      */
-    QString name(sss::peer_identity const& eid, QString const& defaultName = tr("(unnamed peer)")) const;
+    QString name(uia::peer_identity const& eid, QString const& defaultName = tr("(unnamed peer)")) const;
     /**
      * Return the host ID of a peer by row number.
      */
-    sss::peer_identity id(int row) const;
+    uia::peer_identity id(int row) const;
     /**
      * Return the row number of a peer by its host ID, -1 if no such peer.
      */
-    int rowWithId(sss::peer_identity const& eid) const;
+    int rowWithId(uia::peer_identity const& eid) const;
 
-    inline bool containsId(sss::peer_identity const& eid) const {
+    inline bool containsId(uia::peer_identity const& eid) const {
         return rowWithId(eid) >= 0;
     }
 
     /**
      * Return a list of all peers' host IDs.
      */
-    QList<sss::peer_identity> ids() const;
+    QList<uia::peer_identity> ids() const;
 
 // private:
     // Internal use only.
@@ -109,12 +108,12 @@ private:
      */
     void useSettings(std::shared_ptr<settings_provider> settings);
 
-    void insertAt(int row, sss::peer_identity const& eid, QString const& name);
+    void insertAt(int row, uia::peer_identity const& eid, QString const& name);
     void writeSettings();
 
 signals:
     // These signals provide slightly simpler alternatives to
     // beginInsertRow, endInsertRow, beginInsertColumn, endInsertColumn.
-    void peerInserted(sss::peer_identity const& eid);
-    void peerRemoved(sss::peer_identity const& eid);
+    void peerInserted(uia::peer_identity const& eid);
+    void peerRemoved(uia::peer_identity const& eid);
 };

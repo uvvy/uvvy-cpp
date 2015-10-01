@@ -13,9 +13,7 @@ MainWindow::MainWindow(WindowManager* m, UserInfo* u)
     : QmlWindow{"quick/MainWindow.qml", m}
 {
     auto a = manager_->root()->accountManager().mainUser();
-    a->foreach_contact([this](UserInfo* u) {
-            contactList_.append(u);
-            });
+    a->foreach_contact([this](UserInfo* u) { contactList_.append(u); });
     auto c = manager_->qmlContext();
     c->setContextProperty("contactListModel", QVariant::fromValue(contactList_));
 }
@@ -24,11 +22,11 @@ MainWindow::~MainWindow()
 {
 }
 
-void MainWindow::updateContactList(UserInfo* u)
+void
+MainWindow::updateContactList(UserInfo* u)
 {
     contactList_.append(u);
     auto c = manager_->qmlContext();
     c->setContextProperty("contactListModel", QVariant::fromValue(contactList_));
 }
-
 }

@@ -19,5 +19,4 @@ public slots:
 private:
     QList<QObject*> contactList_;
 };
-
 }

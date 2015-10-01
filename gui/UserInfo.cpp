@@ -15,20 +15,24 @@ UserInfo::UserInfo(const UserInfo& u)
 {
 }
 
-void UserInfo::read()
+void
+UserInfo::read()
 {
     firstName_ = "Naaame";
-    lastName_ = "Surnaaame";
-    username_ = "Usernaaame";
+    lastName_  = "Surnaaame";
+    username_  = "Usernaaame";
     email_ = "name@example.com";
-    avatar_ = "https://camo.githubusercontent.com/3793f6770550a407f10bfa3480d62fe720cb9d7f/68747470733a2f2f7261772e6769746875622e636f6d2f6265726b75732f6d657474612f6d61737465722f646f63732f6d657474612e706e67";
+    avatar_ =
+        "https://camo.githubusercontent.com/3793f6770550a407f10bfa3480d62fe720cb9d7f/"
+        "68747470733a2f2f7261772e6769746875622e636f6d2f6265726b75732f6d657474612f6d61737465722f646f"
+        "63732f6d657474612e706e67";
     host_ = "HOST";
     city_ = "Antananarivu";
-    eid_ = "IDIDIDIDIDIDID";
+    eid_  = "IDIDIDIDIDIDID";
 }
 
-void UserInfo::write() const
+void
+UserInfo::write() const
 {
 }
-
 }

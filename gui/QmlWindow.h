@@ -19,7 +19,7 @@ class QmlWindow : public QObject
     Q_OBJECT
 
 protected:
-    WindowManager *manager_{nullptr};
+    WindowManager* manager_{nullptr};
     QQmlComponent component_;
     QQuickWindow* window_{nullptr};
 
@@ -30,13 +30,8 @@ public:
     QmlWindow(QString qmlFile, WindowManager* m);
     virtual ~QmlWindow();
 
-    inline void show() {
-        window_->show();
-    }
+    inline void show() { window_->show(); }
 
-    inline void hide() {
-        window_->hide();
-    }
+    inline void hide() { window_->hide(); }
 };
-
 }

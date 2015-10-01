@@ -1,63 +1,67 @@
 #include "Contact.h"
 
-Contact::Contact(const QString &id, const QString &userName)
-		: _id(id)
-		, _userName(userName)
+Contact::Contact(const QString& id, const QString& userName)
+    : _id(id)
+    , _userName(userName)
 {
-
 }
 
-QString Contact::id()
+QString
+Contact::id()
 {
-	return _id;
+    return _id;
 }
 
-void Contact::setId(const QString &id)
+void
+Contact::setId(const QString& id)
 {
-	_id = id;
+    _id = id;
 }
 
-QString Contact::userName()
+QString
+Contact::userName()
 {
-	return _userName;
+    return _userName;
 }
 
-void Contact::setUserName(const QString &userName)
+void
+Contact::setUserName(const QString& userName)
 {
-	_userName = userName;
+    _userName = userName;
 }
 
-bool Contact::loadVersion1(Contact *contact, QDataStream &ds)
+bool
+Contact::loadVersion1(Contact* contact, QDataStream& ds)
 {
-	QString id;
-	QString userName;
+    QString id;
+    QString userName;
 
-	ds >> id >> userName;
+    ds >> id >> userName;
 
-	contact->setId(id);
-	contact->setUserName(userName);
+    contact->setId(id);
+    contact->setUserName(userName);
 
-	return true;
+    return true;
 }
 
 /*
 bool Contact::loadVersion2(Contact *contact, QDataStream &ds)
 {
-	if(!loadVersion1(contact, ds))
-	{
-		return false;
-	}
+    if(!loadVersion1(contact, ds))
+    {
+        return false;
+    }
 
-	QString param1;
-	QString param2;
-	QString param3;
+    QString param1;
+    QString param2;
+    QString param3;
 
-	ds >> param1 >> param2 >> param3;
+    ds >> param1 >> param2 >> param3;
 
-	contact->setParam1(param1);
-	contact->setParam2(param2);
-	contact->setParam3(param3);
+    contact->setParam1(param1);
+    contact->setParam2(param2);
+    contact->setParam3(param3);
 
-	return true;
+    return true;
 }
 */

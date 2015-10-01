@@ -171,7 +171,7 @@
   <customwidget>
    <class>ChatTextEdit</class>
    <extends>QPlainTextEdit</extends>
-   <header>ChatTextEdit.h</header>
+   <header>Chat/ChatTextEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

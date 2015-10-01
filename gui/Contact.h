@@ -1,22 +1,24 @@
 #pragma once
 
+#include <QString>
+
 class Contact
 {
 public:
-	const int VERSION = 1;
+    const int VERSION = 1;
 
 public:
-	Contact(const QString &id, const QString &userName);
+    Contact(const QString& id, const QString& userName);
 
-	QString id();
-	void setId(const QString &id);
+    QString id();
+    void setId(const QString& id);
 
-	QString userName();
-	void setUserName(const QString &userName);
+    QString userName();
+    void setUserName(const QString& userName);
 
-	static bool loadVersion1(Contact *contact, QDataStream &ds);
+    static bool loadVersion1(Contact* contact, QDataStream& ds);
 
 private:
-	QString _id;
-	QString _userName;
+    QString _id;
+    QString _userName;
 };

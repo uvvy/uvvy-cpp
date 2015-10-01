@@ -14,7 +14,7 @@ class Root;
  * @brief Main class to handle windows and interaction between them.
  *
  *        WindowManager is central class to manage windows creation deletion
- *        and interaction between them. It is exported in qml context and 
+ *        and interaction between them. It is exported in qml context and
  *        can be accessible from qml by @c windowManager object.
  */
 class WindowManager : public QObject
@@ -27,29 +27,20 @@ public:
     WindowManager& operator=(const WindowManager&) = delete;
 
     /// @brief Access to engine.
-    inline QQmlEngine& engine()
-    {
-        return engine_;
-    }
+    inline QQmlEngine& engine() { return engine_; }
 
     /// @brief Access to qml context.
-    inline QQmlContext* qmlContext()
-    {
-        return engine().rootContext();
-    }
+    inline QQmlContext* qmlContext() { return engine().rootContext(); }
 
     /// @brief Access to root.
-    inline Root* root()
-    {
-        return root_;
-    }
+    inline Root* root() { return root_; }
 
     /// @brief Opens registration window.
     Q_INVOKABLE void openRegistrationWindow();
 
     /// @brief Closes registration window.
     Q_INVOKABLE void closeRegistrationWindow();
-    
+
     /// @brief Logs in given user and opens main window with user's contact list.
     /// @param u User to log in.
     void login(UserInfo* u);
@@ -70,5 +61,4 @@ private:
     QmlWindow* registrationWindow_;
     Root* root_;
 };
-
 }

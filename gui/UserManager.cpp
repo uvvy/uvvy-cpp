@@ -5,7 +5,8 @@
 
 namespace gui {
 
-UserManager* UserManager::login(QString u, QString p)
+UserManager*
+UserManager::login(QString u, QString p)
 {
     return new UserManager{u, p};
 }
@@ -18,12 +19,14 @@ UserManager::UserManager(QString u, QString p)
     contacts_["BBBB"] = new UserInfo(*user_);
 }
 
-UserInfo* UserManager::user()
+UserInfo*
+UserManager::user()
 {
     return user_;
 }
 
-UserInfo* UserManager::userById(QString id)
+UserInfo*
+UserManager::userById(QString id)
 {
     auto i = contacts_.find(id);
     if (i == contacts_.end()) {
@@ -32,10 +35,10 @@ UserInfo* UserManager::userById(QString id)
     return i->second;
 }
 
-void UserManager::addContact(UserInfo* u)
+void
+UserManager::addContact(UserInfo* u)
 {
     contacts_["cccc"] = u;
     emit userAdded(u);
 }
-
 }

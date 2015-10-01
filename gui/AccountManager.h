@@ -45,8 +45,8 @@ public:
      * @param c City.
      * @param a Avatar.
      */
-    Q_INVOKABLE void registerUser(QString u, QString p, QString e, QString f,
-            QString l, QString c, QString a);
+    Q_INVOKABLE void
+    registerUser(QString u, QString p, QString e, QString f, QString l, QString c, QString a);
 
     /**
      * @brief Find contact with given credentials.
@@ -64,5 +64,4 @@ private:
     Root* root_;
     UserManager* mainUser_;
 };
-
 }
