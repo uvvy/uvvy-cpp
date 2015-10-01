@@ -9,7 +9,7 @@ int main(int argc, char** argv)
     QApplication app(argc, argv);
     // app.setQuitOnLastWindowClosed(false);
 
-	ChatWidget::setChatDirectory("/home/facelift/chat");
+	ChatWidget::setChatDirectory("/tmp");
 	ChatWidget w("1294883090");
 	w.show();
 

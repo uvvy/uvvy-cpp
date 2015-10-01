@@ -1,5 +1,7 @@
 #ifdef __cplusplus
 
+#include <memory>
+
 #include <QString>
 #include <QWidget>
 #include <QDataStream>

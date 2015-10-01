@@ -1,17 +1,21 @@
 #pragma once
 
+class ChatItemModel;
+
 class ChatItemDelegate: public QStyledItemDelegate
 {
 	Q_OBJECT
 
 public:
-	ChatItemDelegate();
+	ChatItemDelegate(ChatItemModel *model);
+
 	~ChatItemDelegate();
 
 	void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+
 	QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const override;
 
 private:
-	QTextEdit *_textEdit = 0;
+	ChatItemModel *_model = 0;
 
 };

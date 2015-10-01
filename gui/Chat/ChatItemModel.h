@@ -9,14 +9,14 @@ class ChatItemModel: public QAbstractTableModel
 public:
 	ChatItemModel();
 
-	int rowCount(const QModelIndex & parent = QModelIndex()) const override;
-	int columnCount(const QModelIndex & parent = QModelIndex()) const override;
-	QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const override;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+	QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 	int addItem(ChatItem *item);
+	std::shared_ptr<ChatItem> item(int index) const;
 
 private:
-	QVector<QSharedPointer<ChatItem>> _items;
-	QBrush _timeBrush;
+	QVector<std::shared_ptr<ChatItem>> _items;
 };

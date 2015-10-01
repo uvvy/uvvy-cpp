@@ -41,7 +41,7 @@ public:
 
 	void addMessage(const QString &nickName, const QString &message, const QTime &time, bool saveToHistory = true);
 
-	void resizeEvent(QResizeEvent *event);
+	void resizeEvent(QResizeEvent *);
 
 private:
 	Ui_Form *ui;

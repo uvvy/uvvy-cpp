@@ -1,8 +1,8 @@
 #include "ChatWidget.h"
 #include "ui_ChatWidget.h"
-#include "ChatItem.h"
 #include "ChatItemModel.h"
 #include "ChatItemDelegate.h"
+#include "ChatMessageItem.h"
 
 QString ChatWidget::_chatDirectory;
 
@@ -24,6 +24,9 @@ ChatWidget::ChatWidget(const QString &id, QWidget *parentWidget)
 	connect(ui->chatEdit, SIGNAL(returnPressed()), this, SLOT(widgetSendMessage()));
 
 	_model = new ChatItemModel();
+	_delegate = new ChatItemDelegate(_model);
+
+	ui->tableView->setItemDelegate(_delegate);
 	ui->tableView->setModel(_model);
 
 	ui->tableView->setShowGrid(false);
@@ -31,13 +34,9 @@ ChatWidget::ChatWidget(const QString &id, QWidget *parentWidget)
 	ui->tableView->horizontalHeader()->setVisible(false);
 
 	ui->tableView->setWordWrap(true);
-	// ui->tableView->setTextElideMode(Qt::ElideMiddle);
 	
 	ui->tableView->setColumnWidth(0, NICKNAME_COLUMN_WIDTH);
 	ui->tableView->setColumnWidth(2, TIME_COLUMN_WIDTH);
-
-	_delegate = new ChatItemDelegate();
-	ui->tableView->setItemDelegate(_delegate);
 
 	resizeEvent(0);
 
@@ -89,7 +88,7 @@ void ChatWidget::addMessage(const QString &nickName, const QString &message, con
 			ui->textEdit->append(html);
 			*/
 
-			ChatItem *item = new ChatItem(nickName, message, time, QBrush(Qt::red));
+			ChatItem *item = new ChatMessageItem(nickName, message, time, Qt::red);
 
 			int row = _model->addItem(item);
 			ui->tableView->resizeRowToContents(row);
@@ -222,7 +221,7 @@ void ChatWidget::loadChatHistory()
 	}
 }
 
-void ChatWidget::resizeEvent(QResizeEvent *event)
+void ChatWidget::resizeEvent(QResizeEvent *)
 {
 	ui->tableView->setColumnWidth(1, ui->tableView->width() - (NICKNAME_COLUMN_WIDTH + TIME_COLUMN_WIDTH + 60));
 	ui->tableView->resizeRowsToContents();

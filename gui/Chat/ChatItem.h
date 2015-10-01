@@ -3,55 +3,24 @@
 class ChatItem
 {
 public:
-	ChatItem(const QString &nickName, const QString &text, const QTime &time, const QBrush &nickColor)
-		: _nickName(nickName), _text(text), _time(time), _nickColor(nickColor)
+	ChatItem()
 	{
 
 	}
 
-	void setNickName(const QString &nickName)
+	virtual ~ChatItem()
 	{
-		_nickName = nickName;
+
 	}
 
-	const QString &nickName() const
+	virtual QVariant data(int column, int role) const = 0;
+
+	virtual Qt::ItemFlags flags(int /* column */, Qt::ItemFlags flags) const
 	{
-		return _nickName;
+		return flags;
 	}
 
-	void setText(const QString &text)
-	{
-		_text = text;
-	}
+	virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, int column) const = 0;
 
-	const QString &text() const
-	{
-		return _text;
-	}
-
-	void setTime(const QTime &time)
-	{
-		_time = time;
-	}
-
-	const QTime &time()
-	{
-		return _time;
-	}
-
-	void setNickColor(const QBrush &nickColor)
-	{
-		_nickColor = nickColor;
-	}
-
-	const QBrush nickColor() const
-	{
-		return _nickColor;
-	}
-
-private:
-	QString _nickName;
-	QString _text;
-	QTime _time;
-	QBrush _nickColor;
+	virtual QSize sizeHint(const QStyleOptionViewItem &option, int column) const = 0;
 };

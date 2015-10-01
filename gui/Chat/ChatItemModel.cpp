@@ -2,7 +2,6 @@
 #include "ChatItemModel.h"
 
 ChatItemModel::ChatItemModel()
-		: _timeBrush(Qt::gray)
 {
 
 }
@@ -17,62 +16,17 @@ int ChatItemModel::columnCount(const QModelIndex &) const
 	return 3;
 }
 
-QVariant ChatItemModel::data(const QModelIndex & index, int role) const
+QVariant ChatItemModel::data(const QModelIndex &index, int role) const
 {
-	int row = index.row();
-
-	if(index.isValid() && row < _items.size())
+	if(!index.isValid())
 	{
-		switch(role)
-		{
-			case Qt::DisplayRole:
-			case Qt::EditRole:
-			{
-				switch(index.column())
-				{
-					case 0:
-						return _items[row]->nickName();
-					case 1:
-						return _items[row]->text();
-					case 2:
-						return _items[row]->time().toString();
-					default:
-						return QVariant();
-				}
-			}
-			case Qt::ForegroundRole:
-			{
-				switch(index.column())
-				{
-					case 0:
-						return _items[row]->nickColor();
-					// case 1:
-						// return _items[row]->text();
-					case 2:
-						return _timeBrush;
-					default:
-						return QVariant();
-				}
-			}
-			case Qt::TextAlignmentRole:
-			{
-				switch(index.column())
-				{
-					case 0:
-						return (int)(Qt::AlignLeft | Qt::AlignTop);
-					case 1:
-						return (int)(Qt::AlignLeft & Qt::AlignTop);
-					case 2:
-						return (int)(Qt::AlignRight | Qt::AlignTop);
-					default:
-						return QVariant();
-				}
-			}
-			default:
-			{
-				return QVariant();
-			}
-		}
+		return 0;
+	}
+
+	int row = index.row();
+	if(row < _items.size())
+	{
+		return _items[row]->data(index.column(), role);
 	}
 	else
 	{
@@ -82,10 +36,10 @@ QVariant ChatItemModel::data(const QModelIndex & index, int role) const
 
 int ChatItemModel::addItem(ChatItem *item)
 {
-	// TODO: Check hot to do it in Qt 5
+	// TODO: Check how to do it in Qt 5
 	beginResetModel();
 
-	_items.push_back(QSharedPointer<ChatItem>(item));
+	_items.push_back(std::shared_ptr<ChatItem>(item));
 
 	endResetModel();
 
@@ -99,12 +53,23 @@ Qt::ItemFlags ChatItemModel::flags(const QModelIndex &index) const
 		return 0;
 	}
 
-	if(index.column() == 1)
+	int row = index.row();
+	if(row < _items.size())
 	{
-		return Qt::ItemIsEditable | QAbstractTableModel::flags(index);
+		return _items[row]->flags(index.column(), QAbstractTableModel::flags(index));
 	}
 	else
 	{
-		return QAbstractTableModel::flags(index);
+		return 0;
 	}
+}
+
+std::shared_ptr<ChatItem> ChatItemModel::item(int index) const
+{
+	if(index < 0 || index >= _items.size())
+	{
+		return 0;
+	}
+
+	return _items.at(index);
 }
