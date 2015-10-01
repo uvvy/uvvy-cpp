@@ -3,7 +3,7 @@
 
 ChatItemModel::ChatItemModel()
 {
-
+	_regExp.setCaseSensitivity(Qt::CaseInsensitive);
 }
 
 int ChatItemModel::rowCount(const QModelIndex &) const
@@ -36,6 +36,8 @@ QVariant ChatItemModel::data(const QModelIndex &index, int role) const
 
 int ChatItemModel::addItem(ChatItem *item)
 {
+	item->setModel(this);
+
 	// TODO: Check how to do it in Qt 5
 	beginResetModel();
 
@@ -72,4 +74,26 @@ std::shared_ptr<ChatItem> ChatItemModel::item(int index) const
 	}
 
 	return _items.at(index);
+}
+
+const QString &ChatItemModel::searchText() const
+{
+	return _searchText;
+}
+
+void ChatItemModel::setSearchText(const QString &searchText)
+{
+	_searchText = searchText;
+
+	_regExp.setPattern(_searchText);
+}
+
+void ChatItemModel::clearSearchText()
+{
+	_searchText.clear();
+}
+
+const QRegExp &ChatItemModel::regExp() const
+{
+	return _regExp;
 }

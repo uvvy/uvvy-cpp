@@ -7,13 +7,13 @@ class ChatMessageItem: public ChatItem
 public:
 	ChatMessageItem()
 	{
-
+		_textEdit.setStyleSheet("QTextEdit { margin-left: -2px; margin-top: -2px }");
 	}
 
 	ChatMessageItem(const QString &nickName, const QString &text, const QTime &time, const QColor &nickColor)
 		: _nickName(nickName), _text(text), _time(time.toString()), _nickColor(nickColor)
 	{
-
+		ChatMessageItem();
 	}
 
 	ItemType type() const override;
@@ -36,6 +36,8 @@ public:
 
 	void writeVersion1(QDataStream &ds);
 
+	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option) const;
+
 private:
 	QString _nickName;
 	QString _text;
@@ -43,4 +45,5 @@ private:
 	QColor _nickColor;
 	static QColor _textColor;
 	static QColor _timeColor;
+	mutable QTextEdit _textEdit;
 };

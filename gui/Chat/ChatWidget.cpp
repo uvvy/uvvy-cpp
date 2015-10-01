@@ -48,6 +48,8 @@ ChatWidget::ChatWidget(const QString &id, QWidget *parentWidget)
 	resizeEvent(0);
 
 	ui->chatEdit->setFocus();
+
+	_model->setSearchText("bla");
 }
 
 ChatWidget::~ChatWidget()
@@ -149,4 +151,13 @@ void ChatWidget::resizeEvent(QResizeEvent *)
 {
 	ui->tableView->setColumnWidth(1, ui->tableView->width() - (NICKNAME_COLUMN_WIDTH + TIME_COLUMN_WIDTH + 60));
 	ui->tableView->resizeRowsToContents();
+}
+
+void ChatWidget::showEvent(QShowEvent *event)
+{
+	if(!_showed)
+	{
+		_showed = true;
+		resizeEvent(0);
+	}
 }

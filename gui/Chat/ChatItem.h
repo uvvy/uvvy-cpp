@@ -1,5 +1,7 @@
 #pragma once
 
+class ChatItemModel;
+
 class ChatItem
 {
 public:
@@ -39,4 +41,22 @@ public:
 	virtual void write(QDataStream &ds) = 0;
 
 	static ChatItem *createItem(ItemType itemType);
+
+	virtual QWidget *createEditor(QWidget * /*parent*/, const QStyleOptionViewItem &/*option*/) const
+	{
+		return nullptr;
+	}
+
+	ChatItemModel *model() const
+	{
+		return _model;
+	}
+
+	void setModel(ChatItemModel *model)
+	{
+		_model = model;
+	}
+
+private:
+	ChatItemModel *_model = 0;
 };

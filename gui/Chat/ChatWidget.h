@@ -34,7 +34,9 @@ public:
 
 	void addMessage(const QString &nickName, const QString &message, const QTime &time, bool saveToHistory = true);
 
-	void resizeEvent(QResizeEvent *);
+	void resizeEvent(QResizeEvent *) override;
+
+	void showEvent(QShowEvent *event) override;
 
 private:
 	Ui_Form *ui;
@@ -61,4 +63,6 @@ private:
 
 	ChatItemModel *_model = 0;
 	ChatItemDelegate *_delegate = 0;
+
+	bool _showed = false;
 };

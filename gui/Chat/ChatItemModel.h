@@ -17,6 +17,14 @@ public:
 	int addItem(ChatItem *item);
 	std::shared_ptr<ChatItem> item(int index) const;
 
+	const QString &searchText() const;
+	void setSearchText(const QString &searchText);
+	void clearSearchText();
+
+	const QRegExp &regExp() const;
+
 private:
 	QVector<std::shared_ptr<ChatItem>> _items;
+	QString _searchText;
+	QRegExp _regExp;
 };

@@ -44,3 +44,21 @@ QSize ChatItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
 
 	return QSize();
 }
+
+QWidget *ChatItemDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	if(_model != 0)
+	{
+		if(index.isValid())
+		{
+			std::shared_ptr<ChatItem> item = _model->item(index.row());
+			
+			if(item != 0)
+			{
+				return item->createEditor(parent, option);
+			}
+		}
+	}
+
+	return nullptr;
+}

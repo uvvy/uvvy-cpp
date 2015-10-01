@@ -15,6 +15,8 @@ public:
 
 	QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const override;
 
+	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
 private:
 	ChatItemModel *_model = 0;
 
