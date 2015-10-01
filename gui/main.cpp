@@ -5,14 +5,18 @@
 
 int main(int argc, char** argv)
 {
-    // QGuiApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
+
+	/*
     QApplication app(argc, argv);
-    // app.setQuitOnLastWindowClosed(false);
 
 	ChatWidget::setChatDirectory("/tmp");
 	ChatWidget w("1294883090");
 	w.show();
 
-    // gui::Root s;
+	*/
+
+    gui::Root s;
     return app.exec();
 }
