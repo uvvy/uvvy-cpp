@@ -1,13 +1,49 @@
 Topmost 3 tasks:
- ☐ Switching UI to QtQuick and Qt5
-   ☐ Make calling window work (send signals to start/stop call, update status)
+ ☐ For DHT: use sss negotiation to establish secure connection first, then use DHT packets within the channel to PING, STORE, FIND_NODE, and FIND_VALUE.
+   - this means channel needs an API for direct sending of packets
+   - therefore FIRST task is to complete and test kex_initiator/kex_responder working over UDP
+      - need to be able to successfully carry out channel negotiation
+ ☐ FIRST chat version may work over packets over channel, without streams even!
+ - just need to send and ACK each packet one after another, retransmit if not acked in 500ms
+ ☐ Extract sss::link and other low-level communication helpers into libuia. (uia::comm)
 
-Structure:
-  ☐ Separate libvoicebox into a separate repo (not yet?)
-  ☐ Separate libfilesyncbox into a separate repo (not yet?)
-  ☐ Extract sss::link and other low-level communication helpers into libcomm. (uia::comm)
+Structured Secure Streams:
+ ☐ Need to differentiate between substreams received as result of user actions
+   and substreams received as means to deliver datagrams.
+   Might not be that easy, but possibly streams that are already closed for writing by peer can be
+   treated as datagrams, while still open streams ... or we can just send a flag for it?
+
+   Problem with audio_service is that some unreliable data packets (?) are being sent as
+   datagram_substreams and are accepted as control stream instead. This confuses the hell out
+   of audio_service.
+
+   It may be that in SST this was also the cause for multiple substreams just mixing up?
+
+  ✔ we actually receive a datagram packet from the other side if it's a datagram, not a substream so simply stuff it into a separate datagram queue? @done (14-01-28 07:43)
+    Done this for now, need to investigate setting up reliable or too big datagrams as substreams still, write a test.
+
+ ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
+    Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol? This is bug in Old SST, check if still applicable.
+
+ ☐ Read up on Multipath TCP (@sa sst spec 4.3)
+
+ ☐ Support obtaining readable descriptions and lists of supported services/protocols (spec 4.4 end)
+   -- started in base_stream.cpp
+
+Keying Negotiation:
+ ☐ wrap common crypto operations under krypto - e.g. managing public/secret keys, seal/unseal etc
+ ☐ http://ianix.com/pub/curve25519-deployment.html
+ ☐ also need to negotiate dynamic MSS (spec 3.9)
+ ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow
+    - by generating non-random fixtures - have pre-defined secret/public keys in fixtures)
+
+ ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
+   - hard atm due to source/sink driver design, look at pjsip ports/master-port idea for proper driver
+
 
 UI:
+ ☐ Switching UI to QtQuick and Qt5
+   ☐ Make calling window work (send signals to start/stop call, update status)
  ☐ Draw UI sketches for contacts list,
    ☐ chat,
    ☐ audio/video call window,
@@ -125,42 +161,6 @@ Routing:
    ☐ regserver shall be integral part of each participating node
    ☐ regserver will become a part of p2p directory when DHT is implemented
  ☐ Extract regserver logic/state management to remove code duplication between old and new regserver.
-
-Structured Secure Streams:
- ☐ Need to differentiate between substreams received as result of user actions
-   and substreams received as means to deliver datagrams.
-   Might not be that easy, but possibly streams that are already closed for writing by peer can be
-   treated as datagrams, while still open streams ... or we can just send a flag for it?
-
-   Problem with audio_service is that some unreliable data packets (?) are being sent as
-   datagram_substreams and are accepted as control stream instead. This confuses the hell out
-   of audio_service.
-
-   It may be that in SST this was also the cause for multiple substreams just mixing up?
-
-  ✔ we actually receive a datagram packet from the other side if it's a datagram, not a substream so simply stuff it into a separate datagram queue? @done (14-01-28 07:43)
-    Done this for now, need to investigate setting up reliable or too big datagrams as substreams still, write a test.
-
- ☐ Going Online->Offline is not tracked properly, should update when failing to connect or receiving disconnect signal.
-    Looks like presence service stops functioning once there are more services enabled. Looks like the last service always wins - bug in protocol? This is bug in Old SST, check if still applicable.
-
- ☐ tx_reset implementation - test
- ☐ implement rx_reset_packet
- ✔ Split CC into per-strategy subclasses for CC @done (14-01-23 16:03)
- ☐ Read up on Multipath TCP (@sa sst spec 4.3)
-
- ☐ Support obtaining readable descriptions and lists of supported services/protocols (spec 4.4 end)
-   -- started in base_stream.cpp
-
-Keying Negotiation:
- ☐ http://ianix.com/pub/curve25519-deployment.html
- ☐ also need to negotiate dynamic MSS (spec 3.9)
- ☐ Change krypto to use cryptobox_*
- ☐ cover KeyInitiator and KeyResponder with unit tests (need to fake randomness bits somehow
-    - by generating non-random fixtures - have pre-defined secret/public keys in fixtures)
-
- ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
-   - hard atm due to source/sink driver design, look at pjsip ports/master-port idea for proper driver
 
 Most immediate usability necessities:
  ☐ Some documentation, both user and technical
