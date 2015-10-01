@@ -75,6 +75,9 @@ void ChatWidget::widgetSendMessage()
 
 		// Only for debug
 		addMessage("Jordon", text, QTime::currentTime());
+
+		ui->chatEdit->clear();
+		ui->chatEdit->setFocus();
 	}
 }
 
@@ -84,7 +87,10 @@ void ChatWidget::addMessage(const QString &nickName, const QString &message, con
 	{
 		ChatItem *item = new ChatMessageItem(nickName, message, time, Qt::red);
 
-		addItem(item, saveToHistory);
+		if(item != 0)
+		{
+			addItem(item, saveToHistory);
+		}
 	}
 }
 
@@ -95,9 +101,6 @@ void ChatWidget::addItem(ChatItem *item, bool saveToHistory)
 
 	QScrollBar *scroll = ui->tableView->verticalScrollBar();
 	scroll->setValue(scroll->maximum());
-
-	ui->chatEdit->clear();
-	ui->chatEdit->setFocus();
 
 	if(saveToHistory)
 	{
