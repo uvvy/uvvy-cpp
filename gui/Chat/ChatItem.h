@@ -3,6 +3,12 @@
 class ChatItem
 {
 public:
+	enum ItemType
+	{
+		CHAT_MESSAGE_ITEM,
+		CHAT_CALL_ITEM
+	};
+
 	ChatItem()
 	{
 
@@ -12,6 +18,8 @@ public:
 	{
 
 	}
+
+	virtual ItemType type() const = 0;
 
 	virtual QVariant data(int column, int role) const = 0;
 
@@ -23,4 +31,12 @@ public:
 	virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, int column) const = 0;
 
 	virtual QSize sizeHint(const QStyleOptionViewItem &option, int column) const = 0;
+
+	virtual int version() const = 0;
+
+	virtual void read(QDataStream &ds, int version) = 0;
+
+	virtual void write(QDataStream &ds) = 0;
+
+	static ChatItem *createItem(ItemType itemType);
 };

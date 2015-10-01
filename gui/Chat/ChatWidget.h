@@ -8,6 +8,8 @@
  * to add messages (or information about calls/missed calls) to chat widget
  * */
 
+#include "ChatItem.h"
+
 class Ui_Form;
 
 class ChatItemModel;
@@ -16,15 +18,6 @@ class ChatItemDelegate;
 class ChatWidget: public QWidget
 {
 	Q_OBJECT
-
-private:
-	enum EntryType
-	{
-		CHAT_MESSAGE,
-		CHAT_OWN_MESSAGE,
-		CHAT_CALL,
-		CHAT_MISSED_CALL
-	};
 
 public:
 	ChatWidget(const QString &id, QWidget *parentWidget = 0);
@@ -50,19 +43,22 @@ public slots:
 	// Internal slot for internal widgets. Don't use this
 	void widgetSendMessage();
 
-	void saveEntry(EntryType type, const QString &nickName, const QString &text, const QTime &time);
+	// void saveEntry(ChatItem::ItemType type, const QString &nickName, const QString &text, const QTime &time);
 
 signals:
 	void sendMessage(const QString &id, const QString &text, const QTime &time);
 
 private:
 	QString _id;
-	QFile _chatFile;
+	QFile *_file = 0;
+	QDataStream _chatFile;
 
 	static QString _chatDirectory;
 
 private:
 	void loadChatHistory();
+	void addItem(ChatItem *item, bool saveToHistory);
+
 	ChatItemModel *_model = 0;
 	ChatItemDelegate *_delegate = 0;
 };

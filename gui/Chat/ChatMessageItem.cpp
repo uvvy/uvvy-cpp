@@ -3,6 +3,11 @@
 QColor ChatMessageItem::_textColor(Qt::black);
 QColor ChatMessageItem::_timeColor(Qt::gray);
 
+ChatItem::ItemType ChatMessageItem::type() const
+{
+	return CHAT_MESSAGE_ITEM;
+}
+
 QVariant ChatMessageItem::data(int column, int role) const
 {
 	switch(role)
@@ -112,4 +117,45 @@ QSize ChatMessageItem::sizeHint(const QStyleOptionViewItem &option, int column) 
 	}
 	
 	return QSize();
+}
+
+int ChatMessageItem::version() const
+{
+	// Change this value each time when you change read/write methods
+	return 1;
+}
+
+void ChatMessageItem::read(QDataStream &ds, int version)
+{
+	switch(version)
+	{
+		// Don' put break after 2 or 3 case, only after case 1:
+		/*
+		case 2:
+			readVersion2(ds);
+		*/
+		case 1:
+			readVersion1(ds);
+			break;
+		default:
+			Q_ASSERT(!"Version not supported");
+			break;
+	}
+}
+
+void ChatMessageItem::write(QDataStream &ds)
+{
+	writeVersion1(ds);
+	// writeVersion2();
+}
+
+// Don't remake all methods, only serialize new members in new versions
+void ChatMessageItem::readVersion1(QDataStream &ds)
+{
+	ds >> _nickName >> _text >> _time >> _nickColor;
+}
+
+void ChatMessageItem::writeVersion1(QDataStream &ds)
+{
+	ds << _nickName << _text << _time << _nickColor;
 }

@@ -12,9 +12,15 @@ const int TIME_COLUMN_WIDTH = 150;
 ChatWidget::ChatWidget(const QString &id, QWidget *parentWidget)
 		: QWidget(parentWidget)
 		, _id(id)
-		, _chatFile(_chatDirectory + QDir::separator() + _id)
+		, _file(new QFile(_chatDirectory + QDir::separator() + _id))
+		, _chatFile(_file)
 {
 	Q_ASSERT(!_chatDirectory.isEmpty() && "Please use setChatDirectory() before creating any ChatWidget");
+
+	if(_file != 0)
+	{
+		_file->open(QIODevice::ReadWrite);
+	}
 
 	ui = new Ui_Form;
 
@@ -38,16 +44,8 @@ ChatWidget::ChatWidget(const QString &id, QWidget *parentWidget)
 	ui->tableView->setColumnWidth(0, NICKNAME_COLUMN_WIDTH);
 	ui->tableView->setColumnWidth(2, TIME_COLUMN_WIDTH);
 
+	loadChatHistory();
 	resizeEvent(0);
-
-	if(!_chatFile.open(QIODevice::ReadWrite | QIODevice::Text))
-	{
-		Q_ASSERT(!"Can't open chat file");
-	}
-	else
-	{
-		loadChatHistory();
-	}
 
 	ui->chatEdit->setFocus();
 }
@@ -58,6 +56,12 @@ ChatWidget::~ChatWidget()
 	{
 		delete _model;
 		_model = 0;
+	}
+
+	if(_file != 0)
+	{
+		delete _file;
+		_file = 0;
 	}
 }
 
@@ -78,32 +82,27 @@ void ChatWidget::addMessage(const QString &nickName, const QString &message, con
 {
 	if(!message.isEmpty())
 	{
-		// TODO: Need to replace :wink: with smiles
-		// QString text = message.toHtmlEscaped();
+		ChatItem *item = new ChatMessageItem(nickName, message, time, Qt::red);
 
-		// if(!text.isEmpty())
-		{
-			/*
-			QString html = QString("<table width=\"100%\"><tr><td align=\"right\" width=\"175\"><font color=\"%1\">%2</font></td><td width=\"15\"></td><td width=\"100%\">%3</td><td align=\"right\"><font color=\"gray\">%4</font></td></tr></table>").arg("red").arg(nickName).arg(text).arg(time.toString());
-			ui->textEdit->append(html);
-			*/
+		addItem(item, saveToHistory);
+	}
+}
 
-			ChatItem *item = new ChatMessageItem(nickName, message, time, Qt::red);
+void ChatWidget::addItem(ChatItem *item, bool saveToHistory)
+{
+	int row = _model->addItem(item);
+	ui->tableView->resizeRowToContents(row);
 
-			int row = _model->addItem(item);
-			ui->tableView->resizeRowToContents(row);
+	QScrollBar *scroll = ui->tableView->verticalScrollBar();
+	scroll->setValue(scroll->maximum());
 
-			QScrollBar *scroll = ui->tableView->verticalScrollBar();
-			scroll->setValue(scroll->maximum());
+	ui->chatEdit->clear();
+	ui->chatEdit->setFocus();
 
-			ui->chatEdit->clear();
-			ui->chatEdit->setFocus();
-
-			if(saveToHistory)
-			{
-				saveEntry(CHAT_MESSAGE, nickName, message, time);
-			}
-		}
+	if(saveToHistory)
+	{
+		_chatFile << (unsigned short)item->type() << (unsigned short)item->version();
+		item->write(_chatFile);
 	}
 }
 
@@ -124,99 +123,21 @@ const QString &ChatWidget::chatDirectory()
 	return _chatDirectory;
 }
 
-void ChatWidget::saveEntry(EntryType type, const QString &nickName, const QString &text, const QTime &time)
-{
-	// type|nick|time|size
-	QString buffer = QString("%1|%2|%3|%4\n%5\n").arg(type).arg(nickName).arg(time.toString()).arg(text.size()).arg(text);
-
-	_chatFile.write(buffer.toUtf8());
-}
-
 void ChatWidget::loadChatHistory()
 {
-	if(_chatFile.isOpen())
+	if(_chatFile.device()->isOpen())
 	{
-		while(!_chatFile.atEnd())
+		while(!_chatFile.device()->atEnd())
 		{
-			while(true)
-			{
-				char c;
-				if(!_chatFile.getChar(&c))
-				{
-					return;
-				}
+			unsigned short itemType;
+			unsigned short version;
 
-				if(c == 0)
-				{
-					return;
-				}
+			_chatFile >> itemType >> version;
 
-				if(c != '\r' && c != '\n')
-				{
-					_chatFile.ungetChar(c);
-					break;
-				}
-			}
+			ChatItem *item = ChatItem::createItem(static_cast<ChatItem::ItemType>(itemType));
+			item->read(_chatFile, version);
 
-			QString buffer = _chatFile.readLine();
-			QStringList list = buffer.split('|');
-
-			if(list.size() != 4)
-			{
-				_chatFile.close();
-				_chatFile.remove();
-				_chatFile.open(QIODevice::ReadWrite | QIODevice::Text);
-				Q_ASSERT(!"Chat file corrupted");
-				return;
-			}
-
-			QStringList::const_iterator it = list.begin();
-
-			bool ok = false;
-			int type = (*it).toInt(&ok);
-
-			if(!ok)
-			{
-				_chatFile.close();
-				_chatFile.remove();
-				_chatFile.open(QIODevice::ReadWrite | QIODevice::Text);
-				Q_ASSERT(!"Chat file corrupted");
-				return;
-			}
-
-			++it;
-			QString nickName = *it;
-
-			++it;
-			QTime time = QTime::fromString(*it);
-
-			++it;
-			int size = (*it).toInt(&ok);
-			if(!ok)
-			{
-				_chatFile.close();
-				_chatFile.remove();
-				_chatFile.open(QIODevice::ReadWrite | QIODevice::Text);
-				Q_ASSERT(!"Chat file corrupted");
-				return;
-			}
-
-			QString text = _chatFile.read(size);
-			if(text.size() != size)
-			{
-				_chatFile.close();
-				_chatFile.remove();
-				_chatFile.open(QIODevice::ReadWrite | QIODevice::Text);
-				Q_ASSERT(!"Chat file corrupted");
-				return;
-			}
-
-			switch(type)
-			{
-				case CHAT_MESSAGE:
-					addMessage(nickName, text, time, false);
-					break;
-			}
+			addItem(item, false);
 		}
 	}
 }

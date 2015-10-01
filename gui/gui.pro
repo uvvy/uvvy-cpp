@@ -28,4 +28,4 @@ HEADERS += exceptions.h AccountManager.h MainWindow.h QmlWindow.h Root.h UserInf
 SOURCES += main.cpp AccountManager.cpp MainWindow.cpp QmlWindow.cpp Root.cpp UserInfo.cpp UserManager.cpp WindowManager.cpp
 
 HEADERS += Contact.h Chat/ChatWidget.h Chat/ChatTextEdit.h Chat/ChatItem.h Chat/ChatMessageItem.h Chat/ChatItemModel.h Chat/ChatItemDelegate.h
-SOURCES += Contact.cpp Chat/ChatWidget.cpp Chat/ChatTextEdit.cpp Chat/ChatMessageItem.cpp Chat/ChatItemModel.cpp Chat/ChatItemDelegate.cpp
+SOURCES += Contact.cpp Chat/ChatWidget.cpp Chat/ChatTextEdit.cpp Chat/ChatMessageItem.cpp Chat/ChatItemModel.cpp Chat/ChatItemDelegate.cpp Chat/ChatItemFactory.cpp
