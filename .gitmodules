@@ -4,39 +4,50 @@
 [submodule "sss"]
 	path = sss
 	url = git@github.com:berkus/libsss.git
+	branch = master
 [submodule "cmake"]
 	path = cmake
 	url = git@github.com:berkus/cmake-setup.git
+	branch = master
 [submodule "travis-ci"]
 	path = travis-ci
 	url = git@github.com:berkus/travis-scripts.git
+	branch = master
 [submodule "routing"]
 	path = routing
 	url = git@github.com:berkus/librouting.git
+	branch = master
 [submodule "krypto"]
 	path = krypto
 	url = git@github.com:berkus/libkrypto.git
 [submodule "nat"]
 	path = nat
 	url = git@github.com:berkus/libnat.git
+	branch = master
 [submodule "arsenal"]
 	path = arsenal
 	url = git@github.com:berkus/libarsenal.git
+	branch = master
 [submodule "3rdparty/dir_monitor"]
 	path = 3rdparty/dir_monitor
 	url = git@github.com:berkus/dir_monitor.git
+	branch = master
 [submodule "3rdparty/metakit"]
 	path = 3rdparty/metakit
 	url = git@github.com:berkus/metakit.git
+	branch = master
 [submodule "3rdparty/opus"]
 	path = 3rdparty/opus
 	url = git@github.com:berkus/opus.git
+	branch = master
 [submodule "3rdparty/rtaudio"]
 	path = 3rdparty/rtaudio
 	url = git@github.com:berkus/rtaudio.git
+	branch = master
 [submodule "3rdparty/sodiumpp"]
 	path = 3rdparty/sodiumpp
 	url=git@github.com:berkus/sodiumpp.git
+	branch = master
 [submodule "uia"]
 	path = uia
 	url = git@github.com:berkus/libuia.git
