@@ -9,7 +9,7 @@ include(cmake/setup.cmake)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Set flag for submodules build
-set(BUILD_IN_METTANODE ON)
+set(BUILD_IN_UVVY ON)
 
 if (APPLE)
     set(GUI_TYPE MACOSX_BUNDLE)
