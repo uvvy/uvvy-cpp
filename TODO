@@ -4,8 +4,8 @@ Topmost 3 tasks:
    - therefore FIRST task is to complete and test kex_initiator/kex_responder working over UDP
       - need to be able to successfully carry out channel negotiation
  ☐ FIRST chat version may work over packets over channel, without streams even!
- - just need to send and ACK each packet one after another, retransmit if not acked in 500ms
- ☐ Extract sss::link and other low-level communication helpers into libuia. (uia::comm)
+     - just need to send and ACK each packet one after another, retransmit if not acked in 500ms
+ ✔ Extract sss::link and other low-level communication helpers into libuia. (uia::comm) @done (15-10-18 03:40)
 
 Structured Secure Streams:
  ☐ Need to differentiate between substreams received as result of user actions
@@ -39,7 +39,6 @@ Keying Negotiation:
 
  ☐ run audio streaming test in both the simulation environment (file-to-file using arbitrary loss percentage) and real VoiceService environment (file-to-hw output using local network connection).
    - hard atm due to source/sink driver design, look at pjsip ports/master-port idea for proper driver
-
 
 UI:
  ☐ Switching UI to QtQuick and Qt5
@@ -82,7 +81,7 @@ Chats:
     Навигация по времени, возможности просматривать лог как лог (сплошную ленту), а не отдельные сообщения, в идеале возможность отмечать куски лога как важные. - Юдж
     еще экспорт и копипаста в читаемом виде. - Юдж
 
-  UI: "Advertise my membership in room [#osdev] to [Nobody [v]"
+  UI: "Advertise my membership in [#osdev] room to [Nobody [v]"
 
 Screencasting/screensharing:
  ☐ Screencasting client
@@ -140,7 +139,7 @@ Grabber prototype:
   ☐ There's `o2' qt library for oauth 1.0 and 2.0 - could use for login?
   ☐ This is against the TOS!
 
-Personal Cluster Management:
+Personal Cluster Management (Naming):
  ☐ should be possible to add a device to personal device "cluster", thus allowing it to search the entire cluster and modify (optionally) data in the cluster.
  ☐ should be possible to remove a device from cluster, there might be no access to this device anymore (e.g. lost phone)
  ☐ devices in the cluster always keep track of status for other devices in the cluster and synchronize with them often.
@@ -167,7 +166,7 @@ Most immediate usability necessities:
    - some sss doc posted on atta-metta.net
  ☐ Automatic launching on host OS login
 
- ☐ write SST spec as an RFC draft - complete unfinished SST spec in form of RFC document
+ ☐ write SSS spec as an RFC draft - complete unfinished SSS spec in form of RFC document
    ☐ assign IETF RFC number, see http://www.ietf.org/id-info/
  ☐ finish implementing wire protocol to specs.  Specifically:
    ☐ receiver-directed flow control
@@ -188,7 +187,7 @@ Most immediate usability necessities:
 
   Possibly PID (Proportional-Integral-Differential) flow control.
 
-sst/shell:
+sss/shell:
  ☐ unlock console fds once the shell connection ceases
  ☐ after some waiting time the streams disconnect and mix up
  ☐ Deploy nshd to motoko?
