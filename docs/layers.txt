@@ -4,3 +4,34 @@ Layers
 
 Vertical - dependency on all below layers
 Horizontal - no dependency
+
+```
+
+          sss
+
+        routing                  naming
+
+          uia   nat
+
+sodiumpp       arsenal
+
+```
+
+
+library breakdown
+
+uia contains 
+- base socket operations
+- channel setup (key exchange/channel negotiation, channel-packet send and receive)
+
+nat contains
+- punching nat holes
+- support for maintaining a TURN/STUN server component
+
+routing contains
+- DHT network searches and updates
+
+sss adds
+- framing on top of channels
+- streams on top of framing
+
