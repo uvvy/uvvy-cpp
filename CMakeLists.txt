@@ -21,26 +21,35 @@ include_directories(3rdparty) # sodiumpp
 include_directories(arsenal/include) # For routing access to sss host and link_receiver
 include_directories(krypto/include) # For cryptographic primitives
 include_directories(uia/include)
-include_directories(sss/include) # For routing access to sss host and link_receiver
-include_directories(routing/include) # For sss access to routing client
-include_directories(voicebox/include)
+#include_directories(sss/include) # For routing access to sss host and link_receiver
+#include_directories(routing/include) # For sss access to routing client
+#include_directories(voicebox/include)
 
+# Cryptographic support
 add_subdirectory(3rdparty/sodiumpp)
-add_subdirectory(arsenal)
 #add_subdirectory(krypto)
-#add_subdirectory(voicebox)
-#add_subdirectory(filesyncbox)
-
+# Various C++ utilities
+add_subdirectory(arsenal)
+# Minimal socket and channel functionality. Base substrate.
 add_subdirectory(uia)
-add_subdirectory(sss)
-add_subdirectory(routing)
+# Peer-to-peer overlay network and DHT
+#add_subdirectory(routing)
+# Name resolution overlay network
 #add_subdirectory(naming)
+# NAT passthrough tools
 #add_subdirectory(nat)
-
+# Streams and stream-oriented communication. High level abstractions.
+#add_subdirectory(sss)
+# 3rd-party libraries
 #add_subdirectory(3rdparty/opus)
 #add_subdirectory(3rdparty/rtaudio)
 #add_subdirectory(3rdparty/metakit)
-#add_subdirectory(ui)
+# Audio pipeline
+#add_subdirectory(voicebox)
+# File synchronisation pipeline
+#add_subdirectory(filesyncbox)
+
+#add_subdirectory(gui)
 
 #add_subdirectory(demos)
 #add_subdirectory(playground)
