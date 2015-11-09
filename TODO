@@ -1,11 +1,15 @@
 Topmost 3 tasks:
- ☐ For DHT: use sss negotiation to establish secure connection first, then use DHT packets within the channel to PING, STORE, FIND_NODE, and FIND_VALUE.
-   - this means channel needs an API for direct sending of packets
-   - therefore FIRST task is to complete and test kex_initiator/kex_responder working over UDP
-      - need to be able to successfully carry out channel negotiation
+ ☐ Set up channel between initiator and responder,
+     ☐ send and receive packets,
+     ☐ have packet receiving interface.
+
  ☐ FIRST chat version may work over packets over channel, without streams even!
      - just need to send and ACK each packet one after another, retransmit if not acked in 500ms
- ✔ Extract sss::link and other low-level communication helpers into libuia. (uia::comm) @done (15-10-18 03:40)
+
+layers:
+librouting - uses uia to set up DHT channels
+libnat - uses uia to plonk NAT holes
+libsss - uses uia to set up streams over channels, uses routing to find peers, uses nat to keep connections available
 
 Structured Secure Streams:
  ☐ Need to differentiate between substreams received as result of user actions
@@ -146,6 +150,9 @@ Personal Cluster Management (Naming):
  ☐ search between devices is performed in metadata index, which devices try to synchronise with priority to other objects.
 
 Routing:
+ ☐ For DHT: use sss negotiation to establish secure connection first, then use DHT packets within the channel to PING, STORE, FIND_NODE, and FIND_VALUE.
+   - this means channel needs an API for direct sending of packets
+
  ☐ Connect devices to each other, overlay routing lets device find another device and set up connection.
  ☐ LAN/Bonjour node discovery.
  ☐ Regserver deregistration on logout is added - should notify active connections somehow too?
