@@ -72,6 +72,8 @@ Voice calls:
    ☐ (Adjust received packets time to local machine time, drop too old packets immediately.)
       See gstreamer rtp jitterbuffer for an algorithm to reestimate skew as the session runs.
 
+ ☐ http://www.rowetel.com/blog/?page_id=454 Oslec GPL Line Echo Canceler
+
 Chats:
  ☐ Sync history between instances
  ☐ Draw possible chat synchronization graph ideas between Alice's and Bob's personal cluser devices.

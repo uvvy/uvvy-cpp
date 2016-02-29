@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(mettanode)
-include(CTest)
+project(Uvvy)
 
+include(CTest)
 include(cmake/setup.cmake)
 
 # Export compile commands for ST3 clang plugin.
@@ -46,7 +46,7 @@ add_subdirectory(uia)
 #add_subdirectory(3rdparty/metakit)
 # Audio pipeline
 #add_subdirectory(voicebox)
-# File synchronisation pipeline
+# File synchronisation
 #add_subdirectory(filesyncbox)
 
 #add_subdirectory(gui)
