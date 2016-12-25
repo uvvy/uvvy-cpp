@@ -6,10 +6,10 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "arsenal/opaque_endian.h"
 #include "voicebox/jitterbuffer.h"
-#include "voicebox/audio_service.h" // TRACE_DETAIL
+#include "voicebox/audio_service.h" // trace
 
 /// @todo
 /// [ ] Run set_enabled() all the way from the left side of pipeline to the right
@@ -78,7 +78,7 @@ void jitterbuffer::enqueue(byte_array data)
 void jitterbuffer::accept_input(byte_array msg)
 {
 #if REALTIME_CRIME
-    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
+    BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__;
 #endif
     // log_packet_delay(msg);
 
@@ -105,7 +105,7 @@ void jitterbuffer::accept_input(byte_array msg)
         if (seq_no > queue_first_seq_no)
         {
             enqueue(msg);
-            logger::debug(TRACE_RARE) << "Jitterbuffer - frame received out of order";
+            BOOST_LOG_TRIVIAL(trace) << "Jitterbuffer - frame received out of order";
 
             // if there's a packet with the same sequence number in the queue - replace it
         }
@@ -132,7 +132,7 @@ void jitterbuffer::accept_input(byte_array msg)
         byte_array dummy;
         dummy.resize(12);
         enqueue(dummy);
-        logger::debug(TRACE_RARE) << "MISSED audio frame " << sequence_number_ + i;
+        BOOST_LOG_TRIVIAL(trace) << "MISSED audio frame " << sequence_number_ + i;
     }
 
     // Convert remote timestamp to local time
@@ -141,7 +141,7 @@ void jitterbuffer::accept_input(byte_array msg)
 
     enqueue(msg);
 #if REALTIME_CRIME
-    logger::debug(TRACE_DETAIL) << "Received audio frame " << dec << seq_no;
+    BOOST_LOG_TRIVIAL(trace) << "Received audio frame " << dec << seq_no;
 #endif
 
     sort(queue_.begin(), queue_.end(),
@@ -158,7 +158,7 @@ void jitterbuffer::accept_input(byte_array msg)
         int64_t tsa = queue_[i-1].as<big_int64_t>()[0];
         int64_t tsb = queue_[i].as<big_int64_t>()[0];
         if (tsb - tsa > 10) {
-            logger::warning(TRACE_DETAIL) << "Discontinuity in audio stream: packets are "
+            BOOST_LOG_TRIVIAL(trace) << "Discontinuity in audio stream: packets are "
                 << (tsb - tsa) << "ms apart.";
         }
     }
@@ -201,7 +201,7 @@ void jitterbuffer::reset()
 void jitterbuffer::produce_output(byte_array& buffer)
 {
 #if REALTIME_CRIME
-    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
+    BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__;
 #endif
     unique_lock<mutex> guard(mutex_);
     if (queue_.empty()) {

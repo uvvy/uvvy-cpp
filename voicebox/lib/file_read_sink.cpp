@@ -1,4 +1,4 @@
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "voicebox/file_read_sink.h"
 
 using namespace std;
@@ -11,14 +11,14 @@ file_read_sink::file_read_sink(std::string const& filename)
 
 void file_read_sink::set_enabled(bool enabling)
 {
-    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
+    BOOST_LOG_TRIVIAL(debug) << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled())
     {
         assert(!file_.is_open());
         file_.open(filename_, ios::in|ios::binary);
         offset_ = 0;
 
-        logger::debug() << "File read sink enabled: rate " << sample_rate()
+        BOOST_LOG_TRIVIAL(debug) << "File read sink enabled: rate " << sample_rate()
             << ", channels " << num_channels() << ", frame size " << frame_size();
 
         super::set_enabled(true);
@@ -27,7 +27,7 @@ void file_read_sink::set_enabled(bool enabling)
     {
         super::set_enabled(false);
         file_.close();
-        logger::debug() << "File read sink disabled";
+        BOOST_LOG_TRIVIAL(debug) << "File read sink disabled";
     }
 }
 

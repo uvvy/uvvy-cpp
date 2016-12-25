@@ -9,7 +9,7 @@
 #include <queue>
 #include <mutex>
 #include <boost/asio/strand.hpp>
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "arsenal/algorithm.h"
 #include "sss/stream.h"
 #include "sss/server.h"
@@ -63,14 +63,14 @@ struct send_chain
 
     void enable()
     {
-        logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
+        BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__;
         sink_.enable();
         hw_in_.enable();
     }
 
     void disable()
     {
-        logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
+        BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__;
         hw_in_.disable();
         sink_.disable();
     }
@@ -97,14 +97,14 @@ struct receive_chain
 
     void enable()
     {
-        logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
+        BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__;
         source_.enable();
         hw_out_.enable();
     }
 
     void disable()
     {
-        logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__;
+        BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__;
         source_.disable();
         hw_out_.disable();
     }
@@ -166,7 +166,7 @@ public:
 void audio_service::private_impl::session_command_handler(byte_array const& msg)
 {
     if (msg.is_empty()) {
-        logger::warning() << "Empty session command received - investigate!";
+        BOOST_LOG_TRIVIAL(warning) << "Empty session command received - investigate!";
         return;
     }
 
@@ -180,7 +180,7 @@ void audio_service::private_impl::session_command_handler(byte_array const& msg)
         case cmd_start_session:
             if (!active_)
             {
-                logger::debug(TRACE_DETAIL) << "cmd_start_session, starting audio session";
+                BOOST_LOG_TRIVIAL(trace) << "cmd_start_session, starting audio session";
                 send_->enable();
                 recv_->enable();
                 active_ = true;
@@ -188,7 +188,7 @@ void audio_service::private_impl::session_command_handler(byte_array const& msg)
             }
             break;
         case cmd_stop_session:
-            logger::debug(TRACE_DETAIL) << "cmd_stop_session, stopping audio session";
+            BOOST_LOG_TRIVIAL(trace) << "cmd_stop_session, stopping audio session";
             end_session();
             break;
         default:
@@ -201,17 +201,17 @@ void audio_service::private_impl::connect_stream()
     // Handle session commands
     ready_read_conn = control_stream_->on_ready_read_record.connect([=] {
         byte_array msg = control_stream_->read_record();
-        logger::debug() << "Received audio service command: " << msg;
+        BOOST_LOG_TRIVIAL(debug) << "Received audio service command: " << msg;
         session_command_handler(msg);
     });
 
     link_up_conn = control_stream_->on_link_up.connect([this] {
-        logger::debug() << "Link up, sending start session command";
+        BOOST_LOG_TRIVIAL(debug) << "Link up, sending start session command";
         send_command(cmd_start_session);
     });
 
     link_down_conn = control_stream_->on_link_down.connect([this] {
-        logger::debug() << "Link down, stopping session and disabling audio";
+        BOOST_LOG_TRIVIAL(debug) << "Link down, stopping session and disabling audio";
         parent_->end_session();
     });
 
@@ -241,7 +241,7 @@ void audio_service::private_impl::establish_outgoing_session(peer_identity const
             // @todo Allow specifying a DNS name for endpoint.
             uia::comm::endpoint ep(boost::asio::ip::address::from_string(epstr),
                 stream_protocol::default_port);
-            logger::debug(TRACE_DETAIL) << "Connecting at location hint " << ep;
+            BOOST_LOG_TRIVIAL(trace) << "Connecting at location hint " << ep;
             data_stream_->connect_at(ep);
         }
     }
@@ -259,7 +259,7 @@ void audio_service::private_impl::new_connection(shared_ptr<server> server)
     data_stream_->on_new_substream.connect([this] { new_substream(); });
     data_stream_->listen(stream::buffer_limit);
 
-    logger::info() << "New incoming connection from " << data_stream_->remote_host_id();
+    BOOST_LOG_TRIVIAL(info) << "New incoming connection from " << data_stream_->remote_host_id();
 
     recv_ = make_shared<receive_chain>(data_stream_);
     if (!send_) {
@@ -269,13 +269,13 @@ void audio_service::private_impl::new_connection(shared_ptr<server> server)
 
 void audio_service::private_impl::new_substream()
 {
-    logger::info() << "New incoming substream (must be control stream)";
+    BOOST_LOG_TRIVIAL(info) << "New incoming substream (must be control stream)";
 
     // Should already have incoming stream.
     control_stream_ = data_stream_->accept_substream();
 
     if (!control_stream_) {
-        logger::fatal() << data_stream_->error();
+        BOOST_LOG_TRIVIAL(fatal) << data_stream_->error();
     }
 
     connect_stream();
@@ -342,7 +342,7 @@ bool audio_service::is_active() const
 void audio_service::establish_outgoing_session(peer_identity const& eid,
                                                vector<string> ep_hints)
 {
-    logger::info() << "Connecting to " << eid;
+    BOOST_LOG_TRIVIAL(info) << "Connecting to " << eid;
     pimpl_->establish_outgoing_session(eid, ep_hints);
 }
 

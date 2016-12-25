@@ -7,7 +7,7 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <cassert>
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "voicebox/audio_stream.h"
 
 audio_stream::audio_stream(int framesize, double samplerate, int channels)
@@ -24,7 +24,7 @@ audio_stream::~audio_stream()
 
 void audio_stream::set_enabled(bool enabling)
 {
-    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
+    BOOST_LOG_TRIVIAL(debug) << __PRETTY_FUNCTION__ << " " << enabling;
     enabled_ = enabling;
 }
 

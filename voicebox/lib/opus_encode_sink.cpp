@@ -6,7 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "voicebox/opus_encode_sink.h"
 #include "voicebox/audio_service.h"
 
@@ -16,7 +16,7 @@ namespace voicebox {
 
 void opus_encode_sink::set_enabled(bool enabling)
 {
-    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__ << " " << enabling;
+    BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled()) {
         assert(!encode_state_);
         int error = 0;
@@ -30,7 +30,7 @@ void opus_encode_sink::set_enabled(bool enabling)
         framesize = rate / 100; // 10ms
         set_frame_size(framesize);
         set_sample_rate(rate);
-        logger::debug(TRACE_DETAIL) << "opus_encode_sink: frame size " << dec << framesize
+        BOOST_LOG_TRIVIAL(trace) << "opus_encode_sink: frame size " << dec << framesize
             << " sample rate " << rate;
 
         opus_encoder_ctl(encode_state_, OPUS_SET_VBR(1));
@@ -64,7 +64,7 @@ void opus_encode_sink::produce_output(byte_array& buffer)
     if (!samplebuf.is_empty())
     {
 #if REALTIME_CRIME
-        logger::debug(TRACE_DETAIL) << "Encoding source frame with size: "
+        BOOST_LOG_TRIVIAL(trace) << "Encoding source frame with size: "
             << dec << samplebuf.size() - ts_size;
 #endif
         // Encode the frame and write it into a buffer
@@ -77,7 +77,7 @@ void opus_encode_sink::produce_output(byte_array& buffer)
         buffer.resize(nbytes + buffer_offset);
         buffer.as<big_int64_t>()[0] = samplebuf.as<big_int64_t>()[0]; // Copy timestamp
 #if REALTIME_CRIME
-        logger::debug(TRACE_DETAIL) << "Encoded frame size: " << dec << nbytes;
+        BOOST_LOG_TRIVIAL(trace) << "Encoded frame size: " << dec << nbytes;
         logger::file_dump(buffer, "encoded opus packet");
 #endif
     }

@@ -17,14 +17,14 @@ CallService::CallService(HostState& s, QObject *parent)
 {
     audioclient_.on_session_started.connect([this] {
         // Less detailed logging while in real-time
-        logger::set_verbosity(logger::verbosity::warnings);
+        logger::core::get()->set_filter(logger::trivial::severity >= logger::trivial::warning);
         // Todo: post this to GUI thread? Signals work fine across threads boundaries.
         emit callStarted();
     });
 
     audioclient_.on_session_finished.connect([this] {
         // More detailed logging while not in real-time
-        logger::set_verbosity(logger::verbosity::debug);
+        logger::core::get()->set_filter(logger::trivial::severity >= logger::trivial::debug);
         // Todo: post this to GUI thread? Signals work fine across threads boundaries.
         emit callFinished();
     });

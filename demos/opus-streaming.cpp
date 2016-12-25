@@ -11,7 +11,7 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/positional_options.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "arsenal/settings_provider.h"
 #include "arsenal/any_int_cast.h"
 #include "sss/host.h"
@@ -64,9 +64,7 @@ int main(int argc, char* argv[])
     }
 
     if (!verbose_debug) {
-        logger::set_verbosity(logger::verbosity::info);
-    } else {
-        logger::logging::set_verbosity(199);
+        logging::core::get()->set_filter(logging::trivial:severity >= logging::trivial::info);
     }
 
     auto settings = settings_provider::instance();
@@ -104,10 +102,10 @@ int main(int argc, char* argv[])
 
     voicebox::audio_service service(host);
     service.on_session_started.connect([]{
-        logger::info() << "Audio session started";
+        BOOST_LOG_TRIVIAL(info) << "Audio session started";
     });
     service.on_session_finished.connect([]{
-        logger::info() << "Audio session stopped";
+        BOOST_LOG_TRIVIAL(info) << "Audio session stopped";
         // @todo Send termination signal to mainloop
     });
 
@@ -117,7 +115,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        logger::info() << "Host " << host->host_identity().id()
+        BOOST_LOG_TRIVIAL(info) << "Host " << host->host_identity().id()
             << " listening on port " << dec << port;
         service.listen_incoming_session();
     }

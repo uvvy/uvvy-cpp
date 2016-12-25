@@ -10,12 +10,12 @@
 #include <QCryptographicHash>
 #include <QUrl>
 #include <QDebug>
+#include <boost/log/trivial.hpp>
 #include "ContactModel.h"
 #include "routing/private/regserver_client.h"
 #include "routing/client_profile.h"
 #include "client_utils.h"
 #include "arsenal/settings_provider.h"
-#include "arsenal/logging.h"
 
 using namespace std;
 using namespace sss;
@@ -120,11 +120,11 @@ public:
         , client_(h)
     {
         client_.on_ready.connect([this] {
-            logger::debug() << "client ready";
+            BOOST_LOG_TRIVIAL(debug) << "client ready";
             client_.search(""); // Trigger listing of all available peers.
         });
         client_.on_disconnected.connect([] {
-            logger::debug() << "client disconnected";
+            BOOST_LOG_TRIVIAL(debug) << "client disconnected";
         });
         client_.on_lookup_done.connect([this](peer_identity const& peer,
             uia::comm::endpoint const&,
@@ -133,7 +133,7 @@ public:
             updatePeerProfile(peer, profile);
         });
         client_.on_lookup_failed.connect([](peer_identity const& peer) {
-            logger::debug() << "lookup failed";
+            BOOST_LOG_TRIVIAL(debug) << "lookup failed";
         });
 
         client_.on_search_done.connect([this](std::string const&,
@@ -147,7 +147,7 @@ public:
     void updatePeerProfile(peer_identity const& peer,
             uia::routing::client_profile const& profile)
     {
-        logger::debug() << "updatePeerProfile " << peer;
+        BOOST_LOG_TRIVIAL(debug) << "updatePeerProfile " << peer;
         // find in peers entry with peer id "peer" and update its profile.
         int i = 0;
         foreach (auto& pair, peers_)
@@ -175,7 +175,7 @@ public:
     void foundPeers(std::vector<peer_identity> const& peers, bool last)
     {
         for (auto peer : peers) {
-            logger::debug() << "foundPeers " << peer;
+            BOOST_LOG_TRIVIAL(debug) << "foundPeers " << peer;
             if (!containsId(peer)) {
                 peers_.append(Peer(peer));
             }

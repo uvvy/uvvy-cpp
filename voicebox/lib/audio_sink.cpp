@@ -6,7 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "voicebox/audio_sink.h"
 
 namespace voicebox {
@@ -20,7 +20,7 @@ void audio_sink::produce_output(byte_array& buffer)
 
 void audio_sink::set_enabled(bool enabling)
 {
-    logger::debug() << __PRETTY_FUNCTION__ << " " << enabling;
+    BOOST_LOG_TRIVIAL(debug) << __PRETTY_FUNCTION__ << " " << enabling;
     super::set_enabled(enabling);
     if (producer_) {
         producer_->set_enabled(enabling);

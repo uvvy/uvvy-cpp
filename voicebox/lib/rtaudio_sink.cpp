@@ -14,12 +14,12 @@ namespace voicebox {
 
 void rtaudio_sink::set_enabled(bool enabling)
 {
-    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__ << " " << enabling;
+    BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled())
     {
         if (frame_size() <= 0 or sample_rate() <= 0.0)
         {
-            logger::warning() << "Bad frame size " << frame_size()
+            BOOST_LOG_TRIVIAL(warning) << "Bad frame size " << frame_size()
                 << " or sample rate " << sample_rate();
             return;
         }

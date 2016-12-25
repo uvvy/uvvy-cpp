@@ -6,7 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "voicebox/packet_source.h"
 #include "voicebox/audio_service.h"
 
@@ -38,7 +38,7 @@ void packet_source::set_source(std::shared_ptr<sss::stream> stream)
 
 void packet_source::set_enabled(bool enabling)
 {
-    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__ << " " << enabling;
+    BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__ << " " << enabling;
     super::set_enabled(enabling);
 }
 
@@ -55,7 +55,7 @@ void packet_source::on_packet_received()
     if (is_enabled()) {
         byte_array msg = stream_->read_datagram();
 #if REALTIME_CRIME
-        logger::debug(TRACE_ENTRY) << "Received packet of size " << msg.size();
+        BOOST_LOG_TRIVIAL(trace) << "Received packet of size " << msg.size();
 #endif
         if (msg.size() > 12) { // @todo Magic number - amount of header data
             accept_input(msg);

@@ -33,9 +33,9 @@ BOOST_FIXTURE_TEST_CASE(simple_sim_step, simulator_fixture)
     packetizer pkt_(&source_);
     packet_sink sender_(client, &pkt_);
     pkt_.on_ready_read.connect([&] {
-        logger::debug() << "Packetizer on_ready_read - posting send event";
+        BOOST_LOG_TRIVIAL(debug) << "Packetizer on_ready_read - posting send event";
         simulator->post([&] {
-            logger::debug() << "SEND EVENT - sending all pending packets";
+            BOOST_LOG_TRIVIAL(debug) << "SEND EVENT - sending all pending packets";
             sender_.send_packets();
         });
     });
@@ -46,13 +46,13 @@ BOOST_FIXTURE_TEST_CASE(simple_sim_step, simulator_fixture)
     rtaudio_sink output_(&jb_);
 
     client->on_link_up.connect([&] {
-        logger::debug() << "client: link_up";
+        BOOST_LOG_TRIVIAL(debug) << "client: link_up";
         sender_.enable();
         source_.enable();
     });
 
     server->on_new_connection.connect([&] {
-        logger::debug() << "server: on_new_connection";
+        BOOST_LOG_TRIVIAL(debug) << "server: on_new_connection";
         auto stream = server->accept();
         if (!stream) {
             return;

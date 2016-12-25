@@ -24,7 +24,7 @@ void regclient_set_profile(settings_provider* settings,
     uia::routing::client_profile client(s_client);
     client.set_endpoints(set_to_vector(host->active_local_endpoints()));
     for (auto kw : client.keywords()) {
-        logger::debug() << "Keyword: " << kw;
+        BOOST_LOG_TRIVIAL(debug) << "Keyword: " << kw;
     }
     regclient.set_profile(client);
 }

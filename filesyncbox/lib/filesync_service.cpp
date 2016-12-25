@@ -9,11 +9,11 @@
 #include <queue>
 #include <mutex>
 #include <boost/asio/strand.hpp>
+#include <boost/log/trivial.hpp>
 #include "filesyncbox/filesync_service.h"
 #include "filesyncbox/chunk.h"
 #include "sss/stream.h"
 #include "sss/server.h"
-#include "arsenal/logging.h"
 
 using namespace std;
 using namespace sss;
@@ -96,23 +96,23 @@ void filesync_service::private_impl::connect_stream(shared_ptr<stream> stream)
     // Handle session commands
     peer->ready_read_conn = stream->on_ready_read_record.connect([=] {
         byte_array msg = stream->read_record();
-        logger::debug() << "Received filesync service command: " << msg;
+        BOOST_LOG_TRIVIAL(debug) << "Received filesync service command: " << msg;
         session_command_handler(msg);
     });
 
     peer->link_up_conn = stream->on_link_up.connect([this] {
-        logger::debug() << "Link up, sending start session command";
+        BOOST_LOG_TRIVIAL(debug) << "Link up, sending start session command";
         // send_command(cmd_start_session);
     });
 
     peer->link_down_conn = stream->on_link_down.connect([this] {
-        logger::debug() << "Link down, stopping session and disabling filesync";
+        BOOST_LOG_TRIVIAL(debug) << "Link down, stopping session and disabling filesync";
         // end_session();
     });
 
     if (stream->is_link_up())
     {
-        logger::debug() << "Incoming stream is ready, start sync immediately.";
+        BOOST_LOG_TRIVIAL(debug) << "Incoming stream is ready, start sync immediately.";
         // send_command(cmd_start_session);
     }
 }
@@ -128,14 +128,14 @@ void filesync_service::private_impl::new_connection(shared_ptr<server> server)
     {
         auto peer = sync_peers_[stream->remote_host_id()];
         end_session_with(peer);
-        logger::info() << "Repeated incoming connection from " << stream->remote_host_id();
+        BOOST_LOG_TRIVIAL(info) << "Repeated incoming connection from " << stream->remote_host_id();
         assert(!peer->stream_);
         peer->stream_ = stream;
         connect_stream(peer->stream_);
     }
     else
     {
-        logger::info() << "New incoming connection from " << stream->remote_host_id();
+        BOOST_LOG_TRIVIAL(info) << "New incoming connection from " << stream->remote_host_id();
         auto peer = make_shared<peer_sync>(stream);
         start_session_with(peer);//inserts new peer into the table
         connect_stream(peer->stream_);

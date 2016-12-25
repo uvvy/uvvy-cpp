@@ -7,8 +7,8 @@
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 #include <set>
+#include <boost/log/trivial.hpp>
 #include "traverse_nat.h"
-#include "arsenal/logging.h"
 #include "sss/host.h"
 
 using namespace std;
@@ -18,7 +18,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
 {
     shared_ptr<upnp::UpnpIgdClient> upnp = make_shared<upnp::UpnpIgdClient>();
 
-    logger::info() << "Initialising UPnP";
+    BOOST_LOG_TRIVIAL(info) << "Initialising UPnP";
 
     auto endpoints = host->active_local_endpoints();
     set<uint16_t> ports;
@@ -28,11 +28,11 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
         ports.insert(ep.port());
     }
 
-    logger::debug() << "Need to map " << dec << ports.size() << " ports";
+    BOOST_LOG_TRIVIAL(debug) << "Need to map " << dec << ports.size() << " ports";
     bool all_added = true;
 
     if (!upnp->InitControlPoint()) {
-        logger::debug() << "UPnP control point not found";
+        BOOST_LOG_TRIVIAL(debug) << "UPnP control point not found";
     }
     else
     {
@@ -71,7 +71,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
                     if (ep == mapping) {
                         // YES(1): We're good
                         // remove port from ports
-                        logger::debug() << "NAT found existing port mapping for our endpoint - ext port "
+                        BOOST_LOG_TRIVIAL(debug) << "NAT found existing port mapping for our endpoint - ext port "
                             << port << "->" << mapping;
                         ports.erase(port);
                         mapping_exists = true;
@@ -91,7 +91,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
                     if (m.second == ep) {
                         // YES(2): We're good
                         // remove port from ports
-                        logger::debug() << "NAT found existing port mapping for our endpoint - ext port "
+                        BOOST_LOG_TRIVIAL(debug) << "NAT found existing port mapping for our endpoint - ext port "
                             << m.first << "->" << m.second;
                         ports.erase(port);
                         mapping_exists = true;
@@ -109,7 +109,7 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
                 while (contains(used_ports, ext_port)) {
                     ++ext_port;
                 }
-                logger::debug() << "NAT creating port mapping for our endpoint port "
+                BOOST_LOG_TRIVIAL(debug) << "NAT creating port mapping for our endpoint port "
                     << dec << port << "->" << ext_port;
                 all_added &= upnp->AddPortMapping(port, ext_port, upnp::kTcp);
                 all_added &= upnp->AddPortMapping(port, ext_port, upnp::kUdp);
@@ -117,20 +117,20 @@ shared_ptr<upnp::UpnpIgdClient> traverse_nat(shared_ptr<host> host)
         }
 
         if (upnp->IsAsync()) {
-            logger::debug() << "Waiting...";
+            BOOST_LOG_TRIVIAL(debug) << "Waiting...";
             this_thread::sleep_for(chrono::seconds(5));
         }
     }
 
     if (upnp->HasServices()) {
-        logger::debug() << "External IP: " << upnp->GetExternalIpAddress();
+        BOOST_LOG_TRIVIAL(debug) << "External IP: " << upnp->GetExternalIpAddress();
         assert(all_added);
         if (upnp->IsAsync()) {
             assert(ports.size() == 0);
         }
-        logger::info() << "All UPnP mappings successful";
+        BOOST_LOG_TRIVIAL(info) << "All UPnP mappings successful";
     } else {
-        logger::warning() << "Sorry, no port mappings via UPnP possible";
+        BOOST_LOG_TRIVIAL(warning) << "Sorry, no port mappings via UPnP possible";
     }
 
     return upnp;

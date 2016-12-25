@@ -6,7 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "voicebox/opus_decode_sink.h"
 #include "voicebox/audio_service.h"
 
@@ -16,7 +16,7 @@ namespace voicebox {
 
 void opus_decode_sink::set_enabled(bool enabling)
 {
-    logger::debug(TRACE_ENTRY) << __PRETTY_FUNCTION__ << " " << enabling;
+    BOOST_LOG_TRIVIAL(trace) << __PRETTY_FUNCTION__ << " " << enabling;
     if (enabling and !is_enabled())
     {
         assert(!decode_state_);
@@ -30,7 +30,7 @@ void opus_decode_sink::set_enabled(bool enabling)
         framesize = rate / 100; // 10ms
         set_frame_size(framesize);
         set_sample_rate(rate);
-        logger::debug(TRACE_DETAIL) << "opus_decode_sink: frame size "
+        BOOST_LOG_TRIVIAL(trace) << "opus_decode_sink: frame size "
             << dec << framesize << " sample rate " << rate;
 
         super::set_enabled(true);
@@ -65,7 +65,7 @@ void opus_decode_sink::produce_output(byte_array& samplebuf)
     if (bytebuf.size() > buffer_offset)
     {
 #if REALTIME_CRIME
-        logger::debug(TRACE_DETAIL) << "Decode frame size: " << bytebuf.size() - buffer_offset;
+        BOOST_LOG_TRIVIAL(trace) << "Decode frame size: " << bytebuf.size() - buffer_offset;
 #endif
         int len = opus_decode_float(decode_state_, bytebuf.as<unsigned char>() + buffer_offset,
             bytebuf.size() - buffer_offset, samplebuf.as<float>(), frame_size(), /*decodeFEC:*/0);

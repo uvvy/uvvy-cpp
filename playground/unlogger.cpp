@@ -10,9 +10,9 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/positional_options.hpp>
+#include <boost/log/trivial.hpp>
 #include <boost/format.hpp>
 #include "arsenal/flurry.h"
-#include "arsenal/logging.h"
 #include "arsenal/byte_array_wrap.h"
 #include "opus.h"
 
@@ -78,7 +78,7 @@ struct Decoder
         assert(len > 0);
         assert(len == int(frame_size_));
         if (len != int(frame_size_)) {
-            logger::warning() << "Short decode, decoded " << len << " frames, required " << frame_size_;
+            BOOST_LOG_TRIVIAL(warning) << "Short decode, decoded " << len << " frames, required " << frame_size_;
         }
         return decoded_packet;
     }
@@ -138,7 +138,7 @@ int main(int argc, char** argv)
         // uint32_t seq = magic & 0xffffff;
         // if (*old_seq != seq) {
         //     if (seq - *old_seq > 1) {
-        //         logger::warning() << "Non-consecutive sequence numbers " << *old_seq << "->" << seq;
+        //         BOOST_LOG_TRIVIAL(warning) << "Non-consecutive sequence numbers " << *old_seq << "->" << seq;
         //     }
         //     *old_seq = seq;
         //     //continue; -- in the old style decoder
@@ -161,7 +161,7 @@ int main(int argc, char** argv)
         }
 
         if (data.size() < 8) {
-            logger::warning() << "Packet too small to decode";
+            BOOST_LOG_TRIVIAL(warning) << "Packet too small to decode";
             continue;
         }
         //get time stamp from stamp and plot it too, per packet

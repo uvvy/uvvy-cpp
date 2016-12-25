@@ -6,7 +6,7 @@
 // Distributed under the Boost Software License, Version 1.0.
 // (See file LICENSE_1_0.txt or a copy at http://www.boost.org/LICENSE_1_0.txt)
 //
-#include "arsenal/logging.h"
+#include <boost/log/trivial.hpp>
 #include "voicebox/packet_sink.h"
 
 using namespace std;
@@ -34,7 +34,7 @@ void packet_sink::produce_output(byte_array& buffer)
 void packet_sink::send_packets()
 {
     if (!stream_->is_connected()) {
-        logger::warning() << "Packet sink - stream is not connected, cannot send";
+        BOOST_LOG_TRIVIAL(warning) << "Packet sink - stream is not connected, cannot send";
         return;
     }
 

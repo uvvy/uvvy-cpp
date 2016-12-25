@@ -63,13 +63,13 @@ int audio_hardware::scan()
         audio_inst = new RtAudio();
     }
     catch (RtError& error) {
-        logger::warning() << "Can't initialize RtAudio library, " << error.what();
+        BOOST_LOG_TRIVIAL(warning) << "Can't initialize RtAudio library, " << error.what();
         return -1;
     }
 
     num_devices = audio_inst->getDeviceCount();
     if (num_devices == 0) {
-        logger::warning() << "No audio devices available";
+        BOOST_LOG_TRIVIAL(warning) << "No audio devices available";
     }
 
     input_device = audio_inst->getDefaultInputDevice();
@@ -171,7 +171,7 @@ static int compute_level(const float *buf, int nframes)
     }
     if (level > 1.0)
     {
-        logger::warning() << "TOO HIGH SIGNAL LEVEL " << level;
+        BOOST_LOG_TRIVIAL(warning) << "TOO HIGH SIGNAL LEVEL " << level;
         // Needs compression...
     }
 
@@ -328,7 +328,7 @@ void audio_hardware::open_audio()
         hwframesize = min_frame_size;
     }
     catch (RtError &error) {
-        logger::warning() << "Couldn't open audio stream, " << error.what();
+        BOOST_LOG_TRIVIAL(warning) << "Couldn't open audio stream, " << error.what();
         throw;
     }
 
@@ -351,7 +351,7 @@ void audio_hardware::close_audio()
         audio_inst->closeStream();
     }
     catch (RtError &error) {
-        logger::warning() << "Couldn't close audio stream, " << error.what();
+        BOOST_LOG_TRIVIAL(warning) << "Couldn't close audio stream, " << error.what();
         throw;
     }
 
