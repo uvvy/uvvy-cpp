@@ -16,7 +16,7 @@ if (APPLE)
 endif (APPLE)
 
 include_directories(3rdparty/endian) # Additional unofficial boost libraries
-include_directories(3rdparty) # sodiumpp
+include_directories(3rdparty/sodiumpp/sodiumpp/include) # sodiumpp
 
 include_directories(arsenal/include) # For routing access to sss host and link_receiver
 include_directories(krypto/include) # For cryptographic primitives
@@ -26,6 +26,9 @@ include_directories(uia/include)
 #include_directories(voicebox/include)
 
 # Cryptographic support
+if (BUILD_TESTING)
+    set(SODIUMPP_TEST 1)
+endif()
 add_subdirectory(3rdparty/sodiumpp)
 #add_subdirectory(krypto)
 # Various C++ utilities
